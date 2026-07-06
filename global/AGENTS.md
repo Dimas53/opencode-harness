@@ -77,21 +77,21 @@ Never generate, insert, copy, or preserve Russian text in project files under an
 
 - Never use absolute positioning except overlapping hero images or floating badges
 - Always prefer flexbox or grid for layout
-- Never use inline styles — Tailwind classes only
 - All sizes in fixed px for mobile screens (not rem)
-- No hover effects — use `active:scale-[0.98]` for tap feedback
+- No hover effects — use tap feedback (`active:scale-[0.98]` or equivalent)
+- Follow the project's CSS framework conventions (Tailwind, SCSS, etc.)
 
 ---
 
 ## Code Style
 
-- TypeScript strict mode always
-- Use `<script setup>` in Vue components
-- Use composables for reusable logic
-- Use Pinia stores for global state
+- TypeScript strict mode always (where TypeScript is used)
 - Follow conventional commits: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`
 - Python: PEP8 + type hints
-- PHP: PSR-12
+- PHP / Symfony: PSR-12
+- Vue / Nuxt: use `<script setup>`, composables for reusable logic, Pinia for global state
+- Ionic: follow Ionic component conventions, use Angular or Vue patterns per project
+- Always follow the conventions already established in the project
 
 ---
 
@@ -99,6 +99,8 @@ Never generate, insert, copy, or preserve Russian text in project files under an
 
 - Before implementing any feature with a framework or library — fetch latest docs via context7 MCP
 - For Nuxt projects: always verify the Nuxt major version, follow the corresponding official directory structure
+- For Symfony projects: verify the version and follow Symfony best practices
+- For Ionic projects: verify target platform (iOS/Android/Web) before implementing native features
 - Never assume framework conventions from training data — always resolve via context7 first
 
 ---
@@ -316,10 +318,10 @@ Run both commands:
 git log --oneline origin/main..HEAD
 ```
 Also scroll back through this conversation and list EVERYTHING that was created, modified, or deployed:
-- Directus Flows (created / modified / deployed to production)
-- Directus collections / fields
-- Composables / server routes / utilities
-- Pages / components
+- New flows, automations, or scheduled jobs
+- New collections, tables, or schema changes
+- Composables / modules / server routes / utilities
+- Pages / components / templates
 - Config / Docker / nginx / deploy scripts
 - Any other file touched
 
@@ -466,5 +468,5 @@ Only after steps 1-3 are complete — run `git push`.
 ## Design System (Global Default)
 
 - Always read `docs/design.md` before writing any UI code
-- Use only color tokens defined in `docs/design.md`
-- Icons: `@phosphor-icons/vue` with `Ph` prefix (`PhHouse`, `PhSparkle`, etc.)
+- Use only color tokens and typography defined in `docs/design.md`
+- Follow the icon library and component conventions defined in the project AGENTS.md
