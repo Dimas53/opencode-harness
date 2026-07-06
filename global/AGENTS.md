@@ -362,14 +362,22 @@ If git log shows nothing but you did work in this session — still list what yo
       — new utility function
 ```
 
-### STEP 4 — roadmap.md
+### STEP 4 — Tests
+```
+[ ] If tests exist in this project — run them:
+      — all existing tests must pass before push
+      — if new feature added — add at least one test
+      — if no test suite exists — skip this step
+```
+
+### STEP 5 — roadmap.md
 ```
 [ ] roadmap.md checked:
       — if current Phase fully complete → mark ✅ with date
       — if Phase checkboxes changed → update them
 ```
 
-### STEP 5 — Safety check
+### STEP 6 — Safety check
 ```
 [ ] No Russian text introduced in project files
 [ ] No .env, docker-compose, lock files modified without confirmation

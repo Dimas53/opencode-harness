@@ -8,11 +8,11 @@ fi
 
 npm install -g opencode-ai
 npm install -g @modelcontextprotocol/server-filesystem
-npm install -g @modelcontextprotocol/server-git
+echo "git MCP server runs via uvx — no install needed"
 npm install -g @playwright/mcp
 
 npx playwright install
-npx superpowers install
+opencode plugin add superpowers@git+https://github.com/obra/superpowers.git
 
 mkdir -p ~/.config/opencode/skills
 

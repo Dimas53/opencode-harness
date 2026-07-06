@@ -1,2 +1,41 @@
-# Personal config with real tokens — never commit the real file
-opencode-config.jsonc
+# IDEs and Editors
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+.pytest_cache/
+
+# Secrets — never commit real config
+global/opencode-config.jsonc
+*.env
+.env.*
+!.env.example
+
+# Backups
+*.bak
+
+# Playwright
+.playwright-mcp/
+
+# Docker data
+docker/db_data/
+postgres_data/

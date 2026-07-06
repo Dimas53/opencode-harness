@@ -5,7 +5,7 @@ One command to set up AI-assisted development on any machine.
 ## Quick Start
 
 ```bash
-git clone git@github.com:YOURNAME/opencode-harness.git
+git clone git@github.com:Dimas53/opencode-harness.git
 cd opencode-harness
 make setup
 ```
