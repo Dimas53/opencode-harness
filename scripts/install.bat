@@ -16,6 +16,9 @@ npm install -g opencode-ai
 :: Install MCP servers
 echo Installing MCP servers...
 npm install -g @modelcontextprotocol/server-filesystem
+REM git MCP runs via uvx (pip install uv first)
+REM fetch MCP runs via uvx
+REM context7 is remote — no install needed
 npm install -g @modelcontextprotocol/server-sequential-thinking
 npm install -g @playwright/mcp
 npx playwright install
@@ -37,10 +40,10 @@ xcopy /E /I global\skills "%USERPROFILE%\.config\opencode\skills"
 echo.
 echo Done. Manual steps:
 echo 1. Run: opencode auth login
-echo 2. Edit %%USERPROFILE%%\.config\opencode\opencode.jsonc
-echo    - Copy from global\opencode-config.example.jsonc
-echo    - Replace /YOUR/HOME/PATH with your actual path (use backslashes)
-echo    - Replace YOUR_DIRECTUS_TOKEN if using Directus
+echo 2. Copy and rename config file:
+echo    copy global\opencode-config.example.jsonc %%USERPROFILE%%\.config\opencode\opencode.jsonc
+echo    Then edit: replace /YOUR/HOME/PATH and YOUR_DIRECTUS_TOKEN
+echo    Skip if opencode.jsonc already exists — do NOT overwrite
 echo 3. On first run — select your model
 echo.
 echo Note: RTK is not available on Windows without WSL.

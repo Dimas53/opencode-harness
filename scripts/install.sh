@@ -19,8 +19,12 @@ else
 fi
 
 npm install -g @modelcontextprotocol/server-filesystem
-echo "git MCP server runs via uvx — no install needed"
+# git MCP runs via uvx — no npm install needed
+# fetch MCP runs via uvx — no npm install needed
+# context7 is remote — no install needed
 npm install -g @playwright/mcp
+npm install -g @modelcontextprotocol/server-sequential-thinking
+echo "✓ Sequential thinking MCP installed"
 
 npx playwright install
 opencode plugin add superpowers@git+https://github.com/obra/superpowers.git
@@ -35,6 +39,9 @@ cp -r global/skills/* ~/.config/opencode/skills/
 echo ""
 echo "✓ Done. Manual steps:"
 echo "1. opencode auth login"
-echo "2. Add API key to ~/.config/opencode/.env"
+echo "2. Copy and rename config:"
+echo "   cp global/opencode-config.example.jsonc ~/.config/opencode/opencode.jsonc"
+echo "   Then edit: replace /YOUR/HOME/PATH and YOUR_DIRECTUS_TOKEN"
+echo "   Skip if opencode.jsonc already exists — do NOT overwrite"
 echo "3. On first run — select your model"
 echo "4. opencode mcp list — verify servers"
