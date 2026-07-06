@@ -5,7 +5,8 @@ setup:
 
 setup-lite:
 	@cp global/AGENTS.md ~/.config/opencode/AGENTS.md
-	@cp global/opencode-config.jsonc ~/.config/opencode/opencode.jsonc
+	@cp global/opencode-config.example.jsonc ~/.config/opencode/opencode.jsonc
+	@echo "✏️  Edit ~/.config/opencode/opencode.jsonc — replace /YOUR/HOME/PATH and YOUR_DIRECTUS_TOKEN"
 	@cp -r global/skills/* ~/.config/opencode/skills/
 	@echo "✓ Global files copied."
 

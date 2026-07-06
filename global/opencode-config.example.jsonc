@@ -7,22 +7,16 @@
         "npx",
         "-y",
         "@modelcontextprotocol/server-filesystem",
-        "/Users/DSAITO"
+        "/YOUR/HOME/PATH"
       ]
     },
     "fetch": {
       "type": "local",
-      "command": [
-        "uvx",
-        "mcp-server-fetch"
-      ]
+      "command": ["uvx", "mcp-server-fetch"]
     },
     "git": {
       "type": "local",
-      "command": [
-        "uvx",
-        "mcp-server-git"
-      ]
+      "command": ["uvx", "mcp-server-git"]
     },
     "context7": {
       "type": "remote",
@@ -30,11 +24,7 @@
     },
     "chrome-devtools": {
       "type": "local",
-      "command": [
-        "npx",
-        "-y",
-        "chrome-devtools-mcp"
-      ],
+      "command": ["npx", "-y", "chrome-devtools-mcp"],
       "env": {
         "CHROME_DEBUGGING_PORT": "9222"
       }
@@ -43,24 +33,16 @@
       "type": "remote",
       "url": "http://localhost:8055/mcp",
       "headers": {
-        "Authorization": "Bearer dkIHulcJZ18e3ZuENS943XlY8K_S3nMZ"
+        "Authorization": "Bearer YOUR_DIRECTUS_TOKEN"
       }
     },
     "sequential-thinking": {
       "type": "local",
-      "command": [
-        "npx",
-        "-y",
-        "@modelcontextprotocol/server-sequential-thinking"
-      ]
+      "command": ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"]
     },
     "playwright": {
       "type": "local",
-      "command": [
-        "npx",
-        "-y",
-        "@playwright/mcp"
-      ]
+      "command": ["npx", "-y", "@playwright/mcp"]
     }
   },
   "plugin": [

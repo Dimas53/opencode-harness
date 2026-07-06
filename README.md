@@ -15,6 +15,9 @@ make setup
 1. `opencode auth login`
 2. Add API key to `~/.config/opencode/.env`
 3. Select model on first run
+4. Copy `global/opencode-config.example.jsonc` to `~/.config/opencode/opencode.jsonc`
+5. Replace `/YOUR/HOME/PATH` with your home directory
+6. Replace `YOUR_DIRECTUS_TOKEN` with your actual token
 
 ## Initialize a Project
 
