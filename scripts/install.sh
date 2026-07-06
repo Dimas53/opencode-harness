@@ -7,6 +7,17 @@ if ! command -v node &> /dev/null; then
 fi
 
 npm install -g opencode-ai
+
+# RTK — token optimization for OpenCode
+if command -v brew &> /dev/null; then
+	echo "Installing RTK..."
+	brew install rtk-ai/tap/rtk
+	rtk init -g --opencode
+	echo "✓ RTK installed. Run 'rtk gain' to see token savings."
+else
+	echo "⚠ RTK skipped — brew not found. Install manually: https://github.com/rtk-ai/rtk"
+fi
+
 npm install -g @modelcontextprotocol/server-filesystem
 echo "git MCP server runs via uvx — no install needed"
 npm install -g @playwright/mcp

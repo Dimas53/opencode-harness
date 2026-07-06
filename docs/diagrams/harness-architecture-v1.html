@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Harness — ItoCook</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0d0d12;
+    color: #e2e8f0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    padding: 48px 24px 60px;
+  }
+
+  .diagram { max-width: 1600px; margin: 0 auto; }
+
+  /* ── HEADER ── */
+  .header {
+    text-align: center;
+    margin-bottom: 52px;
+  }
+  .header-label {
+    font-size: 14px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #f97316;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .header h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .header p { font-size: 18px; color: #475569; }
+
+  .section-label {
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #334155;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #1e1e2e;
+    margin: 48px 0;
+  }
+
+  /* ════════════════════════════════
+     PART 1 — MINDMAP (clean, tags only)
+  ════════════════════════════════ */
+  .mindmap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .mindmap-grid {
+    display: grid;
+    grid-template-columns: 1fr 180px 1fr;
+    grid-template-rows: repeat(4, auto);
+    gap: 12px;
+    align-items: center;
+    width: 100%;
+  }
+
+  .center-node {
+    grid-column: 2;
+    grid-row: 1 / 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1e1a2e, #2a1f3d);
+    border: 2px solid #8966FA;
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 16px;
+    box-shadow: 0 0 48px #8966FA1a;
+    align-self: center;
+  }
+  .center-node .llm { font-size: 20px; font-weight: 800; color: #8966FA; }
+  .center-node .llm-sub { font-size: 10px; color: #64748b; margin-top: 4px; line-height: 1.4; }
+
+  .mc {
+    background: #13131a;
+    border-radius: 10px;
+    padding: 10px 12px;
+    border: 1px solid #1e1e2e;
+  }
+  .mc-num {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 3px;
+  }
+  .mc-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 6px;
+  }
+  .tags { display: flex; flex-wrap: wrap; gap: 3px; }
+  .tags.right { justify-content: flex-start; }
+  .tags.left  { justify-content: flex-end; }
+
+  .t {
+    font-size: 12px;
+    padding: 2px 7px;
+    border-radius: 20px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .tb { background:#1e3a5f; color:#60a5fa; border:1px solid #1d4ed833; }
+  .tg { background:#14291e; color:#4ade80; border:1px solid #16a34a33; }
+  .to { background:#2d1b0e; color:#fb923c; border:1px solid #ea580c33; }
+  .tp { background:#1e1a2e; color:#a78bfa; border:1px solid #7c3aed33; }
+  .tk { background:#0d2626; color:#2dd4bf; border:1px solid #0d948033; }
+
+  /* instruction bar */
+  .instr-bar {
+    margin: 0;
+    background: #13131a;
+    border: 1px solid #3b82f622;
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .instr-left { flex-shrink: 0; }
+  .instr-left .mc-num { margin-bottom: 2px; }
+  .instr-left .mc-title { margin-bottom: 0; }
+
+  /* legend */
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: #475569;
+  }
+  .ld { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* ════════════════════════════════
+     PART 2 — DETAILED BLOCKS
+  ════════════════════════════════ */
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+  }
+
+  .detail-card {
+    background: #13131a;
+    border: 1px solid #1e1e2e;
+    border-radius: 14px;
+    padding: 18px;
+  }
+  .detail-card.wide {
+    grid-column: 1 / -1;
+  }
+  .detail-card.half {
+    grid-column: span 1;
+  }
+
+  .dc-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #1e1e2e;
+  }
+  .dc-num-badge {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .dc-title-wrap {}
+  .dc-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 2px;
+  }
+  .dc-sub { font-size: 12px; color: #475569; }
+
+  .dc-items { display: flex; flex-direction: column; gap: 8px; }
+
+  .dc-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .dc-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+  .dc-item-text {}
+  .dc-item-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #cbd5e1;
+    margin-bottom: 1px;
+  }
+  .dc-item-desc {
+    font-size: 14px;
+    color: #475569;
+    line-height: 1.4;
+  }
+
+  /* color variants */
+  .var-blue  .dc-num-badge { background:#1e3a5f; color:#60a5fa; }
+  .var-blue  .dc-dot       { background:#60a5fa; }
+  .var-blue  .dc-header    { border-color:#1d4ed822; }
+
+  .var-green .dc-num-badge { background:#14291e; color:#4ade80; }
+  .var-green .dc-dot       { background:#4ade80; }
+  .var-green .dc-header    { border-color:#16a34a22; }
+
+  .var-orange .dc-num-badge { background:#2d1b0e; color:#fb923c; }
+  .var-orange .dc-dot       { background:#fb923c; }
+  .var-orange .dc-header    { border-color:#ea580c22; }
+
+  .var-purple .dc-num-badge { background:#1e1a2e; color:#a78bfa; }
+  .var-purple .dc-dot       { background:#a78bfa; }
+  .var-purple .dc-header    { border-color:#7c3aed22; }
+
+  .var-teal .dc-num-badge { background:#0d2626; color:#2dd4bf; }
+  .var-teal .dc-dot       { background:#2dd4bf; }
+  .var-teal .dc-header    { border-color:#0d948022; }
+
+  /* ════════════════════════════════
+     PART 3 — WORKFLOW
+  ════════════════════════════════ */
+  .wf-wrap {
+    background: #13131a;
+    border: 1px solid #1e1e2e;
+    border-radius: 16px;
+    padding: 32px 24px 24px;
+  }
+  .workflow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .actor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-width: 110px;
+  }
+  .actor-icon {
+    width: 54px; height: 54px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+  .ic-claude   { background:#1e1a2e; border:1.5px solid #8966FA; }
+  .ic-dmitrii  { background:#1a1e2e; border:1.5px solid #3b82f6; }
+  .ic-opencode { background:#1a2e1e; border:1.5px solid #22c55e; }
+  .actor-name { font-size: 13px; font-weight: 700; color: #cbd5e1; }
+  .actor-sub  { font-size: 10px; color: #475569; text-align: center; line-height: 1.4; }
+
+  .wf-arrow {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 5px;
+    padding: 0 14px; flex: 1; max-width: 110px;
+  }
+  .wf-line { width: 100%; height: 1.5px; position: relative; }
+  .wf-line::after {
+    content: ''; position: absolute;
+    right: -1px; top: -4px;
+    border: 5px solid transparent;
+  }
+  .wf-p { background: linear-gradient(90deg,#8966FA,#6d4fd6); }
+  .wf-p::after { border-left-color: #6d4fd6; }
+  .wf-g { background: linear-gradient(90deg,#22c55e,#16a34a); }
+  .wf-g::after { border-left-color: #16a34a; }
+  .wf-b { background: linear-gradient(90deg,#3b82f6,#2563eb); }
+  .wf-b::after { border-left-color: #2563eb; }
+  .wf-label { font-size: 10px; color: #475569; text-align: center; line-height: 1.3; }
+
+  .wf-note {
+    text-align: center; margin-top: 20px;
+    font-size: 12px; color: #334155; font-style: italic;
+  }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-label">Agent Infrastructure</div>
+  <h1>AI Agent Harness</h1>
+  <p>9 layers around the model · ItoCook project implementation</p>
+</div>
+
+<div class="diagram">
+
+  <!-- ══════════════════════════════════
+       PART 1 — MINDMAP (tags only)
+  ══════════════════════════════════ -->
+  <div class="section-label">Structure — 9 layers around the model</div>
+
+  <div class="mindmap">
+    <!-- INSTRUCTION BAR -->
+    <div class="instr-bar" style="width:100%;max-width:460px;margin:0;">
+      <div class="instr-left">
+        <div class="mc-num" style="color:#60a5fa;">1 · INSTRUCTION</div>
+        <div class="mc-title" style="font-size:13px;font-weight:700;color:#f1f5f9;">Rules of the game · System Prompt</div>
+      </div>
+      <div class="tags" style="flex:1;">
+        <span class="t tb">AGENTS.md</span>
+        <span class="t tb">trigger-based doc rules</span>
+        <span class="t tb">commit frequency</span>
+        <span class="t tb">one concern per session</span>
+        <span class="t tb">permissions check on new collections</span>
+      </div>
+    </div>
+    <div class="mindmap-grid">
+    <!-- LEFT -->
+    <div class="mc" style="grid-column:1;grid-row:1;">
+      <div class="mc-num" style="color:#60a5fa;">2 · CONTEXT</div>
+      <div class="mc-title">What the model sees</div>
+      <div class="tags left">
+        <span class="t tb">progress.md</span><span class="t tb">roadmap.md</span>
+        <span class="t tb">AGENTS.md</span><span class="t tb">design.md</span>
+      </div>
+    </div>
+
+    <div class="mc" style="grid-column:1;grid-row:2;">
+      <div class="mc-num" style="color:#4ade80;">3 · TOOLS</div>
+      <div class="mc-title">Files · commands · APIs</div>
+      <div class="tags left">
+        <span class="t tg">filesystem</span><span class="t tg">git</span>
+        <span class="t tg">fetch</span><span class="t tg">Directus MCP</span>
+        <span class="t tg">Chrome DevTools</span><span class="t tg">Playwright</span>
+      </div>
+    </div>
+
+    <div class="mc" style="grid-column:1;grid-row:3;">
+      <div class="mc-num" style="color:#fb923c;">4 · LOOP</div>
+      <div class="mc-title">Think → Do → Verify</div>
+      <div class="tags left">
+        <span class="t to">plan first</span><span class="t to">one change</span>
+        <span class="t to">verify in browser</span><span class="t to">then commit</span>
+      </div>
+    </div>
+
+    <div class="mc" style="grid-column:1;grid-row:4;">
+      <div class="mc-num" style="color:#a78bfa;">8 · SANDBOX</div>
+      <div class="mc-title">What's allowed / not</div>
+      <div class="tags left">
+        <span class="t tp">approve nginx changes</span>
+        <span class="t tp">approve SW changes</span>
+        <span class="t tp">no secrets in prompts</span>
+      </div>
+    </div>
+
+    <!-- CENTER -->
+    <div class="center-node">
+      <div class="llm">LLM</div>
+      <div class="llm-sub">the model itself<br/>(OpenRouter)</div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="mc" style="grid-column:3;grid-row:1;">
+      <div class="mc-num" style="color:#60a5fa;">5 · MEMORY</div>
+      <div class="mc-title">Notes between steps</div>
+      <div class="tags right">
+        <span class="t tb">progress.md</span><span class="t tb">architecture.md</span>
+        <span class="t tb">docs/specs/</span><span class="t tb">git log</span>
+      </div>
+    </div>
+
+    <div class="mc" style="grid-column:3;grid-row:2;">
+      <div class="mc-num" style="color:#4ade80;">6 · SUBAGENTS</div>
+      <div class="mc-title">Model copies for subtasks</div>
+      <div class="tags right">
+        <span class="t tg">sequential-thinking</span>
+        <span class="t tg">context7</span>
+      </div>
+    </div>
+
+    <div class="mc" style="grid-column:3;grid-row:3;">
+      <div class="mc-num" style="color:#fb923c;">7 · VERIFICATION</div>
+      <div class="mc-title">Tests · lint · typecheck</div>
+      <div class="tags right">
+        <span class="t to">TypeScript</span><span class="t to">DevTools</span>
+        <span class="t to">screenshots</span><span class="t to">npm audit</span>
+      </div>
+    </div>
+
+    <div class="mc" style="grid-column:3;grid-row:4;">
+      <div class="mc-num" style="color:#a78bfa;">9 · SKILLS</div>
+      <div class="mc-title">Knowledge on demand</div>
+      <div class="tags right">
+        <span class="t tp">security/</span><span class="t tp">session-start</span>
+        <span class="t tp">code-reviewer</span>
+        <span class="t tk">nuxt · directus · docker</span>
+        <span class="t tp">brainstorming</span><span class="t tp">diagnose</span><span class="t tp">handoff</span>
+        <span class="t tp">vue</span><span class="t tp">tailwind</span><span class="t tp">frontend-ui</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-item"><div class="ld" style="background:#60a5fa"></div>what model SEES</div>
+    <div class="legend-item"><div class="ld" style="background:#4ade80"></div>what it CAN DO</div>
+    <div class="legend-item"><div class="ld" style="background:#fb923c"></div>how it's CONTROLLED</div>
+    <div class="legend-item"><div class="ld" style="background:#a78bfa"></div>boundaries & knowledge</div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════
+       PART 2 — DETAILED BREAKDOWN
+  ══════════════════════════════════ -->
+  <div class="section-label" style="margin-bottom:20px;">Layer breakdown — what's inside each block</div>
+
+  <div class="detail-grid">
+
+    <!-- 1. INSTRUCTION — full width -->
+    <div class="detail-card wide var-blue">
+      <div class="dc-header">
+        <span class="dc-num-badge">1 · INSTRUCTION</span>
+        <div class="dc-title-wrap">
+          <div class="dc-title">Rules of the Game</div>
+          <div class="dc-sub">The foundation — everything the agent reads before doing anything</div>
+        </div>
+      </div>
+      <div class="dc-items" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">AGENTS.md</div>
+          <div class="dc-item-desc">Main rules file — safety gates, workflow rules, what to never do</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">Trigger-based docs</div>
+          <div class="dc-item-desc">Agent updates docs only on specific events — new composable, new Flow, bug fix</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">Session scope rules</div>
+          <div class="dc-item-desc">One concern per session, verify in browser before commit, plan before build</div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- 2. CONTEXT -->
+    <div class="detail-card var-blue">
+      <div class="dc-header">
+        <span class="dc-num-badge">2 · CONTEXT</span>
+        <div class="dc-title-wrap">
+          <div class="dc-title">What the Model Sees</div>
+          <div class="dc-sub">Documents loaded into context window each session</div>
+        </div>
+      </div>
+      <div class="dc-items">
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">progress.md</div>
+          <div class="dc-item-desc">Living log of what's done, current bugs, session fixes</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">roadmap.md</div>
+          <div class="dc-item-desc">Big picture phases — agent reads this to not dive into wrong phase</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">design.md</div>
+          <div class="dc-item-desc">Single source of truth for all UI decisions — read before any component</div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- 3. TOOLS -->
+    <div class="detail-card var-green">
+      <div class="dc-header">
+        <span class="dc-num-badge">3 · TOOLS</span>
+        <div class="dc-title-wrap">
+          <div class="dc-title">MCP Servers</div>
+          <div class="dc-sub">What the agent can actually do — files, git, browser, APIs</div>
+        </div>
+      </div>
+      <div class="dc-items">
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">filesystem MCP</div>
+          <div class="dc-item-desc">Read and write any project file — components, configs, docs</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">git MCP</div>
+          <div class="dc-item-desc">Commits, history, diffs — agent tracks its own changes</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">Directus MCP</div>
+          <div class="dc-item-desc">Full admin access — creates collections, flows, sets permissions autonomously</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">Chrome DevTools</div>
+          <div class="dc-item-desc">Reads browser console, network, errors — debugs without screenshots</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">Playwright MCP</div>
+          <div class="dc-item-desc">E2E tests, form filling, navigation, screenshots — full browser test runner</div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- 4. LOOP -->
+    <div class="detail-card var-orange">
+      <div class="dc-header">
+        <span class="dc-num-badge">4 · LOOP</span>
+        <div class="dc-title-wrap">
+          <div class="dc-title">Execution Cycle</div>
+          <div class="dc-sub">Think → Do → Verify — the discipline that prevents cascading failures</div>
+        </div>
+      </div>
+      <div class="dc-items">
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">Plan before building</div>
+          <div class="dc-item-desc">Multi-file tasks get a plan first — approved before any code written</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">One change at a time</div>
+          <div class="dc-item-desc">Learned the hard way — multiple simultaneous infra changes = full-day rollback</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">Verify in browser first</div>
+          <div class="dc-item-desc">Agent checks result in DevTools before committing anything to git</div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- 5. MEMORY -->
+    <div class="detail-card var-blue">
+      <div class="dc-header">
+        <span class="dc-num-badge">5 · MEMORY</span>
+        <div class="dc-title-wrap">
+          <div class="dc-title">Notes Between Steps</div>
+          <div class="dc-sub">Trigger-based — agent writes docs when specific events happen, not on schedule</div>
+        </div>
+      </div>
+      <div class="dc-items">
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">progress.md</div>
+          <div class="dc-item-desc">Updated on every bug fix, feature complete, or session end</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">architecture.md</div>
+          <div class="dc-item-desc">Updated when new composable, route, or public interface is added</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">docs/specs/</div>
+          <div class="dc-item-desc">Feature specifications — created for new features without existing specs</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">git log</div>
+          <div class="dc-item-desc">Structured commit messages act as searchable history of decisions</div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- 6. SUBAGENTS -->
+    <div class="detail-card var-green">
+      <div class="dc-header">
+        <span class="dc-num-badge">6 · SUBAGENTS</span>
+        <div class="dc-title-wrap">
+          <div class="dc-title">Intelligence Tools</div>
+          <div class="dc-sub">Specialized models and tools called for specific subtasks</div>
+        </div>
+      </div>
+      <div class="dc-items">
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">context7</div>
+          <div class="dc-item-desc">Pulls live docs for Nuxt, Directus, Vue — always gets current API, not training data</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">sequential-thinking</div>
+          <div class="dc-item-desc">Forces step-by-step reasoning before jumping to implementation</div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- 7. VERIFICATION -->
+    <div class="detail-card var-orange">
+      <div class="dc-header">
+        <span class="dc-num-badge">7 · VERIFICATION</span>
+        <div class="dc-title-wrap">
+          <div class="dc-title">Quality Gates</div>
+          <div class="dc-sub">Checks that run before any commit is made</div>
+        </div>
+      </div>
+      <div class="dc-items">
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">TypeScript check</div>
+          <div class="dc-item-desc">Zero TS errors rule — agent fixes all type errors before committing</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">Browser DevTools</div>
+          <div class="dc-item-desc">Console errors, network 4xx/5xx, CORS — checked via Chrome DevTools MCP</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">Screenshot review</div>
+          <div class="dc-item-desc">Visual confirmation — Dmitrii catches UI regressions the agent misses</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">Test suite (planned)</div>
+          <div class="dc-item-desc">4 Vitest unit + 3 Vitest API + 3 Playwright E2E + CI/CD pipeline — 11 prompts in notes/tests-promt.md</div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- 8. SANDBOX -->
+    <div class="detail-card var-purple">
+      <div class="dc-header">
+        <span class="dc-num-badge">8 · SANDBOX</span>
+        <div class="dc-title-wrap">
+          <div class="dc-title">Boundaries & Safety Gates</div>
+          <div class="dc-sub">Hard rules that require human approval before proceeding</div>
+        </div>
+      </div>
+      <div class="dc-items">
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">nginx changes require approval</div>
+          <div class="dc-item-desc">Learned after a config bug caused full-day outage — now explicit gate</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">Service Worker changes require approval</div>
+          <div class="dc-item-desc">SW strategy switches affect all cached users — can't be reversed without full cache clear</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">No production secrets in prompts</div>
+          <div class="dc-item-desc">Real tokens, passwords, DB strings stay out of Claude/agent conversations</div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- 9. SKILLS -->
+    <div class="detail-card var-teal">
+      <div class="dc-header">
+        <span class="dc-num-badge">9 · SKILLS</span>
+        <div class="dc-title-wrap">
+          <div class="dc-title">Knowledge Loaded on Demand</div>
+          <div class="dc-sub">Agent reads relevant skill files before starting any task in that domain</div>
+        </div>
+      </div>
+      <div class="dc-items">
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">security/ — 5 files</div>
+          <div class="dc-item-desc">Custom security baseline: auth, API, frontend, stack-specific, release checklist</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">session-start</div>
+          <div class="dc-item-desc">Agent boot sequence — reads docs, confirms scope, checks for blockers before coding</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">code-reviewer</div>
+          <div class="dc-item-desc">PR review rules — checks for common patterns, security issues, doc updates</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">codebase-health-check</div>
+          <div class="dc-item-desc">Architecture audit skill — assesses codebase, finds refactoring opportunities, DRY violations</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">nuxt · directus · docker · tailwind</div>
+          <div class="dc-item-desc">Public stack skills — best practices, common pitfalls, API patterns for each tool</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">make-interfaces-feel-better</div>
+          <div class="dc-item-desc">UI polish skill — animations, micro-interactions, visual details for final phase</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">52 skills total (Superpowers + custom + stack)</div>
+          <div class="dc-item-desc">brainstorming, diagnose, handoff, planning, TDD, code-review, spec-driven, incremental-implementation, zoom-out, grill-me, interview-me, dispatching-parallel-agents, source-driven-development, caveman, vue, nuxt, tailwind, playwright, frontend-ui — loaded per task type</div>
+        </div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════
+       PART 3 — WORKFLOW LOOP
+  ══════════════════════════════════ -->
+  <div class="section-label" style="margin-bottom:16px;">Our custom workflow on top of the agent</div>
+
+  <div class="wf-wrap">
+    <div class="workflow">
+      <div class="actor">
+        <div class="actor-icon ic-claude">🧠</div>
+        <div class="actor-name">Claude</div>
+        <div class="actor-sub">Strategic advisor<br/>Prompt author<br/>Diagnostics</div>
+      </div>
+      <div class="wf-arrow">
+        <div class="wf-line wf-p"></div>
+        <div class="wf-label">writes structured<br/>prompts in English</div>
+      </div>
+      <div class="actor">
+        <div class="actor-icon ic-dmitrii">👤</div>
+        <div class="actor-name">Dmitrii</div>
+        <div class="actor-sub">Product owner<br/>Approves changes<br/>Visual QA</div>
+      </div>
+      <div class="wf-arrow">
+        <div class="wf-line wf-g"></div>
+        <div class="wf-label">runs in terminal<br/>via OpenCode</div>
+      </div>
+      <div class="actor">
+        <div class="actor-icon ic-opencode">⚡</div>
+        <div class="actor-name">OpenCode</div>
+        <div class="actor-sub">Executes code<br/>Uses MCP tools<br/>Updates docs</div>
+      </div>
+      <div class="wf-arrow">
+        <div class="wf-line wf-b"></div>
+        <div class="wf-label">reports results<br/>+ screenshots</div>
+      </div>
+      <div class="actor">
+        <div class="actor-icon ic-claude">🧠</div>
+        <div class="actor-name">Claude</div>
+        <div class="actor-sub">Diagnoses issues<br/>Iterates<br/>Next prompt</div>
+      </div>
+    </div>
+    <div class="wf-note">Not talking to the model directly — working through the harness layer</div>
+  </div>
+
+</div>
+</body>
+</html>
