@@ -19,6 +19,11 @@ make setup
 5. Replace `/YOUR/HOME/PATH` with your home directory
 6. Replace `YOUR_DIRECTUS_TOKEN` with your actual token
 
+## Windows Users
+
+Windows requires WSL2 for bash scripts. See [GUIDE.md section 10](./GUIDE.md#10-windows--cross-platform) for full Windows setup instructions.
+Alternative: run manual steps from GUIDE.md instead of make commands.
+
 ## Initialize a Project
 
 ```bash
