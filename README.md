@@ -22,8 +22,16 @@ make setup
 
 ## Windows Users
 
-Windows requires WSL2 for bash scripts. See [GUIDE.md section 10](./GUIDE.md#10-windows--cross-platform) for full Windows setup instructions.
-Alternative: run manual steps from GUIDE.md instead of make commands.
+Windows requires WSL2 for full compatibility, OR you can use the native installer:
+
+**Option 1 — WSL2 (recommended):**
+Install WSL2 from Microsoft Store, then follow the Mac/Linux instructions above.
+
+**Option 2 — Native Windows installer:**
+Run `scripts\install.bat` instead of `make setup`.
+Note: RTK and `make` commands are not available without WSL.
+
+See [GUIDE.md section 10](./GUIDE.md#10-windows--cross-platform) for detailed Windows setup instructions.
 
 ## Initialize a Project
 
