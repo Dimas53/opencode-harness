@@ -1,4 +1,4 @@
-.PHONY: setup setup-lite init init-existing docs-only
+.PHONY: setup setup-lite init init-existing docs-only verify
 
 setup:
 	@./scripts/install.sh
@@ -19,3 +19,6 @@ init-existing:
 docs-only:
 	@cp -r templates/docs/ $(PROJECT)/docs/
 	@echo "✓ Doc templates copied to $(PROJECT)/docs/"
+
+verify:
+	@./scripts/verify.sh
