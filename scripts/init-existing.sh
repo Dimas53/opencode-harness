@@ -1,5 +1,5 @@
 #!/bin/bash
-# Runs harness-init skill for an existing project
+# Open OpenCode TUI in an existing project for harness-init
 # Usage: make init-existing PROJECT=/path/to/project
 
 PROJECT=$1
@@ -9,6 +9,13 @@ if [ -z "$PROJECT" ]; then
 	exit 1
 fi
 
-cp -r templates/docs/ "$PROJECT/docs/"
+echo ""
+echo "  Opening OpenCode in existing project: $PROJECT"
+echo ""
+echo "  When OpenCode opens, type:"
+echo ""
+echo "    Load ~/.config/opencode/skills/harness-init/SKILL.md and run it in existing-project mode."
+echo ""
+
 cd "$PROJECT" || exit 1
-opencode run "Load ~/.config/opencode/skills/harness-init/SKILL.md and run it in existing-project mode."
+opencode

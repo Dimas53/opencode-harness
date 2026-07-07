@@ -13,6 +13,7 @@
 ## Known issues
 - harness-init not tested on real project yet
 - install scripts not tested on clean machine
+- `opencode run` is non-interactive — init scripts now use TUI instead
 
 ## Next session — plan
 - Test make init on recruitment-app

@@ -386,9 +386,10 @@ make init PROJECT=/path/to/new-project
 ```
 
 This runs `init-project.sh` which:
-1. Copies template documentation into the project
-2. Runs `opencode run "Load harness-init skill and run it"`
-3. The harness-init skill interviews you, analyzes gaps, generates docs
+1. Copies template documentation (`docs/` + `AGENTS.md`) into the project
+2. Opens OpenCode TUI automatically
+3. You type the harness-init command shown in the terminal
+4. The harness-init skill interviews you, analyzes gaps, generates docs
 
 The interview covers 9 questions:
 - What is the project and what does it do?
@@ -418,8 +419,9 @@ make init-existing PROJECT=/path/to/existing-project
 ```
 
 This runs `init-existing.sh` which:
-1. Copies template documentation alongside existing docs (never overwrites)
-2. Runs harness-init in existing-project mode
+1. Opens OpenCode TUI in your project
+2. You type the harness-init command shown in the terminal
+3. The agent first reads your code, builds a hypothesis, then fills missing docs
 
 In this mode, the agent first reads your code (`package.json`, folder structure,
 git log, `.env.example`), builds a hypothesis about your project,
