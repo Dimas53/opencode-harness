@@ -80,9 +80,17 @@ Q6: Will this handle sensitive data?
 
 Q7: Where will this be deployed?
     (VPS, cloud provider, local only, not sure yet)
+
+Q8: Do you need a design system?
+    (colors, typography, component library, icon set)
+    If yes — we will create docs/design.md during setup.
+
+Q9: Do you want to create a project plan now?
+    (phases, milestones, initial roadmap)
+    If yes — we will generate docs/roadmap.md with real phases based on your answers.
 ```
 
-After all 7 answers — summarize what you understood and ask:
+After all 9 answers — summarize what you understood and ask:
 > "Here's what I understood: [summary]. Is this correct before I generate docs?"
 
 Wait for confirmation. If user corrects something — update your understanding.
@@ -151,6 +159,7 @@ Based on project description and stage:
 - Phase 1: Foundation (project setup, auth if needed, basic structure)
 - Phase 2: Core Features (based on what user described)
 - Add placeholder phases for later
+- If user answered YES to Q9 — generate with real phases based on their plan
 
 **File 4: docs/CONTEXT.md**
 Based on project domain:
@@ -158,16 +167,23 @@ Based on project domain:
 - Patterns: architectural patterns being used
 - Gotchas: known issues for this stack (from your knowledge)
 
-**File 5: docs/design.md** (only if project has frontend)
-- Colors: placeholder tokens
-- Typography: font choices if mentioned
-- Components: list of likely UI components based on project type
-- Icons: icon library if mentioned
+**File 5: docs/design.md** (only if user answered YES to Q8)
+Based on their stack and preferences:
+- Colors: primary/secondary/background/text tokens
+- Typography: font choices, sizes, weights
+- Components: list of likely UI components for this project type
+- Icons: icon library matching their stack
 
 **File 6: docs/skills-cheatsheet.md**
 Fill the table based on gap analysis results:
 | Skill | Triggers | When to use |
 List only skills that are actually relevant to this project.
+
+**File 7: docs/specs/phase-1.md** (only if user answered YES to Q9)
+Create with what will be built in Phase 1:
+- Key components/pages/endpoints
+- Success criteria
+- Timeline estimate if mentioned
 
 ### Phase 4 — Finalize
 
@@ -185,10 +201,11 @@ Then output:
 Created:
 - AGENTS.md (project-specific rules)
 - docs/ARCHITECTURE.md
-- docs/roadmap.md
+- docs/roadmap.md (with real phases if Q9 answered YES)
 - docs/CONTEXT.md
-- docs/design.md (if frontend)
+- docs/design.md (if Q8 answered YES)
 - docs/skills-cheatsheet.md
+- docs/specs/phase-1.md (if Q9 answered YES)
 
 Stack skills to load on every session:
 [list based on tech stack]
