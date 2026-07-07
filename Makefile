@@ -1,4 +1,4 @@
-.PHONY: setup setup-lite init init-existing docs-only verify
+.PHONY: setup setup-lite init init-existing docs-only verify update
 
 setup:
 	@./scripts/install.sh
@@ -22,3 +22,6 @@ docs-only:
 
 verify:
 	@./scripts/verify.sh
+
+update:
+	@./scripts/update.sh
