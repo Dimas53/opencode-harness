@@ -42,6 +42,17 @@ echo "✓ Chrome DevTools MCP installed"
 npx playwright install
 opencode plugin add superpowers@git+https://github.com/obra/superpowers.git
 
+# Verify superpowers installed correctly
+SKILL_COUNT=$(ls ~/.config/opencode/skills/ 2>/dev/null | wc -l)
+if [ "$SKILL_COUNT" -lt 10 ]; then
+  echo "⚠ Superpowers may not have installed correctly."
+  echo "  Skills found: $SKILL_COUNT (expected 40+)"
+  echo "  Try manually: opencode plugin add superpowers@git+https://github.com/obra/superpowers.git"
+  echo "  Or check: https://github.com/obra/superpowers"
+else
+  echo "✓ Skills installed: $SKILL_COUNT"
+fi
+
 mkdir -p ~/.config/opencode/skills
 
 cp global/AGENTS.md ~/.config/opencode/AGENTS.md
