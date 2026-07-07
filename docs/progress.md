@@ -12,7 +12,6 @@
 
 ## Known issues
 - harness-init not tested on real project yet
-- GUIDE.md sections need review after first real test
 - install scripts not tested on clean machine
 
 ## Next session — plan
@@ -20,3 +19,4 @@
 - Fix any issues found during real test
 
 ## Git log
+- `96a9c5f` — fix: sync install.bat, fix stale 7 to 9 questions refs
