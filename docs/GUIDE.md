@@ -143,6 +143,24 @@ This is the onboarding skill used when initializing new projects. It:
 
 ---
 
+## 3.5 Choosing a Model
+
+Different tasks need different models. Recommended setup via OpenRouter:
+
+| Task | Model | Why |
+|------|-------|-----|
+| Routine fixes, small changes | `deepseek/deepseek-v4-flash:free` | Fast, free, good enough |
+| Architecture, complex refactoring | `google/gemini-2.5-pro` | Best reasoning |
+| Large codebase analysis | `google/gemini-2.5-flash` | 1M context window |
+| Complex reasoning, algorithms | `deepseek/deepseek-v4-pro` | Strong reasoning |
+| Best overall quality | `anthropic/claude-sonnet-4-6` | Most reliable |
+
+> Tip: Use free models for exploration and quick questions. Switch to paid only when
+> the task is complex enough to justify it. RTK saves 80-90% on terminal output —
+> the real cost is in your prompts and responses, not command output.
+
+---
+
 ## 4. How to Start a Session
 
 Every session begins with the command:

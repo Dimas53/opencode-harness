@@ -8,6 +8,15 @@ fi
 
 npm install -g opencode-ai
 
+# Install uv (required for git and fetch MCP servers)
+if command -v brew &> /dev/null; then
+  brew install uv
+  echo "✓ uv installed"
+else
+  echo "⚠ uv not installed — install manually: https://docs.astral.sh/uv/"
+  echo "  Required for git MCP server and fetch MCP server"
+fi
+
 # RTK — token optimization for OpenCode
 if command -v brew &> /dev/null; then
 	echo "Installing RTK..."
@@ -25,6 +34,10 @@ npm install -g @modelcontextprotocol/server-filesystem
 npm install -g @playwright/mcp
 npm install -g @modelcontextprotocol/server-sequential-thinking
 echo "✓ Sequential thinking MCP installed"
+
+# Chrome DevTools MCP (optional — for browser inspection)
+npm install -g chrome-devtools-mcp
+echo "✓ Chrome DevTools MCP installed"
 
 npx playwright install
 opencode plugin add superpowers@git+https://github.com/obra/superpowers.git

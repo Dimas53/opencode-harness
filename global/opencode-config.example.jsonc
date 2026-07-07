@@ -3,24 +3,23 @@
   "mcp": {
     "filesystem": {
       "type": "local",
-      "command": [
-        "npx",
-        "-y",
-        "@modelcontextprotocol/server-filesystem",
-        "/YOUR/HOME/PATH"
-      ]
-    },
-    "fetch": {
-      "type": "local",
-      "command": ["uvx", "mcp-server-fetch"]
+      "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "/YOUR/HOME/PATH"]
     },
     "git": {
       "type": "local",
       "command": ["uvx", "mcp-server-git"]
     },
+    "fetch": {
+      "type": "local",
+      "command": ["uvx", "mcp-server-fetch"]
+    },
     "context7": {
       "type": "remote",
       "url": "https://mcp.context7.com/mcp"
+    },
+    "sequential-thinking": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"]
     },
     "chrome-devtools": {
       "type": "local",
@@ -28,17 +27,6 @@
       "env": {
         "CHROME_DEBUGGING_PORT": "9222"
       }
-    },
-    "directus": {
-      "type": "remote",
-      "url": "http://localhost:8055/mcp",
-      "headers": {
-        "Authorization": "Bearer YOUR_DIRECTUS_TOKEN"
-      }
-    },
-    "sequential-thinking": {
-      "type": "local",
-      "command": ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"]
     },
     "playwright": {
       "type": "local",
