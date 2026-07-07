@@ -1,80 +1,91 @@
 # Skills Cheatsheet
 
-## Always loaded on session start
+## Core — always in use
 
-| Skill | Triggers | When to use |
-|-------|----------|-------------|
-| `using-agent-skills` | Meta-skill — auto-loads at every session start | After `Start` command |
-| `harness-init` | First project setup, `make init` | Initialize new or existing project with docs |
-| `session-start` | After global using-agent-skills | Stack-specific daily session init |
+| Skill | When to tell the agent |
+|---|---|
+| `using-agent-skills` | Meta-skill — auto-loads at every session start |
+| `session-start` | Session start — read progress.md and roadmap, output summary |
+| `brainstorming` | Before a new feature — ask questions first, code after |
+| `grill-with-docs` | Before a new feature — stress-test plan, update CONTEXT.md |
+| `grill-me` | Stress-test an idea or plan — interrogation without doc writing |
+| `interview-me` | Requirements are fuzzy — extract what the user actually needs |
+| `incremental-implementation` | Implement step by step, small iterations |
+| `planning-and-task-breakdown` | Break task into ordered steps before starting |
+| `writing-plans` | Break task into 2-5 minute steps with exact file paths |
+| `handoff` | Session is long — pack context for a fresh session |
+| `diagnose` | Something is broken — run diagnostic cycle |
+| `find-skills` | Find the right skill for any task |
+| `nuxt` | Working with Nuxt — apply Nuxt patterns |
+| `nuxt-ui` | Use Nuxt UI components, don't build custom ones |
+| `vue` | Apply Vue 3 / script setup / composables patterns |
 
-## Planning & Design
+---
 
-| Skill | Triggers | When to use |
-|-------|----------|-------------|
-| `brainstorming` | New feature, unclear requirements | Before any code — ask questions first |
-| `grill-with-docs` | New feature, want docs updated | Stress-test plan + update CONTEXT.md |
-| `spec-driven-development` | "spec", "requirements" | Write spec before implementation |
-| `incremental-implementation` | Large feature, multi-file change | Implement step by step, small commits |
-| `planning-and-task-breakdown` | "break down", "where to start" | Split work into ordered tasks |
-| `writing-plans` | Multi-step task with file paths | 2-5 minute task breakdown |
-| `premortem` | "premortem this", "what could kill this" | Stress-test a plan or decision |
+## Architecture & Documentation
 
-## Development
+| Skill | When to tell the agent |
+|---|---|
+| `zoom-out` | Explain this code in context of the whole system |
+| `improve-codebase-architecture` | Find architectural improvements |
+| `spec-driven-development` | Write spec first, code after |
+| `documentation-and-adrs` | Document architecture decisions — ADR, CONTEXT.md, specs |
+| `source-driven-development` | Check official docs before implementing |
+| `to-prd` | Turn our conversation into a PRD |
+| `to-issues` | Break PRD into individual issues |
+| `prototype` | Quick throwaway prototype to validate an idea — UI or logic |
 
-| Skill | Triggers | When to use |
-|-------|----------|-------------|
-| `frontend-ui-engineering` | UI component, page, layout | Build production-quality interfaces |
-| `api-and-interface-design` | API endpoint, module boundary | Design stable interfaces |
-| `vue` | `.vue` files, composables | Vue 3 Composition API patterns |
-| `tailwind-design-system` | Styles, design tokens | Systematic Tailwind usage |
-| `nuxt` | Nuxt app, server routes | Nuxt patterns, SSR, auto-imports |
-| `nuxt-ui` | UI components with @nuxt/ui | Use Nuxt UI components |
-| `code-reviewer` | Before "done", "ready" | Check work against checklist |
+---
 
-## Debugging & Quality
+## Code Quality
 
-| Skill | Triggers | When to use |
-|-------|----------|-------------|
-| `diagnose` | Bug, error, "not working" | Systematic debug cycle |
-| `debugging-and-error-recovery` | Unexpected error, build fails | Root-cause analysis |
-| `systematic-debugging` | Hard bug, regression | 8-step debug loop |
-| `code-review-and-quality` | "review this code" | Multi-axis quality review |
-| `verification-before-completion` | "done", "ready" (before commit) | Verify before claiming done |
+| Skill | When to tell the agent |
+|---|---|
+| `code-reviewer` | Check your work against checklist before "done" (TS, Vue, Directus, design) |
+| `requesting-code-review` | Request code review before merge |
+| `verification-before-completion` | Verify everything works before saying "done" |
+| `tdd` | Write failing test first, then fix |
+| `test-driven-development` | Addy Osmani variant of TDD |
+| `code-review-and-quality` | Review this code across all quality axes |
+| `systematic-debugging` | Fix bugs with 8-step cycle: reproduce → minimize → hypothesize → fix |
+| `debugging-and-error-recovery` | Debug systematically: reproduce → minimise → fix |
+| `triage` | Prioritize accumulated bugs by severity |
+| `doubt-driven-development` | Adversarial review before critical changes (prod, security, irreversible) |
+| `browser-testing-with-devtools` | Debug/test in browser — console, network, DOM, screenshots via Chrome DevTools |
+| `receiving-code-review` | Got a review — verify feedback technically, don't blindly agree |
 
-## Testing
+---
 
-| Skill | Triggers | When to use |
-|-------|----------|-------------|
-| `test-driven-development` | "write tests", "TDD" | Red-green-refactor |
-| `tdd` | "write tests", "TDD" | Red-green-refactor (alternative) |
-| `browser-testing-with-devtools` | Debug in browser | Console, network, DOM inspection |
+## Stack & Tools
 
-## Security & Infrastructure
+| Skill | When to tell the agent |
+|---|---|
+| `tailwind-design-system` | Use Tailwind systematically, design tokens |
+| `directus` | Working with Directus — schema, permissions, MCP |
+| `api-and-interface-design` | Design API by the rules |
+| `git-workflow-and-versioning` | Apply git workflow patterns |
+| `security` | Security check — auth, secrets, API, infra |
+| `security-and-hardening` | Harden against vulnerabilities |
+| `make-interfaces-feel-better` | Polish UI — typography, shadows, rounding, micro-animations |
+| `performance-optimization` | Find bottlenecks, optimize |
+| `caveman` | Token saving mode — respond briefly |
+| `frontend-ui-engineering` | UI task — apply frontend patterns |
+| `codebase-health-check` | Codebase health analysis: system map, duplicate detection, prioritization, refactoring plan |
 
-| Skill | Triggers | When to use |
-|-------|----------|-------------|
-| `security` | Auth, login, token, .env, deploy | Security audit for any change |
-| `security-and-hardening` | User input, auth, data storage | Harden against vulnerabilities |
-| `docker-expert` | Docker, compose, container | Docker optimization and debugging |
-| `ci-cd-and-automation` | Pipeline, GitHub Actions, deploy | Setup build and deploy pipelines |
-| `shipping-and-launch` | Deploy to production | Pre-launch checklist |
+---
 
-## Git & Docs
+## Rare but useful
 
-| Skill | Triggers | When to use |
-|-------|----------|-------------|
-| `git-workflow-and-versioning` | Commit, branch, merge, PR | Git workflow patterns |
-| `documentation-and-adrs` | "document", ADR, CONTEXT.md | Record architecture decisions |
-| `handoff` | "new session", context limit | Pack context for fresh session |
-| `zoom-out` | "how does this fit" | Broader system perspective |
-
-## Performance & Architecture
-
-| Skill | Triggers | When to use |
-|-------|----------|-------------|
-| `performance-optimization` | Slow, bottleneck, optimize | Find and fix perf issues |
-| `code-simplification` | Complex code, unclear logic | Simplify without changing behavior |
-| `improve-codebase-architecture` | Refactor, DRY, clean up | Find architectural improvements |
-| `codebase-health-check` | "assess codebase", "health" | Full codebase analysis |
-| `doubt-driven-development` | Critical change, security-sensitive | Adversarial review before acting |
+| Skill | When to tell the agent |
+|---|---|
+| `dispatching-parallel-agents` | 2+ independent tasks — run them in parallel |
+| `executing-plans` | Have a ready plan — execute with checkpoints |
+| `setup-matt-pocock-skills` | First time in a new repo — set up all skills |
+| `archify` | Architecture diagrams — workflow, sequence, data-flow, lifecycle, export PNG/SVG |
+| `write-a-skill` | Want to create a new custom skill |
+| `teach` | Explain this concept step by step |
+| `docker-expert` | Docker / docker-compose issues |
+| `finishing-a-development-branch` | Implementation done, tests pass — decide: merge, PR, or cleanup |
+| `using-git-worktrees` | Want to isolate new feature from current working directory |
+| `subagent-driven-development` | Have a plan with independent steps — run sub-agents in parallel |
+| `premortem` | Stress-test a plan/release/decision — imagine it failed 6 months from now and explain why |
