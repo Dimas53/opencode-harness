@@ -33,6 +33,9 @@ global/opencode-config.jsonc
 # Backups
 *.bak
 
+# Local notes (Russian allowed, not versioned)
+notes/
+
 # Playwright
 .playwright-mcp/
 
