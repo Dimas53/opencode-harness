@@ -13,6 +13,11 @@ if errorlevel 1 (
 echo Installing OpenCode...
 npm install -g opencode-ai
 
+:: Install uv (for git and fetch MCP)
+echo Installing uv...
+pip install uv
+echo uv installed for git and fetch MCP
+
 :: Install MCP servers
 echo Installing MCP servers...
 npm install -g @modelcontextprotocol/server-filesystem
@@ -23,13 +28,25 @@ npm install -g @modelcontextprotocol/server-sequential-thinking
 npm install -g @playwright/mcp
 npx playwright install
 
-:: Install uv (for git and fetch MCP)
-echo Installing uv...
-pip install uv
+:: Install Chrome DevTools MCP
+npm install -g chrome-devtools-mcp
 
 :: Install superpowers plugin
 echo Installing superpowers...
 opencode plugin add superpowers@git+https://github.com/obra/superpowers.git
+
+:: Verify superpowers installed correctly
+setlocal enabledelayedexpansion
+set SKILL_COUNT=0
+for /f %%i in ('dir /b "%USERPROFILE%\.config\opencode\skills\" 2^>nul ^| find /c /v ""') do set SKILL_COUNT=%%i
+if %SKILL_COUNT% LSS 10 (
+    echo WARNING: Superpowers may not have installed correctly.
+    echo Skills found: %SKILL_COUNT% ^(expected 40+^)
+    echo Try: opencode plugin add superpowers@git+https://github.com/obra/superpowers.git
+) else (
+    echo Skills installed: %SKILL_COUNT%
+)
+endlocal
 
 :: Copy global files
 echo Copying global config...

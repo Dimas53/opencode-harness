@@ -66,7 +66,7 @@ Wait for session brief. Then type:
 Load ~/.config/opencode/skills/harness-init/SKILL.md and run it.
 ```
 
-The agent will interview you (7 questions), analyze your stack, and generate all project documentation automatically.
+The agent will interview you (9 questions), analyze your stack, and generate all project documentation automatically.
 
 ---
 

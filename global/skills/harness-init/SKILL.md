@@ -283,7 +283,7 @@ RULE 1: Never generate all files at once without showing drafts.
         One file → show draft → wait for ok → next file.
 
 RULE 2: Never skip the interview in NEW PROJECT mode.
-        Even if user seems impatient — all 7 questions must be answered.
+        Even if user seems impatient — all 9 questions must be answered.
 
 RULE 3: Never skip gap analysis.
         Undiscovered skill gaps cause problems in future sessions.

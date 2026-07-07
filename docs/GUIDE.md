@@ -136,7 +136,7 @@ with a `SKILL.md` file. The agent will discover it on next session.
 ### The `harness-init` skill
 
 This is the onboarding skill used when initializing new projects. It:
-1. Interviews the developer (7 questions, one at a time)
+1. Interviews the developer (9 questions, one at a time)
 2. Runs gap analysis (checks available skills vs project needs)
 3. Generates project documentation (AGENTS.md, ARCHITECTURE.md, roadmap.md, etc.)
 4. Commits everything
@@ -390,14 +390,16 @@ This runs `init-project.sh` which:
 2. Runs `opencode run "Load harness-init skill and run it"`
 3. The harness-init skill interviews you, analyzes gaps, generates docs
 
-The interview covers 7 questions:
+The interview covers 9 questions:
 - What is the project and what does it do?
 - Tech stack (framework, backend, database, deployment)
 - Team size
 - Stage (MVP vs production-critical)
-- External integrations (APIs, payments, auth)
+- External integrations (APIs, payments, auth providers)
 - Sensitive data (affects security priority)
 - Deployment target
+- Design system needs (generates docs/design.md)
+- Project plan preference (generates docs/roadmap.md)
 
 After all answers, the skill generates:
 - `AGENTS.md` (project-specific rules)
