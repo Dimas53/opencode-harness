@@ -93,6 +93,32 @@ The agent will read your codebase first, present a hypothesis, and ask only what
 
 ---
 
+## Quick Init (automated scaffolding)
+
+Instead of the manual flow above, use one command:
+
+**New project (empty directory):**
+```bash
+make init PROJECT=/path/to/new-project
+```
+
+This copies docs templates + AGENTS.md, then opens OpenCode automatically.
+When OpenCode opens — type the harness-init command shown in the terminal.
+
+**Existing project (has code already):**
+```bash
+make init-existing PROJECT=/path/to/existing-project
+```
+
+This opens OpenCode in your project. Type the command shown in the terminal
+to run harness-init in existing-project mode.
+
+> **Note:** `make init` and `make init-existing` open interactive TUI (`opencode`
+> without arguments). The one-shot command `opencode run` cannot handle
+> harness-init's 9 interview questions, which is why TUI is required.
+
+---
+
 ## Verify Installation
 
 ```bash

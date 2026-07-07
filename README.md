@@ -18,6 +18,17 @@ make docs-only PROJECT=/path/to/project  # templates only
 
 ## After Setup — Start Any Project
 
+### Automatic (with templates)
+
+```bash
+make init PROJECT=/path/to/new-project      # empty project
+make init-existing PROJECT=/path/to/project  # existing project
+```
+
+Copies templates, opens OpenCode. Type the command shown in terminal.
+
+### Manual
+
 ```bash
 cd /path/to/your/project
 opencode
