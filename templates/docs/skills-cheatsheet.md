@@ -1,3 +1,18 @@
+<!--
+EXAMPLE FILE — fill based on skills actually installed on this machine
+and the project's tech stack. Agent reads this at Session Start.
+
+IMPORTANT: This file is auto-maintained by the agent:
+- When a new skill is installed → agent adds it to this file automatically
+- When harness-init runs gap analysis → agent fills relevant skills here
+- Developer can add manual entries at any time
+
+When initializing a new project:
+  1. Run gap analysis (Phase 2 of harness-init)
+  2. List only skills relevant to THIS project's stack
+  3. Remove skills that don't apply — keep the list focused
+-->
+
 # Skills Cheatsheet
 
 ## Core — always in use
