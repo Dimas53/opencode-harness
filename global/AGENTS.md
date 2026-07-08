@@ -17,10 +17,9 @@
 ## Language Rules
 
 ### Chat language
-- Respond in Russian by default in CLI chat
-- If the user writes in German — respond in German
-- If the user writes in English — respond in English
-- All code explanations, reviews, analyses in chat → Russian unless user requests otherwise
+- Respond in whatever language the user writes their first message in
+- If the user switches language mid-session — switch to match immediately
+- No default language — always mirror the user's input language
 
 ### English-Only Policy (code & project files)
 Russian is strictly prohibited in:
