@@ -18,6 +18,12 @@ This skill orchestrates other skills — do not write logic from scratch.
 ~/.config/opencode/skills/planning-and-task-breakdown/SKILL.md
 ```
 
+## Skill Stack for This Scenario
+
+Before starting, check docs/skill-stacks.md (if it exists in this repo)
+for the exact skill order for "new-project" or "existing-project" scenario.
+If skill-stacks.md doesn't exist yet, use the default order in this file.
+
 ---
 
 ## DETECT MODE FIRST
@@ -61,6 +67,10 @@ Ask these questions ONE AT A TIME. Wait for answer before next question.
 Do NOT ask all at once.
 
 ```
+Q0: On what language should I respond during this project's sessions?
+    (I will use this language for all conversation going forward,
+    unless you switch languages yourself.)
+
 Q1: What is the project name and what does it do? (2-3 sentences)
 
 Q2: What is the tech stack?
@@ -90,7 +100,7 @@ Q9: Do you want to create a project plan now?
     If yes — we will generate docs/roadmap.md with real phases based on your answers.
 ```
 
-After all 9 answers — summarize what you understood and ask:
+After all 10 answers — summarize what you understood and ask:
 > "Here's what I understood: [summary]. Is this correct before I generate docs?"
 
 Wait for confirmation. If user corrects something — update your understanding.
@@ -129,61 +139,24 @@ Project needs browser testing → playwright MCP should be connected
 
 Report gaps and continue only after user confirms.
 
-### Phase 3 — Generate Documentation (use grill-with-docs skill)
+### Phase 3 — Generate Documentation (delegate, don't write directly)
 
-Generate files in this exact order.
-After EACH file — show the draft and wait for "ok" before generating the next.
+harness-init does NOT generate doc content itself. It orchestrates:
 
-**File 1: AGENTS.md (project-specific)**
-Based on interview answers, generate a project AGENTS.md that includes:
-- Stack Skills section (relevant to this project's tech stack)
-- Project File Map (based on framework conventions)
-- Task Context table (based on planned features)
-- Git Workflow
-- MCP Servers Available (based on what's connected)
-- Any framework-specific Gotchas known for this stack
-- Docs Update Matrix
+For each file, before generating:
+1. Read the matching example from templates/docs/examples/[FILENAME]
+   (if it exists) as a structural reference
+2. Load the relevant sub-skill:
+   - AGENTS.md, ARCHITECTURE.md, roadmap.md, CONTEXT.md, skills-cheatsheet.md
+     → load ~/.config/opencode/skills/doc-generator/SKILL.md
+   - design.md → load ~/.config/opencode/skills/design-init/SKILL.md
+   - specs/phase-1.md → load ~/.config/opencode/skills/spec-writer/SKILL.md
+3. Pass interview answers + example file content to that skill
+4. Show the draft, wait for "ok", move to next file
 
-Do NOT include global rules (Session Start, DoD, Session End, Safety Gates) —
-those live in global AGENTS.md and apply automatically.
-
-**File 2: docs/ARCHITECTURE.md**
-Based on tech stack and project description:
-- Overview: what this system does
-- Stack: list all technologies with their role
-- Structure: folder structure based on framework
-- Key Decisions: why this stack was chosen (from interview answers)
-
-**File 3: docs/roadmap.md**
-Based on project description and stage:
-- Phase 1: Foundation (project setup, auth if needed, basic structure)
-- Phase 2: Core Features (based on what user described)
-- Add placeholder phases for later
-- If user answered YES to Q9 — generate with real phases based on their plan
-
-**File 4: docs/CONTEXT.md**
-Based on project domain:
-- Domain Terms: key concepts specific to this project
-- Patterns: architectural patterns being used
-- Gotchas: known issues for this stack (from your knowledge)
-
-**File 5: docs/design.md** (only if user answered YES to Q8)
-Based on their stack and preferences:
-- Colors: primary/secondary/background/text tokens
-- Typography: font choices, sizes, weights
-- Components: list of likely UI components for this project type
-- Icons: icon library matching their stack
-
-**File 6: docs/skills-cheatsheet.md**
-Fill the table based on gap analysis results:
-| Skill | Triggers | When to use |
-List only skills that are actually relevant to this project.
-
-**File 7: docs/specs/phase-1.md** (only if user answered YES to Q9)
-Create with what will be built in Phase 1:
-- Key components/pages/endpoints
-- Success criteria
-- Timeline estimate if mentioned
+If a sub-skill is not yet installed — fall back to generating inline
+using the example as reference, and note to the user that installing
+the sub-skill would improve future runs.
 
 ### Phase 4 — Finalize
 
@@ -215,6 +188,10 @@ MCP servers configured:
 
 Start your first session with: Start
 ```
+
+Remind the user:
+> "Next time you open this project, start with 'Start' — I'll read
+> progress.md and git log automatically before doing anything else."
 
 ---
 
@@ -283,7 +260,7 @@ RULE 1: Never generate all files at once without showing drafts.
         One file → show draft → wait for ok → next file.
 
 RULE 2: Never skip the interview in NEW PROJECT mode.
-        Even if user seems impatient — all 9 questions must be answered.
+        Even if user seems impatient — all 10 questions must be answered.
 
 RULE 3: Never skip gap analysis.
         Undiscovered skill gaps cause problems in future sessions.
