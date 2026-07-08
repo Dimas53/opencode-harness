@@ -51,6 +51,23 @@ The agent will read your codebase first, build a hypothesis, and present it for 
 
 ---
 
+## Analyzing a Project (without creating docs)
+
+```bash
+make analyze PROJECT=/path/to/project
+```
+
+Opens OpenCode in the project. Type:
+
+```
+Load ~/.config/opencode/skills/harness-init/SKILL.md and run it in analyze mode.
+```
+
+The agent will map the codebase, find vulnerabilities, assess risks,
+and save a report to docs/audits/ — without modifying any project files.
+
+---
+
 ## Verify Installation
 
 ```bash
