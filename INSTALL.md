@@ -28,10 +28,10 @@ After setup, run:
 make init PROJECT=/path/to/new-project
 ```
 
-This copies docs templates + AGENTS.md into the project, then opens OpenCode automatically.
-When OpenCode opens — type the command shown in the terminal.
+This copies docs templates + AGENTS.md into the project, then opens OpenCode
+and automatically starts the `agent-new-project` skill.
 
-The `agent-new-project` skill interviews you (9 questions), analyzes your stack,
+The skill interviews you (9 questions), analyzes your stack,
 and generates all project documentation automatically. One file at a time — confirm each.
 
 ---
@@ -42,18 +42,13 @@ and generates all project documentation automatically. One file at a time — co
 make init-existing PROJECT=/path/to/existing-project
 ```
 
-This opens OpenCode in your project. Type the command shown in the terminal.
+This opens OpenCode in your project and automatically starts the `agent-init-existing` skill.
 
-The `agent-init-existing` skill first runs `agent-analyze` to map the codebase,
+The skill first runs `agent-analyze` to map the codebase,
 then fills knowledge gaps via interview, then generates missing documentation.
 
-> **Note:** `make init`, `make init-existing`, and `make analyze` all open
-> interactive TUI (`opencode` without arguments). The one-shot `opencode run`
-> cannot handle interactive confirmation, which is why TUI is required.
-> For `make analyze` — type the command shown, or manually:
-> ```
-> Load ~/.config/opencode/skills/harness-init/agent-analyze.md
-> ```
+> **Note:** All three commands pass the skill reference via `--prompt` flag,
+> so the agent starts working immediately — no manual typing needed.
 
 ---
 
@@ -63,11 +58,7 @@ then fills knowledge gaps via interview, then generates missing documentation.
 make analyze PROJECT=/path/to/project
 ```
 
-Opens OpenCode in the project. Type the command shown in the terminal, or manually:
-
-```
-Load ~/.config/opencode/skills/harness-init/agent-analyze.md
-```
+Opens OpenCode in the project and automatically starts the `agent-analyze` skill.
 
 The agent runs 4 audits: codebase health, architecture zoom-out, security review,
 and premortem — then saves a report to `docs/audits/YYYY-MM-DD-analysis.md`.

@@ -22,27 +22,7 @@ make init-existing PROJECT=/path/to/project    # existing project — analyze + 
 make analyze PROJECT=/path/to/project          # analyze only — audit, no file mods
 ```
 
-Copies templates, opens OpenCode. Type the command shown in terminal.
-
-### Manual
-
-```bash
-cd /path/to/your/project
-opencode
-```
-
-Type `Start`, wait for session brief, then one of:
-
-```
-# New project — interview + full docs
-Load ~/.config/opencode/skills/harness-init/agent-new-project.md
-
-# Existing project — analyze first, then docs
-Load ~/.config/opencode/skills/harness-init/agent-init-existing.md
-
-# Analyze only — audit report, no file modifications
-Load ~/.config/opencode/skills/harness-init/agent-analyze.md
-```
+Copies templates, opens OpenCode automatically and starts the agent.
 
 ## Documentation
 

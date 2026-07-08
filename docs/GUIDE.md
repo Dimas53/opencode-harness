@@ -392,9 +392,8 @@ make init PROJECT=/path/to/new-project
 
 This runs `init-project.sh` which:
 1. Copies template documentation (`docs/` + `AGENTS.md`) into the project
-2. Opens OpenCode TUI automatically
-3. You type the command shown in the terminal
-4. The `agent-new-project` skill interviews you and generates docs
+2. Opens OpenCode TUI automatically with `--prompt` flag
+3. The `agent-new-project` skill interviews you and generates docs
 
 The interview (9 questions, one at a time):
 - Project name and purpose
@@ -420,9 +419,8 @@ make init-existing PROJECT=/path/to/existing-project
 ```
 
 This runs `init-existing.sh` which:
-1. Opens OpenCode TUI in your project
-2. You type the command shown in the terminal
-3. The `agent-init-existing` skill runs `agent-analyze` first to map the codebase,
+1. Opens OpenCode TUI in your project with `--prompt` flag
+2. The `agent-init-existing` skill runs `agent-analyze` first to map the codebase,
    then fills knowledge gaps via interview, then generates missing docs
 
 ### Analyze only — audit, no modifications
@@ -431,13 +429,9 @@ This runs `init-existing.sh` which:
 make analyze PROJECT=/path/to/project
 ```
 
-Opens OpenCode in the project. Type:
+Opens OpenCode in the project with `--prompt` flag and automatically starts the `agent-analyze` skill.
 
-```
-Load ~/.config/opencode/skills/harness-init/agent-analyze.md
-```
-
-The `agent-analyze` skill runs 4 audits in sequence:
+The skill runs 4 audits in sequence:
 1. Codebase health check — system map, duplication, priorities
 2. Zoom-out — architecture explanation in plain language
 3. Security review — auth, API, secrets vulnerabilities

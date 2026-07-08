@@ -12,10 +12,6 @@ fi
 echo ""
 echo "  Opening OpenCode in existing project: $PROJECT"
 echo ""
-echo "  When OpenCode opens, type:"
-echo ""
-echo "    Load ~/.config/opencode/skills/harness-init/agent-init-existing.md"
-echo ""
 
 cd "$PROJECT" || exit 1
-opencode
+opencode --prompt "Load ~/.config/opencode/skills/harness-init/agent-init-existing.md"
