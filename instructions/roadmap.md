@@ -6,7 +6,7 @@
 - [x] global AGENTS.md (generic, multi-stack)
 - [x] harness-init skill
 - [x] templates/docs/
-- [x] docs/ reference folder
+- [x] instructions/ reference folder
 - [x] Installation flow diagram
 
 ## Phase 2: First Real Test

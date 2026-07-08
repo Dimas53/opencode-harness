@@ -6,8 +6,8 @@
 - [x] install.sh + install.bat
 - [x] harness-init skill
 - [x] templates/docs/ (8 files)
-- [x] docs/ reference folder (GUIDE, diagrams, reference docs)
-- [x] docs/reference/ (models, opencode-commands, rtk-workflow)
+- [x] instructions/ reference folder (GUIDE, diagrams, reference docs)
+- [x] instructions/reference/ (models, opencode-commands, rtk-workflow)
 - [x] Installation flow diagram
 
 ## Known issues
