@@ -62,6 +62,27 @@ Never generate, insert, copy, or preserve Russian text in project files under an
 
 ---
 
+## Access Restrictions
+
+NEVER read or access these files/patterns without explicit user confirmation:
+- `.env`, `.env.*`, `*.env`
+- `docker-compose.prod.yml`, any file with `secret`, `credential`, or `password` in the name
+- Private keys (`*.pem`, `*.key`, `id_rsa*`)
+
+NEVER execute these operations without explicit confirmation:
+- `DROP`, `DELETE`, `TRUNCATE` on any database table
+- `rm -rf` on any directory
+- Any command that writes outside the current project root
+
+If a task requires reading a restricted file — stop and ask the user first,
+explain why it's needed, and wait for explicit approval.
+
+This is a behavioral safeguard, not a technical one — for real security,
+the filesystem MCP server should be configured with restricted allowed paths
+(see INSTALL.md "MCP Security" section).
+
+---
+
 ## Safe to do autonomously
 
 - Creating and editing source files (components, composables, server routes, modules)

@@ -59,3 +59,31 @@ rtk --version           # RTK installed
 opencode mcp list       # MCP servers connected
 ls ~/.config/opencode/skills/ | wc -l   # should show 50+ skills
 ```
+
+---
+
+## MCP Security — Restricting Filesystem Access
+
+The filesystem MCP server accepts allowed directories as command-line
+arguments — anything outside those paths is rejected at the server level,
+not just discouraged by AGENTS.md rules.
+
+Example config in `~/.config/opencode/opencode.jsonc`:
+
+```jsonc
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/path/to/your/projects/root"
+      ]
+    }
+  }
+}
+```
+
+Replace the path with your actual projects directory. You can list
+multiple allowed directories as additional array entries.
