@@ -10,7 +10,7 @@ init-existing:
 	@./scripts/init-existing.sh $(PROJECT)
 
 analyze:
-	@./scripts/init-existing.sh $(PROJECT)
+	@./scripts/analyze.sh $(PROJECT)
 
 verify:
 	@./scripts/verify.sh

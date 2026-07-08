@@ -21,7 +21,7 @@ echo "  Opening OpenCode now..."
 echo ""
 echo "  When OpenCode opens, type:"
 echo ""
-echo "    Load ~/.config/opencode/skills/harness-init/SKILL.md and run it."
+echo "    Load ~/.config/opencode/skills/harness-init/agent-new-project.md"
 echo ""
 
 cd "$PROJECT" || exit 1
