@@ -427,14 +427,6 @@ In this mode, the agent first reads your code (`package.json`, folder structure,
 git log, `.env.example`), builds a hypothesis about your project,
 and presents it for confirmation. Only then does it generate missing docs.
 
-### Docs only (already have harness setup)
-
-```bash
-make docs-only PROJECT=/path/to/project
-```
-
-Just copies the documentation templates. No interview, no skill loading.
-
 ---
 
 ## 9. Troubleshooting

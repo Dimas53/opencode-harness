@@ -1,6 +1,6 @@
 # Installation Guide
 
-## Scenario 1 — Fresh machine (nothing installed)
+## Installation
 
 ```bash
 git clone git@github.com:Dimas53/opencode-harness.git
@@ -19,52 +19,16 @@ Then complete manual steps:
 
 ---
 
-## Scenario 2 — OpenCode already installed (add harness to existing setup)
-
-```bash
-git clone git@github.com:Dimas53/opencode-harness.git
-cd opencode-harness
-make setup-lite
-```
-
-`setup-lite` only copies global files (AGENTS.md, skills, config) — does not reinstall OpenCode or MCP servers.
-
-Then complete manual steps 2-5 from Scenario 1.
-
----
-
-## Scenario 3 — Already have OpenCode + skills installed (docs only)
-
-```bash
-git clone git@github.com:Dimas53/opencode-harness.git
-cd opencode-harness
-make docs-only PROJECT=/path/to/your/project
-```
-
-This copies doc templates only. No installs.
-
----
-
 ## Starting a New Project
 
-After setup, go to your project folder and run opencode:
+After setup, run:
 
 ```bash
-cd /path/to/your/project
-opencode
+make init PROJECT=/path/to/new-project
 ```
 
-Then type exactly this:
-
-```
-Start
-```
-
-Wait for session brief. Then type:
-
-```
-Load ~/.config/opencode/skills/harness-init/SKILL.md and run it.
-```
+This copies docs templates + AGENTS.md into the project, then opens OpenCode automatically.
+When OpenCode opens — type the command shown in the terminal to run the harness-init interview.
 
 The agent will interview you (9 questions), analyze your stack, and generate all project documentation automatically.
 
@@ -73,45 +37,13 @@ The agent will interview you (9 questions), analyze your stack, and generate all
 ## Starting an Existing Project
 
 ```bash
-cd /path/to/existing/project
-opencode
-```
-
-Type:
-
-```
-Start
-```
-
-Then:
-
-```
-Load ~/.config/opencode/skills/harness-init/SKILL.md and run it in existing-project mode.
-```
-
-The agent will read your codebase first, present a hypothesis, and ask only what it couldn't determine from code.
-
----
-
-## Quick Init (automated scaffolding)
-
-Instead of the manual flow above, use one command:
-
-**New project (empty directory):**
-```bash
-make init PROJECT=/path/to/new-project
-```
-
-This copies docs templates + AGENTS.md, then opens OpenCode automatically.
-When OpenCode opens — type the harness-init command shown in the terminal.
-
-**Existing project (has code already):**
-```bash
 make init-existing PROJECT=/path/to/existing-project
 ```
 
 This opens OpenCode in your project. Type the command shown in the terminal
 to run harness-init in existing-project mode.
+
+The agent will read your codebase first, build a hypothesis, and present it for confirmation before generating missing docs.
 
 > **Note:** `make init` and `make init-existing` open interactive TUI (`opencode`
 > without arguments). The one-shot command `opencode run` cannot handle
