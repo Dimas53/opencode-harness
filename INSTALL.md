@@ -12,6 +12,7 @@ Then complete manual steps:
 1. `opencode auth login`
 2. Copy config: `cp global/opencode-config.example.jsonc ~/.config/opencode/opencode.jsonc`
 3. Edit the config — replace `/YOUR/HOME/PATH` and `YOUR_DIRECTUS_TOKEN`
+   (If you don't use Directus — delete the `YOUR_DIRECTUS_TOKEN` line entirely)
 4. Run `opencode` — select your model on first launch
 5. Run `rtk gain` — verify RTK is working
 

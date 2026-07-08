@@ -527,7 +527,7 @@ If this fails:
 
 1. Check that opencode is installed: `which opencode`
 2. Check version: `opencode --version`
-3. Run the command manually: `opencode run "Load ~/.config/opencode/skills/harness-init/SKILL.md and run it."`
+3. Run the command manually: `Load ~/.config/opencode/skills/harness-init/agent-new-project.md`
 
 The `run` command was added in OpenCode 1.x. If you're on an older version,
 update: `npm install -g opencode-ai`
@@ -634,12 +634,12 @@ cp -r global/skills/* ~/.config/opencode/skills/
 mkdir -p /path/to/project/docs
 cp -r templates/docs/* /path/to/project/docs/
 cd /path/to/project
-opencode run "Load ~/.config/opencode/skills/harness-init/SKILL.md and run it."
+Load ~/.config/opencode/skills/harness-init/agent-new-project.md
 
 # Existing project
 cp -r templates/docs/* /path/to/project/docs/
 cd /path/to/project
-opencode run "Load ~/.config/opencode/skills/harness-init/SKILL.md and run it in existing-project mode."
+Load ~/.config/opencode/skills/harness-init/agent-init-existing.md
 ```
 
 ### Commands that differ on Windows (even in WSL)
