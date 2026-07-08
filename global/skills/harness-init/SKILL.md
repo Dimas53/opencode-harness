@@ -24,6 +24,20 @@ Before starting, check docs/skill-stacks.md (if it exists in this repo)
 for the exact skill order for "new-project" or "existing-project" scenario.
 If skill-stacks.md doesn't exist yet, use the default order in this file.
 
+## How to Use Template Files
+
+Before generating any documentation file:
+
+1. Read the matching file from `templates/docs/[FILENAME]`
+   (path relative to the harness repo root, not the project being initialized)
+2. The file contains a `<!-- EXAMPLE: ... -->` comment at the top —
+   read it carefully, it explains what to keep and what to replace
+3. Use the file's STRUCTURE (sections, tables, format) as the template
+4. Replace ALL content with project-specific information from the interview
+5. Never copy ItoCook-specific terms, file paths, or domain concepts
+6. The comment header must be REMOVED from the generated file —
+   it's an instruction for the agent, not for the project
+
 ---
 
 ## DETECT MODE FIRST
