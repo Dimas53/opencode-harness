@@ -56,4 +56,8 @@ Wait for confirmation before loading the agent-skill.
 
 - harness-init never runs interviews itself — delegates to agent-skills
 - harness-init never generates files itself — delegates to agent-skills
+- make init → always delegate to agent-new-project
+- make init-existing → always delegate to agent-init-existing
+- make analyze → always delegate to agent-analyze
+- Never mix scenarios — if unsure, ask user which they want
 

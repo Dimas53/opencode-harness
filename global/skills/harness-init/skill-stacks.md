@@ -3,6 +3,10 @@
 Ready-made skill combinations for typical scenarios.
 Each agent-skill defines its own internal skill stack — this file is for reference.
 
+**Trigger types:**
+- `new-project` / `existing-project` / `analyze-only` — triggered via make commands
+- `feature-development` / `debugging` / `audit` / `onboarding-foreign-project` / `docs-update` — manual reference stacks, load by telling the agent which scenario you're in
+
 ---
 
 ## new-project

@@ -130,6 +130,12 @@ the filesystem MCP server should be configured with restricted allowed paths
 > ⚠️ Always read SKILL.md via filesystem path: `Read ~/.config/opencode/skills/foo/SKILL.md`
 > Do NOT use the `skill` MCP tool — it only sees ~31 of 52 installed skills.
 
+### Harness Entry Points
+When user runs make init / make init-existing / make analyze:
+→ Load ~/.config/opencode/skills/harness-init/SKILL.md first
+→ harness-init detects scenario and delegates to correct agent-skill
+→ Never skip harness-init and jump directly to an agent-skill
+
 ### Step 0 — Always load first (every session, every project)
 ```
 Read ~/.config/opencode/skills/using-agent-skills/SKILL.md

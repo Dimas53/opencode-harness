@@ -23,11 +23,15 @@ For projects that have code but no harness docs yet.
    - roadmap.md (current phase + next steps)
    - AGENTS.md (project-specific rules based on stack)
    - skills-cheatsheet.md (based on detected stack)
+   - docs/specs/phase-1.md (if project plan requested)
 5. Each file: show draft → wait for ok → write → next file
 6. Commit: "chore: initialize harness docs for [project name]"
+7. Remind user: "Add docs/design.md if you have a design system.
+   Add docs/plan-main.md if you have a broader vision document."
 
 ## Hard rules
 - Run agent-analyze BEFORE asking any questions
 - Never ask what you can detect from code
 - Never overwrite existing docs/ files without showing diff first
 - One file at a time, always wait for confirmation
+- design.md is NOT generated here — user provides it manually
