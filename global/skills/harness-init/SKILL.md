@@ -158,7 +158,7 @@ Report gaps and continue only after user confirms.
 harness-init does NOT generate doc content itself. It orchestrates:
 
 For each file, before generating:
-1. Read the matching example from templates/docs/examples/[FILENAME]
+1. Read the matching example from templates/docs/[FILENAME]
    (if it exists) as a structural reference
 2. Load the relevant sub-skill:
    - AGENTS.md, ARCHITECTURE.md, roadmap.md, CONTEXT.md, skills-cheatsheet.md
