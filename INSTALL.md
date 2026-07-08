@@ -28,9 +28,10 @@ make init PROJECT=/path/to/new-project
 ```
 
 This copies docs templates + AGENTS.md into the project, then opens OpenCode automatically.
-When OpenCode opens — type the command shown in the terminal to run the harness-init interview.
+When OpenCode opens — type the command shown in the terminal.
 
-The agent will interview you (9 questions), analyze your stack, and generate all project documentation automatically.
+The `agent-new-project` skill interviews you (9 questions), analyzes your stack,
+and generates all project documentation automatically. One file at a time — confirm each.
 
 ---
 
@@ -40,14 +41,18 @@ The agent will interview you (9 questions), analyze your stack, and generate all
 make init-existing PROJECT=/path/to/existing-project
 ```
 
-This opens OpenCode in your project. Type the command shown in the terminal
-to run harness-init in existing-project mode.
+This opens OpenCode in your project. Type the command shown in the terminal.
 
-The agent will read your codebase first, build a hypothesis, and present it for confirmation before generating missing docs.
+The `agent-init-existing` skill first runs `agent-analyze` to map the codebase,
+then fills knowledge gaps via interview, then generates missing documentation.
 
-> **Note:** `make init` and `make init-existing` open interactive TUI (`opencode`
-> without arguments). The one-shot command `opencode run` cannot handle
-> harness-init's 9 interview questions, which is why TUI is required.
+> **Note:** `make init`, `make init-existing`, and `make analyze` all open
+> interactive TUI (`opencode` without arguments). The one-shot `opencode run`
+> cannot handle interactive confirmation, which is why TUI is required.
+> For `make analyze` — type the command shown, or manually:
+> ```
+> Load ~/.config/opencode/skills/harness-init/agent-analyze.md
+> ```
 
 ---
 
@@ -57,14 +62,15 @@ The agent will read your codebase first, build a hypothesis, and present it for 
 make analyze PROJECT=/path/to/project
 ```
 
-Opens OpenCode in the project. Type:
+Opens OpenCode in the project. Type the command shown in the terminal, or manually:
 
 ```
-Load ~/.config/opencode/skills/harness-init/SKILL.md and run it in analyze mode.
+Load ~/.config/opencode/skills/harness-init/agent-analyze.md
 ```
 
-The agent will map the codebase, find vulnerabilities, assess risks,
-and save a report to docs/audits/ — without modifying any project files.
+The agent runs 4 audits: codebase health, architecture zoom-out, security review,
+and premortem — then saves a report to `docs/audits/YYYY-MM-DD-analysis.md`.
+No source files are modified.
 
 ---
 

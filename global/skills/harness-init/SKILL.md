@@ -1,28 +1,15 @@
 # harness-init
 
 ## Purpose
-Initialize a new or existing project with the full harness structure.
-Conduct an interview, perform gap analysis, generate all documentation.
-This skill orchestrates other skills — do not write logic from scratch.
+Detect the project scenario and delegate to the correct agent-skill.
+Does NOT run interviews or generate files itself — each agent-skill
+has its own workflow and skill stack.
 
 ## When to use
 - User runs `make init PROJECT=/path` on a new project
 - User runs `make init-existing PROJECT=/path` on an existing project
-- User says "init harness", "set up this project", "initialize docs"
-
-## Other skills to load before starting
-```
-~/.config/opencode/skills/interview-me/SKILL.md
-~/.config/opencode/skills/grill-with-docs/SKILL.md
-~/.config/opencode/skills/spec-driven-development/SKILL.md
-~/.config/opencode/skills/planning-and-task-breakdown/SKILL.md
-```
-
-## Skill Stack for This Scenario
-
-Before starting, check docs/skill-stacks.md (if it exists in this repo)
-for the exact skill order for "new-project" or "existing-project" scenario.
-If skill-stacks.md doesn't exist yet, use the default order in this file.
+- User runs `make analyze PROJECT=/path` to audit without modifying files
+- User says "init harness", "set up this project", "initialize docs", "analyze", "audit"
 
 ## How to Use Template Files
 

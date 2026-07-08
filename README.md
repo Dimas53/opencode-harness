@@ -17,8 +17,9 @@ make setup
 ### Automatic (with templates)
 
 ```bash
-make init PROJECT=/path/to/new-project      # empty project
-make init-existing PROJECT=/path/to/project  # existing project
+make init PROJECT=/path/to/new-project         # new project — interview + docs
+make init-existing PROJECT=/path/to/project    # existing project — analyze + docs
+make analyze PROJECT=/path/to/project          # analyze only — audit, no file mods
 ```
 
 Copies templates, opens OpenCode. Type the command shown in terminal.
@@ -30,10 +31,17 @@ cd /path/to/your/project
 opencode
 ```
 
-Type `Start`, wait for session brief, then:
+Type `Start`, wait for session brief, then one of:
 
 ```
-Load ~/.config/opencode/skills/harness-init/SKILL.md and run it.
+# New project — interview + full docs
+Load ~/.config/opencode/skills/harness-init/agent-new-project.md
+
+# Existing project — analyze first, then docs
+Load ~/.config/opencode/skills/harness-init/agent-init-existing.md
+
+# Analyze only — audit report, no file modifications
+Load ~/.config/opencode/skills/harness-init/agent-analyze.md
 ```
 
 ## Documentation

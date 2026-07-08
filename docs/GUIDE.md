@@ -135,11 +135,16 @@ with a `SKILL.md` file. The agent will discover it on next session.
 
 ### The `harness-init` skill
 
-This is the onboarding skill used when initializing new projects. It:
-1. Interviews the developer (9 questions, one at a time)
-2. Runs gap analysis (checks available skills vs project needs)
-3. Generates project documentation (AGENTS.md, ARCHITECTURE.md, roadmap.md, etc.)
-4. Commits everything
+This is the orchestrator skill for project initialization. It:
+1. Detects which scenario applies (new project / existing / analyze-only)
+2. Confirms with the user
+3. Delegates to the correct agent-skill:
+   - `agent-new-project` — interview + full docs generation
+   - `agent-init-existing` — analyze codebase first, then generate docs
+   - `agent-analyze` — deep analysis, audit report only, no file modifications
+
+harness-init itself does NOT run interviews or generate files — each agent-skill
+has its own skill stack and workflow.
 
 ---
 
@@ -375,11 +380,11 @@ Every gate exists because it caused a real problem in production:
 
 ---
 
-## 8. How to Initialize a New Project
+## 8. How to Initialize a Project
 
-Two commands in the Makefile depending on your situation.
+Three Makefile commands covering different scenarios.
 
-### New project (empty directory)
+### New project — interview + documentation
 
 ```bash
 make init PROJECT=/path/to/new-project
@@ -388,31 +393,27 @@ make init PROJECT=/path/to/new-project
 This runs `init-project.sh` which:
 1. Copies template documentation (`docs/` + `AGENTS.md`) into the project
 2. Opens OpenCode TUI automatically
-3. You type the harness-init command shown in the terminal
-4. The harness-init skill interviews you, analyzes gaps, generates docs
+3. You type the command shown in the terminal
+4. The `agent-new-project` skill interviews you and generates docs
 
-The interview covers 9 questions:
-- What is the project and what does it do?
+The interview (9 questions, one at a time):
+- Project name and purpose
 - Tech stack (framework, backend, database, deployment)
 - Team size
 - Stage (MVP vs production-critical)
 - External integrations (APIs, payments, auth providers)
 - Sensitive data (affects security priority)
 - Deployment target
-- Design system needs (generates docs/design.md)
-- Project plan preference (generates docs/roadmap.md)
+- Design system needs
+- Project plan preference
 
-After all answers, the skill generates:
-- `AGENTS.md` (project-specific rules)
-- `docs/ARCHITECTURE.md`
-- `docs/roadmap.md`
-- `docs/CONTEXT.md`
-- `docs/design.md` (if frontend project)
-- `docs/skills-cheatsheet.md`
+Generated files (each shown as draft, confirmed one at a time):
+- `AGENTS.md`, `ARCHITECTURE.md`, `CONTEXT.md`, `roadmap.md`, `skills-cheatsheet.md`
+- `docs/specs/phase-1.md` (if project plan requested)
+- `docs/design.md` — user provides manually, not auto-generated
+- `docs/plan-main.md` — user fills in vision document
 
-Each file is shown as a draft before writing. Confirm each one.
-
-### Existing project (has code already)
+### Existing project — analyze first, then documentation
 
 ```bash
 make init-existing PROJECT=/path/to/existing-project
@@ -420,12 +421,29 @@ make init-existing PROJECT=/path/to/existing-project
 
 This runs `init-existing.sh` which:
 1. Opens OpenCode TUI in your project
-2. You type the harness-init command shown in the terminal
-3. The agent first reads your code, builds a hypothesis, then fills missing docs
+2. You type the command shown in the terminal
+3. The `agent-init-existing` skill runs `agent-analyze` first to map the codebase,
+   then fills knowledge gaps via interview, then generates missing docs
 
-In this mode, the agent first reads your code (`package.json`, folder structure,
-git log, `.env.example`), builds a hypothesis about your project,
-and presents it for confirmation. Only then does it generate missing docs.
+### Analyze only — audit, no modifications
+
+```bash
+make analyze PROJECT=/path/to/project
+```
+
+Opens OpenCode in the project. Type:
+
+```
+Load ~/.config/opencode/skills/harness-init/agent-analyze.md
+```
+
+The `agent-analyze` skill runs 4 audits in sequence:
+1. Codebase health check — system map, duplication, priorities
+2. Zoom-out — architecture explanation in plain language
+3. Security review — auth, API, secrets vulnerabilities
+4. Premortem — top 5 risks
+
+Results saved to `docs/audits/YYYY-MM-DD-analysis.md`. No source files modified.
 
 ---
 
