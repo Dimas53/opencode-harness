@@ -7,7 +7,7 @@ Output goes to docs/audits/ only.
 
 ## Skill load check
 After loading all skills in the stack — print:
-"Loaded: [skill name] ✓, [skill name] ✓, ..."
+"Loaded: codebase-health-check ✓, zoom-out ✓, security ✓, premortem ✓"
 If any skill failed to load — STOP and report to user before proceeding.
 
 ## Skill stack (load in this order)

@@ -6,7 +6,7 @@ For projects that have code but no harness docs yet.
 
 ## Skill load check
 After loading all skills in the stack — print:
-"Loaded: [skill name] ✓, [skill name] ✓, ..."
+"Loaded: agent-analyze ✓, grill-with-docs ✓, planning-and-task-breakdown ✓"
 If any skill failed to load — STOP and report to user before proceeding.
 
 ## Skill stack (load in this order)

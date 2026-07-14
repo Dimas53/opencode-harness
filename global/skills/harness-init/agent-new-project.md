@@ -6,7 +6,7 @@ Collect requirements via interview, generate full documentation.
 
 ## Skill load check
 After loading all skills in the stack — print:
-"Loaded: [skill name] ✓, [skill name] ✓, ..."
+"Loaded: interview-me ✓, brainstorming ✓, planning-and-task-breakdown ✓, spec-driven-development ✓"
 If any skill failed to load — STOP and report to user before proceeding.
 
 ## Skill stack (load in this order)

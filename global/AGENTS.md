@@ -19,7 +19,7 @@ Scripts are kept as a backup path, not the primary workflow.
 
 ## Hard Limits
 
-Never do without explicit user confirmation:
+General — destructive actions regardless of project. Never do without explicit user confirmation:
 - `git push` / `git push --force`
 - `rm -rf` / deleting directories
 - Modifying `.env.production`
@@ -66,6 +66,8 @@ Never generate, insert, copy, or preserve Russian text in project files under an
 ---
 
 ## Safety Gates — STOP and ask user before doing any of these
+
+Project-level — configs and infrastructure that could break the project.
 
 | Action | Reason |
 |--------|--------|
