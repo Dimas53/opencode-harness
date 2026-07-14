@@ -97,24 +97,32 @@ Project-level — configs and infrastructure that could break the project.
 When `git commit` completes → run Definition of Done (Steps 1-5 above).
 When `git push` completes → run Session End Protocol below.
 
-**Step 1 — Commit**
+**Step 1 — Docs lag check**
+```bash
+git log --oneline -- docs/ | head -1
+git log --oneline | head -1
+```
+If docs commit is more than 3 commits behind HEAD → warn user:
+> "Docs are behind code. Update now or next session?"
+
+**Step 2 — Commit**
 If there are uncommitted changes — `git add` and `git commit`.
 
-**Step 2 — Update PROGRESS.md**
+**Step 3 — Update PROGRESS.md**
 Write what was done and what was not done this session.
 
-**Step 3 — Save workarounds immediately**
+**Step 4 — Save workarounds immediately**
 If you found a workaround or important error during this session — write it to `memory/YYYY-MM-DD.md` NOW.
 Do not wait for session end. This is mandatory.
 
-**Step 4 — Report status to user**
+**Step 5 — Report status to user**
 ```
 Session closed.
 Done: [brief list of what was accomplished]
 Next: [top 1-2 items from Next session plan]
 ```
 
-**Step 5 — Push**
+**Step 6 — Push**
 Only after steps 1-4 are complete — run `git push`.
 
 > If user exits without pushing — no protocol runs. That's on the user.
