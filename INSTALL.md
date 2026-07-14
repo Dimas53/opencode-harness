@@ -34,7 +34,7 @@ Manual steps:
        ↓
 First run: load AGENTS.md → load skills
   → using-agent-skills/SKILL.md (every session)
-  → git log, progress.md, roadmap.md, task context
+  → git log, PROGRESS.md, roadmap.md, task context
 ```
 
 Then complete manual steps:
@@ -101,7 +101,7 @@ No source files are modified.
 opencode --version      # OpenCode installed
 rtk --version           # RTK installed
 opencode mcp list       # MCP servers connected
-ls ~/.config/opencode/skills/ | wc -l   # should show 50+ skills
+ls ~/.config/opencode/skills/ | wc -l   # should show 60+ skills
 ```
 
 ---
