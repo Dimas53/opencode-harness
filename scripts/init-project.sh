@@ -23,9 +23,15 @@ cp templates/PLAN.md "$PROJECT/PLAN.md"
 cp templates/PROGRESS.md "$PROJECT/PROGRESS.md"
 cp templates/HARNESS.md "$PROJECT/HARNESS.md"
 
+if [ ! -d "$PROJECT/.git" ]; then
+  cd "$PROJECT" && git init && git add . && \
+  git commit -m "chore: initialize project with harness scaffold" >/dev/null 2>&1
+  cd "$OLDPWD" || true
+  echo "  ✓ Git repository initialized"
+fi
+
 echo ""
 echo "  Project scaffold created at $PROJECT"
-echo "  Templates: docs/ + AGENTS.md + HARNESS.md"
 echo ""
 echo "  Opening OpenCode now..."
 echo ""

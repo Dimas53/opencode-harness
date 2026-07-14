@@ -1,23 +1,28 @@
 # agent-analyze
 
+> Use this skill for: read-only audit of an existing project.
+> Does NOT create docs, AGENTS.md, or project setup.
+> For full project setup → use agent-init-existing.md instead.
+
 ## Purpose
 Deep analysis of an existing project — understand architecture, find
 vulnerabilities, assess risks. Does NOT create or modify any project files.
 Output goes to docs/audits/ only.
 
 ## Skill load check
-After loading all skills in the stack — print:
-"Loaded: codebase-health-check ✓, zoom-out ✓, security ✓, premortem ✓"
-If any skill failed to load — STOP and report to user before proceeding.
+For each skill below, try `Read ~/.config/opencode/skills/<path>/SKILL.md`.
+If file not found — skip that skill, continue without stopping.
+After all attempts — print:
+"Loaded: codebase-health-check ✓, zoom-out ✓, security — not found (skipped), premortem ✓"
 
-## Skill stack (load in this order)
+## Skill stack (load in this order, skip missing)
 1. ~/.config/opencode/skills/codebase-health-check/SKILL.md
 2. ~/.config/opencode/skills/zoom-out/SKILL.md
 3. ~/.config/opencode/skills/security/SKILL.md
 4. ~/.config/opencode/skills/premortem/SKILL.md
 
 ## Steps
-1. Load all four skills above silently before doing anything
+1. Load all four skills above — skip missing ones, do not stop
 2. Run codebase-health-check → system map, duplication, priorities
 3. Run zoom-out → explain architecture in plain language
 4. Run security → find auth, API, secrets vulnerabilities

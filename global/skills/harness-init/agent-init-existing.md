@@ -1,5 +1,9 @@
 # agent-init-existing
 
+> Use this skill for: connecting harness to an existing project.
+> Runs analysis first, then generates docs and AGENTS.md.
+> For read-only audit only → use agent-analyze.md instead.
+
 ## Purpose
 Analyze an existing project AND create full documentation structure.
 For projects that have code but no harness docs yet.

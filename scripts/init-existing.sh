@@ -14,8 +14,15 @@ if [ -z "$PROJECT" ]; then
 	exit 1
 fi
 
+HARNESS_PATH="$(cd "$(dirname "$0")/.." && pwd)"
+
 echo ""
-echo "  Opening OpenCode in existing project: $PROJECT"
+echo "  Copying harness templates to existing project..."
+cp "$HARNESS_PATH/templates/HARNESS.md" "$PROJECT/HARNESS.md" 2>/dev/null || true
+cp "$HARNESS_PATH/templates/MEMORY.md" "$PROJECT/MEMORY.md" 2>/dev/null || true
+cp "$HARNESS_PATH/templates/PROGRESS.md" "$PROJECT/PROGRESS.md" 2>/dev/null || true
+mkdir -p "$PROJECT/memory"
+echo "  Done."
 echo ""
 
 cd "$PROJECT" || exit 1
