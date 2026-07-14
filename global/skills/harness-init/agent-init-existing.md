@@ -4,6 +4,11 @@
 Analyze an existing project AND create full documentation structure.
 For projects that have code but no harness docs yet.
 
+## Skill load check
+After loading all skills in the stack — print:
+"Loaded: [skill name] ✓, [skill name] ✓, ..."
+If any skill failed to load — STOP and report to user before proceeding.
+
 ## Skill stack (load in this order)
 1. ~/.config/opencode/skills/harness-init/agent-analyze.md  ← run analysis first
 2. ~/.config/opencode/skills/grill-with-docs/SKILL.md ← fill knowledge gaps

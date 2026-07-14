@@ -17,6 +17,17 @@ Scripts are kept as a backup path, not the primary workflow.
 
 ---
 
+## Hard Limits
+
+Never do without explicit user confirmation:
+- `git push` / `git push --force`
+- `rm -rf` / deleting directories
+- Modifying `.env.production`
+- Any actions outside the current project
+- Running scripts from external sources (`curl | sh`)
+
+---
+
 ## Behavior
 
 - Always make a plan before large changes
@@ -26,6 +37,7 @@ Scripts are kept as a backup path, not the primary workflow.
 - NEVER push to git without explicit permission
 - NEVER delete files without explicit confirmation
 - NEVER modify lock files (`package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`)
+- If you execute the same action three times in a row without progress — STOP. Describe the problem to the user instead of continuing.
 
 ---
 
@@ -73,6 +85,43 @@ Never generate, insert, copy, or preserve Russian text in project files under an
 | Modifying `AGENTS.md` or `CLAUDE.md` in any project | Changes agent's own rules — must be transparent |
 
 **Tool approval dialogs:** always choose "once", never "always" unless explicitly instructed.
+
+---
+
+## Session End Protocol — triggered by `git push`
+
+**Triggers:** agent just ran `git commit` OR agent just ran `git push` OR user says any variant of: "end session", "конец", "конец сессии", "пока", "session done", "done", "всё", "готово" — regardless of phrasing.
+
+When `git commit` completes → run Definition of Done (Steps 1-5 above).
+When `git push` completes → run Session End Protocol below.
+
+**Step 1 — Docs lag check**
+```bash
+git log --oneline -- docs/ | head -1
+git log --oneline | head -1
+```
+If docs commit is more than 5 commits behind HEAD → ask:
+> "Docs are behind code. Update now or next session?"
+
+**Step 2 — Progress update**
+Update `docs/progress.md`:
+- Add brief summary of what was done this session
+- Update Known issues if anything new discovered
+- Update Next session plan with concrete next steps
+
+**Step 3 — Session summary output**
+```
+Session closed.
+Done: [brief list of what was accomplished]
+Next: [top 1-2 items from Next session plan]
+Docs status: [up to date / behind by N commits]
+```
+
+**Step 4 — Push**
+Only after steps 1-3 are complete — run `git push`.
+
+> If user exits without pushing — no protocol runs. That's on the user.
+> Commit = Definition of Done. Push = Session End. This is the full cycle.
 
 ---
 
@@ -352,6 +401,10 @@ Skills loaded: [list]
 Skipping any step is a violation. "I only did X in this prompt" is NOT an excuse —
 you must look at the ENTIRE conversation window, not just the last action.**
 
+NEVER mark a step as `[✓]` before actually executing it.
+Mark `[•]` for in-progress, `[ ]` for todo, `[✓]` only after confirmed done.
+Stating "done" without executing is a violation.
+
 ### STEP 0 — SESSION SCAN (do this first, before any other step)
 
 Run both commands:
@@ -459,43 +512,6 @@ If docs commit is more than 5 commits behind HEAD OR more than 1 week old:
 - Do NOT re-document files unchanged since last docs session
 - Do NOT mix docs update and feature work in the same session
 - Do NOT delete existing sections in `CONTEXT.md` or `ARCHITECTURE.md` — only append
-
----
-
-## Session End Protocol — triggered by `git push`
-
-**Triggers:** agent just ran `git commit` OR agent just ran `git push` — regardless of how user asked for it.
-
-When `git commit` completes → run Definition of Done (Steps 1-5 above).
-When `git push` completes → run Session End Protocol below.
-
-**Step 1 — Docs lag check**
-```bash
-git log --oneline -- docs/ | head -1
-git log --oneline | head -1
-```
-If docs commit is more than 5 commits behind HEAD → ask:
-> "Docs are behind code. Update now or next session?"
-
-**Step 2 — Progress update**
-Update `docs/progress.md`:
-- Add brief summary of what was done this session
-- Update Known issues if anything new discovered
-- Update Next session plan with concrete next steps
-
-**Step 3 — Session summary output**
-```
-Session closed.
-Done: [brief list of what was accomplished]
-Next: [top 1-2 items from Next session plan]
-Docs status: [up to date / behind by N commits]
-```
-
-**Step 4 — Push**
-Only after steps 1-3 are complete — run `git push`.
-
-> If user exits without pushing — no protocol runs. That's on the user.
-> Commit = Definition of Done. Push = Session End. This is the full cycle.
 
 ---
 

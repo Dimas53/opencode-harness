@@ -5,6 +5,11 @@ Deep analysis of an existing project — understand architecture, find
 vulnerabilities, assess risks. Does NOT create or modify any project files.
 Output goes to docs/audits/ only.
 
+## Skill load check
+After loading all skills in the stack — print:
+"Loaded: [skill name] ✓, [skill name] ✓, ..."
+If any skill failed to load — STOP and report to user before proceeding.
+
 ## Skill stack (load in this order)
 1. ~/.config/opencode/skills/codebase-health-check/SKILL.md
 2. ~/.config/opencode/skills/zoom-out/SKILL.md

@@ -4,6 +4,11 @@
 Initialize a brand new project from scratch.
 Collect requirements via interview, generate full documentation.
 
+## Skill load check
+After loading all skills in the stack — print:
+"Loaded: [skill name] ✓, [skill name] ✓, ..."
+If any skill failed to load — STOP and report to user before proceeding.
+
 ## Skill stack (load in this order)
 1. ~/.config/opencode/skills/interview-me/SKILL.md
 2. ~/.config/opencode/skills/brainstorming/SKILL.md
@@ -42,3 +47,4 @@ Collect requirements via interview, generate full documentation.
 - Never skip the interview — even if user seems to know everything
 - Never generate all files at once — one at a time with confirmation
 - design.md is NOT generated here — user provides it manually
+- After commit — ALWAYS print a reminder about plan-main.md and design.md. This is mandatory, not optional. No exceptions.
