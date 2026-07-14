@@ -17,10 +17,11 @@ fi
 mkdir -p "$PROJECT"
 cp -r templates/docs/ "$PROJECT/docs/"
 cp templates/AGENTS.md "$PROJECT/AGENTS.md"
+cp templates/HARNESS.md "$PROJECT/HARNESS.md"
 
 echo ""
 echo "  Project scaffold created at $PROJECT"
-echo "  Templates: docs/ + AGENTS.md"
+echo "  Templates: docs/ + AGENTS.md + HARNESS.md"
 echo ""
 echo "  Opening OpenCode now..."
 echo ""

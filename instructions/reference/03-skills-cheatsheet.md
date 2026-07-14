@@ -6,6 +6,11 @@
 |---|---|
 | `using-agent-skills` | Meta-skill — auto-loads at every session start |
 | `session-start` | Session start — read progress.md and roadmap, output summary |
+| `startup` | Full startup ritual with explanations — load if inline steps fail |
+| `session-end` | Session end protocol — triggered on commit/push/"end session" |
+| `dod` | Definition of Done checklist — runs before every commit |
+| `frontend` | CSS/Layout rules + Design System — for UI/frontend work |
+| `documentation` | Documentation session — triggered by docs lag or phase complete |
 | `brainstorming` | Before a new feature — ask questions first, code after |
 | `grill-with-docs` | Before a new feature — stress-test plan, update CONTEXT.md |
 | `grill-me` | Stress-test an idea or plan — interrogation without doc writing |

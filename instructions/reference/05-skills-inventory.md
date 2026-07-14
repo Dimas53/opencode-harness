@@ -19,6 +19,11 @@ Machine: DSAITO's MacBook
 | `code-simplification` | `.config/opencode/skills/` | superpowers | same as above |
 | `code-reviewer` | `.config/opencode/skills/` | custom (project-specific) | N/A — written by hand for ItoCook |
 | `codebase-health-check` | `.config/opencode/skills/` | unknown (no YAML frontmatter, no project refs) | Possibly manual install or old superpowers version |
+| `startup` | `global/skills/startup/SKILL.md` | custom (harness) | Part of opencode-harness — full 12-step startup ritual |
+| `session-end` | `global/skills/session-end/SKILL.md` | custom (harness) | Part of opencode-harness — session end protocol with edge cases |
+| `dod` | `global/skills/dod/SKILL.md` | custom (harness) | Part of opencode-harness — Definition of Done with per-step checklists |
+| `frontend` | `global/skills/frontend/SKILL.md` | custom (harness) | Part of opencode-harness — CSS/Layout + Design System rules |
+| `documentation` | `global/skills/documentation/SKILL.md` | custom (harness) | Part of opencode-harness — documentation session triggers and script |
 | `context-engineering` | `.config/opencode/skills/` | superpowers | `npx superpowers install` |
 | `debugging-and-error-recovery` | `.config/opencode/skills/` | superpowers | same as above |
 | `deprecation-and-migration` | `.config/opencode/skills/` | superpowers | same as above |
@@ -67,19 +72,24 @@ Machine: DSAITO's MacBook
 | `writing-plans` | `.config/opencode/skills/` | superpowers | `npx superpowers install` |
 | `zoom-out` | both | superpowers + find-skills | `npx superpowers install` + `mattpocock/skills` |
 
-**Totals:** 57 unique skills (51 in `.config/opencode/skills/`, 21 in `.agents/skills/`, 15 overlap)
+**Totals:** 62 unique skills (51 in `.config/opencode/skills/`, 5 in `global/skills/` (startup, session-end, dod, frontend, documentation), 21 in `.agents/skills/`, 15 overlap)
 
 ---
 
 ## 2. Custom Skills — Must Copy Into Harness
 
-These 3 skills were written by hand for ItoCook and contain project-specific logic. Only they need to live in `opencode-harness/global/skills/` (superpowers skills are reinstallable).
+These 8 skills were written by hand for ItoCook and opencode-harness. Only they need to live in `opencode-harness/global/skills/` (superpowers skills are reinstallable).
 
 | Skill | Files | Total size | Notes |
 |---|---|---|---|
 | `code-reviewer` | 1 file: `SKILL.md` (1.2K) | 4K | ItoCook-specific review rules, Russian text |
 | `session-start` | 1 file: `SKILL.md` (956B) | 4K | Russian triggers, ItoCook session flow |
 | `security` | 6 files: `SKILL.md` (3.1K), 5 sub-docs (40K total) | 60K | Multi-doc security checklist for Nuxt 4 + Directus 11 + PostgreSQL |
+| `startup` | 1 file: `SKILL.md` (2.2K) | 4K | Full 12-step startup ritual with edge cases |
+| `session-end` | 1 file: `SKILL.md` (2.1K) | 4K | Session end protocol with troubleshooting |
+| `dod` | 1 file: `SKILL.md` (3.1K) | 4K | Definition of Done with per-step checklists |
+| `frontend` | 1 file: `SKILL.md` (942B) | 2K | CSS/Layout + Design System rules |
+| `documentation` | 1 file: `SKILL.md` (1.4K) | 2K | Documentation session triggers and script |
 
 ### codebase-health-check — Origin Unclear
 
@@ -116,7 +126,7 @@ npx superpowers install
 #   - sickn33/antigravity-awesome-skills: docker-expert
 #   - vercel-labs/skills: find-skills
 
-# 4. Copy custom skills (3 skills)
+# 4. Copy custom skills (8 skills)
 cp -r global/skills/* ~/.config/opencode/skills/
 ```
 

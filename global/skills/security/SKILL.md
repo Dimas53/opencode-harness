@@ -21,11 +21,12 @@ Stack-specific guidance for Nuxt 4 + Directus 11 + PostgreSQL + nginx + Docker i
 | Task type | Files to read |
 |---|---|
 | Auth, login, tokens, cookies, signup | `01-auth-and-secrets.md` |
+| Any task touching secrets, .env, credentials | `01-auth-and-secrets.md` always |
 | API routes, server routes, DB queries, permissions | `02-api-and-data.md` |
 | Vue components, nginx config, Docker, CSP, CORS | `03-frontend-and-infra.md` |
 | Nuxt / Directus / PostgreSQL specific work | `04-stack-specific.md` |
 | Pre-release review, PR review, deploy | `05-release-checklist.md` |
-| Any task touching secrets, .env, credentials | `01-auth-and-secrets.md` always |
+| Directus role/permission management, admin token routes | `06-directus-nuxt.md` |
 
 When in doubt — load `01` and `02`. They cover the most common vulnerabilities.
 
@@ -76,5 +77,6 @@ security/
 ├── 02-api-and-data.md        ← server routes, permissions, input validation, OWASP
 ├── 03-frontend-and-infra.md  ← Vue XSS, CSP, CORS, nginx, Docker
 ├── 04-stack-specific.md      ← Nuxt 4, Directus 11, PostgreSQL, nginx patterns
-└── 05-release-checklist.md   ← pre-release audit, incident response, code review
+├── 05-release-checklist.md   ← pre-release audit, incident response, code review
+└── 06-directus-nuxt.md       ← role checks, admin token routes, permission audit
 ```
