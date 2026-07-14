@@ -37,8 +37,9 @@ If any skill failed to load — STOP and report to user before proceeding.
     - docs/specs/phase-1.md (if project plan requested)
     - HARNESS.md (from templates/HARNESS.md — fill Entry point + Risk levels from analysis + grill answers, leave Product contract and Decisions to inherit as empty sections for user)
 5. Each file: show draft → wait for ok → write → next file
-6. Commit: "chore: initialize harness docs for [project name]"
-7. Remind user: "Add docs/design.md if you have a design system.
+6. Write session log to PROGRESS.md: "chore: initialize harness docs for [project name]"
+7. Commit: "chore: initialize harness docs for [project name]"
+8. Remind user: "Add docs/design.md if you have a design system.
    Add docs/plan-main.md if you have a broader vision document."
 
 ## Hard rules
