@@ -8,6 +8,35 @@ cd opencode-harness
 make setup
 ```
 
+Setup chain:
+
+```
+git clone → cd opencode-harness
+  ↓
+make setup → scripts/install.sh
+  ├── npm install -g opencode-ai                     # OpenCode CLI
+  ├── brew install uv                                 # uv for MCP git+fetch
+  ├── brew install rtk → rtk init -g --opencode       # RTK token optimizer
+  ├── npm i -g @modelcontextprotocol/server-filesystem
+  ├── npm i -g @modelcontextprotocol/server-sequential-thinking
+  ├── npm i -g chrome-devtools-mcp
+  ├── npm i -g @playwright/mcp
+  ├── npx playwright install                           # Browsers
+  ├── opencode plugin add superpowers@git+...          # 40+ skills
+  ├── cp global/AGENTS.md → ~/.config/opencode/       # Global rules
+  ├── cp global/opencode-config.example.jsonc → ...    # MCP config
+  └── cp -r global/skills/* → ~/.config/opencode/skills/  # Custom skills
+       ↓
+Manual steps:
+  ├── opencode auth login
+  ├── Copy & edit ~/.config/opencode/opencode.jsonc   # MCP servers + plugins
+  └── opencode → select model
+       ↓
+First run: load AGENTS.md → load skills
+  → using-agent-skills/SKILL.md (every session)
+  → git log, progress.md, roadmap.md, task context
+```
+
 Then complete manual steps:
 1. `opencode auth login`
 2. Copy config: `cp global/opencode-config.example.jsonc ~/.config/opencode/opencode.jsonc`

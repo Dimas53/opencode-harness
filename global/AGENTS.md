@@ -2,6 +2,21 @@
 
 ---
 
+## Harness Shortcuts
+
+When user types exactly:
+- `new` — load and run `~/.config/opencode/skills/harness-init/agent-new-project.md`
+- `existing` — load and run `~/.config/opencode/skills/harness-init/agent-init-existing.md`
+- `analyze` — load and run `~/.config/opencode/skills/harness-init/agent-analyze.md`
+
+**Fallback** (if shortcuts don't work):
+```bash
+cd /path/to/opencode-harness && make init PROJECT=$(pwd)
+```
+Scripts are kept as a backup path, not the primary workflow.
+
+---
+
 ## Behavior
 
 - Always make a plan before large changes
