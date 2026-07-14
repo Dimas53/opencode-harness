@@ -51,6 +51,11 @@ Then complete manual steps:
 
 ## Starting a New Project
 
+### Primary path
+Open OpenCode in any directory and type `new`.
+The agent starts the interview immediately — no make command needed.
+
+### Fallback (make command)
 After setup, run:
 
 ```bash
@@ -67,6 +72,10 @@ and generates all project documentation automatically. One file at a time — co
 
 ## Starting an Existing Project
 
+### Primary path
+Open OpenCode in the project directory and type `existing`.
+
+### Fallback (make command)
 ```bash
 make init-existing PROJECT=/path/to/existing-project
 ```
@@ -83,6 +92,10 @@ then fills knowledge gaps via interview, then generates missing documentation.
 
 ## Analyzing a Project (without creating docs)
 
+### Primary path
+Open OpenCode in the project directory and type `analyze`.
+
+### Fallback (make command)
 ```bash
 make analyze PROJECT=/path/to/project
 ```

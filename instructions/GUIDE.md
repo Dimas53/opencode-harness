@@ -166,6 +166,26 @@ Different tasks need different models. Recommended setup via OpenRouter:
 
 ---
 
+## 3.7 Starting a Project — Shortcuts
+
+The primary way to initialize any project is via shortcuts inside OpenCode:
+
+| Type | What happens |
+|------|-------------|
+| `new` | Loads agent-new-project — interview + full doc generation |
+| `existing` | Loads agent-init-existing — codebase analysis + docs |
+| `analyze` | Loads agent-analyze — read-only audit, no file changes |
+
+These shortcuts work from any directory inside an open OpenCode session.
+No make commands needed — just open OpenCode and type the shortcut.
+
+Fallback if shortcuts don't trigger:
+```bash
+cd ~/path/to/opencode-harness && make init PROJECT=$(pwd)
+```
+
+---
+
 ## 4. How to Start a Session
 
 Every session begins with the command:

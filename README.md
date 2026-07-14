@@ -16,15 +16,22 @@ make setup
 
 ## After Setup — Start Any Project
 
-### Automatic (with templates)
+### Primary path — shortcuts inside OpenCode
+
+Open OpenCode in any directory and type:
+- `new` — new project: interview → full doc structure generated
+- `existing` — existing project: auto-analysis first → fills missing docs
+- `analyze` — read-only audit: architecture map + security review + risk report
+
+### Fallback — make commands (if OpenCode is not open yet)
 
 ```bash
-make init PROJECT=/path/to/new-project         # new empty project: interview (9 questions) → generates full doc structure
-make init-existing PROJECT=/path/to/project    # existing project with code: auto-analysis first → then fills missing docs
-make analyze PROJECT=/path/to/project          # read-only audit: architecture map + security review + risk report, no file changes
+make init PROJECT=/path/to/new-project
+make init-existing PROJECT=/path/to/project  
+make analyze PROJECT=/path/to/project
 ```
 
-Copies templates, opens OpenCode automatically and starts the agent.
+Copies templates and opens OpenCode automatically.
 
 ## Documentation
 
