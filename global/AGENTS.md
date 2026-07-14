@@ -97,30 +97,25 @@ Project-level — configs and infrastructure that could break the project.
 When `git commit` completes → run Definition of Done (Steps 1-5 above).
 When `git push` completes → run Session End Protocol below.
 
-**Step 1 — Docs lag check**
-```bash
-git log --oneline -- docs/ | head -1
-git log --oneline | head -1
-```
-If docs commit is more than 5 commits behind HEAD → ask:
-> "Docs are behind code. Update now or next session?"
+**Step 1 — Commit**
+If there are uncommitted changes — `git add` and `git commit`.
 
-**Step 2 — Progress update**
-Update `docs/progress.md`:
-- Add brief summary of what was done this session
-- Update Known issues if anything new discovered
-- Update Next session plan with concrete next steps
+**Step 2 — Update PROGRESS.md**
+Write what was done and what was not done this session.
 
-**Step 3 — Session summary output**
+**Step 3 — Save workarounds immediately**
+If you found a workaround or important error during this session — write it to `memory/YYYY-MM-DD.md` NOW.
+Do not wait for session end. This is mandatory.
+
+**Step 4 — Report status to user**
 ```
 Session closed.
 Done: [brief list of what was accomplished]
 Next: [top 1-2 items from Next session plan]
-Docs status: [up to date / behind by N commits]
 ```
 
-**Step 4 — Push**
-Only after steps 1-3 are complete — run `git push`.
+**Step 5 — Push**
+Only after steps 1-4 are complete — run `git push`.
 
 > If user exits without pushing — no protocol runs. That's on the user.
 > Commit = Definition of Done. Push = Session End. This is the full cycle.
@@ -347,44 +342,58 @@ When a new skill is installed or discovered in `~/.config/opencode/skills/`:
 
 ---
 
-## Session Start — MANDATORY SEQUENCE
+## Session Start — Startup Ritual
 
 **Run this sequence at the start of EVERY session, regardless of what the user's first message is.
 Complete all steps BEFORE responding to the user's request.**
 
-**Step 1 — Load global skill**
+**Step 1 — Confirm directory**
+```bash
+pwd
+```
+
+**Step 2 — Read git log**
+```bash
+git log --oneline -10
+```
+Git is the source of truth. MEMORY.md is optimistic. If they disagree — git wins.
+
+**Step 3 — Read MEMORY.md (if exists)**
+If `MEMORY.md` exists in the project root — read it.
+Do NOT create it if missing.
+
+**Step 4 — Read today's memory log (if exists)**
+If `memory/YYYY-MM-DD.md` exists for today or yesterday — read it.
+
+**Step 5 — Check environment**
+Verify dev server, Docker containers, or other services are running if the project needs them.
+
+**Step 6 — Load global skill**
 ```
 Read ~/.config/opencode/skills/using-agent-skills/SKILL.md
 ```
 
-**Step 2 — Load stack skills**
+**Step 7 — Load stack skills**
 Check project `AGENTS.md` for the "Stack Skills" section and load all listed skills.
 
-**Step 3 — Read git log**
-```bash
-git log --oneline -5
-```
-
-**Step 4 — Read progress.md**
+**Step 8 — Read progress.md**
 ```
 Read docs/progress.md
 ```
 
-**Step 5 — Sync check**
+**Step 9 — Sync check**
 Compare git log with `progress.md`. If out of sync — update `progress.md` FIRST before anything else.
 
-**Step 6 — Read roadmap.md**
+**Step 10 — Read roadmap.md**
 ```
 Read docs/roadmap.md
 ```
 
-**Step 7 — Load task-specific context**
-Check project `AGENTS.md` "Task Context" table and load relevant docs for the current task.
+**Step 11 — Load task-specific context and skills**
+Check project `AGENTS.md` "Task Context" table and load relevant docs.
+Check `docs/skills-cheatsheet.md` and load relevant skills per triggers.
 
-**Step 8 — Load task-specific skills**
-Check `docs/skills-cheatsheet.md` and load relevant skills per triggers above.
-
-**Step 9 — Report session start**
+**Step 12 — Report session start**
 Before writing any code, output:
 ```
 ✓ Session initialized.
@@ -514,6 +523,22 @@ If docs commit is more than 5 commits behind HEAD OR more than 1 week old:
 - Do NOT re-document files unchanged since last docs session
 - Do NOT mix docs update and feature work in the same session
 - Do NOT delete existing sections in `CONTEXT.md` or `ARCHITECTURE.md` — only append
+
+---
+
+## File Roles — Separation of Concerns
+
+| File | Purpose | Who writes |
+|------|---------|------------|
+| `AGENTS.md` | Behavior — what to do, what not to do, how to work | Agent (one-time) |
+| `MEMORY.md` | Experience — what happened, lessons learned, workarounds | Agent (accumulates) |
+| `PROGRESS.md` | Continuity — what was done between sessions | Agent (each session) |
+| `PLAN.md` | Task plan with verify gates — for tasks > 30 minutes | Agent (per task, deleted after) |
+
+- `AGENTS.md` is procedural memory — always present.
+- `MEMORY.md` is experiential — accumulates across projects.
+- `PROGRESS.md` is session continuity — accumulates within project.
+- `PLAN.md` is task-specific — created for complex tasks, deleted after completion.
 
 ---
 
