@@ -130,6 +130,7 @@ Execute these steps in order BEFORE any response to the user:
 3. **JSDoc:** Add for new composables, modules, server routes, utility functions, components with non-trivial logic.
 4. **Tests:** If test suite exists — run it. All tests must pass. If new feature — add at least one test.
 5. **Safety check:** No Russian text in project files. No .env, docker-compose, or lock files modified without confirmation.
+5b. **Skill feedback:** If any skill behaved unexpectedly or missed an important step — note in memory/YYYY-MM-DD.md what happened and what behavior was expected. Human decides whether to update SKILL.md.
 6. **Respond with results** only after ALL steps are confirmed.
 
 NEVER mark `[✓]` before executing. `[•]` = in progress, `[ ]` = todo, `[✓]` = confirmed done.

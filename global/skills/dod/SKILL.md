@@ -95,6 +95,14 @@ Checklist:
 
 ---
 
+### STEP 5b — Skill feedback
+
+Checklist:
+- [ ] Did any skill behave unexpectedly or miss an important step?
+- [ ] If yes — noted in memory/YYYY-MM-DD.md what happened and expected behavior
+
+---
+
 ### STEP 6 — Cleanup
 
 Checklist:
