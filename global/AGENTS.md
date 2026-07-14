@@ -77,16 +77,17 @@ Project-level — configs and infrastructure that could break the project.
 Execute these steps in order BEFORE any response to the user:
 
 1. `pwd && git log --oneline -10`
-2. `Read ~/.config/opencode/skills/using-agent-skills/SKILL.md`
-3. Read `docs/progress.md` — compare git log with progress status. If out of sync, update progress.md FIRST.
+2. Load `using-agent-skills` — try filesystem path first: `Read ~/.config/opencode/skills/using-agent-skills/SKILL.md`. If not found (built-in skill), load via `skill("using-agent-skills")` instead
+3. Read `PROGRESS.md` in project root — compare git log with progress status. If out of sync, update PROGRESS.md FIRST. If file doesn't exist — skip.
 4. Read `docs/roadmap.md`
 5. Read `MEMORY.md` and `memory/YYYY-MM-DD.md` if they exist (for today or yesterday)
-6. Report:
+6. Read `HARNESS.md` if it exists — apply project constraints and risk levels to session behavior
+7. Report:
    ```
    Session initialized. Phase: [from roadmap]. Last commit: [hash — msg].
    Progress: [from progress.md]. Skills loaded: [list].
    ```
-7. Load task-specific context: check project `docs/skills-cheatsheet.md` for relevant skills matching current task triggers
+8. Load task-specific context: check project `docs/skills-cheatsheet.md` for relevant skills matching current task triggers
 
 **If any step fails — stop, report the error, ask user how to proceed.**
 
@@ -112,7 +113,7 @@ Execute these steps in order BEFORE any response to the user:
    ```
    Session closed. Done: [what was accomplished]. Next: [items].
    ```
-6. `git push`
+6. Ask user: "Push to remote? (y/n)" — wait for explicit confirmation before running `git push`.
 
 **Note:** If user exits without push — no protocol runs. Commit = DoD. Push = Session End.
 
@@ -245,7 +246,7 @@ If a task requires reading a restricted file — stop and ask the user first, ex
 
 - Creating and editing source files (components, composables, server routes, modules)
 - Adding new files to `docs/`
-- Updating `docs/progress.md` and `docs/roadmap.md`
+- Updating `PROGRESS.md` and `docs/roadmap.md`
 - Reading any project files
 - Creating new collections or fields (NOT deleting)
 - Adding JSDoc comments to existing files
@@ -270,19 +271,17 @@ If a task requires reading a restricted file — stop and ask the user first, ex
 
 ## CSS / Layout Rules
 
-- Never use absolute positioning except overlapping hero images or floating badges
-- Always prefer flexbox or grid for layout
-- All sizes in fixed px for mobile screens (not rem)
-- No hover effects — use tap feedback (`active:scale-[0.98]` or equivalent)
-- Follow the project's CSS framework conventions (Tailwind, SCSS, etc.)
+- No absolute positioning except overlapping heroes or floating badges
+- All sizes in fixed px for mobile (not rem), no hover effects — use tap feedback
 
----
+→ Full rules: `load skills/frontend/SKILL.md`
 
-## Design System (Global Default)
+## Design System
 
 - Always read `docs/design.md` before writing any UI code
-- Use only color tokens and typography defined in `docs/design.md`
-- Follow the icon library and component conventions defined in the project AGENTS.md
+- Use only tokens and components defined there
+
+→ Full reference: `load skills/frontend/SKILL.md`
 
 ---
 

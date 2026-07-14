@@ -21,14 +21,17 @@ If any skill failed to load — STOP and report to user before proceeding.
    - What is the business purpose?
    - What's the current phase?
    - What integrations are planned but not yet in code?
-   - Any constraints or decisions not visible in code?
+    - Any constraints or decisions not visible in code?
+    - HARNESS: Are there critical paths that must never break? (e.g., payments, auth, DB)
+    - HARNESS: What is the risk level for DB operations, external API integrations, and auth?
 4. Generate documentation using templates/docs/ as reference:
    - ARCHITECTURE.md (from codebase-health-check findings)
    - CONTEXT.md (domain terms discovered during analysis)
    - roadmap.md (current phase + next steps)
    - AGENTS.md (project-specific rules based on stack)
    - skills-cheatsheet.md (based on detected stack)
-   - docs/specs/phase-1.md (if project plan requested)
+    - docs/specs/phase-1.md (if project plan requested)
+    - HARNESS.md (from templates/HARNESS.md — fill Entry point + Risk levels from analysis + grill answers, leave Product contract and Decisions to inherit as empty sections for user)
 5. Each file: show draft → wait for ok → write → next file
 6. Commit: "chore: initialize harness docs for [project name]"
 7. Remind user: "Add docs/design.md if you have a design system.

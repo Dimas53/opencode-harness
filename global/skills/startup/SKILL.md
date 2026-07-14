@@ -31,22 +31,26 @@ Do NOT create it if missing — it's optional.
 **Step 4 — Read today's memory log (if exists)**
 If `memory/YYYY-MM-DD.md` exists for today or yesterday — read it.
 
+**Step 4b — Read HARNESS.md (if exists)**
+Check project root for `HARNESS.md`. Read it if present.
+Apply project constraints (Product contract) and risk levels (High/Medium/Low) to session behavior.
+Do NOT create it if missing — it's optional.
+
 **Step 5 — Check environment**
 Verify dev server, Docker containers, or other services are running if the project needs them.
 Typical checks: `docker ps`, `curl localhost:PORT`, `npm run dev` status.
 
 **Step 6 — Load global skill**
-```
-Read ~/.config/opencode/skills/using-agent-skills/SKILL.md
-```
+Try filesystem first: `Read ~/.config/opencode/skills/using-agent-skills/SKILL.md`.
+If not found (built-in skill) — load via `skill("using-agent-skills")`.
 
 **Step 7 — Load stack skills**
 Check project `AGENTS.md` for "Stack Skills" section (per-project skills list).
 Load all listed skills.
 
-**Step 8 — Read progress.md**
+**Step 8 — Read PROGRESS.md**
 ```
-Read docs/progress.md
+Read PROGRESS.md in project root
 ```
 
 **Step 9 — Sync check**

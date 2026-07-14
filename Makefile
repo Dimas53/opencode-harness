@@ -1,4 +1,21 @@
-.PHONY: setup init init-existing analyze verify update
+.PHONY: help setup init init-existing analyze verify update
+
+.DEFAULT_GOAL := help
+
+help:
+	@echo "opencode-harness -- commands:"
+	@echo ""
+	@echo "  make setup          -- install harness on a new machine"
+	@echo "  make init           -- initialize a new project"
+	@echo "                        PROJECT=/path/to/project"
+	@echo "  make init-existing  -- connect harness to existing project"
+	@echo "                        PROJECT=/path/to/project"
+	@echo "  make analyze        -- run project analysis"
+	@echo "                        PROJECT=/path/to/project"
+	@echo "  make verify         -- verify harness installation"
+	@echo "  make update         -- update harness from repository"
+	@echo ""
+	@echo "  Primary path: shortcuts new / existing / analyze inside OpenCode"
 
 setup:
 	@./scripts/install.sh
