@@ -43,3 +43,4 @@ If any skill failed to load — STOP and report to user before proceeding.
 - Never overwrite existing docs/ files without showing diff first
 - One file at a time, always wait for confirmation
 - design.md is NOT generated here — user provides it manually
+- If a task takes >30 min — create PLAN.md in project root from templates/PLAN.md. Mark milestones [x] only after running verify: command. Delete PLAN.md when task is done.
