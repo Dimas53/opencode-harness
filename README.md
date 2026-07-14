@@ -2,6 +2,8 @@
 
 One command to set up AI-assisted development on any machine.
 
+**OpenCode version:** v1.17.20 (tested)
+
 See [INSTALL.md](./INSTALL.md) for full installation guide.
 
 ## Quick Start

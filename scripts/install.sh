@@ -8,6 +8,17 @@ fi
 
 npm install -g opencode-ai
 
+REQUIRED_VERSION="v1.17.20"
+INSTALLED_VERSION=$(opencode --version 2>&1 | head -1)
+if [ "$INSTALLED_VERSION" != "$REQUIRED_VERSION" ]; then
+  echo "⚠️  OpenCode version mismatch."
+  echo "    Expected: $REQUIRED_VERSION"
+  echo "    Installed: $INSTALLED_VERSION"
+  echo "    Harness tested on $REQUIRED_VERSION — continue? (y/n)"
+  read -r answer
+  [ "$answer" = "y" ] || exit 1
+fi
+
 # Install uv (required for git and fetch MCP servers)
 if command -v brew &> /dev/null; then
   brew install uv
