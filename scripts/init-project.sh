@@ -16,7 +16,11 @@ fi
 
 mkdir -p "$PROJECT"
 cp -r templates/docs/ "$PROJECT/docs/"
+cp -r templates/memory/ "$PROJECT/memory/"
 cp templates/AGENTS.md "$PROJECT/AGENTS.md"
+cp templates/MEMORY.md "$PROJECT/MEMORY.md"
+cp templates/PLAN.md "$PROJECT/PLAN.md"
+cp templates/PROGRESS.md "$PROJECT/PROGRESS.md"
 cp templates/HARNESS.md "$PROJECT/HARNESS.md"
 
 echo ""
