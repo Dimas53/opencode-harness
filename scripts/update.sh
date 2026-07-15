@@ -18,8 +18,8 @@ else
   echo "=== AGENTS.md has updates ==="
   diff "$GLOBAL_AGENTS" "$REPO_AGENTS"
   echo ""
-  printf "Apply changes? (y/n): "
-  read -r answer
+  echo "Apply changes to ~/.config/opencode/AGENTS.md? (y/n): "
+  read -r answer < /dev/tty
   if [ "$answer" = "y" ]; then
     cp "$REPO_AGENTS" "$GLOBAL_AGENTS"
     echo "✓ AGENTS.md updated"
