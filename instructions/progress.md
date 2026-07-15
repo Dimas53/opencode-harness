@@ -9,6 +9,10 @@
 - [x] instructions/ reference folder (GUIDE, diagrams, reference docs)
 - [x] instructions/reference/ (models, opencode-commands, rtk-workflow)
 - [x] Installation flow diagram
+- [x] DoD Step 2 hardened with mandatory matrix
+- [x] Documentation Session set to auto-run (no ask)
+- [x] install.sh protects existing opencode.jsonc
+- [x] agent-new-project: template check instead of copy, no external paths
 
 ## Known issues
 - harness-init not tested on real project yet

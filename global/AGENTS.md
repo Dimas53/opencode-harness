@@ -126,7 +126,16 @@ Execute these steps in order BEFORE any response to the user:
 **Triggers:** before saying "done" / "ready" / "finished" / "готово" / "всё" / "конец" — execute ALL steps below. Must also run before every `git commit` (Session End calls this first). Skipping any step is a violation.
 
 1. **Session scan:** `git log --oneline origin/main..HEAD`. List everything created/modified/deployed this session.
-2. **Update docs:** Update `progress.md` (completed items, known issues, next plan). If significant changes, update architecture docs.
+2. **Update docs (mandatory per item):**
+   | What changed | Must update |
+   |-------------|-------------|
+   | new page/feature | `docs/architecture/feature-name.md` + `progress.md` |
+   | new collection/field | `docs/schema.md` or schema section + `progress.md` |
+   | new Flow/operation | `docs/flows.md` or flows section + `progress.md` |
+   | new composable/utility | JSDoc on the function + `progress.md` |
+   | config/deploy change | `docs/deployment.md` + `progress.md` |
+   | bugfix/refactor | `progress.md` only |
+   | anything else | `progress.md` always |
 3. **JSDoc:** Add for new composables, modules, server routes, utility functions, components with non-trivial logic.
 4. **Tests:** If test suite exists — run it. All tests must pass. If new feature — add at least one test.
 5. **Safety check:** No Russian text in project files. No .env, docker-compose, or lock files modified without confirmation.
@@ -289,14 +298,16 @@ If a task requires reading a restricted file — stop and ask the user first, ex
 ## Documentation Session
 
 ### When to trigger
-After EVERY response, check silently:
+Auto-run when a phase or major feature completes — do NOT ask, just execute.
+
+Also check silently after every response:
 ```bash
 git log --oneline -- docs/ | head -1
 git log --oneline | head -1
 ```
-If docs commit >5 behind HEAD OR >1 week old → after current task, ask user about docs update.
+If docs commit >5 behind HEAD OR >1 week old → run documentation session after current task. Do not ask for permission — run it.
 
-When a phase or major feature completes — always ask immediately.
+**Exception:** if user explicitly says "no docs update" during a phase, respect that once. Next trigger must fire again.
 
 ### Script (run in order, no logic changes)
 1. **CONTEXT.md** — add new domain terms, append only, do NOT delete existing

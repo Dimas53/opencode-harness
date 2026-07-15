@@ -16,11 +16,15 @@ If any skill failed to load — STOP and report to user before proceeding.
 4. ~/.config/opencode/skills/spec-driven-development/SKILL.md
 
 ## Steps
-0. Ask Q-1: "Do you have a requirements document, design brief, or any existing spec? If yes — share it now, I will read it first and ask only clarifying questions about what is missing. If no — just say 'no' and we will go through the full interview."
+0. **Check if harness templates exist in project:**
+   - If `AGENTS.md` exists in project root → templates were seeded by `make init`. Files ready: `AGENTS.md`, `HARNESS.md`, `MEMORY.md`, `PROGRESS.md`, `PLAN.md`, `docs/`
+   - If `AGENTS.md` does NOT exist → shortcut-init session without `make init`. Agent creates all files from scratch using formats from loaded skills. Do NOT look for external template paths.
+
+1. Ask Q-1: "Do you have a requirements document, design brief, or any existing spec? If yes — share it now, I will read it first and ask only clarifying questions about what is missing. If no — just say 'no' and we will go through the full interview."
    - If user provides a file → read it, ask max 2-3 clarifying questions, skip anything already covered in the file
    - If "no" → proceed to standard interview from Q0
-1. Ask Q0: what language should I respond in?
-2. Load interview-me — run structured interview:
+2. Ask Q0: what language should I respond in?
+3. Load interview-me — run structured interview:
    - Project name and purpose (2-3 sentences)
    - Tech stack (frontend, backend, database, deployment)
    - Team size
@@ -32,21 +36,24 @@ If any skill failed to load — STOP and report to user before proceeding.
     - Project plan? (phases and milestones)
     - HARNESS: Are there critical paths that must never break? (e.g., payments, auth, DB)
     - HARNESS: What is the risk level for DB operations, external API integrations, and auth?
-3. Load brainstorming — explore unknowns, surface assumptions
-4. Load planning-and-task-breakdown — structure phases and tasks
-5. Load spec-driven-development — write phase-1 spec
-6. Generate documentation using templates/docs/ as reference:
+4. Load brainstorming — explore unknowns, surface assumptions
+5. Load planning-and-task-breakdown — structure phases and tasks
+6. Load spec-driven-development — write phase-1 spec
+7. Generate documentation:
+   - If templates exist (step 0) → fill in pre-seeded template files
+   - If no templates → create files from scratch following formats from loaded skills
+   Files to create:
    - AGENTS.md
    - ARCHITECTURE.md
    - CONTEXT.md
    - roadmap.md
    - skills-cheatsheet.md
     - docs/specs/phase-1.md
-    - HARNESS.md (from templates/HARNESS.md — use interview answers to fill Entry point + Risk levels, leave Product contract and Decisions to inherit as empty sections for user to complete)
-7. Each file: show draft → wait for ok → write → next file
-8. Write session log to PROGRESS.md: "chore: initialize harness docs for [project name]"
-9. Commit: "chore: initialize harness docs for [project name]"
-10. Remind user: "Add docs/design.md if you have a design system.
+    - HARNESS.md — use interview answers to fill Entry point + Risk levels, leave Product contract and Decisions to inherit as empty sections for user to complete
+8. Each file: show draft → wait for ok → write → next file
+9. Write session log to PROGRESS.md: "chore: initialize harness docs for [project name]"
+10. Commit: "chore: initialize harness docs for [project name]"
+11. Remind user: "Add docs/design.md if you have a design system.
    Add docs/plan-main.md if you have a broader vision document."
 
 ## Hard rules
@@ -58,3 +65,6 @@ If any skill failed to load — STOP and report to user before proceeding.
 - design.md is NOT generated here — user provides it manually
 - After commit — ALWAYS print a reminder about plan-main.md and design.md. This is mandatory, not optional. No exceptions.
 - If a task takes >30 min — create PLAN.md in project root from templates/PLAN.md. Mark milestones [x] only after running verify: command. Delete PLAN.md when task is done.
+- Step 0 is a check only — no file operations, no external paths
+- If templates exist → use them as-is, do NOT modify
+- If no templates → agent creates all files from scratch, no external dependencies

@@ -67,7 +67,12 @@ fi
 mkdir -p ~/.config/opencode/skills
 
 cp global/AGENTS.md ~/.config/opencode/AGENTS.md
-cp global/opencode-config.example.jsonc ~/.config/opencode/opencode.jsonc
+if [ ! -f ~/.config/opencode/opencode.jsonc ]; then
+    cp global/opencode-config.example.jsonc ~/.config/opencode/opencode.jsonc
+    echo "  → Created ~/.config/opencode/opencode.jsonc"
+else
+    echo "  → ~/.config/opencode/opencode.jsonc already exists — not overwritten"
+fi
 echo "✏️  Edit ~/.config/opencode/opencode.jsonc — replace /YOUR/HOME/PATH and YOUR_DIRECTUS_TOKEN"
 cp -r global/skills/* ~/.config/opencode/skills/
 
