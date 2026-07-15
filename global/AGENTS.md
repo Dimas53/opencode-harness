@@ -10,8 +10,16 @@ When user types exactly:
 - `analyze` — load and run `~/.config/opencode/skills/harness-init/agent-analyze.md`
 
 - `update-harness` — pull latest updates and apply globally:
-  cd ~/.opencode-harness && git pull && make update
-  After running — report what files changed.
+  cd ~/.opencode-harness
+  GIT_OUTPUT=$(git pull 2>&1)
+  if echo "$GIT_OUTPUT" | grep -q "Already up to date"; then
+    echo "✓ git pull: up to date"
+  else
+    echo "✓ git pull: commits pulled"
+  fi
+  make update
+  echo "✓ AGENTS.md: check output above"
+  echo "✓ Skills: check output above"
 
 - `sync-templates` — check for new harness template files missing in current project:
   missing=0
@@ -31,12 +39,12 @@ When user types exactly:
       for f in ~/.opencode-harness/templates/*.md; do
         fname=$(basename "$f")
         [ "$fname" = "AGENTS.md" ] && continue
-        [ ! -f "$(pwd)/$fname" ] && cp "$f" "$(pwd)/$fname" && echo "  ✓ $fname"
+        [ ! -f "$(pwd)/$fname" ] && cp "$f" "$(pwd)/$fname" && echo "✓ Copied $fname"
       done
-      [ ! -d "$(pwd)/memory" ] && mkdir -p "$(pwd)/memory" && echo "  ✓ memory/"
+      [ ! -d "$(pwd)/memory" ] && mkdir -p "$(pwd)/memory" && echo "✓ Created memory/"
     fi
   else
-    echo "✓ Project has all template files"
+    echo "✓ Nothing to add — project is up to date"
   fi
 
 **Fallback** (if shortcuts don't work):
