@@ -15,14 +15,22 @@ elif diff -q "$GLOBAL_AGENTS" "$REPO_AGENTS" > /dev/null 2>&1; then
   echo "✓ AGENTS.md is up to date — no changes"
 else
   echo ""
-  echo "=== AGENTS.md has updates ==="
-  diff "$GLOBAL_AGENTS" "$REPO_AGENTS"
+  echo "┌─────────────────────────────────────┐"
+  echo "│        AGENTS.md has updates        │"
+  echo "└─────────────────────────────────────┘"
   echo ""
-  echo "Apply changes to ~/.config/opencode/AGENTS.md? (y/n): "
+  echo "New lines in repo version:"
+  diff "$GLOBAL_AGENTS" "$REPO_AGENTS" | grep "^>" | sed 's/^> /  + /' | head -20
+  echo ""
+  echo "  (showing first 20 changed lines)"
+  echo ""
+  printf "Apply changes to ~/.config/opencode/AGENTS.md? (y/n): "
   read -r answer < /dev/tty
   if [ "$answer" = "y" ]; then
     cp "$REPO_AGENTS" "$GLOBAL_AGENTS"
-    echo "✓ AGENTS.md updated"
+    echo ""
+    echo "✓ AGENTS.md updated successfully"
+    echo ""
   else
     echo "Skipped — AGENTS.md unchanged"
   fi
