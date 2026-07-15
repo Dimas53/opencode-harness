@@ -34,9 +34,8 @@ else
   echo ""
   echo "  (showing first 20 changed lines)"
   echo ""
-  printf "\033[1;33mApply changes? (y/n):\033[0m "
+  echo -e -n "\033[1;33mApply changes? (y/n):\033[0m " > /dev/tty
   read -r answer < /dev/tty
-  echo ""
   if [ "$answer" = "y" ]; then
     cp "$REPO_AGENTS" "$GLOBAL_AGENTS"
     echo -e "${GREEN}✓ AGENTS.md updated successfully${NC}"
