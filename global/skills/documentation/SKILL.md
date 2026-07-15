@@ -25,7 +25,7 @@ Run in order. No logic changes — only comments and .md files.
 2. **docs/architecture/** — update or create file for changed/new feature.
 3. **docs/specs/** — if new feature built without spec → create `docs/specs/feature-name.md`.
 4. **JSDoc** — only files created or significantly changed since last docs session.
-5. **progress.md** — add line: `Docs updated: [files]`.
+5. **PROGRESS.md** — add line: `Docs updated: [files]`.
 6. **Commit:** `docs: update CONTEXT, architecture, JSDoc after [feature/phase name]`
 
 ## Rules

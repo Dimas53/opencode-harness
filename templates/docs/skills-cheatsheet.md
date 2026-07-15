@@ -20,7 +20,7 @@ When initializing a new project:
 | Skill | When to tell the agent |
 |---|---|
 | `using-agent-skills` | Meta-skill — auto-loads at every session start |
-| `session-start` | Session start — read progress.md and roadmap, output summary |
+| `session-start` | Session start — read PROGRESS.md and roadmap, output summary |
 | `brainstorming` | Before a new feature — ask questions first, code after |
 | `grill-with-docs` | Before a new feature — stress-test plan, update CONTEXT.md |
 | `grill-me` | Stress-test an idea or plan — interrogation without doc writing |

@@ -29,7 +29,7 @@ After loading `using-agent-skills`, immediately load these stack skills:
 | Pages / Views | `{{PAGES_PATH}}` |
 | Global styles | `{{STYLES_PATH}}` |
 | Design reference | `docs/design.md` |
-| Progress log | `docs/progress.md` |
+| Progress log | `PROGRESS.md` |
 | Roadmap | `docs/roadmap.md` |
 | Architecture overview | `docs/ARCHITECTURE.md` |
 | Domain glossary | `docs/CONTEXT.md` |
@@ -100,7 +100,7 @@ RULE 3: "It's a small change" — only CSS tweaks and typo fixes are exempt.
 ```
 Types: `feat`, `fix`, `docs`, `chore`, `refactor`
 
-### After every commit — immediately update progress.md
+### After every commit — immediately update PROGRESS.md
 ```
 ## Git log
 - `<hash>` — commit message

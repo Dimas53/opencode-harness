@@ -130,14 +130,14 @@ Execute these steps in order BEFORE any response to the user:
 
    | What changed | Must update |
    |-------------|-------------|
-   | new page/feature | `docs/architecture/feature-name.md` + `progress.md` |
-   | new collection/field | `docs/schema.md` or schema section + `progress.md` |
-   | new Flow/operation | `docs/flows.md` or flows section + `progress.md` |
-   | new composable/utility | JSDoc on the function + `progress.md` |
-   | config/deploy change | `docs/deployment.md` + `progress.md` |
-   | bugfix/refactor | `progress.md` only |
-   | risk level / product contract / security config change | `HARNESS.md` + `progress.md` |
-   | anything else | `progress.md` always |
+   | new page/feature | `docs/architecture/feature-name.md` + `PROGRESS.md` |
+   | new collection/field | `docs/schema.md` or schema section + `PROGRESS.md` |
+   | new Flow/operation | `docs/flows.md` or flows section + `PROGRESS.md` |
+   | new composable/utility | JSDoc on the function + `PROGRESS.md` |
+   | config/deploy change | `docs/deployment.md` + `PROGRESS.md` |
+   | bugfix/refactor | `PROGRESS.md` only |
+   | risk level / product contract / security config change | `HARNESS.md` + `PROGRESS.md` |
+   | anything else | `PROGRESS.md` always |
 
    `PROGRESS.md`: add completed items, known issues (per-task detail)
 3. **JSDoc:** Add for new composables, modules, server routes, utility functions, components with non-trivial logic.
@@ -318,7 +318,7 @@ If docs commit >5 behind HEAD OR >1 week old → run documentation session after
 2. **docs/architecture/** — update or create file for changed/new feature
 3. **docs/specs/** — if new feature built without spec → create `docs/specs/feature-name.md`
 4. **JSDoc** — only files created or significantly changed since last docs session
-5. **progress.md** — add line: `Docs updated: [files]`
+5. **PROGRESS.md** — add line: `Docs updated: [files]`
 6. **Commit:** `docs: update CONTEXT, architecture, JSDoc after [feature/phase name]`
 
 **Rules:** No logic changes. No re-documenting unchanged files. No mixing with feature work. Append only, never delete existing sections.

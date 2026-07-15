@@ -32,7 +32,7 @@ If any skill failed to load — STOP and report to user before proceeding.
     - Any constraints or decisions not visible in code?
     - HARNESS: Are there critical paths that must never break? (e.g., payments, auth, DB)
     - HARNESS: What is the risk level for DB operations, external API integrations, and auth?
-4. Generate documentation using templates/docs/ as reference:
+4. Generate documentation using docs/ in current project as reference:
    - ARCHITECTURE.md (from codebase-health-check findings)
    - CONTEXT.md (domain terms discovered during analysis)
    - roadmap.md (current phase + next steps)

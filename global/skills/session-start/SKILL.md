@@ -18,7 +18,7 @@ Activate when the user says: "начнём", "start session", "что у нас"
 ---
 **Сессия начата**
 
-Последнее сделано: [из progress.md]
+Last done: [from PROGRESS.md]
 Текущая фаза: [из roadmap.md]
 Следующий шаг: [первый unchecked item]
 Блокеры: [если есть]

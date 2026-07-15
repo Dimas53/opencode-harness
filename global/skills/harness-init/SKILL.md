@@ -15,8 +15,8 @@ has its own workflow and skill stack.
 
 Before generating any documentation file:
 
-1. Read the matching file from `templates/docs/[FILENAME]`
-   (path relative to the harness repo root, not the project being initialized)
+1. Read the matching file from `docs/[FILENAME]`
+   (path relative to the project root, not the harness repo root)
 2. The file contains a `<!-- EXAMPLE: ... -->` comment at the top —
    read it carefully, it explains what to keep and what to replace
 3. Use the file's STRUCTURE (sections, tables, format) as the template

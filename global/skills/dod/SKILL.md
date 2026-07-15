@@ -42,7 +42,7 @@ If git log shows nothing but you did work — still list what you did.
 
 ---
 
-### STEP 1 — progress.md update
+### STEP 1 — PROGRESS.md update
 
 Checklist:
 - [ ] Completed items moved to "Current status"
@@ -120,7 +120,7 @@ Only after ALL steps are confirmed — respond.
 
 Use this format for each step in your response:
 ```
-### STEP 1 — progress.md
+### STEP 1 — PROGRESS.md
 [•] Updating...
 
 ### STEP 2 — Architecture docs

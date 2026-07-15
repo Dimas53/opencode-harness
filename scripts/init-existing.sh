@@ -18,10 +18,13 @@ HARNESS_PATH="$(cd "$(dirname "$0")/.." && pwd)"
 
 echo ""
 echo "  Copying harness templates to existing project..."
-cp "$HARNESS_PATH/templates/HARNESS.md" "$PROJECT/HARNESS.md" 2>/dev/null || true
-cp "$HARNESS_PATH/templates/MEMORY.md" "$PROJECT/MEMORY.md" 2>/dev/null || true
-cp "$HARNESS_PATH/templates/PROGRESS.md" "$PROJECT/PROGRESS.md" 2>/dev/null || true
-mkdir -p "$PROJECT/memory"
+cp -r "$HARNESS_PATH/templates/docs/" "$PROJECT/docs/"
+cp -r "$HARNESS_PATH/templates/memory/" "$PROJECT/memory/"
+cp "$HARNESS_PATH/templates/AGENTS.md" "$PROJECT/AGENTS.md"
+cp "$HARNESS_PATH/templates/MEMORY.md" "$PROJECT/MEMORY.md"
+cp "$HARNESS_PATH/templates/PLAN.md" "$PROJECT/PLAN.md"
+cp "$HARNESS_PATH/templates/PROGRESS.md" "$PROJECT/PROGRESS.md"
+cp "$HARNESS_PATH/templates/HARNESS.md" "$PROJECT/HARNESS.md"
 echo "  Done."
 echo ""
 

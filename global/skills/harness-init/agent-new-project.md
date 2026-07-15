@@ -17,8 +17,8 @@ If any skill failed to load — STOP and report to user before proceeding.
 
 ## Steps
 0. **Check if harness templates exist in project:**
-   - If `AGENTS.md` exists in project root → templates were seeded by `make init`. Files ready: `AGENTS.md`, `HARNESS.md`, `MEMORY.md`, `PROGRESS.md`, `PLAN.md`, `docs/`
-   - If `AGENTS.md` does NOT exist → shortcut-init session without `make init`. Agent creates all files from scratch using formats from loaded skills. Do NOT look for external template paths.
+   - If `AGENTS.md` exists in project root → templates were seeded by `make init`. Files ready: `AGENTS.md`, `HARNESS.md`, `MEMORY.md`, `PROGRESS.md`, `PLAN.md`, `docs/`, `memory/`
+   - If `AGENTS.md` does NOT exist → shortcut-init session without `make init`. Agent creates all files from scratch using formats from loaded skills. Do NOT look for external template paths. Files to create: `AGENTS.md`, `HARNESS.md`, `MEMORY.md`, `PROGRESS.md`, `PLAN.md`, `docs/`, `memory/`
 
 1. Ask Q-1: "Do you have a requirements document, design brief, or any existing spec? If yes — share it now, I will read it first and ask only clarifying questions about what is missing. If no — just say 'no' and we will go through the full interview."
    - If user provides a file → read it, ask max 2-3 clarifying questions, skip anything already covered in the file

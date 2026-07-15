@@ -54,7 +54,7 @@ Read PROGRESS.md in project root
 ```
 
 **Step 9 — Sync check**
-Compare git log with `progress.md`. If they're out of sync (progress mentions undone work or misses completed work) — update `progress.md` FIRST before anything else.
+Compare git log with `PROGRESS.md`. If they're out of sync (progress mentions undone work or misses completed work) — update `PROGRESS.md` FIRST before anything else.
 
 **Step 10 — Read roadmap.md**
 ```
@@ -71,7 +71,7 @@ Before writing any code, output:
 ✓ Session initialized.
 Current phase: [phase name from roadmap]
 Last commit: [hash — message]
-Progress status: [one line from progress.md current status]
+Progress status: [one line from PROGRESS.md current status]
 Working on: [what user asked for]
 Skills loaded: [list]
 ```
