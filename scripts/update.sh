@@ -1,4 +1,11 @@
 #!/bin/bash
+
+# Colors
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
 echo "=== OpenCode Harness — Update ==="
 
 # Pull latest
@@ -15,24 +22,26 @@ elif diff -q "$GLOBAL_AGENTS" "$REPO_AGENTS" > /dev/null 2>&1; then
   echo "✓ AGENTS.md is up to date — no changes"
 else
   echo ""
-  echo "┌─────────────────────────────────────┐"
-  echo "│        AGENTS.md has updates        │"
-  echo "└─────────────────────────────────────┘"
+  echo -e "${BLUE}┌─────────────────────────────────────┐${NC}"
+  echo -e "${BLUE}│        AGENTS.md has updates        │${NC}"
+  echo -e "${BLUE}└─────────────────────────────────────┘${NC}"
   echo ""
   echo "New lines in repo version:"
-  diff "$GLOBAL_AGENTS" "$REPO_AGENTS" | grep "^>" | sed 's/^> /  + /' | head -20
+  diff "$GLOBAL_AGENTS" "$REPO_AGENTS" | grep "^>" | sed 's/^> //' | \
+    while IFS= read -r line; do
+      echo -e "  ${GREEN}+${NC} $line"
+    done | head -20
   echo ""
   echo "  (showing first 20 changed lines)"
   echo ""
-  printf "Apply changes to ~/.config/opencode/AGENTS.md? (y/n): "
+  printf "\033[1;33mApply changes? (y/n):\033[0m "
   read -r answer < /dev/tty
+  echo ""
   if [ "$answer" = "y" ]; then
     cp "$REPO_AGENTS" "$GLOBAL_AGENTS"
-    echo ""
-    echo "✓ AGENTS.md updated successfully"
-    echo ""
+    echo -e "${GREEN}✓ AGENTS.md updated successfully${NC}"
   else
-    echo "Skipped — AGENTS.md unchanged"
+    echo -e "${YELLOW}Skipped — AGENTS.md unchanged${NC}"
   fi
 fi
 
