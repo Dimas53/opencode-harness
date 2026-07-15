@@ -64,7 +64,7 @@ If any skill failed to load — STOP and report to user before proceeding.
 - Never generate all files at once — one at a time with confirmation
 - design.md is NOT generated here — user provides it manually
 - After commit — ALWAYS print a reminder about plan-main.md and design.md. This is mandatory, not optional. No exceptions.
-- If a task takes >30 min — create PLAN.md in project root from templates/PLAN.md. Mark milestones [x] only after running verify: command. Delete PLAN.md when task is done.
+- If a task takes >30 min — create PLAN.md in project root following the standard structure from skill memory. Mark milestones [x] only after running verify: command. Delete PLAN.md when task is done.
 - Step 0 is a check only — no file operations, no external paths
 - If templates exist → use them as-is, do NOT modify
 - If no templates → agent creates all files from scratch, no external dependencies

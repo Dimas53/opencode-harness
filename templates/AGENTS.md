@@ -155,7 +155,7 @@ Follow this exact order:
 
 | File | Updated by | Trigger |
 |------|-----------|---------|
-| `docs/progress.md` | Agent — automatic | Every commit + push |
+| `PROGRESS.md` | Agent — automatic | Every commit + push |
 | `docs/roadmap.md` | Agent — automatic | Phase completed |
 | `docs/architecture/*.md` | Agent — automatic | Architecture changed |
 | `docs/CONTEXT.md` | Agent — on request | Documentation Session |

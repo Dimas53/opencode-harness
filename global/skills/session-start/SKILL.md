@@ -9,7 +9,7 @@ Activate when the user says: "начнём", "start session", "что у нас"
 
 ## Steps
 
-1. Read `docs/progress.md` — last 20 lines
+1. Read `PROGRESS.md` in project root — last 20 lines
 2. Read `docs/roadmap.md` — find current phase (look for unchecked items)
 3. Read `docs/skills-cheatsheet.md` — note available skills for this session
 4. Read `docs/project-state.md` if exists
