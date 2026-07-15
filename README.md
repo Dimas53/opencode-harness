@@ -14,6 +14,24 @@ cd opencode-harness
 make setup
 ```
 
+## Already Installed? Update to Latest
+
+Already have the harness? Just pull and update:
+
+```bash
+cd ~/path/to/opencode-harness
+git pull
+make update
+```
+
+If you cloned before `make link` existed — run it once to enable shortcuts:
+
+```bash
+make link
+```
+
+After that, `update-harness` shortcut works from anywhere inside OpenCode.
+
 ## After Setup — Start Any Project
 
 ### Primary path — shortcuts inside OpenCode
