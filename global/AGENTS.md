@@ -107,7 +107,7 @@ Execute these steps in order BEFORE any response to the user:
    If docs commit is more than 3 commits behind HEAD → warn user.
 
 2. `git add` and `git commit` if there are uncommitted changes.
-3. Write to `PROGRESS.md`: what was done, what was not done, known issues.
+3. Write to `PROGRESS.md` — append session summary: what was done overall, what's next (session-level summary, not per-task detail — DoD already handled that).
 4. If you found a workaround or important error this session — write to `memory/YYYY-MM-DD.md` NOW. Do not wait.
 5. Report:
    ```
@@ -136,7 +136,10 @@ Execute these steps in order BEFORE any response to the user:
    | new composable/utility | JSDoc on the function + `progress.md` |
    | config/deploy change | `docs/deployment.md` + `progress.md` |
    | bugfix/refactor | `progress.md` only |
+   | risk level / product contract / security config change | `HARNESS.md` + `progress.md` |
    | anything else | `progress.md` always |
+
+   `PROGRESS.md`: add completed items, known issues (per-task detail)
 3. **JSDoc:** Add for new composables, modules, server routes, utility functions, components with non-trivial logic.
 4. **Tests:** If test suite exists — run it. All tests must pass. If new feature — add at least one test.
 5. **Safety check:** No Russian text in project files. No .env, docker-compose, or lock files modified without confirmation.

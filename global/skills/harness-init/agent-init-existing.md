@@ -19,6 +19,10 @@ If any skill failed to load — STOP and report to user before proceeding.
 3. ~/.config/opencode/skills/planning-and-task-breakdown/SKILL.md
 
 ## Steps
+0. **Check if templates exist in project:**
+   - If `AGENTS.md` exists in current directory → templates already seeded by `make init`. Files ready: `AGENTS.md`, `HARNESS.md`, `MEMORY.md`, `PROGRESS.md`, `PLAN.md`, `docs/`, `memory/`
+   - If `AGENTS.md` does NOT exist → running via shortcut without `make init`. Create all required files from skill memory (no external `templates/` path needed): `AGENTS.md`, `HARNESS.md`, `MEMORY.md`, `PROGRESS.md`, `PLAN.md`, `docs/`, `memory/`
+
 1. Run agent-analyze first — get full picture of the project
 2. Present findings to user, ask for corrections
 3. Load grill-with-docs — fill gaps agent couldn't detect from code:
@@ -35,7 +39,7 @@ If any skill failed to load — STOP and report to user before proceeding.
    - AGENTS.md (project-specific rules based on stack)
    - skills-cheatsheet.md (based on detected stack)
     - docs/specs/phase-1.md (if project plan requested)
-    - HARNESS.md (from templates/HARNESS.md — fill Entry point + Risk levels from analysis + grill answers, leave Product contract and Decisions to inherit as empty sections for user)
+    - HARNESS.md — use HARNESS.md already present in project root. If not present — create from skill memory following standard structure. Fill Entry point + Risk levels from analysis + grill answers, leave Product contract and Decisions to inherit as empty sections for user
 5. Each file: show draft → wait for ok → write → next file
 6. Write session log to PROGRESS.md: "chore: initialize harness docs for [project name]"
 7. Commit: "chore: initialize harness docs for [project name]"
@@ -48,4 +52,4 @@ If any skill failed to load — STOP and report to user before proceeding.
 - Never overwrite existing docs/ files without showing diff first
 - One file at a time, always wait for confirmation
 - design.md is NOT generated here — user provides it manually
-- If a task takes >30 min — create PLAN.md in project root from templates/PLAN.md. Mark milestones [x] only after running verify: command. Delete PLAN.md when task is done.
+- If a task takes >30 min — create PLAN.md in project root. Use PLAN.md already present in project root. If not present — create from skill memory following standard structure. Mark milestones [x] only after running verify: command. Delete PLAN.md when task is done.
