@@ -127,6 +127,7 @@ Execute these steps in order BEFORE any response to the user:
 
 1. **Session scan:** `git log --oneline origin/main..HEAD`. List everything created/modified/deployed this session.
 2. **Update docs (mandatory per item):**
+
    | What changed | Must update |
    |-------------|-------------|
    | new page/feature | `docs/architecture/feature-name.md` + `progress.md` |
