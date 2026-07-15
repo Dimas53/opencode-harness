@@ -9,6 +9,36 @@ When user types exactly:
 - `existing` — load and run `~/.config/opencode/skills/harness-init/agent-init-existing.md`
 - `analyze` — load and run `~/.config/opencode/skills/harness-init/agent-analyze.md`
 
+- `update-harness` — pull latest updates and apply globally:
+  cd ~/.opencode-harness && git pull && make update
+  After running — report what files changed.
+
+- `sync-templates` — check for new harness template files missing in current project:
+  missing=0
+  for f in ~/.opencode-harness/templates/*.md; do
+    fname=$(basename "$f")
+    [ "$fname" = "AGENTS.md" ] && continue
+    if [ ! -f "$(pwd)/$fname" ]; then
+      echo "  + $fname — not in project"
+      missing=1
+    fi
+  done
+  [ ! -d "$(pwd)/memory" ] && echo "  + memory/ — directory not in project" && missing=1
+  if [ "$missing" = "1" ]; then
+    printf "Copy missing files to project? (y/n): "
+    read -r answer
+    if [ "$answer" = "y" ]; then
+      for f in ~/.opencode-harness/templates/*.md; do
+        fname=$(basename "$f")
+        [ "$fname" = "AGENTS.md" ] && continue
+        [ ! -f "$(pwd)/$fname" ] && cp "$f" "$(pwd)/$fname" && echo "  ✓ $fname"
+      done
+      [ ! -d "$(pwd)/memory" ] && mkdir -p "$(pwd)/memory" && echo "  ✓ memory/"
+    fi
+  else
+    echo "✓ Project has all template files"
+  fi
+
 **Fallback** (if shortcuts don't work):
 ```bash
 cd /path/to/opencode-harness && make init PROJECT=$(pwd)

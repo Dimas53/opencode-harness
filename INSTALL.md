@@ -37,6 +37,9 @@ First run: load AGENTS.md → load skills
   → git log, PROGRESS.md, roadmap.md, task context
 ```
 
+A symlink `~/.opencode-harness` is created pointing to your clone.
+This enables the `update-harness` and `sync-templates` shortcuts.
+
 Then complete manual steps:
 1. `opencode auth login`
 2. Copy config: `cp global/opencode-config.example.jsonc ~/.config/opencode/opencode.jsonc`
@@ -105,6 +108,21 @@ Opens OpenCode in the project and automatically starts the `agent-analyze` skill
 The agent runs 4 audits: codebase health, architecture zoom-out, security review,
 and premortem — then saves a report to `docs/audits/YYYY-MM-DD-analysis.md`.
 No source files are modified.
+
+---
+
+## Keeping the Harness Updated
+
+### Inside OpenCode (from any project)
+
+Type `update-harness` — pulls latest changes and updates global files.
+Requires `make link` to have been run once after cloning.
+
+### Via terminal
+
+```bash
+cd ~/.opencode-harness && git pull && make update
+```
 
 ---
 

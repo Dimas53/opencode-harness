@@ -22,6 +22,8 @@ Open OpenCode in any directory and type:
 - `new` — new project: interview → full doc structure generated
 - `existing` — existing project: auto-analysis first → fills missing docs
 - `analyze` — read-only audit: architecture map + security review + risk report
+- `update-harness` — pull latest harness updates and apply globally
+- `sync-templates` — check for new template files missing in current project
 
 ### Fallback — make commands (if OpenCode is not open yet)
 
@@ -32,6 +34,16 @@ make analyze PROJECT=/path/to/project
 ```
 
 Copies templates and opens OpenCode automatically.
+
+### Symlink (required for update-harness and sync-templates)
+
+Run once after cloning to enable the update shortcuts:
+
+```bash
+make link
+```
+
+This creates `~/.opencode-harness` pointing to your local clone.
 
 ## Documentation
 

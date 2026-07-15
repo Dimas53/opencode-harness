@@ -4,27 +4,28 @@ echo "=== OpenCode Harness — Update ==="
 # Pull latest
 git pull origin main
 
-# Update global AGENTS.md only if user hasn't modified it
-if command -v md5 &>/dev/null; then
-  MD5_CMD="md5 -q"
-elif command -v md5sum &>/dev/null; then
-  MD5_CMD="md5sum"
-else
-  MD5_CMD=""
-fi
+# Update AGENTS.md with diff preview
+GLOBAL_AGENTS="$HOME/.config/opencode/AGENTS.md"
+REPO_AGENTS="global/AGENTS.md"
 
-if [ -n "$MD5_CMD" ]; then
-  LOCAL_HASH=$(eval "$MD5_CMD" ~/.config/opencode/AGENTS.md 2>/dev/null | cut -d' ' -f1)
-  REPO_HASH=$(eval "$MD5_CMD" global/AGENTS.md 2>/dev/null | cut -d' ' -f1)
-fi
-
-if [ "$LOCAL_HASH" = "$REPO_HASH" ]; then
-  cp global/AGENTS.md ~/.config/opencode/AGENTS.md
-  echo "✓ AGENTS.md updated"
+if [ ! -f "$GLOBAL_AGENTS" ]; then
+  cp "$REPO_AGENTS" "$GLOBAL_AGENTS"
+  echo "✓ AGENTS.md installed (fresh install)"
+elif diff -q "$GLOBAL_AGENTS" "$REPO_AGENTS" > /dev/null 2>&1; then
+  echo "✓ AGENTS.md is up to date — no changes"
 else
-  echo "⚠ Your ~/.config/opencode/AGENTS.md has local changes."
-  echo "  Review diff: diff ~/.config/opencode/AGENTS.md global/AGENTS.md"
-  echo "  Then manually copy if needed."
+  echo ""
+  echo "=== AGENTS.md has updates ==="
+  diff "$GLOBAL_AGENTS" "$REPO_AGENTS"
+  echo ""
+  printf "Apply changes? (y/n): "
+  read -r answer
+  if [ "$answer" = "y" ]; then
+    cp "$REPO_AGENTS" "$GLOBAL_AGENTS"
+    echo "✓ AGENTS.md updated"
+  else
+    echo "Skipped — AGENTS.md unchanged"
+  fi
 fi
 
 # Update skills — only ADD new ones, never overwrite existing

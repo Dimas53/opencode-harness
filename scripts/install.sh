@@ -76,6 +76,9 @@ fi
 echo "✏️  Edit ~/.config/opencode/opencode.jsonc — replace /YOUR/HOME/PATH and YOUR_DIRECTUS_TOKEN"
 cp -r global/skills/* ~/.config/opencode/skills/
 
+ln -sf "$(pwd)" ~/.opencode-harness
+echo "✓ Symlink created: ~/.opencode-harness → $(pwd)"
+
 echo ""
 echo "✓ Done. Manual steps:"
 echo "1. opencode auth login"

@@ -175,6 +175,8 @@ The primary way to initialize any project is via shortcuts inside OpenCode:
 | `new` | Loads agent-new-project — interview + full doc generation |
 | `existing` | Loads agent-init-existing — codebase analysis + docs |
 | `analyze` | Loads agent-analyze — read-only audit, no file changes |
+| `update-harness` | Pulls latest harness updates, applies globally (requires `make link` once) |
+| `sync-templates` | Checks for new template files missing in current project, copies with confirmation |
 
 These shortcuts work from any directory inside an open OpenCode session.
 No make commands needed — just open OpenCode and type the shortcut.

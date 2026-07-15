@@ -1,4 +1,4 @@
-.PHONY: help setup init init-existing analyze verify update
+.PHONY: help link setup init init-existing analyze verify update
 
 .DEFAULT_GOAL := help
 
@@ -15,9 +15,18 @@ help:
 	@echo "  make verify         -- verify harness installation"
 	@echo "  make update         -- update harness from repository"
 	@echo ""
+	@echo "  make link          -- create ~/.opencode-harness symlink"
+	@echo ""
 	@echo "  Primary path: shortcuts new / existing / analyze inside OpenCode"
 
 setup:
+
+link:
+	@ln -sf "$(shell pwd)" ~/.opencode-harness
+	@echo "✓ Symlink created: ~/.opencode-harness → $(shell pwd)"
+	@echo "  Run this once after cloning to enable update-harness shortcut"
+
+init:
 	@./scripts/install.sh
 
 init:

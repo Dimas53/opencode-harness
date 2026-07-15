@@ -19,9 +19,17 @@
 - install scripts not tested on clean machine
 - `opencode run` is non-interactive — init scripts now use TUI instead
 
+## This session
+- `make link` target — creates ~/.opencode-harness symlink (once after clone)
+- install.sh — creates symlink automatically on setup
+- `update-harness` shortcut — `cd ~/.opencode-harness && git pull && make update`
+- `sync-templates` shortcut — check + copy missing template files into project
+- update.sh — md5 checksum replaced with diff + interactive apply (y/n)
+- Docs: README, INSTALL, GUIDE updated with new commands
+
 ## Next session — plan
 - Test make init on recruitment-app
 - Fix any issues found during real test
+- Update docs: templates/PROGRESS.md, templates/HARNESS.md
 
 ## Git log
-- `96a9c5f` — fix: sync install.bat, fix stale 7 to 9 questions refs
