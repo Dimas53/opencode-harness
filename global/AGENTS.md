@@ -92,7 +92,7 @@ Project-level — configs and infrastructure that could break the project.
 ---
 
 [ENFORCEMENT RULES: STARTUP]
-- MANDATORY: Execute all 7 steps in ## Session Start below. Non-negotiable.
+- MANDATORY: Execute all 8 steps in ## Session Start below. Non-negotiable.
 - STOP-CONDITION: Any step fails (non-zero exit, missing file, read error) — halt immediately. Report the exact error. Wait for user instruction. Do NOT proceed. Do NOT assume success.
 - OUTPUT-LOCK: The first output of this session MUST be the Session Initialized report. No preamble, no greetings, no "I'll start". The block must appear before any other text.
 
@@ -125,7 +125,23 @@ Execute these steps in order BEFORE any response to the user:
    Session initialized. Phase: [from roadmap]. Last commit: [hash — msg].
    Progress: [from progress.md]. Skills loaded: [list].
    ```
-8. Load task-specific context: check project `docs/skills-cheatsheet.md` for relevant skills matching current task triggers
+8. Docs freshness check:
+   Run: `git log --oneline --since="14 days ago" -- docs/`
+   Collect all .md files in `docs/` that are NOT in the output
+   (no commits in last 14 days).
+
+   If any stale files found:
+     Print after session report:
+     "⚠️ Stale docs (no commits in 14+ days):
+      - [filename] — candidate for update
+      - docs/plan-main.md — candidate for delete (if in list)"
+
+     Ask once: "Update stale docs now? (y/n)"
+     If y — run Documentation Session for stale files
+     If n — add note to PROGRESS.md: "Stale docs skipped: [list]" and continue
+
+   If no stale files — continue silently.
+9. Load task-specific context: check project `docs/skills-cheatsheet.md` for relevant skills matching current task triggers
 
 **If any step fails — stop, report the error, ask user how to proceed.**
 
