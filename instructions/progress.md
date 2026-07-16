@@ -32,4 +32,9 @@
 - Fix any issues found during real test
 - Update docs: templates/PROGRESS.md, templates/HARNESS.md
 
+## This session
+- 6 new skills added to global/AGENTS.md (codebase-design, domain-modeling, research, resolving-merge-conflicts, wayfinder, setup-ts-deep-modules)
+- Updated instructions/reference/03-skills-cheatsheet.md — added 6 skills to Architecture section
+- Updated templates/docs/skills-cheatsheet.md — added 6 skills to Architecture section
+
 ## Git log

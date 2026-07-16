@@ -39,6 +39,12 @@
 | `to-prd` | Turn our conversation into a PRD |
 | `to-issues` | Break PRD into individual issues |
 | `prototype` | Quick throwaway prototype to validate an idea — UI or logic |
+| `codebase-design` | Vocabulary for deep module design — interface, seam, depth, adapter. Before creating a new module |
+| `domain-modeling` | Refine domain model: clarify terms, create ADR, update CONTEXT.md. Before complex architecture decisions |
+| `research` | Investigate from primary sources (docs, API, specs) via background agent. Don't start code without research |
+| `wayfinder` | Task exceeds one session — break into decision tickets on issue tracker. For multi-session epics |
+| `setup-ts-deep-modules` | Set up dependency-cruiser and deep modules (entry points, subfolders private). For new or growing Nuxt 4 monorepo |
+| `resolving-merge-conflicts` | Merge/rebase conflict — resolve systematically: understand each change's intent, preserve where possible |
 
 ---
 

@@ -405,5 +405,11 @@ Always load SKILL.md via filesystem path: `Read ~/.config/opencode/skills/<domai
 | CI/CD | pipeline, GitHub Actions, deploy, Docker, production | ci-cd-and-automation/SKILL.md |
 | Parallel Tasks | multiple independent subtasks, do in parallel | dispatching-parallel-agents/SKILL.md |
 | Skill Discovery | new skill installed, discovered | — auto-detect and add to docs/skills-cheatsheet.md |
+| Architecture/Code Design | module, seam, depth, interface design, refactor, code health, improve architecture | codebase-design/SKILL.md, improve-codebase-architecture/SKILL.md |
+| Domain Modeling | domain term, glossary, CONTEXT.md, ADR, ubiquitous language, terminology | domain-modeling/SKILL.md, documentation-and-adrs/SKILL.md |
+| Research | investigate, research, find docs, gather facts, learn API | research/SKILL.md |
+| Merge Conflicts | merge conflict, rebase conflict, git merge, resolve conflict | resolving-merge-conflicts/SKILL.md |
+| Wayfinding / Large Planning | huge task, multi-session, roadmap, chartered effort | wayfinder/SKILL.md, planning-and-task-breakdown/SKILL.md |
+| TS Deep Modules | barrel files, dependency-cruiser, deep modules, entry points, package boundaries | setup-ts-deep-modules/SKILL.md, codebase-design/SKILL.md |
 
 → Full reference for when to use which skill: `read instructions/reference/03-skills-cheatsheet.md`
