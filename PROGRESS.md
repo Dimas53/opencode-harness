@@ -69,6 +69,7 @@ Last commit: 16ef9d8 — feat: add make start launcher
   - notes/AGENTS.reality-check.md: full update — all v0.3 fixes marked, compared vs audit/overview/workflow
   - session-end.sh: memory check upgraded from warning to fail if session has git changes
   - global/AGENTS.md: Documentation Session auto-trigger removed, `docs` shortcut added
+  - scripts/update.sh: fixed /dev/tty bug — no-TTY auto-applies, interactive prompts use [ -t 0 ]
 - Problems: none
 - Next:
   - v0.4 planning — decide scope

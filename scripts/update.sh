@@ -34,14 +34,19 @@ else
   echo ""
   echo "  (showing first 20 changed lines)"
   echo ""
-  echo -e -n "\033[1;33mApply changes? (y/n):\033[0m " > /dev/tty
-  read -r answer < /dev/tty
-  if [ "$answer" = "y" ]; then
-    cp "$REPO_AGENTS" "$GLOBAL_AGENTS"
-    echo -e "${GREEN}✓ AGENTS.md updated successfully${NC}"
+
+  if [ -t 1 ] && [ -t 0 ]; then
+    printf "\033[1;33mApply changes? (y/n):\033[0m "
+    read -r answer
+    if [ "$answer" != "y" ]; then
+      echo -e "${YELLOW}Skipped — AGENTS.md unchanged${NC}"
+      exit 0
+    fi
   else
-    echo -e "${YELLOW}Skipped — AGENTS.md unchanged${NC}"
+    echo "No TTY detected — auto-applying changes"
   fi
+  cp "$REPO_AGENTS" "$GLOBAL_AGENTS"
+  echo -e "${GREEN}✓ AGENTS.md updated successfully${NC}"
 fi
 
 # Update skills — only ADD new ones, never overwrite existing

@@ -230,6 +230,7 @@ Updated: 2026-07-17 — v0.3 complete, all Priority 0 closed
 | 2 | JSDoc / "scan entire conversation" | Не автоматизируются в принципе — только на честном слове |
 | 3 | 3 strikes stop / STOP-CONDITION | Нет технической блокировки |
 | 4 | browser/webhook safety gate | ❌ DEAD — нет блокировки |
+| 5 | update.sh баг: при неинтерактивном запуске (/dev/tty нет) read падает, ответ пустой → "Skipped". Нужно auto-apply если нет TTY. | Из-за этого патчи AGENTS.md не доходят до ~/.config/opencode/ |
 
 ## Сравнение с harness-audit-2026-07-16
 
