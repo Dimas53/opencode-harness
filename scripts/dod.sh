@@ -48,8 +48,8 @@ if git rev-parse --is-inside-work-tree &>/dev/null; then
   fi
 
   if [ -n "$FILES" ]; then
-    # Exclude notes/ (Russian allowed there), binary extensions
-    SCAN_FILES=$(echo "$FILES" | grep -v "^notes/" | grep -vE "\.(png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|pdf|zip|tar|gz)$" || true)
+    # Exclude notes/ (Russian allowed), global/ (harness templates), this script itself, binary extensions
+    SCAN_FILES=$(echo "$FILES" | grep -v "^notes/" | grep -v "^global/" | grep -v "^scripts/dod.sh" | grep -vE "\.(png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|pdf|zip|tar|gz)$" || true)
 
     if [ -n "$SCAN_FILES" ]; then
       CYRILLIC_HITS=$(echo "$SCAN_FILES" | xargs grep -rl '[А-Яа-яЁё]' 2>/dev/null || true)
