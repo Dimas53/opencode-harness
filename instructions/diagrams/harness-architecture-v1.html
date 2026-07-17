@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agent Harness — ItoCook</title>
+<title>OpenCode Harness — Architecture Overview</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -285,6 +285,7 @@
   .ic-claude   { background:#1e1a2e; border:1.5px solid #8966FA; }
   .ic-user  { background:#1a1e2e; border:1.5px solid #3b82f6; }
   .ic-opencode { background:#1a2e1e; border:1.5px solid #22c55e; }
+  .ic-tool  { background:#1a1a2e; border:1.5px solid #a78bfa; }
   .actor-name { font-size: 13px; font-weight: 700; color: #cbd5e1; }
   .actor-sub  { font-size: 10px; color: #475569; text-align: center; line-height: 1.4; }
 
@@ -316,8 +317,8 @@
 <body>
 <div class="header">
   <div class="header-label">Agent Infrastructure</div>
-  <h1>AI Agent Harness</h1>
-  <p>9 layers around the model · ItoCook project implementation</p>
+  <h1>OpenCode Harness</h1>
+  <p>9 layers around the agent · portable AI-assisted development harness</p>
 </div>
 
 <div class="diagram">
@@ -325,7 +326,7 @@
   <!-- ══════════════════════════════════
        PART 1 — MINDMAP (tags only)
   ══════════════════════════════════ -->
-  <div class="section-label">Structure — 9 layers around the model</div>
+  <div class="section-label">Structure — 9 layers around the agent</div>
 
   <div class="mindmap">
     <!-- INSTRUCTION BAR -->
@@ -346,10 +347,10 @@
     <!-- LEFT -->
     <div class="mc" style="grid-column:1;grid-row:1;">
       <div class="mc-num" style="color:#60a5fa;">2 · CONTEXT</div>
-      <div class="mc-title">What the model sees</div>
+      <div class="mc-title">What the agent sees</div>
       <div class="tags left">
-        <span class="t tb">progress.md</span><span class="t tb">roadmap.md</span>
-        <span class="t tb">AGENTS.md</span><span class="t tb">design.md</span>
+        <span class="t tb">PROGRESS.md</span><span class="t tb">roadmap.md</span>
+        <span class="t tb">AGENTS.md</span><span class="t tb">MEMORY.md</span><span class="t tb">HARNESS.md</span>
       </div>
     </div>
 
@@ -360,6 +361,7 @@
         <span class="t tg">filesystem</span><span class="t tg">git</span>
         <span class="t tg">fetch</span><span class="t tg">Directus MCP</span>
         <span class="t tg">Chrome DevTools</span><span class="t tg">Playwright</span>
+        <span class="t tg">context7</span><span class="t tg">websearch</span>
       </div>
     </div>
 
@@ -374,11 +376,12 @@
 
     <div class="mc" style="grid-column:1;grid-row:4;">
       <div class="mc-num" style="color:#a78bfa;">8 · SANDBOX</div>
-      <div class="mc-title">What's allowed / not</div>
+      <div class="mc-title">Safety boundaries (planned)</div>
       <div class="tags left">
-        <span class="t tp">approve nginx changes</span>
-        <span class="t tp">approve SW changes</span>
-        <span class="t tp">no secrets in prompts</span>
+        <span class="t tp">Sandbox DB (schema-only)</span>
+        <span class="t tp">.agentignore (field-level)</span>
+        <span class="t tp">LLM Guard (PII anonymize)</span>
+        <span class="t tp">Audit Layer (session log)</span>
       </div>
     </div>
 
@@ -391,9 +394,9 @@
     <!-- RIGHT -->
     <div class="mc" style="grid-column:3;grid-row:1;">
       <div class="mc-num" style="color:#60a5fa;">5 · MEMORY</div>
-      <div class="mc-title">Notes between steps</div>
+      <div class="mc-title">Trigger-based docs</div>
       <div class="tags right">
-        <span class="t tb">progress.md</span><span class="t tb">architecture.md</span>
+        <span class="t tb">PROGRESS.md</span><span class="t tb">MEMORY.md</span>
         <span class="t tb">docs/specs/</span><span class="t tb">git log</span>
       </div>
     </div>
@@ -411,8 +414,8 @@
       <div class="mc-num" style="color:#fb923c;">7 · VERIFICATION</div>
       <div class="mc-title">Tests · lint · typecheck</div>
       <div class="tags right">
-        <span class="t to">TypeScript</span><span class="t to">DevTools</span>
-        <span class="t to">screenshots</span><span class="t to">npm audit</span>
+        <span class="t to">DoD checklist</span><span class="t to">DevTools</span>
+        <span class="t to">screenshots</span><span class="t to">tests</span>
       </div>
     </div>
 
@@ -420,11 +423,12 @@
       <div class="mc-num" style="color:#a78bfa;">9 · SKILLS</div>
       <div class="mc-title">Knowledge on demand</div>
       <div class="tags right">
-        <span class="t tp">security/</span><span class="t tp">session-start</span>
-        <span class="t tp">code-reviewer</span>
-        <span class="t tk">nuxt · directus · docker</span>
+        <span class="t tp">security/</span><span class="t tp">session-start/end</span>
+        <span class="t tp">dod · code-review</span>
         <span class="t tp">brainstorming</span><span class="t tp">diagnose</span><span class="t tp">handoff</span>
-        <span class="t tp">vue</span><span class="t tp">tailwind</span><span class="t tp">frontend-ui</span>
+        <span class="t tp">premortem</span><span class="t tp">archify</span><span class="t tp">grill-me</span>
+        <span class="t tk">nuxt · vue · tailwind · docker</span>
+        <span class="t tp">spec-driven · TDD · incremental</span>
       </div>
     </div>
   </div>
@@ -432,7 +436,7 @@
 
   <!-- LEGEND -->
   <div class="legend">
-    <div class="legend-item"><div class="ld" style="background:#60a5fa"></div>what model SEES</div>
+    <div class="legend-item"><div class="ld" style="background:#60a5fa"></div>what agent SEES</div>
     <div class="legend-item"><div class="ld" style="background:#4ade80"></div>what it CAN DO</div>
     <div class="legend-item"><div class="ld" style="background:#fb923c"></div>how it's CONTROLLED</div>
     <div class="legend-item"><div class="ld" style="background:#a78bfa"></div>boundaries & knowledge</div>
@@ -441,9 +445,9 @@
   <hr class="divider">
 
   <!-- ══════════════════════════════════
-       PART 2 — DETAILED BREAKDOWN
+       PART 2 — LAYER BREAKDOWN
   ══════════════════════════════════ -->
-  <div class="section-label" style="margin-bottom:20px;">Layer breakdown — what's inside each block</div>
+  <div class="section-label" style="margin-bottom:20px;">Layer breakdown — what's inside each layer</div>
 
   <div class="detail-grid">
 
@@ -466,8 +470,8 @@
           <div class="dc-item-desc">Agent updates docs only on specific events — new composable, new Flow, bug fix</div>
         </div></div>
         <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
-          <div class="dc-item-name">Session scope rules</div>
-          <div class="dc-item-desc">One concern per session, verify in browser before commit, plan before build</div>
+          <div class="dc-item-name">Hard Limits + Safety Gates</div>
+          <div class="dc-item-desc">Never: git push, rm -rf, modify .env. Stop: docker-compose, deployments, SSH, DB migrations</div>
         </div></div>
       </div>
     </div>
@@ -477,13 +481,13 @@
       <div class="dc-header">
         <span class="dc-num-badge">2 · CONTEXT</span>
         <div class="dc-title-wrap">
-          <div class="dc-title">What the Model Sees</div>
-          <div class="dc-sub">Documents loaded into context window each session</div>
+          <div class="dc-title">What the Agent Sees</div>
+          <div class="dc-sub">Documents loaded into context window each session start</div>
         </div>
       </div>
       <div class="dc-items">
         <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
-          <div class="dc-item-name">progress.md</div>
+          <div class="dc-item-name">PROGRESS.md</div>
           <div class="dc-item-desc">Living log of what's done, current bugs, session fixes</div>
         </div></div>
         <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
@@ -491,8 +495,8 @@
           <div class="dc-item-desc">Big picture phases — agent reads this to not dive into wrong phase</div>
         </div></div>
         <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
-          <div class="dc-item-name">design.md</div>
-          <div class="dc-item-desc">Single source of truth for all UI decisions — read before any component</div>
+          <div class="dc-item-name">MEMORY.md + HARNESS.md</div>
+          <div class="dc-item-desc">Lessons learned + project constraints and risk levels</div>
         </div></div>
       </div>
     </div>
@@ -527,6 +531,10 @@
           <div class="dc-item-name">Playwright MCP</div>
           <div class="dc-item-desc">E2E tests, form filling, navigation, screenshots — full browser test runner</div>
         </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">context7 + websearch</div>
+          <div class="dc-item-desc">Live documentation lookup and web search — always current APIs</div>
+        </div></div>
       </div>
     </div>
 
@@ -536,21 +544,21 @@
         <span class="dc-num-badge">4 · LOOP</span>
         <div class="dc-title-wrap">
           <div class="dc-title">Execution Cycle</div>
-          <div class="dc-sub">Think → Do → Verify — the discipline that prevents cascading failures</div>
+          <div class="dc-sub">Think → Do → Verify → DoD → Commit — skill-based workflow discipline</div>
         </div>
       </div>
       <div class="dc-items">
         <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
-          <div class="dc-item-name">Plan before building</div>
-          <div class="dc-item-desc">Multi-file tasks get a plan first — approved before any code written</div>
+          <div class="dc-item-name">Skill-based workflows</div>
+          <div class="dc-item-desc">Brainstorm, spec, plan, implement, TDD — each phase has a dedicated skill</div>
         </div></div>
         <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
-          <div class="dc-item-name">One change at a time</div>
-          <div class="dc-item-desc">Learned the hard way — multiple simultaneous infra changes = full-day rollback</div>
+          <div class="dc-item-name">One concern at a time</div>
+          <div class="dc-item-desc">Learned the hard way — simultaneous changes = unpredictable rollback</div>
         </div></div>
         <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
-          <div class="dc-item-name">Verify in browser first</div>
-          <div class="dc-item-desc">Agent checks result in DevTools before committing anything to git</div>
+          <div class="dc-item-name">DoD before every commit</div>
+          <div class="dc-item-desc">Definition of Done runs first — SESSION SCAN, docs, JSDoc, tests, safety, skill feedback</div>
         </div></div>
       </div>
     </div>
@@ -560,26 +568,26 @@
       <div class="dc-header">
         <span class="dc-num-badge">5 · MEMORY</span>
         <div class="dc-title-wrap">
-          <div class="dc-title">Notes Between Steps</div>
-          <div class="dc-sub">Trigger-based — agent writes docs when specific events happen, not on schedule</div>
+          <div class="dc-title">Trigger-Based Docs</div>
+          <div class="dc-sub">Agent writes docs when specific events happen, not on schedule</div>
         </div>
       </div>
       <div class="dc-items">
         <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
-          <div class="dc-item-name">progress.md</div>
+          <div class="dc-item-name">PROGRESS.md</div>
           <div class="dc-item-desc">Updated on every bug fix, feature complete, or session end</div>
         </div></div>
         <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
-          <div class="dc-item-name">architecture.md</div>
-          <div class="dc-item-desc">Updated when new composable, route, or public interface is added</div>
+          <div class="dc-item-name">MEMORY.md</div>
+          <div class="dc-item-desc">Accumulates workarounds, lessons learned across sessions</div>
         </div></div>
         <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
-          <div class="dc-item-name">docs/specs/</div>
-          <div class="dc-item-desc">Feature specifications — created for new features without existing specs</div>
+          <div class="dc-item-name">docs/specs/ + architecture</div>
+          <div class="dc-item-desc">Feature specs and architecture docs created per change type (DoD)</div>
         </div></div>
         <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
-          <div class="dc-item-name">git log</div>
-          <div class="dc-item-desc">Structured commit messages act as searchable history of decisions</div>
+          <div class="dc-item-name">git log + memory/YYYY-MM-DD.md</div>
+          <div class="dc-item-desc">Structured commit messages + daily workaround notes</div>
         </div></div>
       </div>
     </div>
@@ -610,26 +618,26 @@
       <div class="dc-header">
         <span class="dc-num-badge">7 · VERIFICATION</span>
         <div class="dc-title-wrap">
-          <div class="dc-title">Quality Gates</div>
-          <div class="dc-sub">Checks that run before any commit is made</div>
+          <div class="dc-title">Quality Gates (DoD)</div>
+          <div class="dc-sub">Checks that run via Definition of Done BEFORE every commit</div>
         </div>
       </div>
       <div class="dc-items">
         <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
-          <div class="dc-item-name">TypeScript check</div>
-          <div class="dc-item-desc">Zero TS errors rule — agent fixes all type errors before committing</div>
+          <div class="dc-item-name">SESSION SCAN</div>
+          <div class="dc-item-desc">List everything created/modified/deployed this session</div>
         </div></div>
         <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
-          <div class="dc-item-name">Browser DevTools</div>
-          <div class="dc-item-desc">Console errors, network 4xx/5xx, CORS — checked via Chrome DevTools MCP</div>
+          <div class="dc-item-name">Docs per change type</div>
+          <div class="dc-item-desc">Schema change → docs/schema.md, new feature → docs/architecture/, etc.</div>
         </div></div>
         <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
-          <div class="dc-item-name">Screenshot review</div>
-          <div class="dc-item-desc">Visual confirmation — User catches UI regressions the agent misses</div>
+          <div class="dc-item-name">JSDoc + Tests + Safety</div>
+          <div class="dc-item-desc">JSDoc for new composables/routes, run test suite, check no Cyrillic/leaked secrets</div>
         </div></div>
         <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
-          <div class="dc-item-name">Test suite (planned)</div>
-          <div class="dc-item-desc">4 Vitest unit + 3 Vitest API + 3 Playwright E2E + CI/CD pipeline — 11 prompts in notes/tests-promt.md</div>
+          <div class="dc-item-name">Skill feedback</div>
+          <div class="dc-item-desc">Note skill issues in memory/YYYY-MM-DD.md — human decides whether to update SKILL.md</div>
         </div></div>
       </div>
     </div>
@@ -637,24 +645,28 @@
     <!-- 8. SANDBOX -->
     <div class="detail-card var-purple">
       <div class="dc-header">
-        <span class="dc-num-badge">8 · SANDBOX</span>
+        <span class="dc-num-badge">8 · SANDBOX (PLANNED)</span>
         <div class="dc-title-wrap">
-          <div class="dc-title">Boundaries & Safety Gates</div>
-          <div class="dc-sub">Hard rules that require human approval before proceeding</div>
+          <div class="dc-title">4-Layer Security Isolation</div>
+          <div class="dc-sub">Architecture plan in notes/SANDBOX_ARCHITECTURE.md — not yet implemented</div>
         </div>
       </div>
       <div class="dc-items">
         <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
-          <div class="dc-item-name">nginx changes require approval</div>
-          <div class="dc-item-desc">Learned after a config bug caused full-day outage — now explicit gate</div>
+          <div class="dc-item-name">Layer 1 — Sandbox DB</div>
+          <div class="dc-item-desc">Agent works with schema-only copy in isolated Docker container — no real data</div>
         </div></div>
         <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
-          <div class="dc-item-name">Service Worker changes require approval</div>
-          <div class="dc-item-desc">SW strategy switches affect all cached users — can't be reversed without full cache clear</div>
+          <div class="dc-item-name">Layer 2 — .agentignore</div>
+          <div class="dc-item-desc">Blocks access to prod credentials, backups, PII fields (file + field-level)</div>
         </div></div>
         <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
-          <div class="dc-item-name">No production secrets in prompts</div>
-          <div class="dc-item-desc">Real tokens, passwords, DB strings stay out of Claude/agent conversations</div>
+          <div class="dc-item-name">Layer 3 — LLM Guard</div>
+          <div class="dc-item-desc">Anonymizes PII before sending to model, scans responses for data leaks</div>
+        </div></div>
+        <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
+          <div class="dc-item-name">Layer 4 — Audit Layer</div>
+          <div class="dc-item-desc">Logs what agent read and sent — metadata-only, answerable to auditor</div>
         </div></div>
       </div>
     </div>
@@ -670,32 +682,32 @@
       </div>
       <div class="dc-items">
         <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
-          <div class="dc-item-name">security/ — 5 files</div>
-          <div class="dc-item-desc">Custom security baseline: auth, API, frontend, stack-specific, release checklist</div>
+          <div class="dc-item-name">security/ — multi-file</div>
+          <div class="dc-item-desc">Custom security baseline: auth-and-secrets, api-and-data, frontend-and-infra, stack-specific, release-checklist</div>
         </div></div>
         <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
-          <div class="dc-item-name">session-start</div>
-          <div class="dc-item-desc">Agent boot sequence — reads docs, confirms scope, checks for blockers before coding</div>
+          <div class="dc-item-name">session-start / session-end / dod</div>
+          <div class="dc-item-desc">Agent boot sequence, session closure, Definition of Done checklist</div>
         </div></div>
         <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
-          <div class="dc-item-name">code-reviewer</div>
-          <div class="dc-item-desc">PR review rules — checks for common patterns, security issues, doc updates</div>
+          <div class="dc-item-name">code-review · codebase-health-check</div>
+          <div class="dc-item-desc">PR review rules and architecture audit — DRY violations, refactoring opportunities</div>
         </div></div>
         <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
-          <div class="dc-item-name">codebase-health-check</div>
-          <div class="dc-item-desc">Architecture audit skill — assesses codebase, finds refactoring opportunities, DRY violations</div>
+          <div class="dc-item-name">Process: brainstorm → spec → plan → implement → TDD</div>
+          <div class="dc-item-desc">brainstorming, spec-driven, planning, incremental-implementation, TDD, grill-me, interview-me, premortem, doubt-driven</div>
         </div></div>
         <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
-          <div class="dc-item-name">nuxt · directus · docker · tailwind</div>
-          <div class="dc-item-desc">Public stack skills — best practices, common pitfalls, API patterns for each tool</div>
+          <div class="dc-item-name">Diagnostics: diagnose · systematic-debugging · handoff</div>
+          <div class="dc-item-desc">Systematic root-cause debugging, error recovery, session context handoff</div>
         </div></div>
         <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
-          <div class="dc-item-name">make-interfaces-feel-better</div>
-          <div class="dc-item-desc">UI polish skill — animations, micro-interactions, visual details for final phase</div>
+          <div class="dc-item-name">Stack: nuxt · vue · tailwind · docker · frontend-ui</div>
+          <div class="dc-item-desc">Framework-specific best practices, API patterns, UI polish with make-interfaces-feel-better</div>
         </div></div>
         <div class="dc-item"><div class="dc-dot"></div><div class="dc-item-text">
-          <div class="dc-item-name">52 skills total (Superpowers + custom + stack)</div>
-          <div class="dc-item-desc">brainstorming, diagnose, handoff, planning, TDD, code-review, spec-driven, incremental-implementation, zoom-out, grill-me, interview-me, dispatching-parallel-agents, source-driven-development, caveman, vue, nuxt, tailwind, playwright, frontend-ui — loaded per task type</div>
+          <div class="dc-item-name">50+ skills total (custom + superpowers + stack)</div>
+          <div class="dc-item-desc">archify, caveman, CI/CD, code-simplification, context-engineering, deprecation-migration, dispatching-parallel-agents, documentation-adrs, docker-expert, git-workflow, idea-refine, performance-optimization, security-hardening, shipping-launch, source-driven, zoom-out, to-issues, to-prd, triage, prototype, teach, write-a-skill, find-skills — loaded per task type</div>
         </div></div>
       </div>
     </div>
@@ -707,44 +719,53 @@
   <!-- ══════════════════════════════════
        PART 3 — WORKFLOW LOOP
   ══════════════════════════════════ -->
-  <div class="section-label" style="margin-bottom:16px;">Our custom workflow on top of the agent</div>
+  <div class="section-label" style="margin-bottom:16px;">Session lifecycle — how OpenCode works with the harness</div>
 
   <div class="wf-wrap">
     <div class="workflow">
       <div class="actor">
-        <div class="actor-icon ic-claude">🧠</div>
-        <div class="actor-name">Claude</div>
-        <div class="actor-sub">Strategic advisor<br/>Prompt author<br/>Diagnostics</div>
-      </div>
-      <div class="wf-arrow">
-        <div class="wf-line wf-p"></div>
-        <div class="wf-label">writes structured<br/>prompts in English</div>
-      </div>
-      <div class="actor">
-        <div class="actor-icon user">👤</div>
-        <div class="actor-name">User</div>
-        <div class="actor-sub">Product owner<br/>Approves changes<br/>Visual QA</div>
+        <div class="actor-icon ic-opencode">⚡</div>
+        <div class="actor-name">OpenCode</div>
+        <div class="actor-sub">CLI · MCP host<br/>Agent runtime</div>
       </div>
       <div class="wf-arrow">
         <div class="wf-line wf-g"></div>
-        <div class="wf-label">runs in terminal<br/>via OpenCode</div>
+        <div class="wf-label">reads rules + loads skills</div>
       </div>
       <div class="actor">
-        <div class="actor-icon ic-opencode">⚡</div>
-        <div class="actor-name">OpenCode</div>
-        <div class="actor-sub">Executes code<br/>Uses MCP tools<br/>Updates docs</div>
+        <div class="actor-icon ic-opencode" style="background:#1a2e1e;border-color:#22c55e;">📋</div>
+        <div class="actor-name">Session Start</div>
+        <div class="actor-sub">9-step protocol<br/>Git log · docs · skills</div>
+      </div>
+      <div class="wf-arrow">
+        <div class="wf-line wf-g"></div>
+        <div class="wf-label">works through tasks</div>
+      </div>
+      <div class="actor">
+        <div class="actor-icon ic-opencode" style="background:#1a2e1e;border-color:#22c55e;">⚙️</div>
+        <div class="actor-name">Work Loop</div>
+        <div class="actor-sub">Think → Do → Verify<br/>Skill-based workflows</div>
+      </div>
+      <div class="wf-arrow">
+        <div class="wf-line wf-g"></div>
+        <div class="wf-label">DoD → commit → Session End</div>
+      </div>
+      <div class="actor">
+        <div class="actor-icon ic-opencode" style="background:#1e1a2e;border-color:#a78bfa;">✓</div>
+        <div class="actor-name">Definition of Done</div>
+        <div class="actor-sub">Before every commit<br/>SCAN · docs · tests · safety</div>
       </div>
       <div class="wf-arrow">
         <div class="wf-line wf-b"></div>
-        <div class="wf-label">reports results<br/>+ screenshots</div>
+        <div class="wf-label">reports progress</div>
       </div>
       <div class="actor">
-        <div class="actor-icon ic-claude">🧠</div>
-        <div class="actor-name">Claude</div>
-        <div class="actor-sub">Diagnoses issues<br/>Iterates<br/>Next prompt</div>
+        <div class="actor-icon user">👤</div>
+        <div class="actor-name">Human</div>
+        <div class="actor-sub">Approves changes<br/>Visual QA · Push</div>
       </div>
     </div>
-    <div class="wf-note">Not talking to the model directly — working through the harness layer</div>
+    <div class="wf-note">Everything runs inside OpenCode — no separate agent orchestrator</div>
   </div>
 
 </div>
