@@ -16,7 +16,7 @@ echo "=== DoD Check ==="
 echo ""
 
 # ── Step 1: Uncommitted changes ──────────────────────────────────────────────
-echo "[ 1/4 ] Uncommitted changes"
+echo "[ 1/5 ] Uncommitted changes"
 
 if ! git rev-parse --is-inside-work-tree &>/dev/null; then
   check_warn "Not inside a git repo — skipping git checks"
@@ -39,7 +39,7 @@ fi
 echo ""
 
 # ── Step 2: Cyrillic scan ────────────────────────────────────────────────────
-echo "[ 2/4 ] Cyrillic scan (project files)"
+echo "[ 2/5 ] Cyrillic scan (project files)"
 
 # What to scan: tracked files only, excluding notes/ and binary files
 CYRILLIC_HITS=""
@@ -73,7 +73,7 @@ fi
 echo ""
 
 # ── Step 3: Docs lag ─────────────────────────────────────────────────────────
-echo "[ 3/4 ] Docs lag check"
+echo "[ 3/5 ] Docs lag check"
 
 if ! git rev-parse --is-inside-work-tree &>/dev/null; then
   check_warn "Not inside a git repo — skipping docs lag check"
@@ -107,7 +107,7 @@ fi
 echo ""
 
 # ── Step 4: PROGRESS.md ──────────────────────────────────────────────────────
-echo "[ 4/4 ] PROGRESS.md check"
+echo "[ 4/5 ] PROGRESS.md check"
 
 TODAY=$(date +%Y-%m-%d)
 
@@ -129,6 +129,23 @@ else
     check_warn "PROGRESS.md last updated: $MODIFIED (not today)"
     echo "   → Add today's work before committing"
   fi
+fi
+
+echo ""
+
+# ── Step 5: Quick tests ──────────────────────────────────────────────────────
+echo "[ 5/5 ] Quick tests"
+
+if command -v bats &>/dev/null && [ -f "Makefile" ]; then
+  TEST_OUTPUT=$(make test-quick 2>&1) && TEST_OK=1 || TEST_OK=0
+  if [ "$TEST_OK" = "1" ]; then
+    check_pass "All tests pass"
+  else
+    check_fail "Tests failed — run 'make test-quick' to see details"
+    echo "   $TEST_OUTPUT" | head -5 | sed 's/^/    /'
+  fi
+else
+  check_warn "bats or Makefile not found — skipping tests"
 fi
 
 echo ""
