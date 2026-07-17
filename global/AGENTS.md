@@ -106,7 +106,7 @@ Project-level — configs and infrastructure that could break the project.
 - VERIFY-BEFORE-MARK: Do NOT mark any DoD step `[✓]` until confirmed executed. Use `[•]` in progress, `[ ]` todo.
 
 [ENFORCEMENT RULES: SESSION END]
-- TRIGGER-LOCK: On "end / конец / done / готово / всё / пока" or `git push` — Session End protocol MUST run.
+- TRIGGER-LOCK: On "end / done" or `git push` — Session End protocol MUST run.
 - STOP-CONDITION: If docs lag check shows >3 commits — warn user before commit or push. Do not skip.
 - MANDATORY: Save workarounds to `memory/YYYY-MM-DD.md` if any found. Do not wait, do not forget.
 - OUTPUT-LOCK: The final output MUST be the "Session closed" report. Without it, session is not ended.
@@ -137,7 +137,7 @@ Execute these steps in order BEFORE any response to the user:
 
 ## Session End
 
-**Triggers:** after `git commit` → run Definition of Done first. After `git push` or user says "end session / конец / конец сессии / done / готово / всё / пока / session done" → run below.
+**Triggers:** after `git commit` → run Definition of Done first. After `git push` or user says "end / done / finish / finished / close / session end / bye / Ende / Schluss / fertig / tschüss / bis dann" → run below.
 
 1. Check docs lag:
    ```bash
@@ -163,7 +163,7 @@ Execute these steps in order BEFORE any response to the user:
 
 ## Definition of Done
 
-**Triggers:** before saying "done" / "ready" / "finished" / "готово" / "всё" / "конец" — execute ALL steps below. Must also run before every `git commit` (Session End calls this first). Skipping any step is a violation.
+**Triggers:** before saying "done" / "ready" / "finished" — execute ALL steps below. Must also run before every `git commit` (Session End calls this first). Skipping any step is a violation.
 
 1. **Session scan:** `git log --oneline origin/main..HEAD`. List everything created/modified/deployed this session.
 2. **Update docs (mandatory per item):**

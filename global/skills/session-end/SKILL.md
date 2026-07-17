@@ -79,6 +79,6 @@ Only after steps 1-5 are complete.
 ## Orchestration
 
 `git commit` → run Definition of DoD first (see skills/dod/SKILL.md)
-`git push` or user says "end/конец/done" → run this protocol
+`git push` or user says "end / done / bye / Ende / fertig" → run this protocol
 
 These triggers are already in AGENTS.md Behavior section.

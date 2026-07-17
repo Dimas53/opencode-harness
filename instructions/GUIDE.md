@@ -196,10 +196,10 @@ Every session begins with the command:
 Start
 ```
 
-That's it. A single word. The agent then runs a mandatory 8-step sequence:
+That's it. A single word. The agent then runs a mandatory 7-step sequence:
 
 1. **pwd + git log** — `git log --oneline -10`
-2. **Load global skill** — reads `using-agent-skills/SKILL.md` (filesystem or built-in)
+2. **Load global skill + task‑specific context** — reads `using-agent-skills/SKILL.md` (filesystem or built-in), then checks `docs/skills-cheatsheet.md` for skills matching your request's triggers
 3. **Read PROGRESS.md** — compare git log with progress status; fix if out of sync
 4. **Read roadmap.md** — current phase and next tasks
 5. **Read MEMORY.md** and `memory/YYYY-MM-DD.md` if they exist (today or yesterday)
@@ -211,10 +211,15 @@ Session initialized. Phase: [from roadmap]. Last commit: [hash — msg].
 Progress: [from PROGRESS.md]. Skills loaded: [list].
 ```
 
-8. **Load task-specific context** — check `docs/skills-cheatsheet.md` for skills matching your request's triggers
-
 Do NOT start coding before seeing this brief. If the agent starts working
 without it — something is wrong (see Troubleshooting section).
+
+### Pre‑session check (optional, from terminal)
+
+Before opening OpenCode you can run `make start` from the terminal.
+It shows `git log`, checks `PROGRESS.md` freshness, verifies the
+`.session-ended` guard, and prints a summary — so you have context
+before the agent session begins. This is optional.
 
 ### What if you already wrote a question?
 
@@ -254,6 +259,9 @@ git commit -m "type(scope): description"
 The commit MUST NOT happen without your explicit approval.
 The agent asks: "Ready to commit?"
 
+The pre‑commit hook automatically runs `make dod` before every `git commit` —
+no command needed. If any of the 6 checks fail, the commit is blocked.
+
 ### Definition of Done
 
 After commit, BEFORE push, the agent runs the 6-step DoD checklist:
@@ -264,6 +272,8 @@ After commit, BEFORE push, the agent runs the 6-step DoD checklist:
 5. roadmap.md checked
 6. Safety check (no Russian in files, no forbidden files touched)
 
+Most checks are automated via `make dod` (pre‑commit hook): tests,
+Cyrillic scan, docs matrix. The agent handles the rest manually.
 Only after all steps pass does the agent report "done".
 
 ### Push
@@ -277,7 +287,12 @@ You confirm. The agent pushes.
 After push, the agent runs Session End Protocol:
 1. Check if docs are behind code
 2. Update PROGRESS.md with session summary
-3. Output: what was done, what's next, docs status
+3. Create `.session-ended` guard file
+4. Output: what was done, what's next, docs status
+
+If you exit without `make session-end` (or `end / done / Ende` inside
+OpenCode), the `.session-ended` guard is missing. Next `make start` will
+show a warning.
 
 ### Commit-and-push combined command
 
@@ -293,6 +308,10 @@ This prevents the DoD from being skipped.
 If you exit the session without pushing — no Session End runs.
 The progress update and docs check will happen at the next session start.
 This is intentional: push is the marker of a completed session.
+
+Still, run `make session-end` (or `end / done / Ende`) even without a push —
+it stores the `.session-ended` guard so the next session knows the last one
+closed cleanly.
 
 ---
 

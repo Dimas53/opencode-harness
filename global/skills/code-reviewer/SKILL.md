@@ -4,7 +4,7 @@ Activate after completing any code changes before reporting "done".
 
 ## Trigger
 
-After finishing implementation, before saying "готово", "сделано", "done".
+After finishing implementation, before saying "done", "finished".
 
 ## Checklist
 

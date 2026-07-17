@@ -151,18 +151,20 @@ else
   if [ -z "$CHANGED" ]; then
     check_pass "No changed files to check"
   else
+    # Filter out files that ARE documentation (PROGRESS.md, notes/)
     CODE_CHANGED=0
     DOCS_CHANGED=0
+    FILTERED=$(echo "$CHANGED" | grep -v "^PROGRESS.md$" | grep -v "^notes/" || true)
     for d in $CODE_DIRS; do
-      if echo "$CHANGED" | grep -q "^$d"; then CODE_CHANGED=1; fi
+      if echo "$FILTERED" | grep -q "^$d"; then CODE_CHANGED=1; fi
     done
     for d in $DOCS_DIRS; do
-      if echo "$CHANGED" | grep -q "^$d"; then DOCS_CHANGED=1; fi
+      if echo "$FILTERED" | grep -q "^$d"; then DOCS_CHANGED=1; fi
     done
     if [ "$CODE_CHANGED" = "1" ] && [ "$DOCS_CHANGED" = "0" ]; then
-      check_warn "Code changed but no docs update found"
+      check_fail "Code changed but no docs update found"
       echo "   Changed: $(echo "$CHANGED" | tr '\n' ' ')"
-      echo "   → Update docs/ or instructions/ if this change affects architecture, API, or schema"
+      echo "   → Update docs/ or instructions/ before committing"
     else
       check_pass "Code changes accompanied by docs update (or docs-only change)"
     fi

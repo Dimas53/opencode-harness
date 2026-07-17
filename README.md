@@ -63,6 +63,30 @@ make link
 
 This creates `~/.opencode-harness` pointing to your local clone.
 
+## Daily Workflow
+
+### Automatically (no command needed)
+
+- **`git commit`** — pre-commit hook runs `make dod` (6 checks) automatically.
+  If any check fails, the commit is blocked.
+
+### Trigger words inside OpenCode
+
+| Say this | What happens |
+|----------|-------------|
+| `Start` | Session Start — 7-step init sequence |
+| `end` / `done` / `Ende` | `make session-end` — docs lag check, PROGRESS.md update, `.session-ended` guard |
+| `dod` | `make dod` — 6 checks manually (same as pre-commit) |
+
+### From terminal (optional)
+
+```bash
+make start         # context summary + open opencode
+make session-end   # close session from terminal
+make test-quick    # run 20 bats tests
+make verify        # check harness installation
+```
+
 ## Documentation
 
 - [INSTALL.md](./INSTALL.md) — full installation guide

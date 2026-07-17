@@ -46,6 +46,28 @@
 
 ---
 
+## Harness Make Commands
+
+### Automatic (triggered by git hook)
+
+- **`make dod`** — 6‑check Definition of Done: uncommitted, Cyrillic scan, docs lag, PROGRESS.md, docs matrix, quick tests. Runs automatically via pre‑commit hook on every `git commit`.
+
+### Trigger words inside OpenCode
+
+- **`make session-end`** — run on `end / done / Ende`: checks docs lag, updates PROGRESS.md, creates `.session-ended` guard.
+
+### Manual (from terminal)
+
+- **`make start`** — show git log + PROGRESS.md + .session-ended check, then open OpenCode
+- **`make test-quick`** — run 20 bats tests (all scripts + templates)
+- **`make verify`** — check harness installation (scripts exist, config in place)
+- **`make update`** — pull latest harness + copy global files to `~/.config/opencode/`
+- **`make init PROJECT=/path`** — new project: copy templates + interview via OpenCode
+- **`make init-existing PROJECT=/path`** — existing project: analyze + docs generation
+- **`make analyze PROJECT=/path`** — read‑only audit: architecture + security + risk
+
+---
+
 ## Keyboard Shortcuts
 
 | Key | Action |
