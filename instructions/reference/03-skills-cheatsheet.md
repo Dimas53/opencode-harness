@@ -91,6 +91,11 @@
 |---|---|---|
 | `codebase-health-check` | Assess codebase health, find messy/duplicate code, plan refactoring |
 | `junior-to-senior` | Review and improve code quality — make it better, more maintainable |
+| `context-canary` | Detect context rot/degradation, install canary signal for long sessions |
+| `fuck-slop` | De-slop pass — remove AI writing artifacts, polish text |
+| `interface-kit` | Design accessible, performant UIs with animation and spatial principles |
+| `last-20-percent` | Finish the last 20% — polish, final details, experiential layer |
+| `loop-factory` | Run a spec-driven agent loop with inbox → active → archive workflow |
 | `dispatching-parallel-agents` | 2+ independent tasks — run them in parallel |
 | `executing-plans` | Have a ready plan — execute with checkpoints |
 | `setup-matt-pocock-skills` | First time in a new repo — set up all skills |

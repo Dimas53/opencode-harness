@@ -84,6 +84,8 @@ Last commit: 16ef9d8 — feat: add make start launcher
   - global/AGENTS.md: added "Function max 25 lines. Component max 150 lines." rule to Code Style
   - templates/AGENTS.md: synced all three changes
   - instructions/reference/03-skills-cheatsheet.md: added junior-to-senior and codebase-health-check
+  - Moved 5 more skills to OpenCode config (context-canary, fuck-slop, interface-kit, last-20-percent, loop-factory)
+  - Added all 5 skills to the Auto-Loading trigger table in global/AGENTS.md + templates/AGENTS.md
 - Problems:
   - Russian-language trigger removed from junior-to-senior — rejected by DoD cyrillic check, removed per user confirmation
 - Next:
