@@ -94,6 +94,19 @@ Last commit: 16ef9d8 — feat: add make start launcher
 - Next:
   - v0.4 planning
   - Test: fresh `git clone && make setup` on clean machine
+  - Add .agents/ .claude/ skills-lock.json to .gitignore
+
+### 2026-07-17 (v0.4 — continued)
+
+- Done:
+  - Pushed 3 commits: JuliusBrussee skills install, trigger table, skill repo cleanup
+  - scripts/install.sh: added npx skills add + copy to OpenCode config
+  - scripts/update.sh: added JuliusBrussee skill enrichment
+  - global/skills/: removed 6 downloadable skills (installed via npx)
+- Problems:
+  - `make update` re-runs npx skills add, creates .agents/ + .claude/ + skills-lock.json artifacts in repo — need .gitignore
+- Next:
+  - Clean up .gitignore
 
 ### 2026-07-17 (v0.3 closing)
 
