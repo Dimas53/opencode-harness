@@ -36,6 +36,8 @@ echo ""
 echo "  Opening OpenCode now..."
 echo ""
 
+bash "$(dirname "$0")/install-hooks.sh" "$PROJECT"
+
 cd "$PROJECT" || exit 1
 opencode --prompt "Load ~/.config/opencode/skills/harness-init/agent-new-project.md" || {
   echo "✗ OpenCode failed to start. Check: opencode --version"

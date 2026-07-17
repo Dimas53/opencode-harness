@@ -28,6 +28,8 @@ cp "$HARNESS_PATH/templates/HARNESS.md" "$PROJECT/HARNESS.md"
 echo "  Done."
 echo ""
 
+bash "$(dirname "$0")/install-hooks.sh" "$PROJECT"
+
 cd "$PROJECT" || exit 1
 opencode --prompt "Load ~/.config/opencode/skills/harness-init/agent-init-existing.md" || {
   echo "✗ OpenCode failed to start. Check: opencode --version"

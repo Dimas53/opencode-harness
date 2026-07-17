@@ -1,0 +1,15 @@
+#!/bin/bash
+# .git/hooks/pre-commit
+# Installed by: scripts/install-hooks.sh
+# Blocks commit if DoD checks fail.
+
+HARNESS_PATH="${OPENCODE_HARNESS_PATH:-$HOME/.opencode-harness}"
+DOD_SCRIPT="$HARNESS_PATH/scripts/dod.sh"
+
+if [ ! -f "$DOD_SCRIPT" ]; then
+  echo "⚠ pre-commit: dod.sh not found at $DOD_SCRIPT"
+  echo "  Set OPENCODE_HARNESS_PATH or re-run make setup"
+  exit 0
+fi
+
+PRE_COMMIT=1 bash "$DOD_SCRIPT"

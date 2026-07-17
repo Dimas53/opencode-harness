@@ -21,6 +21,8 @@ When user types exactly:
   echo "✓ AGENTS.md: check output above"
   echo "✓ Skills: check output above"
 
+- `dod` — run `make dod` in current project directory
+
 - `sync-templates` — check for new harness template files missing in current project:
   missing=0
   for f in ~/.opencode-harness/templates/*.md; do
@@ -286,11 +288,28 @@ Look for these files (ANY match = harness project):
 
 ## Technology Standards
 
-- Before implementing any feature with a framework or library — fetch latest docs via context7 MCP
-- For Nuxt projects: always verify the Nuxt major version, follow the corresponding official directory structure
-- For Symfony projects: verify the version and follow Symfony best practices
-- For Ionic projects: verify target platform (iOS/Android/Web) before implementing native features
-- Never assume framework conventions from training data — always resolve via context7 first
+Before implementing any feature with a framework or library — fetch docs via context7 MCP.
+
+**Concrete triggers (do this before writing code, not after):**
+
+| You're about to... | Run first |
+|--------------------|-----------|
+| Use a Nuxt composable or server route | `context7: resolve nuxt` → read relevant section |
+| Touch Directus schema, flows, or API | `context7: resolve directus` |
+| Write Tailwind classes | `context7: resolve tailwindcss` |
+| Use a Vue 3 API | `context7: resolve vue` |
+| Write Symfony controller or service | `context7: resolve symfony` |
+
+**How to call:**
+```
+Read via MCP context7 tool: resolve_library_id("nuxt"), then get_library_docs(...)
+```
+
+- For Nuxt projects: verify major version first, follow the corresponding directory structure
+- For Symfony projects: verify version, follow Symfony best practices
+- For Ionic projects: verify target platform (iOS/Android/Web) before native features
+- **Never assume conventions from training data.** If you catch yourself writing framework code
+  without a context7 call — stop, make the call, then continue.
 
 ---
 
