@@ -57,3 +57,6 @@ dod:
 
 session-end:
 	@./scripts/session-end.sh
+
+start:
+	@bash scripts/start.sh
