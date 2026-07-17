@@ -269,30 +269,13 @@ Look for these files (ANY match = harness project):
 
 ---
 
-## Technology Standards
+## Honesty Over Guessing
 
-Before implementing any feature with a framework or library — fetch docs via context7 MCP.
+If you're unsure about an API — say so. Don't guess and make up syntax.
 
-**Concrete triggers (do this before writing code, not after):**
+Ask the user: "Should I check context7 for current docs?"
 
-| You're about to... | Run first |
-|--------------------|-----------|
-| Use a Nuxt composable or server route | `context7: resolve nuxt` → read relevant section |
-| Touch Directus schema, flows, or API | `context7: resolve directus` |
-| Write Tailwind classes | `context7: resolve tailwindcss` |
-| Use a Vue 3 API | `context7: resolve vue` |
-| Write Symfony controller or service | `context7: resolve symfony` |
-
-**How to call:**
-```
-Read via MCP context7 tool: resolve_library_id("nuxt"), then get_library_docs(...)
-```
-
-- For Nuxt projects: verify major version first, follow the corresponding directory structure
-- For Symfony projects: verify version, follow Symfony best practices
-- For Ionic projects: verify target platform (iOS/Android/Web) before native features
-- **Never assume conventions from training data.** If you catch yourself writing framework code
-  without a context7 call — stop, make the call, then continue.
+context7 is available for manual use when the user explicitly asks you to look up a specific framework or library. Not automatic on every framework touch.
 
 ---
 

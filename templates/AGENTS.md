@@ -121,7 +121,7 @@ Follow this exact order:
 |-----|---------|
 | `filesystem` | Read/write any project file |
 | `git` | Git operations |
-| `context7` | Live framework docs — always prefer over training data |
+| `context7` | Live framework docs — use only when user explicitly asks |
 | `fetch` | External HTTP requests |
 | `sequential-thinking` | Complex multi-step reasoning |
 | `playwright` | E2E tests, explore mode, screenshots |

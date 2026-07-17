@@ -36,7 +36,7 @@ Last commit: 16ef9d8 — feat: add make start launcher
   - ~70% of Harness rules not enforced (documented in audit)
   - pre-commit hook didn't differentiate staged/unstaged on first run — fixed
 - Next:
-  - Enforce context7 usage (zero calls in practice)
+  - Replace context7 auto-trigger with honest manual rule (done 2026-07-17)
   - Add PROGRESS.md check to `make dod`
 
 ### 2026-07-17
@@ -46,10 +46,16 @@ Last commit: 16ef9d8 — feat: add make start launcher
   - global/AGENTS.md: session start reduced 9→7 steps, doc check merged into session-end (66bb8c7)
   - scripts/start.sh — `make start` launcher for full session init (16ef9d8)
   - Makefile: added `start` target
-- Problems: none
+  - Replaced automatic context7 triggers with "Honesty Over Guessing" rule in global/AGENTS.md
+  - Updated templates/AGENTS.md context7 description to manual-only
+  - tests/agents.bats — 14 tests (all scripts exist + bash -n + no TODO)
+  - Makefile: added `test-quick` and `test` targets
+  - `make test-quick` — 20/20 tests pass (6 templates + 14 agents)
+- Problems:
+  - context7 auto-trigger was aspirational and never enforced — replaced with honest approach
 - Next:
-  - Enforce context7 usage (zero calls in practice)
-  - Add PROGRESS.md check to `make dod`
+  - Memory save: upgrade from warning to fail in `make session-end`
+  - Documentation Session shortcut: remove auto-trigger, add manual `docs` shortcut
 
 ## Git Log
 

@@ -58,5 +58,17 @@ dod:
 session-end:
 	@./scripts/session-end.sh
 
+test-quick:
+	@echo "=== Quick Tests ==="
+	@echo "[bash -n] Checking script syntax..."
+	@for s in scripts/*.sh; do bash -n "$$s" || exit 1; done
+	@echo "  ✓ All scripts pass syntax check"
+	@echo "[bats] Running template tests..."
+	@bats tests/templates.bats
+	@echo "[bats] Running agent tests..."
+	@bats tests/agents.bats
+
+test: test-quick
+
 start:
 	@bash scripts/start.sh
