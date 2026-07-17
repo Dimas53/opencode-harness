@@ -33,7 +33,7 @@ else
   if [ -z "$DOCS_DIR" ]; then
     check_warn "No docs/ or instructions/ directory — skipping"
   else
-    DOCS_COMMIT=$(git log --oneline -- "$DOCS_DIR" 2>/dev/null | head -1 | awk '{print $1}')
+    DOCS_COMMIT=$(git log --oneline -1 -- "$DOCS_DIR" 2>/dev/null | awk '{print $1}' || echo "")
     HEAD_COMMIT=$(git rev-parse --short HEAD 2>/dev/null || echo "")
 
     if [ -z "$DOCS_COMMIT" ]; then
