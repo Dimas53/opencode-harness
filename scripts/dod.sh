@@ -83,7 +83,7 @@ else
     check_warn "No docs/ directory — skipping"
   else
     # Last commit touching docs/
-    DOCS_COMMIT=$(git log --oneline -- "$DOCS_DIR" 2>/dev/null | head -1 | awk '{print $1}')
+    DOCS_COMMIT=$(git log --oneline -- "$DOCS_DIR" 2>/dev/null | sed -n '1p' | awk '{print $1}')
     # Current HEAD
     HEAD_COMMIT=$(git rev-parse --short HEAD 2>/dev/null || echo "")
 

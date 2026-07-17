@@ -273,7 +273,7 @@ After commit, BEFORE push, the agent runs the 6-step DoD checklist:
 6. Safety check (no Russian in files, no forbidden files touched)
 
 Most checks are automated via `make dod` (pre‑commit hook): tests,
-Cyrillic scan, docs matrix. The agent handles the rest manually.
+Cyrillic scan, docs matrix (SIGPIPE-safe, uses `sed` instead of `head`). The agent handles the rest manually.
 Only after all steps pass does the agent report "done".
 
 ### Push
