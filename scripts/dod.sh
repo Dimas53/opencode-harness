@@ -21,7 +21,12 @@ echo "[ 1/3 ] Uncommitted changes"
 if ! git rev-parse --is-inside-work-tree &>/dev/null; then
   check_warn "Not inside a git repo — skipping git checks"
 else
-  UNCOMMITTED=$(git status --porcelain 2>/dev/null | grep -v "^??" || true)
+  if [ "${PRE_COMMIT:-0}" = "1" ]; then
+    # In pre-commit hook: staged changes are the commit itself — only check unstaged
+    UNCOMMITTED=$(git diff --stat 2>/dev/null || true)
+  else
+    UNCOMMITTED=$(git status --porcelain 2>/dev/null | grep -v "^??" || true)
+  fi
   if [ -z "$UNCOMMITTED" ]; then
     check_pass "No uncommitted changes"
   else
@@ -49,7 +54,7 @@ if git rev-parse --is-inside-work-tree &>/dev/null; then
 
   if [ -n "$FILES" ]; then
     # Exclude notes/ (Russian allowed), global/ (harness templates), this script itself, binary extensions
-    SCAN_FILES=$(echo "$FILES" | grep -v "^notes/" | grep -v "^global/" | grep -v "^scripts/dod.sh" | grep -vE "\.(png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|pdf|zip|tar|gz)$" || true)
+    SCAN_FILES=$(echo "$FILES" | grep -v "^notes/" | grep -v "^global/" | grep -v "^scripts/dod.sh" | grep -v "^scripts/session-end.sh" | grep -vE "\.(png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|pdf|zip|tar|gz)$" || true)
 
     if [ -n "$SCAN_FILES" ]; then
       CYRILLIC_HITS=$(echo "$SCAN_FILES" | xargs grep -rl '[А-Яа-яЁё]' 2>/dev/null || true)

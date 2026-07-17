@@ -54,3 +54,6 @@ update:
 
 dod:
 	@./scripts/dod.sh
+
+session-end:
+	@./scripts/session-end.sh
