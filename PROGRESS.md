@@ -74,6 +74,21 @@ Last commit: 16ef9d8 — feat: add make start launcher
 - Next:
   - v0.4 planning — decide scope
 
+### 2026-07-17 (v0.3 → v0.4 startup)
+
+- Done:
+  - Installed 8 skills from JuliusBrussee/skills (caveman, context-canary, fuck-slop, grill-me, interface-kit, junior-to-senior, last-20-percent, loop-factory)
+  - Added junior-to-senior skill to global/skills/ and deployed via make update
+  - global/AGENTS.md: updated codebase-health-check triggers (added "assess", removed "DRY, duplication, assess codebase")
+  - global/AGENTS.md: added junior-to-senior skill entry with triggers "review, improve quality, make it better"
+  - global/AGENTS.md: added "Function max 25 lines. Component max 150 lines." rule to Code Style
+  - templates/AGENTS.md: synced all three changes
+  - instructions/reference/03-skills-cheatsheet.md: added junior-to-senior and codebase-health-check
+- Problems:
+  - Russian-language trigger removed from junior-to-senior — rejected by DoD cyrillic check, removed per user confirmation
+- Next:
+  - v0.4 planning
+
 ### 2026-07-17 (v0.3 closing)
 
 - Done:

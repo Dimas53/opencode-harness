@@ -252,6 +252,7 @@ Look for these files (ANY match = harness project):
 - Python: PEP8 + type hints. PHP/Symfony: PSR-12
 - Vue/Nuxt: `<script setup>`, composables, Pinia
 - Always follow the conventions already established in the project
+- Function max 25 lines. Component max 150 lines. If exceeded — refactor before committing.
 
 ---
 
@@ -356,7 +357,8 @@ Always load SKILL.md via filesystem path: `Read ~/.config/opencode/skills/<domai
 | Domain | Triggers | Path |
 |--------|----------|------|
 | Security/Auth | auth, login, token, cookie, permissions, API route, server route, `.env`, secrets, nginx, Docker, CORS, CSP, deploy, release, collection, field | security/SKILL.md |
-| Codebase Health | refactor, clean up, DRY, duplication, code health, assess codebase, messy | codebase-health-check/SKILL.md |
+| Codebase Health | refactor, clean up, code health, messy, assess | codebase-health-check/SKILL.md |
+| Junior-to-Senior | review, improve quality, make it better | junior-to-senior/SKILL.md |
 | Planning | plan, break down, where to start, unclear scope, large task | planning-and-task-breakdown/SKILL.md |
 | Specification | spec, requirements, what should this do, new feature no clear scope | spec-driven-development/SKILL.md |
 | Implementation | add, implement, create, build a component/page/endpoint, new feature | incremental-implementation/SKILL.md |

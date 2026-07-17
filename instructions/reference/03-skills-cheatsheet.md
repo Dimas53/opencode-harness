@@ -88,7 +88,9 @@
 ## Rare but useful
 
 | Skill | When to tell the agent |
-|---|---|
+|---|---|---|
+| `codebase-health-check` | Assess codebase health, find messy/duplicate code, plan refactoring |
+| `junior-to-senior` | Review and improve code quality — make it better, more maintainable |
 | `dispatching-parallel-agents` | 2+ independent tasks — run them in parallel |
 | `executing-plans` | Have a ready plan — execute with checkpoints |
 | `setup-matt-pocock-skills` | First time in a new repo — set up all skills |
