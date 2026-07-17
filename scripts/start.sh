@@ -24,5 +24,27 @@ if [ -f "PROGRESS.md" ]; then
   echo ""
 fi
 
+# ── Session end guard ─────────────────────────────────────────────────────────
+SESSION_FILE=".session-ended"
+if [ -f "$SESSION_FILE" ]; then
+  SAVED_DATE=$(cat "$SESSION_FILE" | head -1)
+  TODAY=$(date +%Y-%m-%d)
+
+  if [ "$SAVED_DATE" != "$TODAY" ] && [ "$SAVED_DATE" != "$(date -v-1d +%Y-%m-%d 2>/dev/null)" ]; then
+    echo "⚠ Previous session not closed properly ($SAVED_DATE)."
+    echo "  Run: make session-end"
+    echo ""
+  elif [ "$SAVED_DATE" != "$TODAY" ]; then
+    echo "⚠ Previous session closed yesterday ($SAVED_DATE). Still recommended:"
+    echo "  Run: make session-end — check for warnings"
+    echo ""
+  fi
+  rm -f "$SESSION_FILE"
+else
+  echo "⚠ Previous session was not closed properly (no .session-ended)."
+  echo "  Run: make session-end first"
+  echo ""
+fi
+
 echo "Opening OpenCode..."
 opencode

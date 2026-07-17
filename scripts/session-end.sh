@@ -126,3 +126,7 @@ if [ $WARN -gt 0 ]; then
 else
   echo "Session clean. Push to remote? Run: git push"
 fi
+
+# ── Mark session as closed ────────────────────────────────────────────────────
+date +%Y-%m-%d > .session-ended
+echo "✓ Session closed: $(cat .session-ended)"

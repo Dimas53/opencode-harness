@@ -42,3 +42,6 @@ notes/
 # Docker data
 docker/db_data/
 postgres_data/
+
+# Session guard
+.session-ended
