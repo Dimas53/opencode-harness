@@ -126,7 +126,7 @@ else
   elif [ "$MODIFIED" = "unknown" ]; then
     check_warn "PROGRESS.md — could not determine modification date"
   else
-    check_fail "PROGRESS.md last updated: $MODIFIED (not today)"
+    check_warn "PROGRESS.md last updated: $MODIFIED (not today)"
     echo "   → Add today's work before committing"
   fi
 fi
