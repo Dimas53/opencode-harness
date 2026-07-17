@@ -1,5 +1,7 @@
 # Skills Cheatsheet
 
+**Source:** Harness skills = repo (`global/skills/`). JuliusBrussee skills = installed via `npx skills add JuliusBrussee/skills -y` during `make setup`.
+
 ## Core — always in use
 
 | Skill | When to tell the agent |

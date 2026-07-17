@@ -86,10 +86,14 @@ Last commit: 16ef9d8 — feat: add make start launcher
   - instructions/reference/03-skills-cheatsheet.md: added junior-to-senior and codebase-health-check
   - Moved 5 more skills to OpenCode config (context-canary, fuck-slop, interface-kit, last-20-percent, loop-factory)
   - Added all 5 skills to the Auto-Loading trigger table in global/AGENTS.md + templates/AGENTS.md
+  - Removed 6 downloadable skills from global/skills/ (not in repo — installed via npx skills add JuliusBrussee/skills -y)
+  - Updated scripts/install.sh: added npx skills add JuliusBrussee/skills -y + copy .agents/skills/ to OpenCode config
+  - Updated scripts/update.sh: added JuliusBrussee skill enrichment on make update
 - Problems:
   - Russian-language trigger removed from junior-to-senior — rejected by DoD cyrillic check, removed per user confirmation
 - Next:
   - v0.4 planning
+  - Test: fresh `git clone && make setup` on clean machine
 
 ### 2026-07-17 (v0.3 closing)
 

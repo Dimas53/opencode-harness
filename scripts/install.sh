@@ -61,8 +61,12 @@ if [ "$SKILL_COUNT" -lt 10 ]; then
   echo "  Try manually: opencode plugin add superpowers@git+https://github.com/obra/superpowers.git"
   echo "  Or check: https://github.com/obra/superpowers"
 else
-  echo "✓ Skills installed: $SKILL_COUNT"
+  echo "✓ Superpowers installed: $SKILL_COUNT"
 fi
+
+# Install JuliusBrussee skills (context-canary, fuck-slop, interface-kit, junior-to-senior, last-20-percent, loop-factory)
+npx skills add JuliusBrussee/skills -y
+echo "✓ JuliusBrussee skills installed"
 
 mkdir -p ~/.config/opencode/skills
 
@@ -75,6 +79,12 @@ else
 fi
 echo "✏️  Edit ~/.config/opencode/opencode.jsonc — replace /YOUR/HOME/PATH and YOUR_DIRECTUS_TOKEN"
 cp -r global/skills/* ~/.config/opencode/skills/
+
+# Copy JuliusBrussee skills from .agents/skills/ to OpenCode config
+if [ -d .agents/skills ]; then
+  cp -r .agents/skills/* ~/.config/opencode/skills/
+  echo "✓ JuliusBrussee skills copied to OpenCode config"
+fi
 
 ln -sf "$(pwd)" ~/.opencode-harness
 echo "✓ Symlink created: ~/.opencode-harness → $(pwd)"

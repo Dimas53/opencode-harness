@@ -61,5 +61,18 @@ for skill_dir in global/skills/*/; do
   fi
 done
 
+# Install/enrich JuliusBrussee skills
+npx skills add JuliusBrussee/skills -y 2>/dev/null || echo "→ JuliusBrussee skills: already installed or skipped"
+if [ -d .agents/skills ]; then
+  for skill_dir in .agents/skills/*/; do
+    skill_name=$(basename "$skill_dir")
+    target="$HOME/.config/opencode/skills/$skill_name"
+    if [ ! -d "$target" ]; then
+      cp -r "$skill_dir" "$target"
+      echo "✓ New skill added (JuliusBrussee): $skill_name"
+    fi
+  done
+fi
+
 echo ""
 echo "✓ Update complete. Run 'make verify' to check installation."
