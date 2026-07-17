@@ -5,9 +5,11 @@
 set -euo pipefail
 
 PASS=0
+FAIL=0
 WARN=0
 
 check_pass() { echo "✓ $1"; PASS=$((PASS + 1)); }
+check_fail() { echo "✗ $1"; FAIL=$((FAIL + 1)); }
 check_warn() { echo "⚠ $1"; WARN=$((WARN + 1)); }
 
 TODAY=$(date +%Y-%m-%d)
@@ -81,13 +83,24 @@ echo "[ 3/3 ] Memory log check"
 
 MEMORY_FILE="memory/$TODAY.md"
 
-if [ ! -d "memory" ]; then
-  check_warn "memory/ directory not found"
-  echo "   → Run: mkdir memory"
-elif [ ! -f "$MEMORY_FILE" ]; then
-  check_warn "No memory log for today: $MEMORY_FILE"
-  echo "   → If you found workarounds or errors this session — write them now"
-  echo "   → File: $MEMORY_FILE"
+  SESSION_CHANGES=$(git diff HEAD~1 --name-only 2>/dev/null || true)
+
+  if [ ! -d "memory" ]; then
+    if [ -n "$SESSION_CHANGES" ]; then
+      check_fail "memory/ not found and session has changes — workarounds may be lost"
+      echo "   → Run: mkdir memory && touch $MEMORY_FILE"
+    else
+      check_warn "memory/ directory not found"
+      echo "   → Run: mkdir memory"
+    fi
+  elif [ ! -f "$MEMORY_FILE" ]; then
+    if [ -n "$SESSION_CHANGES" ]; then
+      check_fail "No memory log for today and session has changes — workarounds may be lost"
+      echo "   → Run: touch $MEMORY_FILE && write session notes"
+    else
+      check_warn "No memory log for today: $MEMORY_FILE"
+      echo "   → If you found workarounds or errors this session — write them now"
+    fi
 else
   LINES=$(wc -l < "$MEMORY_FILE" | tr -d ' ')
   if [ "$LINES" -lt 3 ]; then
@@ -117,10 +130,13 @@ fi
 echo ""
 
 # ── Summary ──────────────────────────────────────────────────────────────────
-echo "Results: $PASS passed, $WARN warnings"
+echo "Results: $PASS passed, $FAIL failed, $WARN warnings"
 echo ""
 
-if [ $WARN -gt 0 ]; then
+if [ $FAIL -gt 0 ]; then
+  echo "✗ Session has issues — fix fails before closing."
+  exit 1
+elif [ $WARN -gt 0 ]; then
   echo "Address warnings above, then push when ready."
   echo "Push to remote? Run: git push"
 else

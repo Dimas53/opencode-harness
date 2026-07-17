@@ -67,9 +67,11 @@ Last commit: 16ef9d8 — feat: add make start launcher
   - session-end.sh: creates .session-ended on close
   - start.sh: checks .session-ended on open, warns if missing or >1 day old
   - notes/AGENTS.reality-check.md: full update — all v0.3 fixes marked, compared vs audit/overview/workflow
+  - session-end.sh: memory check upgraded from warning to fail if session has git changes
+  - global/AGENTS.md: Documentation Session auto-trigger removed, `docs` shortcut added
 - Problems: none
 - Next:
-  - Memory save: upgrade from warning to fail in `make session-end`
+  - v0.4 planning — decide scope
 
 ## Git Log
 

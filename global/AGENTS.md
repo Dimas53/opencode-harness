@@ -22,6 +22,7 @@ When user types exactly:
   echo "✓ Skills: check output above"
 
 - `dod` — run `make dod` in current project directory
+- `docs` — run `make session-end` and remind to update docs if code changed
 
 - `sync-templates` — check for new harness template files missing in current project:
   missing=0
@@ -340,29 +341,11 @@ If a task requires reading a restricted file — stop and ask the user first, ex
 
 ## Documentation Session
 
-### When to trigger
-Auto-run when a phase or major feature completes — do NOT ask, just execute.
+Use `docs` shortcut (see Harness Shortcuts above) when user asks to update docs. No auto-trigger.
 
-Also check silently after every response:
-```bash
-git log --oneline -- docs/ | head -1
-git log --oneline | head -1
-```
-If docs commit >5 behind HEAD OR >1 week old → run documentation session after current task. Do not ask for permission — run it.
+If `make dod` step 6 warns about code changes without docs — update relevant files before closing.
 
-**Exception:** if user explicitly says "no docs update" during a phase, respect that once. Next trigger must fire again.
-
-### Script (run in order, no logic changes)
-1. **CONTEXT.md** — add new domain terms, append only, do NOT delete existing
-2. **docs/architecture/** — update or create file for changed/new feature
-3. **docs/specs/** — if new feature built without spec → create `docs/specs/feature-name.md`
-4. **JSDoc** — only files created or significantly changed since last docs session
-5. **PROGRESS.md** — add line: `Docs updated: [files]`
-6. **Commit:** `docs: update CONTEXT, architecture, JSDoc after [feature/phase name]`
-
-**Rules:** No logic changes. No re-documenting unchanged files. No mixing with feature work. Append only, never delete existing sections.
-
-→ Full session reference: `load skills/documentation/SKILL.md`
+→ Full session reference: `load skills/documentation/SKILL.md``
 
 ---
 
