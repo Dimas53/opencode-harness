@@ -16,7 +16,7 @@ echo "=== DoD Check ==="
 echo ""
 
 # ── Step 1: Uncommitted changes ──────────────────────────────────────────────
-echo "[ 1/5 ] Uncommitted changes"
+echo "[ 1/6 ] Uncommitted changes"
 
 if ! git rev-parse --is-inside-work-tree &>/dev/null; then
   check_warn "Not inside a git repo — skipping git checks"
@@ -39,7 +39,7 @@ fi
 echo ""
 
 # ── Step 2: Cyrillic scan ────────────────────────────────────────────────────
-echo "[ 2/5 ] Cyrillic scan (project files)"
+echo "[ 2/6 ] Cyrillic scan (project files)"
 
 # What to scan: tracked files only, excluding notes/ and binary files
 CYRILLIC_HITS=""
@@ -73,7 +73,7 @@ fi
 echo ""
 
 # ── Step 3: Docs lag ─────────────────────────────────────────────────────────
-echo "[ 3/5 ] Docs lag check"
+echo "[ 3/6 ] Docs lag check"
 
 if ! git rev-parse --is-inside-work-tree &>/dev/null; then
   check_warn "Not inside a git repo — skipping docs lag check"
@@ -107,7 +107,7 @@ fi
 echo ""
 
 # ── Step 4: PROGRESS.md ──────────────────────────────────────────────────────
-echo "[ 4/5 ] PROGRESS.md check"
+echo "[ 4/6 ] PROGRESS.md check"
 
 TODAY=$(date +%Y-%m-%d)
 
@@ -133,8 +133,46 @@ fi
 
 echo ""
 
-# ── Step 5: Quick tests ──────────────────────────────────────────────────────
-echo "[ 5/5 ] Quick tests"
+# ── Step 5: Docs matrix check ────────────────────────────────────────────────
+echo "[ 5/6 ] Docs matrix check"
+
+CODE_DIRS="scripts/ hooks/ tests/ global/ templates/ Makefile"
+DOCS_DIRS="docs/ instructions/"
+
+if ! git rev-parse --is-inside-work-tree &>/dev/null; then
+  check_warn "Not inside a git repo — skipping"
+else
+  if [ "${PRE_COMMIT:-0}" = "1" ]; then
+    CHANGED=$(git diff --cached --name-only --diff-filter=ACMR 2>/dev/null || true)
+  else
+    CHANGED=$(git diff HEAD~1 --name-only --diff-filter=ACMR 2>/dev/null || true)
+  fi
+
+  if [ -z "$CHANGED" ]; then
+    check_pass "No changed files to check"
+  else
+    CODE_CHANGED=0
+    DOCS_CHANGED=0
+    for d in $CODE_DIRS; do
+      if echo "$CHANGED" | grep -q "^$d"; then CODE_CHANGED=1; fi
+    done
+    for d in $DOCS_DIRS; do
+      if echo "$CHANGED" | grep -q "^$d"; then DOCS_CHANGED=1; fi
+    done
+    if [ "$CODE_CHANGED" = "1" ] && [ "$DOCS_CHANGED" = "0" ]; then
+      check_warn "Code changed but no docs update found"
+      echo "   Changed: $(echo "$CHANGED" | tr '\n' ' ')"
+      echo "   → Update docs/ or instructions/ if this change affects architecture, API, or schema"
+    else
+      check_pass "Code changes accompanied by docs update (or docs-only change)"
+    fi
+  fi
+fi
+
+echo ""
+
+# ── Step 6: Quick tests ──────────────────────────────────────────────────────
+echo "[ 6/6 ] Quick tests"
 
 if command -v bats &>/dev/null && [ -f "Makefile" ]; then
   TEST_OUTPUT=$(make test-quick 2>&1) && TEST_OK=1 || TEST_OK=0

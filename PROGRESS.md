@@ -57,6 +57,20 @@ Last commit: 16ef9d8 — feat: add make start launcher
   - Memory save: upgrade from warning to fail in `make session-end`
   - Documentation Session shortcut: remove auto-trigger, add manual `docs` shortcut
 
+### 2026-07-17 (late)
+
+- Done:
+  - .session-ended guard: session-end.sh creates it, start.sh warns if missing/stale
+  - .gitignore: added .session-ended
+  - dod.sh step 5: docs matrix check — warns if code changed but no docs updated
+  - dod.sh: renumbered 1-5 → 1-6
+  - session-end.sh: creates .session-ended on close
+  - start.sh: checks .session-ended on open, warns if missing or >1 day old
+- Problems: none
+- Next:
+  - Memory save: upgrade from warning to fail in `make session-end`
+  - Documentation Session shortcut: remove auto-trigger, add manual `docs` shortcut
+
 ## Git Log
 
 - `16ef9d8` — feat: add make start launcher
