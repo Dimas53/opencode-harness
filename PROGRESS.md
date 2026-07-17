@@ -3,7 +3,7 @@
 ## Current Status
 
 Phase: v0.3 — Infrastructure stabilization
-Last commit: e68336b — docs: translate "What's Not Here" section to English
+Last commit: 16ef9d8 — feat: add make start launcher
 
 ## Known Issues
 
@@ -36,13 +36,30 @@ Last commit: e68336b — docs: translate "What's Not Here" section to English
   - ~70% of Harness rules not enforced (documented in audit)
   - pre-commit hook didn't differentiate staged/unstaged on first run — fixed
 - Next:
-  - Build `make session-start` target
+  - Enforce context7 usage (zero calls in practice)
+  - Add PROGRESS.md check to `make dod`
+
+### 2026-07-17
+
+- Done:
+  - PROGRESS.md: stale no longer blocks, changed to warn only (8998a6d)
+  - global/AGENTS.md: session start reduced 9→7 steps, doc check merged into session-end (66bb8c7)
+  - scripts/start.sh — `make start` launcher for full session init (16ef9d8)
+  - Makefile: added `start` target
+- Problems: none
+- Next:
+  - Enforce context7 usage (zero calls in practice)
   - Add PROGRESS.md check to `make dod`
 
 ## Git Log
 
-- `f3e424c` — feat: add project-level AGENTS.md, clean up architecture diagrams
+- `16ef9d8` — feat: add make start launcher
+- `66bb8c7` — refactor: session start 9→7 steps, merge doc check into session-end
+- `8998a6d` — fix: PROGRESS.md stale → warn not fail
+- `80eb51b` — docs: add PROGRESS.md with v0.3 state, dod step 4 validates it
+- `174e8c6` — fix: session-end.sh SIGPIPE on docs lag check
 - `f152663` — feat: add make session-end script
-- `d09012f` — feat: add make dod, pre-commit hook, fix Makefile
+- `e68336b` — docs: translate "What's Not Here" section to English
+- `f3e424c` — feat: add project-level AGENTS.md, clean up architecture diagrams
 - `f4d16d4` — fix: exclude dod.sh itself from cyrillic scan
-- `42d8a8c` — docs: add 6 new skills to cheatsheets and sync AGENTS.md
+- `d09012f` — feat: add make dod, pre-commit hook, fix Makefile
