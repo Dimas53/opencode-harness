@@ -16,7 +16,7 @@ echo "=== DoD Check ==="
 echo ""
 
 # ── Step 1: Uncommitted changes ──────────────────────────────────────────────
-echo "[ 1/3 ] Uncommitted changes"
+echo "[ 1/4 ] Uncommitted changes"
 
 if ! git rev-parse --is-inside-work-tree &>/dev/null; then
   check_warn "Not inside a git repo — skipping git checks"
@@ -39,7 +39,7 @@ fi
 echo ""
 
 # ── Step 2: Cyrillic scan ────────────────────────────────────────────────────
-echo "[ 2/3 ] Cyrillic scan (project files)"
+echo "[ 2/4 ] Cyrillic scan (project files)"
 
 # What to scan: tracked files only, excluding notes/ and binary files
 CYRILLIC_HITS=""
@@ -73,7 +73,7 @@ fi
 echo ""
 
 # ── Step 3: Docs lag ─────────────────────────────────────────────────────────
-echo "[ 3/3 ] Docs lag check"
+echo "[ 3/4 ] Docs lag check"
 
 if ! git rev-parse --is-inside-work-tree &>/dev/null; then
   check_warn "Not inside a git repo — skipping docs lag check"
@@ -101,6 +101,33 @@ else
         check_pass "Docs lag: ${LAG} commit(s) — acceptable"
       fi
     fi
+  fi
+fi
+
+echo ""
+
+# ── Step 4: PROGRESS.md ──────────────────────────────────────────────────────
+echo "[ 4/4 ] PROGRESS.md check"
+
+TODAY=$(date +%Y-%m-%d)
+
+if [ ! -f "PROGRESS.md" ]; then
+  check_fail "PROGRESS.md not found"
+  echo "   → Create it first: cp templates/PROGRESS.md PROGRESS.md"
+else
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    MODIFIED=$(stat -f "%Sm" -t "%Y-%m-%d" PROGRESS.md 2>/dev/null || echo "unknown")
+  else
+    MODIFIED=$(stat -c "%y" PROGRESS.md 2>/dev/null | cut -d' ' -f1 || echo "unknown")
+  fi
+
+  if [ "$MODIFIED" = "$TODAY" ]; then
+    check_pass "PROGRESS.md updated today"
+  elif [ "$MODIFIED" = "unknown" ]; then
+    check_warn "PROGRESS.md — could not determine modification date"
+  else
+    check_fail "PROGRESS.md last updated: $MODIFIED (not today)"
+    echo "   → Add today's work before committing"
   fi
 fi
 
