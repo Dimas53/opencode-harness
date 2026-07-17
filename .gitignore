@@ -36,6 +36,11 @@ global/opencode-config.jsonc
 # Local notes (Russian allowed, not versioned)
 notes/
 
+# npx skills add artifacts (local skill copies + lockfile)
+.agents/
+.claude/
+skills-lock.json
+
 # Playwright
 .playwright-mcp/
 
