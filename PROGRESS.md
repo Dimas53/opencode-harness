@@ -74,8 +74,27 @@ Last commit: 16ef9d8 — feat: add make start launcher
 - Next:
   - v0.4 planning — decide scope
 
+### 2026-07-17 (v0.3 closing)
+
+- Done:
+  - dod.sh step 5: check_warn → check_fail — docs matrix now blocks commit
+  - dod.sh step 5: exclude PROGRESS.md + notes/ from code check, add instructions/ as valid docs dir
+  - dod.sh: replace head -1 with sed -n '1p' — eliminate SIGPIPE 141
+  - global/AGENTS.md: removed Russian trigger words from Session End + DoD
+  - global/AGENTS.md: added German session-end triggers (Ende, Schluss, fertig, tschüss, bis dann)
+  - templates/AGENTS.md: synced from global
+  - global/skills/session-end/SKILL.md, code-reviewer/SKILL.md: removed Russian
+  - GUIDE.md, README.md, 02-opencode-commands.md: updated session lifecycle docs
+  - ~/.config/opencode/AGENTS.md: auto-synced via make update
+- Problems: none
+- Next:
+  - v0.4 — plan and execute
+
 ## Git Log
 
+- `f158e7b` — fix: replace head -1 with sed -n '1p' in dod.sh to avoid SIGPIPE
+- `c1b8b3d` — fix: remove Russian trigger words from AGENTS.md, update docs
+- `d9f5b12` — fix: dod.sh step 5 check_warn → check_fail, exclude PROGRESS.md + notes/
 - `16ef9d8` — feat: add make start launcher
 - `66bb8c7` — refactor: session start 9→7 steps, merge doc check into session-end
 - `8998a6d` — fix: PROGRESS.md stale → warn not fail
