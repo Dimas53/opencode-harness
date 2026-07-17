@@ -66,10 +66,10 @@ Last commit: 16ef9d8 — feat: add make start launcher
   - dod.sh: renumbered 1-5 → 1-6
   - session-end.sh: creates .session-ended on close
   - start.sh: checks .session-ended on open, warns if missing or >1 day old
+  - notes/AGENTS.reality-check.md: full update — all v0.3 fixes marked, compared vs audit/overview/workflow
 - Problems: none
 - Next:
   - Memory save: upgrade from warning to fail in `make session-end`
-  - Documentation Session shortcut: remove auto-trigger, add manual `docs` shortcut
 
 ## Git Log
 
