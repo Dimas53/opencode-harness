@@ -107,25 +107,25 @@ If it fails — don't commit.
 
 ---
 
-## Чего здесь нет
+## What's Not Here
 
-Намеренно исключено из этого файла (правила существуют в глобальном AGENTS.md,
-но не применимы к Harness):
+Intentionally excluded from this file (rules exist in global AGENTS.md
+but don't apply to Harness):
 
-| Исключено | Почему |
-|-----------|--------|
-| Nuxt/Vue/Vite правила | В проекте нет .vue файлов |
-| Directus коллекции/схемы | Нет Directus инстанса |
-| Tailwind/CSS правила | Нет фронтенда |
-| API endpoint правила | Нет API |
-| TDD для Vitest/Playwright | Нет тестового раннера (будет BATS) |
-| JSDoc на компонентах | Нет компонентов |
-| Работа в Docker | Нет Docker Compose |
-| Работа с БД/миграции | Нет БД |
-| Prisma/Symfony/Laravel | Нет этих фреймворков |
-| Браузерное тестирование | Нет UI для тестов |
-| TypeScript strict mode | Нет TS (есть bash + Markdown) |
-| Conventional commits | Нет релизного цикла |
-| Проверка Nuxt/Directus версий | Нет зависимостей |
+| Excluded | Reason |
+|----------|--------|
+| Nuxt/Vue/Vite rules | No .vue files in this project |
+| Directus collections/schema | No Directus instance |
+| Tailwind/CSS rules | No frontend |
+| API endpoint rules | No API |
+| TDD for Vitest/Playwright | No test runner yet (will be BATS) |
+| JSDoc on components | No components |
+| Docker workflow | No Docker Compose |
+| Database / migrations | No database |
+| Prisma/Symfony/Laravel | None of these frameworks |
+| Browser testing | No UI to test |
+| TypeScript strict mode | No TS (bash + Markdown only) |
+| Conventional commits | No release cycle |
+| Nuxt/Directus version checks | No dependencies |
 
-Если какой-то из этих пунктов появится в Harness — перенести сюда из глобального.
+If any of these ever appear in Harness — move the rule here from global.
