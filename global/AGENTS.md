@@ -35,6 +35,25 @@ When user types exactly:
     fi
   done
   [ ! -d "$(pwd)/memory" ] && echo "  + memory/ — directory not in project" && missing=1
+  # .gitignore — merge, never overwrite (keep project's existing entries)
+  gt="~/.opencode-harness/templates/.gitignore"
+  if [ ! -f "$(pwd)/.gitignore" ]; then
+    echo "  + .gitignore — not in project"
+    missing=1
+  else
+    gt_missing=0
+    while IFS= read -r line; do
+      [ -z "$line" ] && continue
+      grep -qxF "$line" "$(pwd)/.gitignore" || gt_missing=1
+    done < "$gt"
+    if [ "$gt_missing" = "1" ]; then
+      echo "  ~ .gitignore — missing entries (merge manually):"
+      while IFS= read -r line; do
+        [ -z "$line" ] && continue
+        grep -qxF "$line" "$(pwd)/.gitignore" || echo "    + $line"
+      done < "$gt"
+    fi
+  fi
   if [ "$missing" = "1" ]; then
     printf "Copy missing files to project? (y/n): "
     read -r answer
@@ -45,10 +64,18 @@ When user types exactly:
         [ ! -f "$(pwd)/$fname" ] && cp "$f" "$(pwd)/$fname" && echo "✓ Copied $fname"
       done
       [ ! -d "$(pwd)/memory" ] && mkdir -p "$(pwd)/memory" && echo "✓ Created memory/"
+      if [ ! -f "$(pwd)/.gitignore" ]; then
+        cp ~/.opencode-harness/templates/.gitignore "$(pwd)/.gitignore" && echo "✓ Copied .gitignore"
+      fi
     fi
   else
     echo "✓ Nothing to add — project is up to date"
   fi
+
+- `switch-directus` — repoint the global Directus MCP config to this
+  project's Directus URL. Reads DIRECTUS_URL from `.env`; asks for explicit
+  confirmation before writing outside the project. Usage: `switch-directus`
+  (uses .env) or `switch-directus <url>` (explicit URL).
 
 **Fallback** (if shortcuts don't work):
 ```bash
@@ -119,11 +146,28 @@ Execute these steps in order BEFORE any response to the user:
 
 1. `pwd && git log --oneline -10`
 2. Load `using-agent-skills` — try filesystem path first: `Read ~/.config/opencode/skills/using-agent-skills/SKILL.md`. If not found (built-in skill), load via `skill("using-agent-skills")` instead. Also check project `docs/skills-cheatsheet.md` for relevant skills matching current task triggers.
-3. Read `PROGRESS.md` in project root — compare git log with progress status. If out of sync, update PROGRESS.md FIRST. If file doesn't exist — skip.
-4. Read `docs/roadmap.md`
+ 3. Read `PROGRESS.md` in project root — compare git log with progress status. If out of sync, update PROGRESS.md FIRST. If file doesn't exist — skip.
+    After reading PROGRESS.md, look for a line starting with `Session language:`.
+    - If present — continue the ENTIRE session in that language WITHOUT asking.
+    - If absent — ask the user for their language explicitly before proceeding.
+ 4. Read `docs/roadmap.md`
 5. Read `MEMORY.md` and `memory/YYYY-MM-DD.md` if they exist (for today or yesterday)
-6. Read `HARNESS.md` if it exists — apply project constraints and risk levels to session behavior
-7. Report:
+ 6. Read `HARNESS.md` if it exists — apply project constraints and risk levels to session behavior
+ 7. If the project uses the Directus MCP server (`.env` has DIRECTUS_URL, or
+    HARNESS.md declares a Directus instance):
+    - Read the MCP config file (`~/.config/opencode/opencode.jsonc`, then
+      project `opencode.jsonc` if present) and extract the `directus` server's
+      URL (from `mcpServers.directus.env.DIRECTUS_URL` or its args). This is a
+      READ only — never modify the config here.
+    - Compare it with the project's expected URL (`.env` DIRECTUS_URL).
+    - If they differ — STOP and report clearly, do NOT continue Session Start:
+      "⚠️ Стоп. MCP Directus подключён к другому инстансу (<mcp-url>), а этот
+      проект использует <expected-url>. Работа с Directus невозможна. Напиши
+      switch-directus чтобы переключить (возьмёт URL из .env и спросит
+      подтверждение)."
+    - Wait for the user to resolve it. Do not proceed until MCP points at the
+      expected instance.
+ 8. Report:
    ```
    Session initialized. Phase: [from roadmap]. Last commit: [hash — msg].
    Progress: [from progress.md]. Skills loaded: [list].
@@ -222,9 +266,16 @@ Russian is strictly prohibited in:
 - documentation, commit messages, pull requests
 - TODOs, FIXMEs, UI text, logs, tests, config files, generated code
 
-**Exception:** `notes/` folder — Russian is allowed there.
+ **Exception:** `notes/` folder — Russian is allowed there.
 
-Before starting work in any repository:
+ **Exception override — `memory/` is English ONLY:**
+ - Entries in `memory/YYYY-MM-DD.md` are ALWAYS written in English,
+   regardless of the session language (even if Q0 / Session language is ru).
+ - No Cyrillic quotes or snippets, even inside workaround descriptions.
+ - Rationale: memory files are cross-session agent knowledge; they must be
+   machine-scannable and language-stable.
+
+ Before starting work in any repository:
 1. Perform a one-time full-project scan for Cyrillic characters
 2. Report detected Russian text and replace it with English whenever the affected file is touched
 3. Before every commit: scan all modified files, replace any Cyrillic found

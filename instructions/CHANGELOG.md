@@ -39,3 +39,39 @@ The `new` shortcut previously generated only 6 documentation files and missed
 `HARNESS.md`, `MEMORY.md`, `PLAN.md`, `PROGRESS.md` and `memory/` because the
 skill never called `make init` and ignored `templates/`. The `new` flow now
 drives the scaffold through `make init`, then fills it via interview.
+
+## 2026-07-19 (touch-test pass 2 — harness behaviour fixes)
+
+Fixes from the `new` touch-test (RecipeBox) and follow-up notes:
+
+- **templates/.gitignore** — added standard ignore set (`.DS_Store`, `.idea/`,
+  `.vscode/`, `node_modules/`, `.env*`, `*.log`, `.nuxt/`, `.output/`, `dist/`).
+- **scripts/init-project.sh** — copies `templates/.gitignore` into the project
+  only if one does not already exist (no merge logic; merge lives in the
+  `sync-templates` shortcut).
+- **global/AGENTS.md** (`sync-templates` shortcut) — `.gitignore` is now merged
+  (missing lines reported, never overwritten) and copied when absent.
+- **agent-new-project.md (Step 4 / Q5)** — design-system question is now
+  conditional: skipped when Q-1 = "no", asked only if a provided spec file did
+  not already cover it.
+- **agent-new-project.md (Step 8)** — `HARNESS.md` now filled with Entry point
+  (dev/test/lint) and Risk levels from the interview; Product contract and
+  Decisions to inherit are left for the user. Port conflict check added
+  (host: `lsof`/`ss`; Docker: `docker ps`) with free alternatives proposed and
+  chosen ports recorded in HARNESS.md Entry point.
+- **agent-new-project.md (Step 10)** — session log written to `PROGRESS.md`
+  including `Session language: [from Q0]`.
+- **agent-new-project.md (Step 11 / hand-off)** — explicit order: `end` → new
+  session → `start`.
+- **global/AGENTS.md (Session Start)** — language persisted via `Session
+  language:` line in PROGRESS.md; resumed without re-asking. Directus MCP
+  instance verified against project `DIRECTUS_URL`; mismatch stops Session
+  Start with a clear warning and points to `switch-directus`. New `switch-directus`
+  shortcut repoints the global MCP config (explicit confirmation required).
+- **global/AGENTS.md (English-Only Policy)** — `memory/` is now English ONLY,
+  regardless of session language; no Cyrillic quotes even in workarounds.
+- **templates/MEMORY.md & global/MEMORY.md** — Known Gotcha: pin
+  `typescript@5.6.3` + `vue-tsc@2.1.10` + `@types/node` on Node 20 (newer
+  versions break the typecheck toolchain).
+- **README.md** — documented the `switch-directus` shortcut and the Directus
+  MCP switching flow.

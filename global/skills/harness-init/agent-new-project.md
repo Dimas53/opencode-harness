@@ -18,7 +18,7 @@ then fill the scaffolded template files with the project's context.
    (HARNESS.md, MEMORY.md, PLAN.md, PROGRESS.md, memory/, docs/ tree,
    and the project AGENTS.md skeleton):
    ```bash
-   cd "<project directory>" && make init PROJECT="$(pwd)" --no-open
+    ~/.opencode-harness/scripts/init-project.sh "$(pwd)" --no-open
    ```
    - `--no-open` prevents launching a second OpenCode instance (we are
      already inside one). The scaffold copies everything from
@@ -49,8 +49,14 @@ then fill the scaffolded template files with the project's context.
    - Q3: Stage (MVP / production-critical) + deployment target (local Docker /
      Vercel / self-hosted)
    - Q4: External integrations + sensitive data? (payments, external APIs, PII)
-   - Q5: Design system? (if yes — user adds docs/design.md manually) + core
-     entity/field model (e.g. task fields: title, status, assignee…)
+    - Q5: Core entity/field model (e.g. task fields: title, status, assignee…).
+      ALWAYS ask for the entity/field model.
+      The design-system sub-question is CONDITIONAL — follow strictly:
+      - If Q-1 answer was "no" (no spec file): DO NOT ask about the design
+        system at all. Silently note that the user adds docs/design.md manually
+        later if one appears. Asking about design system here is a VIOLATION.
+      - If Q-1 provided a file: ask about the design system ONLY IF the file
+        did not already cover it. If covered, SKIP it.
    - Q6: Project plan? (phases / milestones, or single MVP iteration)
    - HARNESS questions (ask before writing files): critical paths of the
      project, and risk levels for each area (per HARNESS.md vocabulary)
@@ -78,11 +84,39 @@ then fill the scaffolded template files with the project's context.
      project's own ubiquitous language
    - `roadmap.md` — REWRITE the example phases; use the real MVP phases
    - `skills-cheatsheet.md` — keep as-is or trim to relevant skills
-   - `docs/specs/phase-1.md` — write the phase-1 spec
-   Each file: show draft → wait for ok → write → next file.
-9. Commit: "chore: initialize harness docs for [project name]"
-10. Remind user: "Add docs/design.md if you have a design system.
-    Add docs/plan-main.md if you have a broader vision document."
+    - `docs/specs/phase-1.md` — write the phase-1 spec
+    - `HARNESS.md` — fill the interview-derived sections:
+        - Entry point: dev server command, test command, lint command
+        - Risk levels: copy the risk levels from the HARNESS-questions answers
+          in the interview (e.g. auth = high, public sharing = high)
+      Before writing HARNESS.md Entry point, check for port conflicts:
+        - Host ports (macOS / Linux):
+            lsof -nP -iTCP -sTCP:LISTEN | grep -E ':(3000|3001|8055|8056|5432)'
+          (Linux fallback if lsof is missing: `ss -tlnp | grep -E ':(3000|3001|8055|8056|5432)'`)
+        - Docker containers (catches ports not visible to lsof on the host):
+            docker ps --format "table {{.Names}}\t{{.Ports}}"
+      Show the result to the user. If a port the project needs is taken,
+      propose free alternatives:
+        - Frontend (Nuxt): 3000 / 3001
+        - Directus:         8055 / 8056
+        - PostgreSQL:       5432 / 5433
+      Record the chosen ports in HARNESS.md Entry point (and in `.env` /
+      docker-compose when the implementation session runs).
+      Leave these sections EMPTY for the user to fill later:
+        - Product contract (what must never break)
+        - Decisions to inherit (architectural choices future agents must know)
+    Each file: show draft → wait for ok → write → next file.
+ 9. Commit: "chore: initialize harness docs for [project name]"
+ 10. Write a brief session log into `PROGRESS.md`: what was done, which files
+    were created, and the next step (start M1 from the roadmap). Do NOT leave
+    PROGRESS.md as the empty scaffold.
+    Include the session language on its own line so the next session can
+    resume in the same language without asking:
+    ```
+    Session language: [language from Q0, e.g. ru or en]
+    ```
+ 11. Remind user: "Add docs/design.md if you have a design system.
+     Add docs/plan-main.md if you have a broader vision document."
 
 ### Phase 2 — Hand off to the working session
 11. Hand-off report — show the user a formatted summary:
@@ -94,15 +128,23 @@ then fill the scaffolded template files with the project's context.
     - skills-cheatsheet.md, docs/specs/phase-1.md
     - HARNESS.md, MEMORY.md, PLAN.md, PROGRESS.md, memory/
 
-    Next step:
-    -> Open a NEW session in this folder and type `start`
-       (triggers internal Session Start -> continues from roadmap M1)
+     Next step:
+     Follow this order EXACTLY:
+     1. Type `end` in THIS session to close it correctly — this triggers the
+        Session End protocol (final commit + PROGRESS.md update + "Session
+        closed" report). Do NOT skip this.
+     2. Open a NEW session in this folder.
+     3. Type `start` in the new session
+        (triggers internal Session Start -> continues from roadmap M1)
 
-    Reminder:
-    - add docs/design.md if a design system appears
-    - add docs/plan-main.md if there is a broader vision document
-    ```
-    Do NOT scaffold or run M1 here — `new` is docs + scaffold only.
+     Reminder:
+     - add docs/design.md if a design system appears
+     - add docs/plan-main.md if there is a broader vision document
+     - Fill HARNESS.md sections — Product contract (what must never break) and
+       Decisions to inherit (architectural choices future agents must know) —
+       these require your input, not the agent's.
+     ```
+     Do NOT scaffold or run M1 here — `new` is docs + scaffold only.
 
 ## Hard rules
 - Q0 (language) is ALWAYS first — before any other question, including Q-1

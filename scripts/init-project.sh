@@ -39,6 +39,11 @@ cp templates/PLAN.md "$PROJECT/PLAN.md"
 cp templates/PROGRESS.md "$PROJECT/PROGRESS.md"
 cp templates/HARNESS.md "$PROJECT/HARNESS.md"
 
+if [ ! -f "$PROJECT/.gitignore" ]; then
+  cp templates/.gitignore "$PROJECT/.gitignore"
+  echo "  ✓ .gitignore copied"
+fi
+
 if [ ! -d "$PROJECT/.git" ]; then
   cd "$PROJECT" && git init && git add . && \
   git commit -m "chore: initialize project with harness scaffold" >/dev/null 2>&1

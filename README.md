@@ -42,6 +42,8 @@ Open OpenCode in any directory and type:
 - `analyze` — read-only audit: architecture map + security review + risk report
 - `update-harness` — pull latest harness updates and apply globally
 - `sync-templates` — check for new template files missing in current project
+- `switch-directus` — repoint the global Directus MCP server to this project's
+  Directus URL (see [Directus MCP switching](#switching-the-directus-mcp-instance))
 
 ### Fallback — make commands (if OpenCode is not open yet)
 
@@ -62,6 +64,36 @@ make link
 ```
 
 This creates `~/.opencode-harness` pointing to your local clone.
+
+## Switching the Directus MCP instance
+
+OpenCode has a single **global** Directus MCP config shared by every project.
+When you work on more than one Directus project, the MCP may point at the wrong
+instance. This is detected at Session Start: if the MCP instance differs from
+the project's expected `DIRECTUS_URL`, the agent stops and warns you.
+
+To repoint the MCP without editing config files by hand, type:
+
+```
+switch-directus
+```
+
+What happens step by step:
+
+1. The agent reads `DIRECTUS_URL` from the current project's `.env`.
+   (Or pass an explicit URL: `switch-directus https://directus.example.com`.)
+2. It locates the MCP config (`~/.config/opencode/opencode.jsonc`, then a
+   project-level `opencode.jsonc` if present).
+3. It shows the change: old URL → new URL in the `directus` mcp-server block.
+4. It asks for explicit confirmation before writing — nothing is changed until
+   you say yes.
+5. On confirmation it rewrites the `directus` server's URL in the config.
+6. The MCP reconnects on the next call / session restart. Re-run `start` or
+   continue — the agent now sees the correct instance.
+
+> **Note:** the Directus MCP is global. If a second project is open in another
+> session, switching here also affects that session. This is intentional and
+> only happens on your explicit `switch-directus` command.
 
 ## Daily Workflow
 
