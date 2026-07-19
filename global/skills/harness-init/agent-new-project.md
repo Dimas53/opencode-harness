@@ -58,9 +58,18 @@ then fill the scaffolded template files with the project's context.
       - If Q-1 provided a file: ask about the design system ONLY IF the file
         did not already cover it. If covered, SKIP it.
    - Q6: Project plan? (phases / milestones, or single MVP iteration)
-   - HARNESS questions (ask before writing files): critical paths of the
-     project, and risk levels for each area (per HARNESS.md vocabulary)
-4.5. MANDATORY restate — before generating any file, show a summary and wait
+    - HARNESS questions (ask before writing files): critical paths of the
+      project, and risk levels for each area (per HARNESS.md vocabulary)
+ 4.4. SKILL GAP CHECK — after the interview, before restate:
+    - Read `docs/skills-cheatsheet.md`, section "Stack → Required Skills".
+    - Match the table against the stack from the interview (Q1).
+    - For each required skill, check it exists:
+        ls ~/.config/opencode/skills/<name>
+    - Show the result (do NOT block the interview):
+        ✅ found: <name>
+        ❌ missing: <name> — install: <install command from the table>
+    - This is informational only; proceed to restate (4.5) regardless.
+ 4.5. MANDATORY restate — before generating any file, show a summary and wait
     for explicit "yes". Format:
     ```
     - Purpose:     <one line>

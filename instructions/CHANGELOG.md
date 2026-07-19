@@ -75,3 +75,17 @@ Fixes from the `new` touch-test (RecipeBox) and follow-up notes:
   versions break the typecheck toolchain).
 - **README.md** — documented the `switch-directus` shortcut and the Directus
   MCP switching flow.
+
+## 2026-07-19 — Stack→Skill map + sync cleanup
+
+- **templates/docs/skills-cheatsheet.md** & **instructions/reference/03-skills-cheatsheet.md**
+  — added `## Stack → Required Skills` table (technology → skill folder →
+  install command). Directus → `npx skills add directus`; TypeScript covered
+  by `tdd` + `test-driven-development` (no standalone skill).
+- **global/skills/harness-init/agent-new-project.md** — new step `4.4 SKILL GAP
+  CHECK` before restate: reads Stack→Required Skills, matches interview
+  stack, `ls ~/.config/opencode/skills/<name>` per skill, shows ✅/❌ with
+  install command. Informational only — does not block the interview.
+- **Sync** — `global/skills/*` fully mirrored to `~/.config/opencode/skills/`
+  (25 files in sync). Recovered missing `security/06-directus-nuxt.md`.
+- **session-start/SKILL.md** — output block translated RU→EN (English-Only Policy).

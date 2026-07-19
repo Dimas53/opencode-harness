@@ -170,3 +170,26 @@ Last commit: 16ef9d8 — feat: add make start launcher
 - `f3e424c` — feat: add project-level AGENTS.md, clean up architecture diagrams
 - `f4d16d4` — fix: exclude dod.sh itself from cyrillic scan
 - `d09012f` — feat: add make dod, pre-commit hook, fix Makefile
+
+## Session 2026-07-19 (stack→skill map + sync cleanup)
+
+Session language: ru
+
+### Done
+- **Stack → Required Skills** section added to `templates/docs/skills-cheatsheet.md`
+  and `instructions/reference/03-skills-cheatsheet.md` (table: technology →
+  skill folder → install command). Directus → `npx skills add directus`;
+  TypeScript covered by `tdd` + `test-driven-development` (no standalone skill).
+- **agent-new-project.md** — new step `4.4 SKILL GAP CHECK` before restate
+  (4.5): reads the Stack→Required Skills table, matches against interview
+  stack, `ls ~/.config/opencode/skills/<name>` per skill, shows ✅/❌ with
+  install command. Informational only — does NOT block the interview.
+- **Sync cleanup** — `global/skills/*` mirrored into `~/.config/opencode/skills/`:
+  harness-init (agent-analyze, agent-init-existing, SKILL), security (SKILL +
+  06-directus-nuxt.md was missing), session-start, code-reviewer. All 25 skill
+  files now in sync; AGENTS.md in sync.
+- **session-start/SKILL.md** — output block translated RU→EN (English-Only Policy
+  for global/ files).
+
+### Known issues
+- (none new)
