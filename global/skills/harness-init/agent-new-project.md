@@ -2,12 +2,8 @@
 
 ## Purpose
 Initialize a brand new project from scratch.
-Collect requirements via interview, generate full documentation.
-
-## Skill load check
-After loading all skills in the stack — print:
-"Loaded: interview-me ✓, brainstorming ✓, planning-and-task-breakdown ✓, spec-driven-development ✓"
-If any skill failed to load — STOP and report to user before proceeding.
+Scaffold the harness structure, collect requirements via interview,
+then fill the scaffolded template files with the project's context.
 
 ## Skill stack (load in this order)
 1. ~/.config/opencode/skills/interview-me/SKILL.md
@@ -16,55 +12,106 @@ If any skill failed to load — STOP and report to user before proceeding.
 4. ~/.config/opencode/skills/spec-driven-development/SKILL.md
 
 ## Steps
-0. **Check if harness templates exist in project:**
-   - If `AGENTS.md` exists in project root → templates were seeded by `make init`. Files ready: `AGENTS.md`, `HARNESS.md`, `MEMORY.md`, `PROGRESS.md`, `PLAN.md`, `docs/`, `memory/`
-   - If `AGENTS.md` does NOT exist → shortcut-init session without `make init`. Agent creates all files from scratch using formats from loaded skills. Do NOT look for external template paths. Files to create: `AGENTS.md`, `HARNESS.md`, `MEMORY.md`, `PROGRESS.md`, `PLAN.md`, `docs/`, `memory/`
 
-1. Ask Q-1: "Do you have a requirements document, design brief, or any existing spec? If yes — share it now, I will read it first and ask only clarifying questions about what is missing. If no — just say 'no' and we will go through the full interview."
-   - If user provides a file → read it, ask max 2-3 clarifying questions, skip anything already covered in the file
-   - If "no" → proceed to standard interview from Q0
-2. Ask Q0: what language should I respond in?
-3. Load interview-me — run structured interview:
-   - Project name and purpose (2-3 sentences)
-   - Tech stack (frontend, backend, database, deployment)
-   - Team size
-   - Stage (MVP or production-critical)
-   - External integrations
-   - Sensitive data?
-   - Deployment target
-   - Design system? (if yes — user adds design.md manually before session)
-    - Project plan? (phases and milestones)
-    - HARNESS: Are there critical paths that must never break? (e.g., payments, auth, DB)
-    - HARNESS: What is the risk level for DB operations, external API integrations, and auth?
-4. Load brainstorming — explore unknowns, surface assumptions
-5. Load planning-and-task-breakdown — structure phases and tasks
-6. Load spec-driven-development — write phase-1 spec
-7. Generate documentation:
-   - If templates exist (step 0) → fill in pre-seeded template files
-   - If no templates → create files from scratch following formats from loaded skills
-   Files to create:
-   - AGENTS.md
-   - ARCHITECTURE.md
-   - CONTEXT.md
-   - roadmap.md
-   - skills-cheatsheet.md
-    - docs/specs/phase-1.md
-    - HARNESS.md — use interview answers to fill Entry point + Risk levels, leave Product contract and Decisions to inherit as empty sections for user to complete
-8. Each file: show draft → wait for ok → write → next file
-9. Write session log to PROGRESS.md: "chore: initialize harness docs for [project name]"
-10. Commit: "chore: initialize harness docs for [project name]"
-11. Remind user: "Add docs/design.md if you have a design system.
-   Add docs/plan-main.md if you have a broader vision document."
+### Phase 0 — Scaffold (BEFORE the interview)
+1. Run the harness scaffold so the project has the full structure
+   (HARNESS.md, MEMORY.md, PLAN.md, PROGRESS.md, memory/, docs/ tree,
+   and the project AGENTS.md skeleton):
+   ```bash
+   cd "<project directory>" && make init PROJECT="$(pwd)" --no-open
+   ```
+   - `--no-open` prevents launching a second OpenCode instance (we are
+     already inside one). The scaffold copies everything from
+     `templates/` and runs `git init` + hooks.
+   - If the user invoked `new` from a folder that is NOT yet the target
+     project, ask which directory to scaffold into, then run `make init`
+     there.
+   - Do NOT edit the global AGENTS.md (`~/.config/opencode/AGENTS.md`) —
+     it lives outside the project and is managed by `make setup` only.
+
+### Phase 1 — Interview + fill the scaffold
+2. Ask Q0: what language should I respond in? (Ask this FIRST so the entire
+   interview runs in the user's chosen language.)
+3. Ask Q-1: "Do you have a requirements document, design brief, or any existing
+   spec? If yes — share it now, I will read it first and ask only clarifying
+   questions about what is missing. If no — just say 'no' and we will go
+   through the full interview."
+   - If user provides a file → read it, ask max 2-3 clarifying questions,
+     skip anything already covered in the file
+   - If "no" → proceed to standard interview
+   - Q-1 is asked AFTER Q0 so the question and all follow-ups are in the
+     user's chosen language
+4. Load interview-me — run structured interview with the fixed question order
+   below. Each question: state your guess, wait for the answer, one at a time.
+   - Q1: Project name and purpose (2-3 sentences)
+   - Q2: Team size + authorization model (solo / team / public? login via
+     Directus? per-user data?)
+   - Q3: Stage (MVP / production-critical) + deployment target (local Docker /
+     Vercel / self-hosted)
+   - Q4: External integrations + sensitive data? (payments, external APIs, PII)
+   - Q5: Design system? (if yes — user adds docs/design.md manually) + core
+     entity/field model (e.g. task fields: title, status, assignee…)
+   - Q6: Project plan? (phases / milestones, or single MVP iteration)
+   - HARNESS questions (ask before writing files): critical paths of the
+     project, and risk levels for each area (per HARNESS.md vocabulary)
+4.5. MANDATORY restate — before generating any file, show a summary and wait
+    for explicit "yes". Format:
+    ```
+    - Purpose:     <one line>
+    - Users:       <one line>
+    - Success:     <one line — how we know it worked>
+    - Constraint:  <one line — binding limit>
+    - Out of scope:<one line — explicitly NOT building>
+    ```
+    Do NOT proceed to file generation until the user confirms. If they refine —
+    fold in and restate.
+5. Load brainstorming — explore unknowns, surface assumptions
+6. Load planning-and-task-breakdown — structure phases and tasks
+7. Load spec-driven-development — write phase-1 spec
+8. Fill the scaffolded template files with the interview context. The files
+   already exist from Phase 0 — DO NOT generate them from scratch, fill or
+   rewrite them in place:
+   - `AGENTS.md` — replace `[Project Name]`, `[Framework + version]`,
+     `[path]` placeholders, stack skills, file map, backend/UI rules
+   - `ARCHITECTURE.md` — write the real architecture
+   - `CONTEXT.md` — REWRITE, removing the example domain terms; use the
+     project's own ubiquitous language
+   - `roadmap.md` — REWRITE the example phases; use the real MVP phases
+   - `skills-cheatsheet.md` — keep as-is or trim to relevant skills
+   - `docs/specs/phase-1.md` — write the phase-1 spec
+   Each file: show draft → wait for ok → write → next file.
+9. Commit: "chore: initialize harness docs for [project name]"
+10. Remind user: "Add docs/design.md if you have a design system.
+    Add docs/plan-main.md if you have a broader vision document."
+
+### Phase 2 — Hand off to the working session
+11. Hand-off report — show the user a formatted summary:
+    ```
+    Project [name] initialized.
+
+    Created:
+    - AGENTS.md, ARCHITECTURE.md, CONTEXT.md, roadmap.md
+    - skills-cheatsheet.md, docs/specs/phase-1.md
+    - HARNESS.md, MEMORY.md, PLAN.md, PROGRESS.md, memory/
+
+    Next step:
+    -> Open a NEW session in this folder and type `start`
+       (triggers internal Session Start -> continues from roadmap M1)
+
+    Reminder:
+    - add docs/design.md if a design system appears
+    - add docs/plan-main.md if there is a broader vision document
+    ```
+    Do NOT scaffold or run M1 here — `new` is docs + scaffold only.
 
 ## Hard rules
-- Q-1 (spec file check) is always first — before any other question
-- If user provided a spec file — read it, limit follow-ups to 2-3, do not repeat what's in the file
-- If "no" — Q0 (language) is next, then full interview
+- Q0 (language) is ALWAYS first — before any other question, including Q-1
+- Q-1 (spec file check) is asked AFTER Q0, so the question and all follow-ups
+  are in the user's chosen language
 - Never skip the interview — even if user seems to know everything
 - Never generate all files at once — one at a time with confirmation
 - design.md is NOT generated here — user provides it manually
-- After commit — ALWAYS print a reminder about plan-main.md and design.md. This is mandatory, not optional. No exceptions.
-- If a task takes >30 min — create PLAN.md in project root following the standard structure from skill memory. Mark milestones [x] only after running verify: command. Delete PLAN.md when task is done.
-- Step 0 is a check only — no file operations, no external paths
-- If templates exist → use them as-is, do NOT modify
-- If no templates → agent creates all files from scratch, no external dependencies
+- Never touch the global AGENTS.md — only the project's scaffolded files
+- `new` is documentation + scaffold only — project implementation (M1) happens
+  in the next session, not here
+- restate (step 4.5) is MANDATORY — no file is written before explicit "yes"

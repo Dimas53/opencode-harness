@@ -1,8 +1,24 @@
 #!/bin/bash
 # Scaffold a new project and open OpenCode TUI for harness-init
-# Usage: make init PROJECT=/path/to/project
+# Usage: make init PROJECT=/path/to/project [--no-open]
 
-PROJECT=$1
+PROJECT=""
+NO_OPEN=0
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --no-open)
+      NO_OPEN=1
+      shift
+      ;;
+    *)
+      if [ -z "$PROJECT" ]; then
+        PROJECT="$1"
+      fi
+      shift
+      ;;
+  esac
+done
 
 if ! command -v opencode &>/dev/null; then
   echo "✗ opencode not found. Run: make setup"
@@ -10,7 +26,7 @@ if ! command -v opencode &>/dev/null; then
 fi
 
 if [ -z "$PROJECT" ]; then
-	echo "Usage: make init PROJECT=/path/to/project"
+	echo "Usage: make init PROJECT=/path/to/project [--no-open]"
 	exit 1
 fi
 
@@ -33,10 +49,17 @@ fi
 echo ""
 echo "  Project scaffold created at $PROJECT"
 echo ""
-echo "  Opening OpenCode now..."
-echo ""
 
 bash "$(dirname "$0")/install-hooks.sh" "$PROJECT"
+
+if [ "$NO_OPEN" -eq 1 ]; then
+  echo "  Skipping OpenCode launch (--no-open)."
+  exit 0
+fi
+
+echo ""
+echo "  Opening OpenCode now..."
+echo ""
 
 cd "$PROJECT" || exit 1
 opencode --prompt "Load ~/.config/opencode/skills/harness-init/agent-new-project.md" || {

@@ -124,6 +124,37 @@ Last commit: 16ef9d8 — feat: add make start launcher
 - Next:
   - v0.4 — plan and execute
 
+### 2026-07-19 (new-flow fix)
+
+- Done:
+  - scripts/init-project.sh: added `--no-open` flag — scaffolds project
+    (copies templates, git init, hooks) without launching a second OpenCode
+    instance. Used by `new` flow from inside OpenCode.
+  - global/skills/harness-init/agent-new-project.md (+ synced to
+    ~/.config/opencode/skills/): restructured into 3 phases:
+    - Phase 0 — Scaffold: runs `make init PROJECT="$(pwd)" --no-open` BEFORE
+      interview, so HARNESS.md/MEMORY.md/PLAN.md/PROGRESS.md/memory/ always exist
+    - Phase 1 — fixed interview question order (Q1 name/purpose, Q2 team/auth,
+      Q3 stage/deploy, Q4 integrations/sensitive, Q5 design/fields, Q6 plan) +
+      HARNESS questions (critical paths, risk levels); MANDATORY restate (4.5)
+      with explicit "yes" before any file is written; fill/REWRITE scaffolded
+      templates in place (no generate-from-scratch)
+    - Phase 2 — formatted hand-off report: lists created files, instructs user
+      to open new session and type `start` (continues from roadmap M1)
+  - templates/AGENTS.md: restored to PROJECT skeleton (was accidentally
+    overwritten with global AGENTS.md) — placeholders only, no global content
+  - templates/docs/CONTEXT.md + roadmap.md: cleaned of example domain data
+    (Cook/Deduction/Hetzner/Tailwind) — structure + instruction comment only
+  - Root cause fixed: `new` previously generated only 6 docs files and missed
+    HARNESS/MEMORY/PLAN/PROGRESS/memory/ because the skill never called
+    `make init` and ignored templates/
+- Problems:
+  - templates/AGENTS.md was a duplicate of global AGENTS.md — would have created
+    a redundant mirror in every new project; corrected to project skeleton
+- Next:
+  - Touch-test the `new` flow in an empty folder; verify full file set appears
+  - Fix Makefile known issues (duplicate `init` target, empty `setup` target)
+
 ## Git Log
 
 - `f158e7b` — fix: replace head -1 with sed -n '1p' in dod.sh to avoid SIGPIPE
