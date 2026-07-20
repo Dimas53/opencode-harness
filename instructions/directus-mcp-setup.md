@@ -66,8 +66,15 @@ Follow these sub-steps in order.
    | `directus_files`       | CRUD     |
    | `directus_folders`     | CRUD     |
 
-   (Running flows is covered by the permission on `directus_flows`; uploading
-   files by the permission on `directus_files`.)
+    (Running flows is covered by the permission on `directus_flows`; uploading
+    files by the permission on `directus_files`.)
+
+    > ⚠️ Want the agent to reach **all** your collections without listing them
+    > one by one? Do **not** use the **All Collections (`*`)** option — it does
+    > not reliably apply to existing collections in Directus 11 (verified). For
+    > a local dev machine, enable **Admin Access** on this policy (see
+    > "Granting access to your own collections" below). For production, grant
+    > each collection explicitly.
 
 5. **Save** the policy.
 
@@ -133,20 +140,27 @@ When you need OpenCode to touch one of your own collections, grant the `mcp`
 policy **Read** (and **Create/Update** as needed) on that collection in
 **Settings → Access Policies → mcp**. No config change is required.
 
-### Chicken-and-egg: access to collections that don't exist yet
+### Granting access to your own (user) collections
 
-The setup above grants the `mcp` policy rights only on system collections. To
-let the agent **create** and **read your own** collections, the policy needs
-rights on them — but the collections may not exist yet. Two ways to resolve it:
+After Step 2a the `mcp` policy can only see system collections. To let the agent
+**create and read your own** collections, the policy needs rights on them. Two
+supported approaches:
 
-- **Local / dev (recommended for convenience):** in
-  **Settings → Access Policies → mcp → Collection Permissions**, click
-  **+ Add Collection**, choose **All Collections** (or type `*`), and grant at
-  least **Read + Create** (full CRUD for convenience). This also covers
-  collections created later — no per-collection setup.
-- **Per-collection / production (least privilege):** create the collection
-  first (via admin or directly), then add just that collection to the `mcp`
-  policy with the needed rights. Repeat for every new collection.
+- **Local / dev machine — Admin Access:** in **Settings → Access Policies →
+  mcp**, enable **Admin Access** (`admin_access: true`). The agent gets full
+  access to everything, including collections not yet created — no
+  per-collection setup, and the chicken-and-egg problem disappears. Use this on
+  your own machine; **do NOT** use it on shared / production instances.
+- **Production / shared instance — explicit grants:** in **Settings → Access
+  Policies → mcp → Collection Permissions**, click **+ Add Collection** and pick
+  the **specific** collection, then grant the needed rights. Repeat for every
+  collection the agent should touch.
+
+> ⚠️ The **All Collections (`*`)** option does **not** reliably apply to existing
+> collections in Directus 11. Verified: a `*` CRUD grant was created but did not
+> take effect, while an explicit grant on the same collection worked
+> immediately. Do not rely on `*` as a "give everything" shortcut — use Admin
+> Access for dev or explicit per-collection grants for production.
 
 The token itself is never changed — only the policy's permissions in Directus.
 
