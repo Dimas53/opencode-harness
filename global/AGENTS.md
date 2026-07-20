@@ -144,7 +144,9 @@ Execute these steps in order BEFORE any response to the user:
  3. Read `PROGRESS.md` in project root — compare git log with progress status. If out of sync, update PROGRESS.md FIRST. If file doesn't exist — skip.
     After reading PROGRESS.md, look for a line starting with `Session language:`.
     - If present — continue the ENTIRE session in that language WITHOUT asking.
-    - If absent — ask the user for their language explicitly before proceeding.
+    - If absent — ask the user for their language explicitly before proceeding,
+      then WRITE `Session language: <chosen>` into `PROGRESS.md` (create the file
+      if it does not exist) so the choice persists and is never asked again.
  4. Read `docs/roadmap.md`
 5. Read `MEMORY.md` and `memory/YYYY-MM-DD.md` if they exist (for today or yesterday)
  6. Read `HARNESS.md` if it exists — apply project constraints and risk levels to session behavior

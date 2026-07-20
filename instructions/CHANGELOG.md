@@ -4,6 +4,20 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-07-20
 
+### Session language persisted in PROGRESS.md
+
+- **global/AGENTS.md** — Session Start step 3 now instructs the agent to WRITE
+  `Session language: <chosen>` into `PROGRESS.md` (create the file if missing)
+  after the user picks a language, so it is never asked again. Previously the
+  protocol only said "ask" and never persisted the choice, so the prompt
+  re-appeared every session.
+- **Directus 11 wildcard gotcha** — `instructions/directus-mcp-setup.md` corrected:
+  the `All Collections (*)` permission does NOT reliably apply to existing
+  collections in Directus 11. For local/dev use Admin Access (`admin_access:
+  true`) on the `mcp` policy; for production use explicit per-collection grants.
+
+## 2026-07-20
+
 ### Directus MCP — per-project generated config (switch-directus removed)
 
 - **Architecture change:** Directus MCP is now configured **per project** from
