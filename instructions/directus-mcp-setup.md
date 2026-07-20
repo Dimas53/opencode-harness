@@ -133,6 +133,23 @@ When you need OpenCode to touch one of your own collections, grant the `mcp`
 policy **Read** (and **Create/Update** as needed) on that collection in
 **Settings → Access Policies → mcp**. No config change is required.
 
+### Chicken-and-egg: access to collections that don't exist yet
+
+The setup above grants the `mcp` policy rights only on system collections. To
+let the agent **create** and **read your own** collections, the policy needs
+rights on them — but the collections may not exist yet. Two ways to resolve it:
+
+- **Local / dev (recommended for convenience):** in
+  **Settings → Access Policies → mcp → Collection Permissions**, click
+  **+ Add Collection**, choose **All Collections** (or type `*`), and grant at
+  least **Read + Create** (full CRUD for convenience). This also covers
+  collections created later — no per-collection setup.
+- **Per-collection / production (least privilege):** create the collection
+  first (via admin or directly), then add just that collection to the `mcp`
+  policy with the needed rights. Repeat for every new collection.
+
+The token itself is never changed — only the policy's permissions in Directus.
+
 ## Setting this up for additional projects
 
 Repeat Steps 1–4 in each project. Each project has its own `.env` and its own
