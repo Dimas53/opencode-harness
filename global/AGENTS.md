@@ -72,11 +72,6 @@ When user types exactly:
     echo "✓ Nothing to add — project is up to date"
   fi
 
-- `switch-directus` — repoint the global Directus MCP config to this
-  project's Directus URL. Reads DIRECTUS_URL from `.env`; asks for explicit
-  confirmation before writing outside the project. Usage: `switch-directus`
-  (uses .env) or `switch-directus <url>` (explicit URL).
-
 **Fallback** (if shortcuts don't work):
 ```bash
 cd /path/to/opencode-harness && make init PROJECT=$(pwd)
@@ -155,22 +150,16 @@ Execute these steps in order BEFORE any response to the user:
  6. Read `HARNESS.md` if it exists — apply project constraints and risk levels to session behavior
  7. If the project uses the Directus MCP server (`.env` has DIRECTUS_URL, or
     HARNESS.md declares a Directus instance):
-    - If a project-level `opencode.jsonc` exists in the project root — use it
-      (it fully overrides the global config) and skip the mismatch check below.
-      This is a READ only — never modify the config here.
-    - Otherwise read the global MCP config (`~/.config/opencode/opencode.jsonc`)
-      and extract the `directus` server's URL. The Directus MCP server is a
-      remote server: `mcpServers.directus.url` (e.g. `http://localhost:8055/mcp`),
-      authenticated via `mcpServers.directus.headers.Authorization: "Bearer <token>"`.
-      This is a READ only — never modify the config here.
-    - Compare the MCP URL host with the project's expected URL (`.env` DIRECTUS_URL).
-    - If they differ — STOP and report clearly, do NOT continue Session Start:
-      "⚠️ Стоп. MCP Directus подключён к другому инстансу (<mcp-url>), а этот
-      проект использует <expected-url>. Работа с Directus невозможна. Напиши
-      switch-directus чтобы переключить (возьмёт URL из .env и спросит
-      подтверждение)."
-    - Wait for the user to resolve it. Do not proceed until MCP points at the
-      expected instance.
+    - If a project-level `opencode.jsonc` exists in the project root — it is
+      used automatically when OpenCode starts (it fully overrides the global
+      config). No further action needed here. This is a READ only — never
+      modify the config here.
+    - If NO local `opencode.jsonc` exists — warn the user:
+      "⚠️ Directus MCP is not configured for this project. Create `.env`
+      (DIRECTUS_URL + MCP_DIRECTUS_TOKEN) and run `make mcp`
+      (see instructions/directus-mcp-setup.md)."
+    - Do NOT modify any config. There is no global directus config to compare
+      against and no switching.
  8. Report:
    ```
    Session initialized. Phase: [from roadmap]. Last commit: [hash — msg].

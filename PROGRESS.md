@@ -15,6 +15,30 @@ Last commit: 5c46838 — refactor(harness): rename existing → adopt
 - `session-end.sh` PROGRESS.md + memory/ warnings expected for meta-project
 - `notes/` has 6 stale session artifacts — archive candidate
 
+## Session 2026-07-20 (Directus MCP — per-project generated config)
+
+### Done
+- **Architecture:** Directus MCP is now per-project from `.env`. Removed the
+  global `directus` block from `~/.config/opencode/opencode.jsonc` and deleted
+  the `switch-directus` shortcut/logic everywhere. No global Directus MCP to
+  switch — each project gets its own gitignored `opencode.jsonc`.
+- **scripts/gen-opencode.sh** (new) — reads `.env` (`DIRECTUS_URL` +
+  `MCP_DIRECTUS_TOKEN`), merges the global OpenCode config, writes a local
+  `opencode.jsonc` with the per-project `directus` block.
+- **Makefile** — added `mcp` target. **scripts/start.sh** — regenerates
+  `opencode.jsonc` from `.env` before launching OpenCode.
+- **templates/.env.example** (new) — `DIRECTUS_URL` + `MCP_DIRECTUS_TOKEN`
+  placeholders; `init-project.sh` copies it to `.env` when absent.
+- **instructions/directus-mcp-setup.md** — rewritten: enable MCP server, create
+  Access Policy → Role → User → Static Token, `.env`, `make mcp`, open project.
+- **global/AGENTS.md** — Session Start step 7 simplified (local `opencode.jsonc`
+  used automatically; else warn to create `.env` + `make mcp`). Synced to
+  `~/.config/opencode/AGENTS.md`.
+- **README.md** — removed `switch-directus`; `## Directus MCP` now per-project.
+
+### Known issues
+- (none)
+
 ## Session Log
 
 ### 2026-07-16

@@ -1,154 +1,150 @@
 # Directus MCP Setup
 
-How to connect the OpenCode Directus MCP server to your projects — securely,
-for both solo and team workflows.
+How to let OpenCode talk to a project's Directus instance via the Model Context
+Protocol (MCP) server.
 
-## TL;DR
+## When do you need this?
 
-- One global MCP server in `~/.config/opencode/opencode.jsonc`.
-- One shared `mcp` user (service account, minimal rights) per Directus instance.
-- The token lives in the global config once.
-- The project URL comes from the project's `.env` (`DIRECTUS_URL`).
-- `switch-directus` changes only the URL — never the token.
+If you want OpenCode to read your collections/fields, create items, or run flows
+in **this project's** Directus instance, you must set up the Directus MCP.
+Without it OpenCode has no Directus access at all.
 
----
+> You only do this once per Directus project. Other projects repeat the same
+> steps against their own instance.
 
-## 1. Create a dedicated `mcp` user in Directus
+## Architecture (per-project, no global config)
 
-Do NOT use an admin token. Create a scoped service account instead.
+- Directus MCP is configured **per project** in a local `opencode.jsonc`
+  generated from the project's `.env`.
+- The global `~/.config/opencode/opencode.jsonc` contains **no** `directus`
+  block — there is nothing to switch between projects.
+- Each project gets its **own** `mcp` user + role inside its own Directus instance.
+- The generated `opencode.jsonc` is **gitignored** (it embeds the token) — never commit it.
+- Open each project in its own OpenCode window. Three projects = three
+  independent MCP connections, each pointed at its own instance.
+
+## Prerequisites
+
+- Directus **v11.12+** (MCP server requires it). Check the version:
+  ```bash
+  docker exec <directus-container> node -e "console.log(require('/directus/package.json').version)"
+  ```
+- The project's Directus instance is running and reachable (e.g. `http://localhost:8055`).
+
+## Step 1 — Enable the MCP server in Directus
 
 1. Open your Directus admin panel.
-2. **Settings → Access Policies → New Policy** (or "Roles"):
-   - Name: `mcp` (or `mcp-readonly`).
-   - **Scope is the developer's choice.** The `mcp` user only needs enough
-     rights for what the agent actually does. Examples:
-     - **Read-only** — grant read access to `directus_collections`,
-       `directus_fields`, `directus_relations` (schema introspection only).
-       Use this if the agent only inspects the project.
-     - **Read + write** — also allow create/update/delete on the collections
-       the agent manages (e.g. the agent scaffolds content models, seeds
-       data, or runs migrations). This is common when the agent builds the
-       project, not just reads it.
-   - Avoid the `Administrator` role unless you explicitly want full access.
-     Prefer the narrowest policy that covers the agent's real workload.
-3. **User Directory → New User**:
-   - Email: `mcp@local` (or any placeholder).
-   - Assign the `mcp` policy you created.
-   - Generate a **static access token** (user → token field). Copy it.
-4. Repeat steps 1-3 in **each** Directus instance you work with.
+2. Go to **Settings → AI → Model Context Protocol**.
+3. Set **MCP Server: Enabled**, then **Save**.
 
-> The same token value can be reused across instances (you set it manually),
-> so the global MCP config needs only one token. If an instance already has
-> its own token, see Override below.
+The MCP endpoint is now available at `<DIRECTUS_URL>/mcp`.
 
----
+## Step 2 — Create a scoped access policy, role, user, and token
 
-## 2. Put the token in the global config
+Do **not** use an admin token. Create a scoped, least-privilege identity.
+Follow these sub-steps in order.
 
-Edit `~/.config/opencode/opencode.jsonc`. The Directus MCP server is a
-**remote** server authenticated with a `Bearer` token in the request headers:
+### 2a — Create the Access Policy (permissions)
 
-```jsonc
-{
-  "mcpServers": {
-    "directus": {
-      "type": "remote",
-      "url": "http://localhost:8055/mcp",
-      "headers": {
-        "Authorization": "Bearer dkIHulcJZ18e3ZuENS943XlY8K_S3nMZ"
-      }
-    }
-  }
-}
-```
+1. **Settings → Access Policies → Create Policy**.
+2. **Name:** `mcp`
+3. Enable **App Access** (this lets the user authenticate via token).
+4. Under **Collection Permissions**, grant the following. The rights depend on
+   what the agent should be allowed to do. If you want the agent to be able to
+   do everything (read the schema, create collections, run flows, upload files)
+   — grant full CRUD on all the system collections below. If you want to
+   restrict it — that is your responsibility. Start with Read on the schema
+   collections and add more as needed.
 
-- Set `url` to any of your instances (including the `/mcp` path) — it will
-  be auto-corrected per project on Session Start (see below).
-- The token after `Bearer ` is the `mcp` user's static access token. It is
-  set **once** and shared by all projects that use the same `mcp` user token.
+   | Collection           | Permission |
+   |----------------------|------------|
+   | `directus_collections` | CRUD     |
+   | `directus_fields`      | CRUD     |
+   | `directus_relations`   | CRUD     |
+   | `directus_flows`       | CRUD     |
+   | `directus_operations`  | CRUD     |
+   | `directus_files`       | CRUD     |
+   | `directus_folders`     | CRUD     |
 
----
+   (Running flows is covered by the permission on `directus_flows`; uploading
+   files by the permission on `directus_files`.)
 
-## 3. Automatic URL switching on Session Start
+5. **Save** the policy.
 
-Every session, the agent reads the project's `.env`:
+### 2b — Create the Role and assign the policy
+
+1. **Settings → Roles → Create Role**.
+2. **Name:** `mcp`
+3. Assign the **Access Policy:** `mcp` (the one from 2a).
+4. **Save** the role.
+
+### 2c — Create the User and assign the role
+
+1. **Settings → User Directory → Create User** (or **Settings → Users**).
+2. **Name:** `MCP User`
+3. **Role:** `mcp` (the one from 2b).
+4. **Save** the user.
+
+### 2d — Generate the Static Token
+
+1. Open the **MCP User** card you just created.
+2. Find the **Token** field and click **Generate** (Static Token).
+3. **Copy** the generated token — you will paste it into `.env` in Step 3.
+
+## Step 3 — Put the credentials in the project `.env`
+
+Edit the project's `.env` (created from `templates/.env.example` by `make init`):
 
 ```env
-DIRECTUS_URL=http://localhost:8056
+# DIRECTUS_URL e.g. http://localhost:8055 or http://localhost:8056
+DIRECTUS_URL=http://localhost:8055
+MCP_DIRECTUS_TOKEN=<paste the token from Step 2d>
 ```
 
-Then it compares that URL with the one in the global MCP config.
+`.env` is gitignored, so the token never leaves your machine via git.
 
-- **Match** → nothing happens, the agent proceeds.
-- **Mismatch** → the agent asks: "MCP points at a different instance
-  (<mcp-url>), switch to <expected-url>?" — you reply `yes` and it updates
-  the global config.
+## Step 4 — Generate `opencode.jsonc`
 
-This means in normal work you never think about `switch-directus`: open the
-project, the agent fixes the address itself.
+From the project root run:
 
----
-
-## 4. Override — per-project `opencode.jsonc`
-
-For projects that need a **different token** (separate service account,
-production instance, etc.), put a local config in the project root:
-
-```jsonc
-// opencode.jsonc  (in your project root)
-{
-  "mcpServers": {
-    "directus": {
-      "type": "remote",
-      "url": "https://shop.directus.app/mcp",
-      "headers": {
-        "Authorization": "Bearer project-specific-token"
-      }
-    }
-  }
-}
+```bash
+make mcp
 ```
 
-A project-level `opencode.jsonc` **overrides** the global one for that session.
-The agent uses it and does not touch the global config.
+This runs `scripts/gen-opencode.sh`, which reads `.env`, merges your global
+OpenCode config, and writes a local `opencode.jsonc` containing the `directus`
+MCP block (`url = <DIRECTUS_URL>/mcp`, `Authorization: Bearer <token>`).
 
-**IMPORTANT — never commit this file:**
+You can also run it manually: `bash scripts/gen-opencode.sh`.
 
-```gitignore
-opencode.jsonc
+## Step 5 — Open the project
+
+```bash
+make start
 ```
 
-(Already included in the harness `.gitignore` template.)
+`make start` regenerates `opencode.jsonc` from `.env` (if `.env` has
+`DIRECTUS_URL`) and then launches OpenCode. The Directus MCP connects to
+**your** instance on launch. No switching, no restart.
 
----
+## Adding more collections later
 
-## 5. `switch-directus` (manual lever)
+When you need OpenCode to touch one of your own collections, grant the `mcp`
+policy **Read** (and **Create/Update** as needed) on that collection in
+**Settings → Access Policies → mcp**. No config change is required.
 
-Use it only when you want to switch without restarting the session, or when
-auto-switch did not fire.
+## Setting this up for additional projects
 
-```
-switch-directus            # reads DIRECTUS_URL from .env
-switch-directus <url>      # explicit URL
-```
+Repeat Steps 1–4 in each project. Each project has its own `.env` and its own
+`opencode.jsonc` pointing at its own Directus instance. Open them in separate
+OpenCode windows — they run completely independently.
 
-What it does:
-- Reads `DIRECTUS_URL` from the project's `.env` (or uses the explicit URL).
-- If a local `opencode.jsonc` exists in the project → it does **not** modify
-  the global config; it reports "using project config".
-- If no local config → it updates only the `url` (the `/mcp` endpoint) in the
-  global `~/.config/opencode/opencode.jsonc`. The `headers.Authorization`
-  (Bearer token) is left untouched.
+## Troubleshooting
 
-It always asks for confirmation before writing.
-
----
-
-## Decision summary
-
-| Case | What to do |
-|------|-----------|
-| Default (99%) | One `mcp` user + one token in global config; URL from `.env` |
-| Auto URL fix | Nothing — Session Start handles it |
-| Manual switch | `switch-directus` |
-| Special token / instance | Project-level `opencode.jsonc` (gitignored) |
+- **MCP not connecting / "directus" missing:** run `make mcp` — `opencode.jsonc`
+  was not generated (or `.env` is missing `DIRECTUS_URL` / `MCP_DIRECTUS_TOKEN`).
+- **401 Unauthorized:** token invalid/expired, or user has no role / no
+  App Access. Re-check Steps 2b–2d.
+- **403 on writes:** grant the `mcp` policy the needed permission on that
+  collection (Step 2a / "Adding more collections later").
+- **Endpoint not found:** MCP Server not Enabled (Step 1), or Directus < v11.12.

@@ -34,14 +34,14 @@ day to day — everything else lives in [INSTALL.md](./INSTALL.md) /
 - `analyze` — read-only audit: architecture map + security review + risk report
 - `update-harness` — pull latest harness updates and apply globally
 - `sync-templates` — check for new template files missing in current project
-- `switch-directus` — repoint the Directus MCP URL (manual lever). See [Directus MCP Setup](instructions/directus-mcp-setup.md).
 
 ## Directus MCP
 
-One global Directus MCP server, one shared `mcp` user token. The project URL is
-taken from `.env` and auto-corrected on Session Start. `switch-directus` is a
-manual lever that updates only the URL. Full setup:
-[instructions/directus-mcp-setup.md](instructions/directus-mcp-setup.md).
+Configured per project from the project's `.env` (see
+[Directus MCP Setup](instructions/directus-mcp-setup.md)). There is no global
+Directus MCP config — each project generates its own gitignored `opencode.jsonc`
+via `make mcp` (or automatically on `make start`), pointing at that project's
+Directus instance. Open each project in its own OpenCode window.
 
 ## Daily Workflow
 

@@ -44,6 +44,26 @@ if [ ! -f "$PROJECT/.gitignore" ]; then
   echo "  ✓ .gitignore copied"
 fi
 
+ENV_FILE="$PROJECT/.env"
+if [ ! -f "$ENV_FILE" ]; then
+  cp templates/.env.example "$ENV_FILE"
+  echo "  ✓ .env created from template (fill DIRECTUS_URL + MCP_DIRECTUS_TOKEN)"
+else
+  # Never overwrite an existing .env — only append the Directus MCP vars if missing.
+  added=0
+  if ! grep -q '^DIRECTUS_URL=' "$ENV_FILE"; then
+    printf '\n# Directus MCP\nDIRECTUS_URL=\n' >> "$ENV_FILE"; added=1
+  fi
+  if ! grep -q '^MCP_DIRECTUS_TOKEN=' "$ENV_FILE"; then
+    printf 'MCP_DIRECTUS_TOKEN=\n' >> "$ENV_FILE"; added=1
+  fi
+  if [ "$added" -eq 1 ]; then
+    echo "  ✓ .env updated: added DIRECTUS_URL + MCP_DIRECTUS_TOKEN (fill them in)"
+  else
+    echo "  ✓ .env already has Directus MCP vars"
+  fi
+fi
+
 if [ ! -d "$PROJECT/.git" ]; then
   cd "$PROJECT" && git init && git add . && \
   git commit -m "chore: initialize project with harness scaffold" >/dev/null 2>&1

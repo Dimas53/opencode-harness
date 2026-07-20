@@ -4,6 +4,33 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-07-20
 
+### Directus MCP — per-project generated config (switch-directus removed)
+
+- **Architecture change:** Directus MCP is now configured **per project** from
+  the project's `.env`. There is **no global `directus` block** in
+  `~/.config/opencode/opencode.jsonc` and the `switch-directus` shortcut is
+  removed. Each project generates its own gitignored `opencode.jsonc` that fully
+  overrides the global config, so three projects = three independent MCP
+  connections, each pointed at its own Directus instance.
+- **scripts/gen-opencode.sh** (new) — reads `.env` (`DIRECTUS_URL` +
+  `MCP_DIRECTUS_TOKEN`), merges the global OpenCode config, and writes a local
+  `opencode.jsonc` with the per-project `directus` MCP block.
+- **Makefile** — added `mcp` target (`bash scripts/gen-opencode.sh $(PROJECT)`).
+- **scripts/start.sh** — regenerates `opencode.jsonc` from `.env` before
+  launching OpenCode when `.env` has `DIRECTUS_URL`.
+- **templates/.env.example** (new) — `DIRECTUS_URL` + `MCP_DIRECTUS_TOKEN`
+  placeholders; `init-project.sh` copies it to `.env` when absent.
+- **instructions/directus-mcp-setup.md** — rewritten for the per-project flow
+  (enable MCP server, create Access Policy → Role → User → Static Token, put
+  credentials in `.env`, `make mcp`, open project).
+- **global/AGENTS.md** — Session Start step 7 simplified: if a local
+  `opencode.jsonc` exists it is used automatically; otherwise warn the user to
+  create `.env` and run `make mcp`. All `switch-directus` references removed.
+- **README.md** — `switch-directus` shortcut and old global-MCP section removed;
+  `## Directus MCP` now describes the per-project flow.
+
+## 2026-07-20
+
 ### README cleanup — keep only top-level commands
 
 - Removed terminal `make` command blocks (Fallback, Symlink, From terminal) from

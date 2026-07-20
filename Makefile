@@ -1,4 +1,4 @@
-.PHONY: help link setup init init-adopt analyze verify update dod
+.PHONY: help link setup init init-adopt analyze verify update dod mcp
 
 .DEFAULT_GOAL := help
 
@@ -72,3 +72,6 @@ test: test-quick
 
 start:
 	@bash scripts/start.sh
+
+mcp:
+	@bash scripts/gen-opencode.sh $(PROJECT)

@@ -46,5 +46,12 @@ else
   echo ""
 fi
 
+# Regenerate per-project Directus MCP config from .env (if this is a Directus project)
+if [ -f ".env" ] && grep -q "DIRECTUS_URL" ".env"; then
+  echo "[ mcp ] Generating opencode.jsonc from .env..."
+  bash "$HARNESS_PATH/scripts/gen-opencode.sh" "$(pwd)" \
+    || echo "  ⚠ skipped (set DIRECTUS_URL + MCP_DIRECTUS_TOKEN in .env)"
+fi
+
 echo "Opening OpenCode..."
 opencode
