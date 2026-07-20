@@ -6,7 +6,7 @@
 
 When user types exactly:
 - `new` — load and run `~/.config/opencode/skills/harness-init/agent-new-project.md`
-- `existing` — load and run `~/.config/opencode/skills/harness-init/agent-init-existing.md`
+- `adopt` — load and run `~/.config/opencode/skills/harness-init/agent-adopt.md`
 - `analyze` — load and run `~/.config/opencode/skills/harness-init/agent-analyze.md`
 
 - `update-harness` — pull latest updates and apply globally:
@@ -289,8 +289,8 @@ Never generate, insert, copy, or preserve Russian text in project files under an
 **Check: does the current project have harness files?**
 
 Look for these files (ANY match = harness project):
-- `scripts/init-project.sh`, `scripts/init-existing.sh`, `scripts/analyze.sh`
-- `Makefile` with `init` or `init-existing` or `analyze` targets
+- `scripts/init-project.sh`, `scripts/init-adopt.sh`, `scripts/analyze.sh`
+- `Makefile` with `init` or `init-adopt` or `analyze` targets
 - `global/AGENTS.md` with "Harness Shortcuts" section
 
 **If YES (harness project):** JSDoc required for composables, server routes, utilities, and complex functions. Inline comments for non-obvious logic, workarounds, and edge cases. No comments on trivial getters/setters.

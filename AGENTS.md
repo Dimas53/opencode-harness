@@ -28,7 +28,7 @@ Makefile            → build orchestration (caution: has bugs)
 | User types | Action |
 |------------|--------|
 | `new` | `make init PROJECT=$(pwd)` |
-| `existing` | `make init-existing PROJECT=$(pwd)` |
+| `adopt` | `make init-adopt PROJECT=$(pwd)` |
 | `analyze` | `make analyze PROJECT=$(pwd)` |
 | `update-harness` | cd ~/.opencode-harness && git pull && make update |
 | `sync-templates` | inline (check + copy missing) |

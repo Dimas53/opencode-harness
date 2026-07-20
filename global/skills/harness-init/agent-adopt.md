@@ -1,4 +1,4 @@
-# agent-init-existing
+# agent-adopt
 
 > Use this skill for: connecting harness to an existing project.
 > Runs analysis first, then generates docs and AGENTS.md.

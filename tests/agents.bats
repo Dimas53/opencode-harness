@@ -37,9 +37,9 @@ setup() {
   [ -s "$HARNESS_ROOT/scripts/init-project.sh" ]
 }
 
-@test "scripts/init-existing.sh exists and non-empty" {
-  [ -f "$HARNESS_ROOT/scripts/init-existing.sh" ]
-  [ -s "$HARNESS_ROOT/scripts/init-existing.sh" ]
+@test "scripts/init-adopt.sh exists and non-empty" {
+  [ -f "$HARNESS_ROOT/scripts/init-adopt.sh" ]
+  [ -s "$HARNESS_ROOT/scripts/init-adopt.sh" ]
 }
 
 @test "scripts/analyze.sh exists and non-empty" {

@@ -63,7 +63,7 @@
 - **`make verify`** — check harness installation (scripts exist, config in place)
 - **`make update`** — pull latest harness + copy global files to `~/.config/opencode/`
 - **`make init PROJECT=/path`** — new project: copy templates + interview via OpenCode
-- **`make init-existing PROJECT=/path`** — existing project: analyze + docs generation
+- **`make init-adopt PROJECT=/path`** — existing project: analyze + docs generation
 - **`make analyze PROJECT=/path`** — read‑only audit: architecture + security + risk
 
 ---

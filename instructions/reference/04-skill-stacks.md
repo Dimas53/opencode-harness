@@ -4,7 +4,7 @@ Ready-made skill combinations for typical scenarios.
 Each agent-skill defines its own internal skill stack — this file is for reference.
 
 **Trigger types:**
-- `new-project` / `existing-project` / `analyze-only` — triggered via make commands
+- `new-project` / `adopt-project` / `analyze-only` — triggered via make commands
 - `feature-development` / `debugging` / `audit` / `onboarding-foreign-project` / `docs-update` — manual reference stacks, load by telling the agent which scenario you're in
 
 ---
@@ -23,13 +23,13 @@ Internal stack (defined in agent-new-project.md):
 
 ---
 
-## existing-project
+## adopt-project
 
-Trigger: `make init-existing PROJECT=/path`
+Trigger: `make init-adopt PROJECT=/path`
 
-Delegated to: `~/.config/opencode/skills/harness-init/agent-init-existing.md`
+Delegated to: `~/.config/opencode/skills/harness-init/agent-adopt.md`
 
-Internal stack (defined in agent-init-existing.md):
+Internal stack (defined in agent-adopt.md):
 1. agent-analyze — map the system first
 2. grill-with-docs — fill gaps agent couldn't detect
 3. planning-and-task-breakdown — structure the work

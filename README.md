@@ -38,7 +38,7 @@ After that, `update-harness` shortcut works from anywhere inside OpenCode.
 
 Open OpenCode in any directory and type:
 - `new` — new project: interview → full doc structure generated
-- `existing` — existing project: auto-analysis first → fills missing docs
+- `adopt` — existing project: auto-analysis first → fills missing docs
 - `analyze` — read-only audit: architecture map + security review + risk report
 - `update-harness` — pull latest harness updates and apply globally
 - `sync-templates` — check for new template files missing in current project
@@ -49,7 +49,7 @@ Open OpenCode in any directory and type:
 
 ```bash
 make init PROJECT=/path/to/new-project
-make init-existing PROJECT=/path/to/project  
+make init-adopt PROJECT=/path/to/project  
 make analyze PROJECT=/path/to/project
 ```
 

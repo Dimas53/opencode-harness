@@ -7,7 +7,7 @@ has its own workflow and skill stack.
 
 ## When to use
 - User runs `make init PROJECT=/path` on a new project
-- User runs `make init-existing PROJECT=/path` on an existing project
+- User runs `make init-adopt PROJECT=/path` on an existing project
 - User runs `make analyze PROJECT=/path` to audit without modifying files
 - User says "init harness", "set up this project", "initialize docs", "analyze", "audit"
 
@@ -45,7 +45,7 @@ It does NOT run interviews or generate docs itself.
 → Load ~/.config/opencode/skills/harness-init/agent-analyze.md
 
 **EXISTING PROJECT** — current directory has source code AND user wants docs
-→ Load ~/.config/opencode/skills/harness-init/agent-init-existing.md
+→ Load ~/.config/opencode/skills/harness-init/agent-adopt.md
 
 ### How to detect user intent
 
@@ -59,7 +59,7 @@ Wait for confirmation before loading the agent-skill.
 - harness-init never runs interviews itself — delegates to agent-skills
 - harness-init never generates files itself — delegates to agent-skills
 - make init → always delegate to agent-new-project
-- make init-existing → always delegate to agent-init-existing
+- make init-adopt → always delegate to agent-adopt
 - make analyze → always delegate to agent-analyze
 - Never mix scenarios — if unsure, ask user which they want
 

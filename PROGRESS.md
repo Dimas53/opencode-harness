@@ -30,7 +30,7 @@ Last commit: 16ef9d8 — feat: add make start launcher
   - scripts/session-end.sh — session end checks (docs lag + PROGRESS + memory)
   - Pre-commit hook installed, verified blocking real commits
   - global/AGENTS.md: added `dod` shortcut, replaced Technology Standards with triggers table
-  - init scripts: hook installation appended to init-project.sh and init-existing.sh
+  - init scripts: hook installation appended to init-project.sh and init-adopt.sh
   - Fixed session-end.sh SIGPIPE 141 bug (head -1 under set -o pipefail)
 - Problems:
   - ~70% of Harness rules not enforced (documented in audit)
@@ -185,7 +185,7 @@ Session language: ru
   stack, `ls ~/.config/opencode/skills/<name>` per skill, shows ✅/❌ with
   install command. Informational only — does NOT block the interview.
 - **Sync cleanup** — `global/skills/*` mirrored into `~/.config/opencode/skills/`:
-  harness-init (agent-analyze, agent-init-existing, SKILL), security (SKILL +
+  harness-init (agent-analyze, agent-adopt, SKILL), security (SKILL +
   06-directus-nuxt.md was missing), session-start, code-reviewer. All 25 skill
   files now in sync; AGENTS.md in sync.
 - **session-start/SKILL.md** — output block translated RU→EN (English-Only Policy
@@ -193,3 +193,23 @@ Session language: ru
 
 ### Known issues
 - (none new)
+
+## Session 2026-07-19 (rename existing → adopt)
+
+Session language: ru
+
+### Done
+- Renamed shortcut `existing` → `adopt` (global/AGENTS.md + ~/.config/AGENTS.md
+  + repo AGENTS.md + README + INSTALL + GUIDE).
+- Renamed skill file `agent-init-existing.md` → `agent-adopt.md` (global/ +
+  ~/.config), updated all cross-references (SKILL.md, agent-analyze.md, GUIDE,
+  04-skill-stacks, README, INSTALL, PROGRESS).
+- Renamed Makefile target `init-existing` → `init-adopt`; updated all docs.
+- Renamed script `scripts/init-existing.sh` → `scripts/init-adopt.sh` (git mv),
+  updated internal references + install-hooks.sh comment.
+- Renamed `04-skill-stacks.md` section `existing-project` → `adopt-project`.
+- All 25 skill files verified in sync (global/ ↔ ~/.config); AGENTS.md synced;
+  bash syntax OK; no Cyrillic introduced.
+
+### Known issues
+- (none)

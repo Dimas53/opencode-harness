@@ -76,14 +76,14 @@ and generates all project documentation automatically. One file at a time — co
 ## Starting an Existing Project
 
 ### Primary path
-Open OpenCode in the project directory and type `existing`.
+Open OpenCode in the project directory and type `adopt`.
 
 ### Fallback (make command)
 ```bash
-make init-existing PROJECT=/path/to/existing-project
+make init-adopt PROJECT=/path/to/existing-project
 ```
 
-This opens OpenCode in your project and automatically starts the `agent-init-existing` skill.
+This opens OpenCode in your project and automatically starts the `agent-adopt` skill.
 
 The skill first runs `agent-analyze` to map the codebase,
 then fills knowledge gaps via interview, then generates missing documentation.

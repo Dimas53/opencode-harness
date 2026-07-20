@@ -2,7 +2,7 @@
 
 > Use this skill for: read-only audit of an existing project.
 > Does NOT create docs, AGENTS.md, or project setup.
-> For full project setup → use agent-init-existing.md instead.
+> For full project setup → use agent-adopt.md instead.
 
 ## Purpose
 Deep analysis of an existing project — understand architecture, find

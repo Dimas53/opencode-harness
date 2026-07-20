@@ -2,7 +2,7 @@
 # scripts/install-hooks.sh
 # Installs pre-commit hook into the target project's .git/hooks/.
 # Usage: ./scripts/install-hooks.sh /path/to/project
-#        (called by init-project.sh and init-existing.sh)
+#        (called by init-project.sh and init-adopt.sh)
 set -euo pipefail
 
 TARGET_PROJECT="${1:-$(pwd)}"
