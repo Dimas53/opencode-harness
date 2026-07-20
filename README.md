@@ -40,8 +40,14 @@ day to day — everything else lives in [INSTALL.md](./INSTALL.md) /
 Configured per project from the project's `.env` (see
 [Directus MCP Setup](instructions/directus-mcp-setup.md)). There is no global
 Directus MCP config — each project generates its own gitignored `opencode.jsonc`
-via `make mcp` (or automatically on `make start`), pointing at that project's
-Directus instance. Open each project in its own OpenCode window.
+pointing at that project's Directus instance. Open each project in its own
+OpenCode window.
+
+Generate the config (run from the project root):
+- `make mcp` — generate `opencode.jsonc` from `.env`. Re-run after editing
+  `.env` or the global OpenCode config, so new common MCPs are picked up.
+- `make start` — same as `make mcp`, then launches OpenCode. Prefer this over
+  launching OpenCode directly so the config stays current.
 
 ## Daily Workflow
 

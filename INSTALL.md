@@ -137,6 +137,27 @@ ls ~/.config/opencode/skills/ | wc -l   # should show 60+ skills
 
 ---
 
+## Directus MCP (per project)
+
+Each project gets its own Directus MCP connection, generated from the project's
+`.env` into a gitignored `opencode.jsonc`. There is no global `directus` block.
+
+From the project root:
+
+```bash
+make mcp      # generate opencode.jsonc from .env (re-run after editing
+              # .env or the global OpenCode config)
+make start    # same as `make mcp`, then launches OpenCode
+```
+
+> Note: launching OpenCode directly (without `make start`) does NOT regenerate
+> `opencode.jsonc`. The local file is a snapshot — new common MCPs added to the
+> global config, or a changed `MCP_DIRECTUS_TOKEN` in `.env`, are picked up only
+> after re-running `make mcp` (or `make start`). Prefer `make start` so the config
+> stays current. Full setup: [instructions/directus-mcp-setup.md](instructions/directus-mcp-setup.md).
+
+---
+
 ## MCP Security — Restricting Filesystem Access
 
 The filesystem MCP server accepts allowed directories as command-line
