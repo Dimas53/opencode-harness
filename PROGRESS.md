@@ -237,3 +237,19 @@ Session language: ru
 
 ### Known issues
 - (none)
+
+---
+
+## Session — README cleanup (top-level commands only)
+
+### Done
+- README.md: removed Fallback make-commands block, Symlink block, and From
+  terminal block. Kept only OpenCode shortcuts (`new`/`adopt`/`analyze`/
+  `update-harness`/`sync-templates`/`switch-directus`), Daily Workflow trigger
+  words, and links to INSTALL.md / GUIDE.md. Terminal `make` commands remain
+  documented in INSTALL.md and instructions/GUIDE.md.
+- Verified no make command was lost — `make link`, `make init`, `make start`
+  all still present in INSTALL.md / GUIDE.md.
+
+### Known issues
+- (none)

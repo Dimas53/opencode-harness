@@ -4,6 +4,14 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-07-20
 
+### README cleanup — keep only top-level commands
+
+- Removed terminal `make` command blocks (Fallback, Symlink, From terminal) from
+  README. Those live in INSTALL.md / instructions/GUIDE.md. README now shows only
+  the day-to-day shortcuts typed inside OpenCode plus links to detailed docs.
+
+## 2026-07-20
+
 ### Directus MCP setup strategy
 
 - **instructions/directus-mcp-setup.md** — new guide: create a dedicated `mcp`
