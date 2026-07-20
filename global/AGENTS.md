@@ -155,11 +155,15 @@ Execute these steps in order BEFORE any response to the user:
  6. Read `HARNESS.md` if it exists — apply project constraints and risk levels to session behavior
  7. If the project uses the Directus MCP server (`.env` has DIRECTUS_URL, or
     HARNESS.md declares a Directus instance):
-    - Read the MCP config file (`~/.config/opencode/opencode.jsonc`, then
-      project `opencode.jsonc` if present) and extract the `directus` server's
-      URL (from `mcpServers.directus.env.DIRECTUS_URL` or its args). This is a
-      READ only — never modify the config here.
-    - Compare it with the project's expected URL (`.env` DIRECTUS_URL).
+    - If a project-level `opencode.jsonc` exists in the project root — use it
+      (it fully overrides the global config) and skip the mismatch check below.
+      This is a READ only — never modify the config here.
+    - Otherwise read the global MCP config (`~/.config/opencode/opencode.jsonc`)
+      and extract the `directus` server's URL. The Directus MCP server is a
+      remote server: `mcpServers.directus.url` (e.g. `http://localhost:8055/mcp`),
+      authenticated via `mcpServers.directus.headers.Authorization: "Bearer <token>"`.
+      This is a READ only — never modify the config here.
+    - Compare the MCP URL host with the project's expected URL (`.env` DIRECTUS_URL).
     - If they differ — STOP and report clearly, do NOT continue Session Start:
       "⚠️ Стоп. MCP Directus подключён к другому инстансу (<mcp-url>), а этот
       проект использует <expected-url>. Работа с Directus невозможна. Напиши

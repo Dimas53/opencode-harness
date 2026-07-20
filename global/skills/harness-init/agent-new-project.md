@@ -149,6 +149,12 @@ then fill the scaffolded template files with the project's context.
      Reminder:
      - add docs/design.md if a design system appears
      - add docs/plan-main.md if there is a broader vision document
+     - If this project uses Directus, create a dedicated `mcp` user (service
+       account) in that Directus instance and put its static access token in
+       the global `~/.config/opencode/opencode.jsonc` under
+       `mcpServers.directus.headers.Authorization: "Bearer <token>"`. Scope
+       (read-only vs read+write) is the developer's choice. See
+       `instructions/directus-mcp-setup.md`.
      - Fill HARNESS.md sections — Product contract (what must never break) and
        Decisions to inherit (architectural choices future agents must know) —
        these require your input, not the agent's.

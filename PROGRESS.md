@@ -3,7 +3,7 @@
 ## Current Status
 
 Phase: v0.3 — Infrastructure stabilization
-Last commit: 16ef9d8 — feat: add make start launcher
+Last commit: 5c46838 — refactor(harness): rename existing → adopt
 
 ## Known Issues
 
@@ -210,6 +210,30 @@ Session language: ru
 - Renamed `04-skill-stacks.md` section `existing-project` → `adopt-project`.
 - All 25 skill files verified in sync (global/ ↔ ~/.config); AGENTS.md synced;
   bash syntax OK; no Cyrillic introduced.
+
+### Known issues
+- (none)
+
+---
+
+## Session — Directus MCP setup strategy
+
+### Done
+- Added `instructions/directus-mcp-setup.md`: full guide for the Directus MCP
+  server — mcp service-account user creation (scope = developer's choice:
+  read-only or read+write), global shared `Bearer` token in
+  `~/.config/opencode/opencode.jsonc` (`type: remote`, `url`, `headers.Authorization`),
+  per-project URL auto-correction on Session Start, per-project `opencode.jsonc`
+  override, and `switch-directus` semantics.
+- Updated `global/AGENTS.md` Session Start step 7: local project `opencode.jsonc`
+  takes priority (fully overrides global, skips mismatch check); MCP URL now read
+  from `mcpServers.directus.url` with `Bearer` auth. Synced to ~/.config/AGENTS.md.
+- Shortened `README.md` `switch-directus` section to 3 lines + link to the setup guide.
+- Added `opencode.jsonc` to `templates/.gitignore` (init-project.sh copies
+  .gitignore only when absent — override stays per-project, gitignored).
+- Added Directus `mcp` user reminder to hand-off of both `agent-new-project.md`
+  and `agent-adopt.md`. Synced to ~/.config/skills/.
+- All modified batch files verified Cyrillic-free; bats tests pass (14/14).
 
 ### Known issues
 - (none)

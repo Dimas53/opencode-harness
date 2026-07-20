@@ -43,8 +43,14 @@ If any skill failed to load — STOP and report to user before proceeding.
 5. Each file: show draft → wait for ok → write → next file
 6. Write session log to PROGRESS.md: "chore: initialize harness docs for [project name]"
 7. Commit: "chore: initialize harness docs for [project name]"
-8. Remind user: "Add docs/design.md if you have a design system.
-   Add docs/plan-main.md if you have a broader vision document."
+ 8. Remind user: "Add docs/design.md if you have a design system.
+    Add docs/plan-main.md if you have a broader vision document.
+    If this project uses Directus, create a dedicated `mcp` user (service
+    account) in that Directus instance and put its static access token in the
+    global `~/.config/opencode/opencode.jsonc` under
+    `mcpServers.directus.headers.Authorization: \"Bearer <token>\"`. Scope
+    (read-only vs read+write) is the developer's choice. See
+    `instructions/directus-mcp-setup.md`."
 
 ## Hard rules
 - Run agent-analyze BEFORE asking any questions

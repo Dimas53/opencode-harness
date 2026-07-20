@@ -2,6 +2,25 @@
 
 All notable changes to opencode-harness are documented here.
 
+## 2026-07-20
+
+### Directus MCP setup strategy
+
+- **instructions/directus-mcp-setup.md** — new guide: create a dedicated `mcp`
+  service-account user in each Directus instance (scope is the developer's
+  choice — read-only or read+write), store one shared `Bearer` token in the
+  global `~/.config/opencode/opencode.jsonc` (`mcpServers.directus` as a remote
+  server with `url` + `headers.Authorization`), auto-correct the project URL on
+  Session Start, and override per-project via a gitignored `opencode.jsonc`.
+- **global/AGENTS.md** — Session Start step 7 now prioritizes a project-level
+  `opencode.jsonc` (full override, skips mismatch check) and reads the MCP URL
+  from `mcpServers.directus.url` with `Bearer` auth.
+- **README.md** — `switch-directus` section shortened to a 3-line summary linking
+  to the setup guide.
+- **templates/.gitignore** — added `opencode.jsonc`.
+- **agent-new-project.md / agent-adopt.md** — hand-off now reminds the user to
+  create the Directus `mcp` user when the project uses Directus.
+
 ## 2026-07-19
 
 ### `new` flow — restructure into a single coherent mechanism
