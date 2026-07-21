@@ -26,8 +26,18 @@ then fill the scaffolded template files with the project's context.
    - If the user invoked `new` from a folder that is NOT yet the target
      project, ask which directory to scaffold into, then run `make init`
      there.
-   - Do NOT edit the global AGENTS.md (`~/.config/opencode/AGENTS.md`) —
-     it lives outside the project and is managed by `make setup` only.
+    - Do NOT edit the global AGENTS.md (`~/.config/opencode/AGENTS.md`) —
+      it lives outside the project and is managed by `make setup` only.
+  2. After scaffold, verify `.env.example` exists in the project root:
+     ```bash
+     ls "$(pwd)/.env.example" 2>/dev/null && echo "EXISTS" || echo "MISSING"
+     ```
+     If missing — copy it from templates:
+     ```bash
+     cp ~/.opencode-harness/templates/.env.example "$(pwd)/.env.example"
+     ```
+     `.env.example` is MANDATORY — without it the developer has no reference
+     for required environment variables. Never create `.env` directly.
 
 ### Phase 1 — Interview + fill the scaffold
  2. Ask Q0: what language should I respond in? (Ask this FIRST so the entire
@@ -36,17 +46,27 @@ then fill the scaffolded template files with the project's context.
     "Understood, working in [language]. Setting up the project structure — this will take a few seconds."
     (print this in the session language from Q0, replacing [language] with the language name)
  3. Ask Q-1: "Do you have a requirements document, design brief, or any existing
-   spec? If yes — share it now, I will read it first and ask only clarifying
-   questions about what is missing. If no — just say 'no' and we will go
-   through the full interview."
-   - If user provides a file → read it, ask max 2-3 clarifying questions,
-     skip anything already covered in the file
-   - If "no" → proceed to standard interview
-   - Q-1 is asked AFTER Q0 so the question and all follow-ups are in the
-     user's chosen language
-4. Load interview-me — run structured interview with the fixed question order
-   below. Each question: state your guess, wait for the answer, one at a time.
-   - Q1: Project name and purpose (2-3 sentences)
+    spec? If yes — share it now, I will read it and pre-fill the interview.
+    If no — just say 'no' and we will go through the full interview."
+    - If user provides a file → read it FULLY. The files are PRE-FILL, not
+      interview replacement. The full interview (step 4) ALWAYS runs — Q1→Q6 +
+      HARNESS questions, one at a time. For each question:
+        - If the file clearly and unambiguously answers it → read the answer
+          aloud and confirm: "From the file I understood [answer] — correct?"
+          (in the session language). Wait for explicit yes/no before proceeding.
+        - If answer is missing, unclear, or ambiguous → ask the question
+          normally as if there were no files.
+    - NEVER batch questions — one question at a time, always.
+    - If "no" → proceed to standard interview (step 4 as-is).
+    - Q-1 is asked AFTER Q0 so the question and all follow-ups are in the
+      user's chosen language.
+ 4. Load interview-me — run structured interview with the fixed question order
+    below. Each question: state your guess, wait for the answer, one at a time.
+    If Q-1 provided files: for each question, first check if the file answers
+    it clearly. If yes → confirm the answer with the user before proceeding.
+    If not → ask normally. The full interview ALWAYS runs, one question at a
+    time regardless of files.
+    - Q1: Project name and purpose (2-3 sentences)
    - Q2: Team size + authorization model (solo / team / public? login via
      Directus? per-user data?)
    - Q3: Stage (MVP / production-critical) + deployment target (local Docker /
@@ -118,7 +138,10 @@ then fill the scaffolded template files with the project's context.
     - `CONTEXT.md` — REWRITE, removing the example domain terms; use the
       project's own ubiquitous language
     - `roadmap.md` — REWRITE the example phases; use the real MVP phases
-     - `skills-cheatsheet.md` — keep as-is or trim to relevant skills
+     - `skills-cheatsheet.md` — keep as-is. ADD entries relevant to this
+       project's stack. NEVER delete existing entries — this file is a global
+       reference, not a project-specific config.
+       Show draft → confirm before writing (same as all other files).
       - `docs/specs/phase-1.md` — write the phase-1 spec
       - `docs/plan-main.md` — ONLY if Q-1 provided a spec/brief file: rewrite
         with the project's vision. If Q-1 answer was "no": delete this file
@@ -145,13 +168,20 @@ then fill the scaffolded template files with the project's context.
           - Decisions to inherit (architectural choices future agents must know)
      Each file: show draft → wait for ok → write → next file.
      **Specifically for AGENTS.md:**
-      - Replace stack skills placeholder with the actual `found_skills` from step 4.4.
-      - If `missing_skills` exists, add a comment line in the Stack Skills section:
+      - Replace stack skills placeholder with the actual `found_skills` and
+        `missing_skills` from step 4.4. Use clear Installed / Missing split:
         ```
-        # Add missing skills here after installing:
-        # https://mcpmarket.com/tools/skills/laravel/SKILL.md
-        # https://www.skills.sh/laravel
+        # Installed (load on every session start):
+        ~/.config/opencode/skills/security-and-hardening/SKILL.md
+        ~/.config/opencode/skills/docker-expert/SKILL.md
+
+        # Missing — install before next session:
+        # ❌ django/drf → https://mcpmarket.com/tools/skills
+        # ❌ react → https://www.skills.sh/
         ```
+        If all skills found — write only the Installed section.
+        If all skills missing — write only the Missing section.
+        If no skills at all — write "None found" comment.
  9. Commit: "chore: initialize harness docs for [project name]"
  10. Write a brief session log into `PROGRESS.md`: what was done, which files
     were created, and the next step (start M1 from the roadmap). Do NOT leave
@@ -166,9 +196,17 @@ then fill the scaffolded template files with the project's context.
     IMPORTANT: print this entire hand-off in the session language
     (from Q0), not in English.
     Replace `[ProjectName]` with the real project name.
-    Replace `[if missing: ❌ ...]` with the actual missing skills from
-    step 4.4, one per line with ❌. If no missing skills — write
-    "all required skills are installed" instead.
+    Replace `[found_skills]` and `[missing_skills]` with the actual lists
+    from step 4.4. Show both ✅ found and ❌ missing skills, exactly as
+    they appeared in the gap check block. If all skills found — show only
+    ✅ lines with header "✅ Skills — all required installed". If all skills
+    missing — show only ❌ lines.
+    In 🚀 BEFORE NEXT SESSION, make points conditional on Q-1:
+    - "Add docs/design.md": show ONLY if Q-1 did NOT provide a design file.
+      If user provided design.md via Q-1 → the file already exists → skip.
+    - "Add docs/plan-main.md": show ONLY if Q-1 did NOT provide a plan file.
+      If plan-main.md was already written from Q-1 → skip.
+    - Renumber items sequentially after removing skipped ones.
     ```
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     ✅ [ProjectName] initialized
@@ -178,13 +216,15 @@ then fill the scaffolded template files with the project's context.
 
     🚀 BEFORE NEXT SESSION:
       1. New session → `start`
-      2. Add `docs/design.md` if a design system exists
-      3. Add `docs/plan-main.md` if a broader vision document exists
-      4. Fill HARNESS.md: Product contract + Decisions to inherit
+      [show only if design file NOT provided in Q-1:
+       2. Add `docs/design.md` if a design system exists]
+      [show only if plan file NOT provided in Q-1:
+       N. Add `docs/plan-main.md` if a broader vision document exists]
+      [renumber to N+1] Fill HARNESS.md: Product contract + Decisions to inherit
 
-    ⚠️ Missing skills:
-      [if missing: ❌ skill — install command]
-      [if all ok: all required skills are installed]
+    ⚠️ Skills:
+      [found_skills: ✅ name — found]
+      [missing_skills: ❌ name — not found]
       → https://mcpmarket.com/tools/skills
       → https://www.skills.sh/
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -206,10 +246,16 @@ then fill the scaffolded template files with the project's context.
 - NEVER write multiple files in one turn without confirmation between each one.
   One file = show draft → wait for confirmation → write → next file.
   Batch-writing all files at once is a VIOLATION.
+- NEVER delete entries from skills-cheatsheet.md — only ADD entries relevant
+  to this project's stack. This file is a global reference, not a
+  project-specific config.
 - design.md is NOT generated here — user provides it manually
 - Never touch the global AGENTS.md — only the project's scaffolded files
 - `new` is documentation + scaffold only — project implementation (M1) happens
   in the next session, not here
 - restate (step 4.5) is MANDATORY — no file is written before explicit "yes"
-- NEVER create .env directly — only .env.example with placeholder values.
-  Real .env is created by the developer manually and must be in .gitignore.
+- `.env.example` is MANDATORY — verify it exists after scaffold. If missing,
+  copy it from templates/ before the interview. This gives the developer a
+  reference for required environment variables.
+- NEVER create `.env` directly — only `.env.example` with placeholder values.
+  Real `.env` is created by the developer manually and must be in .gitignore.

@@ -4,6 +4,18 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-07-21
 
+### agent-new-project — P20-P26 fixes
+
+- **P20**: Q-1 files now PRE-FILL not interview replacement. Full interview
+  Q1→Q6→HARNESS always runs; files only pre-fill answers, agent confirms each.
+- **P21**: Hard rule — NEVER delete entries from skills-cheatsheet.md (only ADD).
+- **P22**: Hand-off shows both ✅ found and ❌ missing skills.
+- **P23**: AGENTS.md Stack Skills — clear Installed / Missing sections.
+- **P24**: Phase 0 verifies .env.example after scaffold, copies if missing.
+- **P25**: skills-cheatsheet.md — inline show→confirm→write requirement.
+- **P26**: Hand-off conditional hints — "Add docs/design.md" / "Add plan-main.md"
+  shown only if files NOT provided in Q-1.
+
 ### Analyze skill — expanded skill stack
 
 - **global/skills/harness-init/agent-analyze.md** — skill stack expanded from 4 to

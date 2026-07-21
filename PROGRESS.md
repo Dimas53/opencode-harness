@@ -352,3 +352,27 @@ Session language: ru
 
 ### Next
 - Live-test cycle on real projects
+
+## Session 2026-07-21 (P20-P26 — Q-1 pre-fill, skill-gap hand-off, .env.example)
+
+Session language: ru
+
+### Done
+- **P20**: Q-1 rewritten — files are PRE-FILL not interview replacement.
+  Full interview Q1→Q6→HARNESS always runs, one question at a time.
+  Files only pre-fill answers, agent confirms each before skipping.
+- **P21**: Hard rule + step 8 — NEVER delete entries from skills-cheatsheet.md.
+  Removed "trim" language, replaced with "ADD only, NEVER delete".
+- **P22**: Hand-off now shows both ✅ found and ❌ missing skills
+  (was only ❌ before).
+- **P23**: AGENTS.md Stack Skills — clear Installed / Missing sections
+  with uncommented paths for found, commented # ❌ for missing.
+- **P24**: Phase 0 now verifies .env.example after scaffold; copies from
+  templates/ if missing. Hard rule strengthened.
+- **P25**: skills-cheatsheet.md — inline show→confirm→write requirement.
+- **P26**: Hand-off NEXT STEPS — "Add docs/design.md" and
+  "Add docs/plan-main.md" shown only if files NOT provided in Q-1.
+- All mirrors synced (global/ ↔ ~/.config/); Cyrillic-free; make verify: 8/8
+
+### Next
+- Live-test cycle: run `new` with Q-1 files on a real project (test_6)
