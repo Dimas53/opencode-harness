@@ -15,14 +15,20 @@ Last commit: 5c46838 — refactor(harness): rename existing → adopt
 - `session-end.sh` PROGRESS.md + memory/ warnings expected for meta-project
 - `notes/` has 6 stale session artifacts — archive candidate
 
-## Session 2026-07-21 (Analyze skill — expanded skill stack)
+## Session 2026-07-21 (Analyze quality gate + notes archive)
 
 ### Done
-- Added 3 skills to agent-analyze: context-canary, junior-to-senior, code-review-and-quality
-- Reordered skill stack for logical flow (zoom-out → context-canary → health → junior-to-senior → code-review → security → premortem)
-- Added Quality Gate: every skill must produce ≥5 concrete findings with file+line
-- Added sections to report output: Context Check, Senior Review, Quality
-- Synced live skill file
+- agent-analyze.md: expanded from 4 to 7 skills (context-canary, junior-to-senior,
+  code-review-and-quality); reordered logically; Quality Gate (≥5 concrete
+  findings with file+line); report sections: Context Check, Senior Review, Quality
+- Archived stale premortems (07-07/07-08) → notes/old/
+- Synced global/AGENTS.md → ~/.config (language persistence)
+- Verified Directus 11 wildcard gotcha doc fix
+
+### Next
+- Consider running `analyze` on a real project to validate the new skill stack
+- On Directus prod migration: remove admin_access, replace with per-collection grants
+- Consider merging `instructions/reference/` (8 files → 4-5)
 
 ## Session 2026-07-20 (Directus MCP — per-project generated config)
 
