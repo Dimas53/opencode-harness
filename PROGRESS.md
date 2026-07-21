@@ -15,6 +15,15 @@ Last commit: 5c46838 — refactor(harness): rename existing → adopt
 - `session-end.sh` PROGRESS.md + memory/ warnings expected for meta-project
 - `notes/` has 6 stale session artifacts — archive candidate
 
+## Session 2026-07-21 (Analyze skill — expanded skill stack)
+
+### Done
+- Added 3 skills to agent-analyze: context-canary, junior-to-senior, code-review-and-quality
+- Reordered skill stack for logical flow (zoom-out → context-canary → health → junior-to-senior → code-review → security → premortem)
+- Added Quality Gate: every skill must produce ≥5 concrete findings with file+line
+- Added sections to report output: Context Check, Senior Review, Quality
+- Synced live skill file
+
 ## Session 2026-07-20 (Directus MCP — per-project generated config)
 
 ### Done

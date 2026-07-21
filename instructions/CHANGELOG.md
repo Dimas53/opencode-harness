@@ -2,6 +2,22 @@
 
 All notable changes to opencode-harness are documented here.
 
+## 2026-07-21
+
+### Analyze skill — expanded skill stack
+
+- **global/skills/harness-init/agent-analyze.md** — skill stack expanded from 4 to
+  7 skills: zoom-out → context-canary → codebase-health-check → junior-to-senior →
+  code-review-and-quality → security → premortem.
+- Added **context-canary** (context rot/degradation check) after zoom-out.
+- Added **junior-to-senior** (senior-level design/approach findings).
+- Added **code-review-and-quality** (multi-axis code review).
+- Reordered for logical flow: architecture first, then health, then quality, then
+  security/risks.
+- Introduced **Quality Gate**: every skill must produce at least 5 concrete
+  findings with specific file+line examples. Generic statements not allowed.
+- Report output now includes sections: Context Check, Senior Review, Quality.
+
 ## 2026-07-20
 
 ### Session language persisted in PROGRESS.md
