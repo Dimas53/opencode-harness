@@ -90,7 +90,7 @@
 ## Rare but useful
 
 | Skill | When to tell the agent |
-|---|---|---|
+|---|---|
 | `codebase-health-check` | Assess codebase health, find messy/duplicate code, plan refactoring |
 | `junior-to-senior` | Review and improve code quality — make it better, more maintainable |
 | `context-canary` | Detect context rot/degradation, install canary signal for long sessions |

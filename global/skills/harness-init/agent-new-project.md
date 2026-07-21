@@ -61,13 +61,26 @@ then fill the scaffolded template files with the project's context.
     - HARNESS questions (ask before writing files): critical paths of the
       project, and risk levels for each area (per HARNESS.md vocabulary)
  4.4. SKILL GAP CHECK — after the interview, before restate:
-    - Read `docs/skills-cheatsheet.md`, section "Stack → Required Skills".
-    - Match the table against the stack from the interview (Q1).
-    - For each required skill, check it exists:
-        ls ~/.config/opencode/skills/<name>
-    - Show the result (do NOT block the interview):
-        ✅ found: <name>
-        ❌ missing: <name> — install: <install command from the table>
+    - Extract technologies from the interview answers (Q1 stack).
+    - List all installed skills:
+        ls ~/.config/opencode/skills/
+    - Match by semantic naming (e.g. "vue" covers Vue 3,
+      "docker-expert" covers Docker, no match for Symfony → ❌).
+    - Print a formatted block (do NOT block the interview):
+      ```
+      ┌─────────────────────────────────────┐
+      │ ⚠️  SKILL GAP CHECK                 │
+      │  ✅ vue — found                    │
+      │  ✅ docker-expert — found          │
+      │  ❌ symfony — not found             │
+      │                                     │
+      │  → will be repeated in hand-off below       │
+      │  → https://mcpmarket.com/tools/skills│
+      │  → https://www.skills.sh/           │
+      └─────────────────────────────────────┘
+      ```
+      If all skills found — print the same block without ❌ lines,
+      with header "✅ SKILL GAP CHECK — all ok".
     - This is informational only; proceed to restate (4.5) regardless.
  4.5. MANDATORY restate — before generating any file, show a summary and wait
     for explicit "yes". Format:
@@ -80,7 +93,14 @@ then fill the scaffolded template files with the project's context.
     ```
     Do NOT proceed to file generation until the user confirms. If they refine —
     fold in and restate.
-5. Load brainstorming — explore unknowns, surface assumptions
+ 5. Before loading brainstorming, print a frame explaining why:
+    ```
+    ┌─ Brainstorming ──────────────────────────────┐
+    │ Open questions remain — I will close them before      │
+    │ planning. This takes 2-3 questions.       │
+    └───────────────────────────────────────────────┘
+    ```
+    Load brainstorming — explore unknowns, surface assumptions
 6. Load planning-and-task-breakdown — structure phases and tasks
 7. Load spec-driven-development — write phase-1 spec
 8. Fill the scaffolded template files with the interview context. The files
@@ -124,41 +144,34 @@ then fill the scaffolded template files with the project's context.
     ```
     Session language: [language from Q0, e.g. ru or en]
     ```
- 11. Remind user: "Add docs/design.md if you have a design system.
-     Add docs/plan-main.md if you have a broader vision document."
-
 ### Phase 2 — Hand off to the working session
-11. Hand-off report — show the user a formatted summary:
+11. Hand-off report — show the user a formatted visual block.
+    IMPORTANT: print this entire hand-off in the session language
+    (from Q0), not in English.
+    Replace `[ProjectName]` with the real project name.
+    Replace `[if missing: ❌ ...]` with the actual missing skills from
+    step 4.4, one per line with ❌. If no missing skills — write
+    "all required skills are installed" instead.
     ```
-    Project [name] initialized.
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    ✅ [ProjectName] initialized
 
-    Created:
-    - AGENTS.md, ARCHITECTURE.md, CONTEXT.md, roadmap.md
-    - skills-cheatsheet.md, docs/specs/phase-1.md
-    - HARNESS.md, MEMORY.md, PLAN.md, PROGRESS.md, memory/
+    📋 IN THIS SESSION:
+      → Type `end`
 
-     Next step:
-     Follow this order EXACTLY:
-     1. Type `end` in THIS session to close it correctly — this triggers the
-        Session End protocol (final commit + PROGRESS.md update + "Session
-        closed" report). Do NOT skip this.
-     2. Open a NEW session in this folder.
-     3. Type `start` in the new session
-        (triggers internal Session Start -> continues from roadmap M1)
+    🚀 BEFORE NEXT SESSION:
+      1. New session → `start`
+      2. Add `docs/design.md` if a design system exists
+      3. Add `docs/plan-main.md` if a broader vision document exists
+      4. Fill HARNESS.md: Product contract + Decisions to inherit
 
-     Reminder:
-     - add docs/design.md if a design system appears
-     - add docs/plan-main.md if there is a broader vision document
-     - If this project uses Directus, create a dedicated `mcp` user (service
-       account) in that Directus instance and put its static access token in
-       the global `~/.config/opencode/opencode.jsonc` under
-       `mcpServers.directus.headers.Authorization: "Bearer <token>"`. Scope
-       (read-only vs read+write) is the developer's choice. See
-       `instructions/directus-mcp-setup.md`.
-     - Fill HARNESS.md sections — Product contract (what must never break) and
-       Decisions to inherit (architectural choices future agents must know) —
-       these require your input, not the agent's.
-     ```
+    ⚠️ Missing skills:
+      [if missing: ❌ skill — install command]
+      [if all ok: all required skills are installed]
+      → https://mcpmarket.com/tools/skills
+      → https://www.skills.sh/
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    ```
      Do NOT scaffold or run M1 here — `new` is docs + scaffold only.
 
 ## Hard rules
@@ -166,7 +179,9 @@ then fill the scaffolded template files with the project's context.
 - Q-1 (spec file check) is asked AFTER Q0, so the question and all follow-ups
   are in the user's chosen language
 - Never skip the interview — even if user seems to know everything
-- Never generate all files at once — one at a time with confirmation
+- NEVER write multiple files in one turn without confirmation between each one.
+  One file = show draft → wait for confirmation → write → next file.
+  Batch-writing all files at once is a VIOLATION.
 - design.md is NOT generated here — user provides it manually
 - Never touch the global AGENTS.md — only the project's scaffolded files
 - `new` is documentation + scaffold only — project implementation (M1) happens

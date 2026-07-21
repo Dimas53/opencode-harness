@@ -17,9 +17,13 @@ Delegated to: `~/.config/opencode/skills/harness-init/agent-new-project.md`
 
 Internal stack (defined in agent-new-project.md):
 1. interview-me — Q0-Q9 interview
-2. brainstorming — explore unknowns, surface assumptions
-3. planning-and-task-breakdown — structure phases and tasks
-4. spec-driven-development — write phase-1 spec
+2. 4.4. Skill gap check — `ls ~/.config/opencode/skills/`, semantic match
+   against stack, print ✅/❌ block with marketplace URLs
+3. brainstorming — explore unknowns, surface assumptions
+4. planning-and-task-breakdown — structure phases and tasks
+5. spec-driven-development — write phase-1 spec
+Phase 2: formatted hand-off block with ━━━ frames, 📋🚀⚠️ sections,
+conditional missing skills list, links to mcpmarket.com + skills.sh
 
 ---
 

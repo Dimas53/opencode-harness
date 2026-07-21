@@ -4,6 +4,7 @@
 
 Phase: v0.3 — Infrastructure stabilization
 Last commit: 5c46838 — refactor(harness): rename existing → adopt
+Session language: ru
 
 ## Known Issues
 
@@ -294,6 +295,28 @@ Session language: ru
 - (none)
 
 ---
+
+## Session 2026-07-21 (fix: agent-new-project.md — test_3 bugs)
+
+Session language: ru
+
+### Done
+- **P1**: Removed duplicate step 11 from Phase 1 (design.md reminder inlined in Phase 2)
+- **P2**: Added session language instruction before hand-off block
+- **P3**: Reformatted hand-off with visual frames (━━━), ✅📋🚀⚠️ sections, marketplace URLs
+- **P4**: Added skill gap box after step 4.4, repeated in hand-off
+- **P5**: Added brainstorming explanation frame before step 5
+- **P6**: Replaced weak batch-write rule with VIOLATION-level hard rule
+- **P7**: Stripped template example data (#8966FA, Jost, h-56px, phosphor-icons) → TBD
+- **P8**: Removed TypeScript pinning and example gotchas from templates/MEMORY.md
+- **P9**: Changed step 4.4 from table-based gap to dynamic `ls` check
+- **P10**: Updated instructions/reference/04-skill-stacks.md new-project section
+- **Cyrillic cleanup**: Removed from 5 project files (agent-new-project.md ×2, design.md, MEMORY.md, 04-skill-stacks.md)
+- **Mirror verified**: global/skills/ and ~/.config/opencode/skills/ agent-new-project.md are identical
+- **make verify**: 8/8 passed
+
+### Next
+- Close session
 
 ## Session 2026-07-21 (ostatok reorg + cleanup)
 
