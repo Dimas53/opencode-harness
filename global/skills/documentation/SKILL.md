@@ -1,3 +1,10 @@
+---
+name: documentation
+description: >
+  Updates project documentation when docs lag behind code. Triggered
+  automatically after phase completion or on user request.
+---
+
 # Documentation Session
 
 Loaded when: docs lag check triggers warning, phase/major feature completes, or user asks for docs update.

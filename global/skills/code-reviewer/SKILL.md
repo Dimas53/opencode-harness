@@ -1,3 +1,10 @@
+---
+name: code-reviewer
+description: >
+  Checks code quality before reporting "done". Runs after implementation
+  to ensure changes meet standards before commit.
+---
+
 # Code Reviewer
 
 Activate after completing any code changes before reporting "done".

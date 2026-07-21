@@ -1,3 +1,10 @@
+---
+name: dod
+description: >
+  Full Definition of Done reference with per-step checklists, examples,
+  and edge cases for the mandatory 6-step DoD process.
+---
+
 # Definition of Done — Full Reference
 
 Loaded when AGENTS.md Definition of Done section says to load this skill.

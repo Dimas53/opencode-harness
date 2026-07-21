@@ -2,6 +2,20 @@
 
 All notable changes to opencode-harness are documented here.
 
+## 2026-07-22
+
+### Vendor all skills — removed external dependencies
+
+- **All skills now in-repo** (`global/skills/`): copied 70 skills from superpowers
+  plugin + JuliusBrussee directly into the harness. Zero external dependencies.
+- **install.sh/update.sh**: removed `opencode plugin add superpowers@...`,
+  `npx skills add JuliusBrussee/skills`, `.agents/skills/` copy. Only
+  `cp -r global/skills/*` remains.
+- **10 custom skills** (code-reviewer, codebase-health-check, etc.) got YAML
+  frontmatter (`---`) — required for OpenCode skill discovery.
+- **global/opencode-config.example.jsonc**: removed superpowers from `plugin` array.
+- **`.agents/skills/`** deleted from repo (all skills now in `global/skills/`).
+
 ## 2026-07-21
 
 ### agent-new-project — P20-P26 fixes

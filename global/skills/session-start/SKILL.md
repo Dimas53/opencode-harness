@@ -1,3 +1,10 @@
+---
+name: session-start
+description: >
+  Session start ritual for beginning every new session. Reads context,
+  checks progress, loads skills, and reports session brief.
+---
+
 # Session Start
 
 Use this skill at the beginning of every new session.

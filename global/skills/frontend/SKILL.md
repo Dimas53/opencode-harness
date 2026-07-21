@@ -1,3 +1,10 @@
+---
+name: frontend
+description: >
+  CSS, layout, and styling rules for UI development. Covers flexbox/grid,
+  responsive design, no hover, tap feedback, and design system compliance.
+---
+
 # Frontend UI Rules
 
 Loaded when doing UI/frontend work. Triggers: component, page, layout, form, styles, Tailwind, Nuxt UI, Vue, design, CSS.

@@ -49,30 +49,9 @@ else
   echo -e "${GREEN}✓ AGENTS.md updated successfully${NC}"
 fi
 
-# Update skills — only ADD new ones, never overwrite existing
-for skill_dir in global/skills/*/; do
-  skill_name=$(basename "$skill_dir")
-  target="$HOME/.config/opencode/skills/$skill_name"
-  if [ ! -d "$target" ]; then
-    cp -r "$skill_dir" "$target"
-    echo "✓ New skill added: $skill_name"
-  else
-    echo "→ Skill already exists (skipped): $skill_name"
-  fi
-done
-
-# Install/enrich JuliusBrussee skills
-npx skills add JuliusBrussee/skills -y 2>/dev/null || echo "→ JuliusBrussee skills: already installed or skipped"
-if [ -d .agents/skills ]; then
-  for skill_dir in .agents/skills/*/; do
-    skill_name=$(basename "$skill_dir")
-    target="$HOME/.config/opencode/skills/$skill_name"
-    if [ ! -d "$target" ]; then
-      cp -r "$skill_dir" "$target"
-      echo "✓ New skill added (JuliusBrussee): $skill_name"
-    fi
-  done
-fi
+# Update skills — copy all from repo, overwriting existing
+cp -r global/skills/* "$HOME/.config/opencode/skills/"
+echo "✓ Skills updated from repo"
 
 echo ""
 echo "✓ Update complete. Run 'make verify' to check installation."

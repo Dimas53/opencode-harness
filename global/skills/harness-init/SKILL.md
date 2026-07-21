@@ -1,3 +1,11 @@
+---
+name: harness-init
+description: >
+  Detects project scenario (new / adopt / analyze) and delegates to the
+  correct agent-skill. Orchestrator only — does not run interviews or
+  generate files itself.
+---
+
 # harness-init
 
 ## Purpose

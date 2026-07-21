@@ -1,3 +1,10 @@
+---
+name: startup
+description: >
+  Full startup ritual reference with explanations and edge cases.
+  Deeper version of the compact Session Start in AGENTS.md.
+---
+
 # Startup Ritual — Full Reference
 
 Loaded when AGENTS.md Session Start section says to load this skill.

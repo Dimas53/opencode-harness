@@ -1,3 +1,10 @@
+---
+name: security
+description: >
+  Security baseline for AI-assisted development. Covers auth, secrets,
+  API hardening, CSP, CORS, Docker, and per-stack security patterns.
+---
+
 # Security Skill — Entry Point
 
 > Read this file at the start of every session.

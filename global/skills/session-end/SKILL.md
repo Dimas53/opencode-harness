@@ -1,3 +1,10 @@
+---
+name: session-end
+description: >
+  Session end protocol with edge cases, troubleshooting, and examples.
+  Runs docs lag check, updates PROGRESS.md, creates .session-ended guard.
+---
+
 # Session End Protocol — Full Reference
 
 Loaded when AGENTS.md Session End section says to load this skill.
@@ -79,6 +86,6 @@ Only after steps 1-5 are complete.
 ## Orchestration
 
 `git commit` → run Definition of DoD first (see skills/dod/SKILL.md)
-`git push` or user says "end / done / bye / Ende / fertig" → run this protocol
+`git push` or user says "end/конец/done" → run this protocol
 
 These triggers are already in AGENTS.md Behavior section.

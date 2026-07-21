@@ -51,22 +51,6 @@ npm install -g chrome-devtools-mcp
 echo "✓ Chrome DevTools MCP installed"
 
 npx playwright install
-opencode plugin add superpowers@git+https://github.com/obra/superpowers.git
-
-# Verify superpowers installed correctly
-SKILL_COUNT=$(ls ~/.config/opencode/skills/ 2>/dev/null | wc -l)
-if [ "$SKILL_COUNT" -lt 10 ]; then
-  echo "⚠ Superpowers may not have installed correctly."
-  echo "  Skills found: $SKILL_COUNT (expected 40+)"
-  echo "  Try manually: opencode plugin add superpowers@git+https://github.com/obra/superpowers.git"
-  echo "  Or check: https://github.com/obra/superpowers"
-else
-  echo "✓ Superpowers installed: $SKILL_COUNT"
-fi
-
-# Install JuliusBrussee skills (context-canary, fuck-slop, interface-kit, junior-to-senior, last-20-percent, loop-factory)
-npx skills add JuliusBrussee/skills -y
-echo "✓ JuliusBrussee skills installed"
 
 mkdir -p ~/.config/opencode/skills
 
@@ -79,12 +63,6 @@ else
 fi
 echo "✏️  Edit ~/.config/opencode/opencode.jsonc — replace /YOUR/HOME/PATH and YOUR_DIRECTUS_TOKEN"
 cp -r global/skills/* ~/.config/opencode/skills/
-
-# Copy JuliusBrussee skills from .agents/skills/ to OpenCode config
-if [ -d .agents/skills ]; then
-  cp -r .agents/skills/* ~/.config/opencode/skills/
-  echo "✓ JuliusBrussee skills copied to OpenCode config"
-fi
 
 ln -sf "$(pwd)" ~/.opencode-harness
 echo "✓ Symlink created: ~/.opencode-harness → $(pwd)"

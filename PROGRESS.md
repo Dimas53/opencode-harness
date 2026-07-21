@@ -195,6 +195,25 @@ Session language: ru
   - Touch-test the `new` flow in an empty folder; verify full file set appears
   - Fix Makefile known issues (duplicate `init` target, empty `setup` target)
 
+## Session 2026-07-22 (vendor all skills — remove external dependencies)
+
+Session language: ru
+
+### Done
+- **Vendored all skills**: copied all 70 skills from `~/.config/opencode/skills/` into `global/skills/`.
+  No more dependency on superpowers plugin or JuliusBrussee GitHub repos.
+- **Added YAML frontmatter** to 10 custom harness skills (code-reviewer, codebase-health-check,
+  documentation, dod, frontend, harness-init, security, session-end, session-start, startup)
+- **scripts/install.sh**: removed `opencode plugin add superpowers`, `npx skills add JuliusBrussee`,
+  `.agents/skills/` copy — now only `cp -r global/skills/*`
+- **scripts/update.sh**: same cleanup + changed from "add new only" to full `cp -r` overwrite
+- **global/opencode-config.example.jsonc**: removed superpowers from `plugin` array
+- **Removed `.agents/skills/`** — all skills now live in `global/skills/`
+
+### Next
+- Test clean `git clone && make setup` on a fresh machine
+- On the new MacBook: run `update-harness` and verify all 70 skills land
+
 ## Git Log
 
 - `f158e7b` — fix: replace head -1 with sed -n '1p' in dod.sh to avoid SIGPIPE

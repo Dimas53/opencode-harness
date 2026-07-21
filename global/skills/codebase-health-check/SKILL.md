@@ -1,3 +1,10 @@
+---
+name: codebase-health-check
+description: >
+  Analyses a codebase holistically — identifies duplication, technical debt,
+  refactoring priorities with risk assessment and phased plan.
+---
+
 # Codebase Health Check
 
 **Purpose:** Analyse a codebase holistically, identify what to refactor and in what order, with risk assessment and a phased plan that doesn't break what works.
