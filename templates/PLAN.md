@@ -1,4 +1,9 @@
 # PLAN.md
+
+<!-- This file is created by the agent at the start of a large task (>30 min).
+     In the `new` session it is intentionally empty — the agent fills it
+     during implementation sessions. -->
+
 > Created at task start. Updated throughout. Deleted when task complete.
 
 ## Task

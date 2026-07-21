@@ -14,11 +14,10 @@
 
 ## Product Contract — What Must Never Break
 
-- [ ] Auth / login flow
-- [ ] Payment / billing
-- [ ] Database migrations (irreversible)
-- [ ] API backward compatibility
-- [ ] [other critical paths]
+<!-- List of things that MUST NOT break under any circumstances.
+     Examples: auth, payments, data isolation between clients.
+     Fill after the first working session once critical paths become clear. -->
+- [ ] ...
 
 ## Risk Levels
 
@@ -30,13 +29,11 @@
 
 ## Decisions to Inherit
 
-Document architectural decisions that future agents must know.
-See also: `docs/adr/` for formal ADRs.
-
-- [Why we chose this stack / architecture]
-- [Known limitations]
-- [Past migrations or major refactors]
-- [Testing strategy]
+<!-- Architectural decisions that future agents must know and not re-ask.
+     Examples: "use JWT not sessions", "no API Platform — manual controllers only",
+     "multi-tenant via global scope not separate DBs".
+     Fill once you've made an important technical decision. -->
+- ...
 
 ---
 

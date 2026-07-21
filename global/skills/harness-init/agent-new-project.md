@@ -30,9 +30,12 @@ then fill the scaffolded template files with the project's context.
      it lives outside the project and is managed by `make setup` only.
 
 ### Phase 1 — Interview + fill the scaffold
-2. Ask Q0: what language should I respond in? (Ask this FIRST so the entire
-   interview runs in the user's chosen language.)
-3. Ask Q-1: "Do you have a requirements document, design brief, or any existing
+ 2. Ask Q0: what language should I respond in? (Ask this FIRST so the entire
+    interview runs in the user's chosen language.)
+    After the user answers, print one line acknowledging the language:
+    "Understood, working in [language]. Setting up the project structure — this will take a few seconds."
+    (print this in the session language from Q0, replacing [language] with the language name)
+ 3. Ask Q-1: "Do you have a requirements document, design brief, or any existing
    spec? If yes — share it now, I will read it first and ask only clarifying
    questions about what is missing. If no — just say 'no' and we will go
    through the full interview."
@@ -81,6 +84,9 @@ then fill the scaffolded template files with the project's context.
       ```
       If all skills found — print the same block without ❌ lines,
       with header "✅ SKILL GAP CHECK — all ok".
+    - **Store two lists for later use at step 8:**
+      - `found_skills` = skills that matched (✅)
+      - `missing_skills` = technologies with no skill match (❌)
     - This is informational only; proceed to restate (4.5) regardless.
  4.5. MANDATORY restate — before generating any file, show a summary and wait
     for explicit "yes". Format:
@@ -104,37 +110,48 @@ then fill the scaffolded template files with the project's context.
 6. Load planning-and-task-breakdown — structure phases and tasks
 7. Load spec-driven-development — write phase-1 spec
 8. Fill the scaffolded template files with the interview context. The files
-   already exist from Phase 0 — DO NOT generate them from scratch, fill or
-   rewrite them in place:
-   - `AGENTS.md` — replace `[Project Name]`, `[Framework + version]`,
-     `[path]` placeholders, stack skills, file map, backend/UI rules
-   - `ARCHITECTURE.md` — write the real architecture
-   - `CONTEXT.md` — REWRITE, removing the example domain terms; use the
-     project's own ubiquitous language
-   - `roadmap.md` — REWRITE the example phases; use the real MVP phases
-   - `skills-cheatsheet.md` — keep as-is or trim to relevant skills
-    - `docs/specs/phase-1.md` — write the phase-1 spec
-    - `HARNESS.md` — fill the interview-derived sections:
-        - Entry point: dev server command, test command, lint command
-        - Risk levels: copy the risk levels from the HARNESS-questions answers
-          in the interview (e.g. auth = high, public sharing = high)
-      Before writing HARNESS.md Entry point, check for port conflicts:
-        - Host ports (macOS / Linux):
-            lsof -nP -iTCP -sTCP:LISTEN | grep -E ':(3000|3001|8055|8056|5432)'
-          (Linux fallback if lsof is missing: `ss -tlnp | grep -E ':(3000|3001|8055|8056|5432)'`)
-        - Docker containers (catches ports not visible to lsof on the host):
-            docker ps --format "table {{.Names}}\t{{.Ports}}"
-      Show the result to the user. If a port the project needs is taken,
-      propose free alternatives:
-        - Frontend (Nuxt): 3000 / 3001
-        - Directus:         8055 / 8056
-        - PostgreSQL:       5432 / 5433
-      Record the chosen ports in HARNESS.md Entry point (and in `.env` /
-      docker-compose when the implementation session runs).
-      Leave these sections EMPTY for the user to fill later:
-        - Product contract (what must never break)
-        - Decisions to inherit (architectural choices future agents must know)
-    Each file: show draft → wait for ok → write → next file.
+    already exist from Phase 0 — DO NOT generate them from scratch, fill or
+    rewrite them in place:
+    - `AGENTS.md` — replace `[Project Name]`, `[Framework + version]`,
+      `[path]` placeholders, stack skills, file map, backend/UI rules
+    - `ARCHITECTURE.md` — write the real architecture
+    - `CONTEXT.md` — REWRITE, removing the example domain terms; use the
+      project's own ubiquitous language
+    - `roadmap.md` — REWRITE the example phases; use the real MVP phases
+     - `skills-cheatsheet.md` — keep as-is or trim to relevant skills
+      - `docs/specs/phase-1.md` — write the phase-1 spec
+      - `docs/plan-main.md` — ONLY if Q-1 provided a spec/brief file: rewrite
+        with the project's vision. If Q-1 answer was "no": delete this file
+        (it's not needed — the user has no spec to formalise into a vision doc).
+      - `HARNESS.md` — fill the interview-derived sections:
+         - Entry point: dev server command, test command, lint command
+         - Risk levels: copy the risk levels from the HARNESS-questions answers
+           in the interview (e.g. auth = high, public sharing = high)
+       Before writing HARNESS.md Entry point, check for port conflicts:
+         - Host ports (macOS / Linux):
+             lsof -nP -iTCP -sTCP:LISTEN | grep -E ':(3000|3001|8055|8056|5432)'
+           (Linux fallback if lsof is missing: `ss -tlnp | grep -E ':(3000|3001|8055|8056|5432)'`)
+         - Docker containers (catches ports not visible to lsof on the host):
+             docker ps --format "table {{.Names}}\t{{.Ports}}"
+       Show the result to the user. If a port the project needs is taken,
+       propose free alternatives:
+         - Frontend (Nuxt): 3000 / 3001
+         - Directus:         8055 / 8056
+         - PostgreSQL:       5432 / 5433
+        Record the chosen ports in HARNESS.md Entry point (and in `.env` /
+        docker-compose when the implementation session runs).
+        Leave these sections EMPTY for the user to fill later:
+          - Product contract (what must never break)
+          - Decisions to inherit (architectural choices future agents must know)
+     Each file: show draft → wait for ok → write → next file.
+     **Specifically for AGENTS.md:**
+      - Replace stack skills placeholder with the actual `found_skills` from step 4.4.
+      - If `missing_skills` exists, add a comment line in the Stack Skills section:
+        ```
+        # Add missing skills here after installing:
+        # https://mcpmarket.com/tools/skills/laravel/SKILL.md
+        # https://www.skills.sh/laravel
+        ```
  9. Commit: "chore: initialize harness docs for [project name]"
  10. Write a brief session log into `PROGRESS.md`: what was done, which files
     were created, and the next step (start M1 from the roadmap). Do NOT leave
@@ -172,6 +189,13 @@ then fill the scaffolded template files with the project's context.
       → https://www.skills.sh/
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     ```
+    After the hand-off block, print a separate line in the session language:
+    ```
+    ─────────────────────────────────────
+    ▶ Done. Type `end` to close the session.
+      Then Cmd+N (Mac) / Ctrl+N (Win/Linux) — new session.
+    ─────────────────────────────────────
+    ```
      Do NOT scaffold or run M1 here — `new` is docs + scaffold only.
 
 ## Hard rules
@@ -187,3 +211,5 @@ then fill the scaffolded template files with the project's context.
 - `new` is documentation + scaffold only — project implementation (M1) happens
   in the next session, not here
 - restate (step 4.5) is MANDATORY — no file is written before explicit "yes"
+- NEVER create .env directly — only .env.example with placeholder values.
+  Real .env is created by the developer manually and must be in .gitignore.

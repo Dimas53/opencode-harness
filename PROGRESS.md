@@ -335,3 +335,20 @@ Session language: ru
 - Live-test cycle: `new` on empty project, `analyze` on RecipeBox/ItoCook,
   `adopt` on non-harness project, clean install on MacBook — fix real issues
 - Then: backlog or Sandbox module
+
+## Session 2026-07-21 (P15-P19 — template hints, gap→AGENTS, .env rule, PLAN comment, plan-main conditional)
+
+Session language: ru
+
+### Done
+- **P15**: templates/HARNESS.md — Product Contract and Decisions to Inherit now have detailed hints with examples
+- **P16**: gap check result → auto-write found skills to AGENTS.md Stack Skills + placeholder for missing
+- **P17**: Hard rules — forbid creating .env directly (only .env.example)
+- **P18**: templates/PLAN.md — comment at top explaining it's empty at new-time, filled during implementation
+- **P19**: docs/plan-main.md — created only if Q-1 provided a file, otherwise deleted
+- **P13-P14**: applied in previous session (P13 — language ack after Q0, P14 — final end block)
+- All mirrors synced (global/ ↔ ~/.config/)
+- make verify: 8/8 passed
+
+### Next
+- Live-test cycle on real projects

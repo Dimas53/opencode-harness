@@ -18,12 +18,28 @@ Delegated to: `~/.config/opencode/skills/harness-init/agent-new-project.md`
 Internal stack (defined in agent-new-project.md):
 1. interview-me — Q0-Q9 interview
 2. 4.4. Skill gap check — `ls ~/.config/opencode/skills/`, semantic match
-   against stack, print ✅/❌ block with marketplace URLs
+   against stack, print ✅/❌ block with marketplace URLs.
+   **P16**: found skills auto-written to AGENTS.md Stack Skills section;
+   missing skills get placeholder with marketplace links.
 3. brainstorming — explore unknowns, surface assumptions
 4. planning-and-task-breakdown — structure phases and tasks
 5. spec-driven-development — write phase-1 spec
 Phase 2: formatted hand-off block with ━━━ frames, 📋🚀⚠️ sections,
 conditional missing skills list, links to mcpmarket.com + skills.sh
+
+### Phase 0
+Before the interview, scaffold runs via `init-project.sh --no-open`.
+**P19**: `docs/plan-main.md` is deleted if Q-1 had no spec file.
+
+### Hard rules added
+- **P13**: language acknowledgment line after Q0
+- **P14**: explicit `end` block after hand-off
+- **P17**: forbid creating .env — only .env.example
+- `NEVER write multiple files in one turn` — one file = draft → confirm → write → next
+
+### Templates updated
+- `templates/HARNESS.md` **P15**: Product Contract and Decisions to Inherit now have detailed hints in comments
+- `templates/PLAN.md` **P18**: comment at top explaining it's empty at new-time, filled during implementation sessions
 
 ---
 
