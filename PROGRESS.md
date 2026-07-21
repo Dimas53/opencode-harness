@@ -292,3 +292,23 @@ Session language: ru
 
 ### Known issues
 - (none)
+
+---
+
+## Session 2026-07-21 (ostatok reorg + cleanup)
+
+### Done
+- **`notes/harness/ostatok-po-versii-0.3.md`** — reorganised: deduplicated from ~15
+  source docs, sorted P0→P3→DEAD→Completed, with priority tables
+- **`notes/harness/ostatok-po-versii-0.3.full.md`** — created: full reference with
+  per-document tables, colored status markers (🔴🟡🟢), no deduplication
+- **`notes/AGENTS.reality-check.md`** → `notes/harness/old/` — moved out of root
+  `notes/`, removed from git tracking (`git rm --cached`)
+- **Status corrections**: marked superpowers issue ✅ (user confirmed resolved),
+  stale question count ✅ (GUIDE/INSTALL/diagram already clean)
+- New `notes/harness/old/` directory for archived documents
+
+### Next
+- Live-test cycle: `new` on empty project, `analyze` on RecipeBox/ItoCook,
+  `adopt` on non-harness project, clean install on MacBook — fix real issues
+- Then: backlog or Sandbox module
