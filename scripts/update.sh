@@ -8,8 +8,8 @@ NC='\033[0m'
 
 echo "=== OpenCode Harness — Update ==="
 
-# Pull latest
-git pull origin main
+# Pull latest — abort on failure
+git pull origin main || { echo "✗ git pull failed — aborting"; exit 1; }
 
 # Update AGENTS.md with diff preview
 GLOBAL_AGENTS="$HOME/.config/opencode/AGENTS.md"
