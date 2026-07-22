@@ -396,6 +396,38 @@ Session language: ru
 ### Next
 - Live-test cycle: run `new` with Q-1 files on a real project (test_6)
 
+## Session 2026-07-22 (WSL2/Linux bugs + docs cleanup)
+
+Session language: ru
+
+### Done
+- **install.sh**: OS dispatch (brew for macOS, curl for Linux) for uv + RTK;
+  `export PATH` before `rtk init` on Linux; `~/.bashrc` PATH persistence;
+  git identity prompt at end
+- **Makefile**: `chmod +x scripts/*.sh` in setup target; `uninstall` = full
+  removal with OS dispatch (brew/rm); new `uninstall-lite` target (harness
+  only); new `self-check` target (syntax + permissions + diff)
+- **verify.sh**: OS-aware error hints (brew for macOS, curl for Linux);
+  new check: script permissions (git ls-files mode 755); added pass/fail
+  helper functions
+- **dod.sh**: step 7/7 — Self-check (bash -n on all scripts)
+- **global/AGENTS.md**: DoD updated — self-check step; synced to
+  ~/.config/opencode/
+- **INSTALL.md**: Windows section rewritten — git identity step, daily
+  workflow, tips (/mnt/c/, Windows Terminal), uninstall options, expanded
+  comparison table; API key hint added to Step 5 (both macOS and Windows)
+- **README.md**: deduplicated Update/Uninstall blocks under shared
+  section; uninstall-lite added; Already Installed? removed (replaced
+  by shared Update block)
+- **Bug #1 fix**: `git update-index --chmod=+x` for install.sh and
+  gen-opencode.sh (were 644 in git index)
+
+### Known issues
+- DoD docs matrix check doesn't see INSTALL.md or README.md as docs
+  (only checks docs/ and instructions/) — needs fixing
+- `make uninstall` removes ~/.config/opencode entirely — may delete
+  non-harness configs if user added their own there
+
 ## Session 2026-07-22 (uninstall, bugs #5 #6 #8, clean superpowers refs)
 
 Session language: ru
