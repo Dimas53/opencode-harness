@@ -1,4 +1,4 @@
-.PHONY: help link setup init init-adopt analyze verify update dod mcp uninstall uninstall-full
+.PHONY: help link setup init init-adopt analyze verify update dod mcp self-check uninstall uninstall-lite
 
 .DEFAULT_GOAL := help
 
@@ -16,14 +16,16 @@ help:
 	@echo "  make update         -- update harness from repository"
 	@echo "  make dod            -- run Definition of Done checks"
 	@echo "                        (uncommitted check + cyrillic scan + docs lag)"
-	@echo "  make uninstall      -- remove harness files (symlink, skills, AGENTS.md)"
-	@echo "  make uninstall-full -- remove harness + OpenCode CLI + RTK"
+	@echo "  make self-check     -- verify syntax, permissions and diff before committing"
+	@echo "  make uninstall      -- remove everything (harness + OpenCode + RTK + uv)"
+	@echo "  make uninstall-lite -- remove harness only, keep OpenCode and RTK"
 	@echo ""
 	@echo "  make link          -- create ~/.opencode-harness symlink"
 	@echo ""
 	@echo "  Primary path: shortcuts new / adopt / analyze inside OpenCode"
 
 setup:
+	@chmod +x scripts/*.sh
 	@echo "Setting up opencode-harness..."
 	@./scripts/install.sh
 	@echo "✓ Setup complete. Run: make verify"
@@ -57,21 +59,38 @@ update:
 dod:
 	@./scripts/dod.sh
 
-uninstall:
-	@echo "Removing opencode-harness files..."
-	@rm -f ~/.opencode-harness
-	@rm -rf ~/.config/opencode/skills
-	@rm -f ~/.config/opencode/AGENTS.md
-	@echo "✓ Harness files removed."
-	@echo "  ~/.config/opencode/opencode.jsonc kept (may contain project tokens)."
-	@echo "  Delete manually if you want a clean slate."
+self-check:
+	@echo "=== Self-Check ==="
+	@chmod +x scripts/*.sh 2>/dev/null
+	@bash -n scripts/*.sh || (echo "✗ syntax error in scripts"; exit 1)
+	@echo "✓ Syntax OK"
+	@git ls-files -s scripts/*.sh | awk '$$1 != "100755" {print "✗ missing +x: " $$4}' | grep . && exit 1 || echo "✓ Permissions OK"
+	@git diff --stat
+	@echo "✓ Self-check passed — ready to commit"
 
-uninstall-full: uninstall
-	@echo "Removing OpenCode CLI..."
-	@npm uninstall -g opencode-ai 2>/dev/null && echo "✓ OpenCode removed" || echo "  (not installed)"
-	@echo "Removing RTK..."
-	@brew uninstall rtk 2>/dev/null && echo "✓ RTK removed" || echo "  (not installed)"
-	@echo "✓ Full uninstall complete. The repo directory remains."
+uninstall:
+	@echo "=== Removing opencode-harness ==="
+	@rm -f ~/.opencode-harness
+	@rm -rf ~/.config/opencode
+	@echo "✓ Config files removed"
+	@npm uninstall -g opencode-ai 2>/dev/null && echo "✓ OpenCode CLI removed" || echo "  OpenCode CLI (not installed)"
+	@if [[ "$$(uname -s)" == "Darwin" ]]; then \
+		brew uninstall rtk 2>/dev/null && echo "✓ RTK removed" || echo "  RTK (not installed)"; \
+		brew uninstall uv 2>/dev/null && echo "✓ uv removed" || echo "  uv (not installed)"; \
+	else \
+		rm -f ~/.local/bin/rtk && echo "✓ RTK removed" || echo "  RTK (not found)"; \
+		rm -f ~/.local/bin/uv ~/.local/bin/uvx && echo "✓ uv removed" || echo "  uv (not found)"; \
+	fi
+	@echo ""
+	@echo "  Last step: rm -rf $(CURDIR)"
+
+uninstall-lite:
+	@echo "=== Removing harness files ==="
+	@rm -f ~/.opencode-harness
+	@rm -rf ~/.config/opencode
+	@echo "✓ Harness files removed. OpenCode and RTK kept."
+	@echo ""
+	@echo "  Last step: rm -rf $(CURDIR)"
 
 session-end:
 	@./scripts/session-end.sh

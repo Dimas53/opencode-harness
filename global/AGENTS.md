@@ -224,6 +224,7 @@ Execute these steps in order BEFORE any response to the user:
 5. **Safety check:** No Russian text in project files. No .env, docker-compose, or lock files modified without confirmation.
 5b. **Skill feedback:** If any skill behaved unexpectedly or missed an important step — note in memory/YYYY-MM-DD.md what happened and what behavior was expected. Human decides whether to update SKILL.md.
 6. **Respond with results** only after ALL steps are confirmed.
+7. **Self-check:** Before saying "готово" — run `make self-check` in the harness repo.
 
 NEVER mark `[✓]` before executing. `[•]` = in progress, `[ ]` = todo, `[✓]` = confirmed done.
 

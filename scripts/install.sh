@@ -44,6 +44,8 @@ elif [[ "$OS" == "Linux" ]]; then
 	export PATH="$HOME/.local/bin:$PATH"
 	rtk init -g --opencode
 	echo "✓ RTK installed. Run 'rtk gain' to see token savings."
+	echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+	echo "✓ PATH updated in ~/.bashrc"
 else
 	echo "⚠ RTK skipped — unsupported OS: $OS. Install manually: https://github.com/rtk-ai/rtk"
 fi
@@ -76,6 +78,17 @@ cp -r global/skills/* ~/.config/opencode/skills/
 
 ln -sf "$(pwd)" ~/.opencode-harness
 echo "✓ Symlink created: ~/.opencode-harness → $(pwd)"
+
+# Git identity check
+if [ -z "$(git config --global user.email)" ]; then
+  echo ""
+  echo "⚠️  Git identity not set."
+  read -p "  Enter your email for git: " GIT_EMAIL
+  read -p "  Enter your name for git: " GIT_NAME
+  git config --global user.email "$GIT_EMAIL"
+  git config --global user.name "$GIT_NAME"
+  echo "✓ Git identity configured"
+fi
 
 echo ""
 echo "✓ Done. Next steps:"

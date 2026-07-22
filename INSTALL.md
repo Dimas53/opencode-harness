@@ -217,33 +217,18 @@ make update
 
 ## Uninstalling
 
-Run `make uninstall` in the harness directory, or follow the steps below.
+### Full removal (harness + OpenCode + RTK)
 
-To remove the harness from your machine (without removing OpenCode or RTK):
-
-**Step 1 — Remove harness files**
 ```bash
-rm ~/.opencode-harness                          # symlink
-rm -rf ~/.config/opencode/skills                # skills
-rm ~/.config/opencode/AGENTS.md                 # global rules
+cd ~/opencode-harness && make uninstall
+rm -rf ~/opencode-harness
 ```
 
-> `~/.config/opencode/opencode.jsonc` is not deleted automatically — it may contain
-> Directus tokens for your projects. Delete it manually if needed.
+### Harness only (keep OpenCode and RTK)
 
-**Step 2 — Remove the repo** (optional)
 ```bash
-rm -rf ~/Documents/opencode-harness
-```
-
-**Step 3 — Remove OpenCode CLI** (optional)
-```bash
-npm uninstall -g opencode-ai
-```
-
-**Step 4 — Remove RTK** (optional)
-```bash
-brew uninstall rtk
+cd ~/opencode-harness && make uninstall-lite
+rm -rf ~/opencode-harness
 ```
 
 ---

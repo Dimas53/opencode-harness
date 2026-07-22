@@ -16,7 +16,7 @@ echo "=== DoD Check ==="
 echo ""
 
 # ── Step 1: Uncommitted changes ──────────────────────────────────────────────
-echo "[ 1/6 ] Uncommitted changes"
+echo "[ 1/7 ] Uncommitted changes"
 
 if ! git rev-parse --is-inside-work-tree &>/dev/null; then
   check_warn "Not inside a git repo — skipping git checks"
@@ -39,7 +39,7 @@ fi
 echo ""
 
 # ── Step 2: Cyrillic scan ────────────────────────────────────────────────────
-echo "[ 2/6 ] Cyrillic scan (project files)"
+echo "[ 2/7 ] Cyrillic scan (project files)"
 
 # What to scan: tracked files only, excluding notes/ and binary files
 CYRILLIC_HITS=""
@@ -73,7 +73,7 @@ fi
 echo ""
 
 # ── Step 3: Docs lag ─────────────────────────────────────────────────────────
-echo "[ 3/6 ] Docs lag check"
+echo "[ 3/7 ] Docs lag check"
 
 if ! git rev-parse --is-inside-work-tree &>/dev/null; then
   check_warn "Not inside a git repo — skipping docs lag check"
@@ -107,7 +107,7 @@ fi
 echo ""
 
 # ── Step 4: PROGRESS.md ──────────────────────────────────────────────────────
-echo "[ 4/6 ] PROGRESS.md check"
+echo "[ 4/7 ] PROGRESS.md check"
 
 TODAY=$(date +%Y-%m-%d)
 
@@ -134,7 +134,7 @@ fi
 echo ""
 
 # ── Step 5: Docs matrix check ────────────────────────────────────────────────
-echo "[ 5/6 ] Docs matrix check"
+echo "[ 5/7 ] Docs matrix check"
 
 CODE_DIRS="scripts/ hooks/ tests/ global/ templates/ Makefile"
 DOCS_DIRS="docs/ instructions/"
@@ -174,7 +174,7 @@ fi
 echo ""
 
 # ── Step 6: Quick tests ──────────────────────────────────────────────────────
-echo "[ 6/6 ] Quick tests"
+echo "[ 6/7 ] Quick tests"
 
 if command -v bats &>/dev/null && [ -f "Makefile" ]; then
   TEST_OUTPUT=$(make test-quick 2>&1) && TEST_OK=1 || TEST_OK=0
@@ -187,6 +187,15 @@ if command -v bats &>/dev/null && [ -f "Makefile" ]; then
 else
   check_warn "bats or Makefile not found — skipping tests"
 fi
+
+echo ""
+
+# ── Step 7: Self-check ───────────────────────────────────────────────────────
+echo "[ 7/7 ] Self-check (verification-before-completion)"
+echo "  → Did you verify each change actually works, not just syntactically?"
+echo "  → Run: bash -n on changed scripts"
+echo "  → Run: make verify"
+bash -n scripts/*.sh 2>&1 && check_pass "Self-check (syntax)" || check_fail "Self-check" "fix syntax errors above"
 
 echo ""
 
