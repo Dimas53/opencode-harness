@@ -6,7 +6,19 @@ Phase: v0.3 — Infrastructure stabilization
 Last commit: 5c46838 — refactor(harness): rename existing → adopt
 Session language: ru
 
-## Known Issues
+## Session 2026-07-22 (auto-HOME-PATH, Accessing Windows files, make help, rm -rf fix)
+
+Session language: ru
+
+### Done
+- **#12 — install.sh**: auto-replace `/YOUR/HOME/PATH` with `$HOME` via `sed -i.bak` after creating opencode.jsonc
+- **#11 — INSTALL.md**: dedicated "Accessing your Windows files" section with /mnt/ examples + WSL path tip
+- **#13 — README.md**: added `dod` and `docs` to After Setup shortcuts + `make help` hint
+- **#14 — Makefile help**: added session-end, start, mcp targets + OpenCode shortcuts (new, adopt, analyze, update-harness, sync-templates, dod, docs)
+- **#17 — Safer uninstall**: replaced `rm -rf ~/opencode-harness` with `cd .. && rm -rf opencode-harness` in README.md (1 place) and INSTALL.md (2 places)
+- Self-check: all scripts bash -n OK, permissions OK, no trailing whitespace
+
+### Known issues
 
 - Makefile: duplicate `init` target, empty `setup` target
 - `make session-start` target does not exist

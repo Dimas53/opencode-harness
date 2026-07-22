@@ -63,17 +63,23 @@ npm install -g chrome-devtools-mcp
 echo "✓ Chrome DevTools MCP installed"
 
 npx playwright install
+if [[ "$OS" == "Linux" ]]; then
+  sudo npx playwright install-deps 2>/dev/null || true
+fi
 
 mkdir -p ~/.config/opencode/skills
 
 cp global/AGENTS.md ~/.config/opencode/AGENTS.md
 if [ ! -f ~/.config/opencode/opencode.jsonc ]; then
     cp global/opencode-config.example.jsonc ~/.config/opencode/opencode.jsonc
-    echo "  → Created ~/.config/opencode/opencode.jsonc"
+    sed -i.bak "s|/YOUR/HOME/PATH|$HOME|g" ~/.config/opencode/opencode.jsonc
+    rm -f ~/.config/opencode/opencode.jsonc.bak
+    echo "  → Created ~/.config/opencode/opencode.jsonc (home path configured)"
+    echo "    If you use Directus — set YOUR_DIRECTUS_TOKEN in the file"
 else
     echo "  → ~/.config/opencode/opencode.jsonc already exists — not overwritten"
+    echo "    Check /YOUR/HOME/PATH and YOUR_DIRECTUS_TOKEN in the file"
 fi
-echo "✏️  Edit ~/.config/opencode/opencode.jsonc — replace /YOUR/HOME/PATH and YOUR_DIRECTUS_TOKEN"
 cp -r global/skills/* ~/.config/opencode/skills/
 
 ln -sf "$(pwd)" ~/.opencode-harness

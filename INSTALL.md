@@ -219,18 +219,21 @@ Every time you work with the harness — open Ubuntu terminal (or the Ubuntu
 tab in Windows Terminal). Everything works exactly like on macOS: type `new`,
 `start`, `analyze` inside any OpenCode session.
 
-Your Windows files are accessible from Ubuntu:
+### Accessing your Windows files
+
+Your existing Windows projects are accessible directly from Ubuntu:
 
 ```bash
-# Projects on drive C:
+# Drive C:
 cd /mnt/c/Users/YourName/Documents/my-project
 
-# Projects on drive D:
+# Drive D:
 cd /mnt/d/server/my-project
 ```
 
-Ubuntu files are visible from Windows Explorer at:
-`\\wsl$\Ubuntu\home\your-username\`
+No need to move projects into Ubuntu.
+Tip: bookmark the Ubuntu home folder in Windows Explorer:
+`\\wsl$\Ubuntu\home\your-username`
 
 ### Tips
 
@@ -241,29 +244,18 @@ settings (right-click title bar → Properties → Options).
 Gives you PowerShell and Ubuntu as tabs in one window. Recommended over
 the default WSL terminal — better copy/paste, tabs, themes.
 
-**Working with existing projects on Windows drives:**
-You don't need to move your projects into Ubuntu. Access them directly:
-
-```bash
-cd /mnt/c/Users/YourName/Documents/my-project
-opencode
-```
-
-Everything works the same way. Slightly slower than native Ubuntu paths
-but perfectly functional.
-
 ### Uninstalling
 
 **Full removal** (harness + OpenCode + RTK):
 ```bash
 cd ~/opencode-harness && make uninstall
-rm -rf ~/opencode-harness
+cd .. && rm -rf opencode-harness
 ```
 
 **Harness only** (keep OpenCode and RTK):
 ```bash
 cd ~/opencode-harness && make uninstall-lite
-rm -rf ~/opencode-harness
+cd .. && rm -rf opencode-harness
 ```
 
 ### What differs from macOS
@@ -285,14 +277,14 @@ rm -rf ~/opencode-harness
 
 ```bash
 cd ~/opencode-harness && make uninstall
-rm -rf ~/opencode-harness
+cd .. && rm -rf opencode-harness
 ```
 
 ### Harness only (keep OpenCode and RTK)
 
 ```bash
 cd ~/opencode-harness && make uninstall-lite
-rm -rf ~/opencode-harness
+cd .. && rm -rf opencode-harness
 ```
 
 ---

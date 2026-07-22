@@ -86,13 +86,13 @@ cd ~/opencode-harness && make update
 **Full removal** (harness + OpenCode + RTK):
 ```bash
 cd ~/opencode-harness && make uninstall
-rm -rf ~/opencode-harness
+cd .. && rm -rf opencode-harness
 ```
 
 **Harness only** (keep OpenCode and RTK):
 ```bash
 cd ~/opencode-harness && make uninstall-lite
-rm -rf ~/opencode-harness
+cd .. && rm -rf opencode-harness
 ```
 
 ## After Setup — Start Any Project
@@ -103,6 +103,10 @@ Open OpenCode in any directory and type one of these:
 - `analyze` — read-only audit: architecture map + security review + risk report
 - `update-harness` — pull latest harness updates and apply globally
 - `sync-templates` — check for new template files missing in current project
+- `dod` — run Definition of Done checks (6 steps)
+- `docs` — session end + prompt to update docs if code changed
+
+Or run `make help` in the harness directory to list all available commands.
 
 ## Directus MCP
 

@@ -1,3 +1,5 @@
+SHELL := /bin/bash
+
 .PHONY: help link setup init init-adopt analyze verify update dod mcp self-check uninstall uninstall-lite
 
 .DEFAULT_GOAL := help
@@ -21,8 +23,18 @@ help:
 	@echo "  make uninstall-lite -- remove harness only, keep OpenCode and RTK"
 	@echo ""
 	@echo "  make link          -- create ~/.opencode-harness symlink"
+	@echo "  make session-end   -- run Session End protocol"
+	@echo "  make start         -- same as make mcp, then launch OpenCode"
+	@echo "  make mcp           -- generate opencode.jsonc from .env"
 	@echo ""
-	@echo "  Primary path: shortcuts new / adopt / analyze inside OpenCode"
+	@echo "  Inside OpenCode (type these commands):"
+	@echo "  new               -- start new project (interview + docs)"
+	@echo "  adopt             -- connect harness to existing project"
+	@echo "  analyze           -- read-only audit (no file changes)"
+	@echo "  update-harness    -- pull latest harness updates"
+	@echo "  sync-templates    -- check for missing template files"
+	@echo "  dod               -- run Definition of Done checks"
+	@echo "  docs              -- run session-end + update docs"
 
 setup:
 	@chmod +x scripts/*.sh
@@ -81,6 +93,7 @@ uninstall:
 		rm -f ~/.local/bin/rtk && echo "✓ RTK removed" || echo "  RTK (not found)"; \
 		rm -f ~/.local/bin/uv ~/.local/bin/uvx && echo "✓ uv removed" || echo "  uv (not found)"; \
 	fi
+	@rm -rf ~/.config/rtk ~/.config/uv
 	@echo ""
 	@echo "  Last step: rm -rf $(CURDIR)"
 
