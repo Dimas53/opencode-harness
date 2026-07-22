@@ -89,7 +89,9 @@ During setup:
 opencode auth login
 ```
 
-Pick a provider (Anthropic, OpenRouter) and enter your API key.
+You need an API key. Register at [opencode.ai](https://opencode.ai) — the
+built-in model is free for basic use. Or use any provider (Anthropic, OpenRouter)
+with your own key.
 
 **Step 6 — Edit config**
 ```bash
@@ -125,71 +127,85 @@ make update
 
 ## Installing on Windows
 
-Windows requires **WSL2** (Windows Subsystem for Linux). Your Windows system stays completely untouched — WSL2 installs Ubuntu as an app alongside Windows. You get a separate Ubuntu terminal that you open when needed; everything else on your machine stays as-is.
+WSL2 installs Ubuntu as an app alongside Windows — your Windows system stays
+completely untouched. You get a separate Ubuntu terminal that you open when
+needed; everything else on your machine stays as-is.
 
 ### Prerequisites (one-time for clean machines)
 
-Run in PowerShell as Administrator:
+**Step 0 — Install WSL2 with Ubuntu**
+
+In PowerShell as Administrator:
 
 ```powershell
 wsl --install
 ```
 
-Restart your computer. After restart, Ubuntu opens automatically — create a username and password.
+Restart your computer. After restart, Ubuntu opens automatically — create a
+username and password.
 
-Then inside the Ubuntu terminal:
+**Step 1 — Inside Ubuntu terminal: install make and Node.js**
 
 ```bash
-# Step 1 — Install make and Node.js
 sudo apt update && sudo apt install -y make curl
-
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
-source ~/.bashrc
-nvm install 20
+source ~/.bashrc && nvm install 20
 ```
 
 Verify: `make --version && node --version && npm --version`
 
+**Step 2 — Set git identity**
+
+```bash
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"
+```
+
 ### Steps
 
-**Step 2 — Clone**
+**Step 3 — Clone**
+
 ```bash
-cd ~
 git clone https://github.com/Dimas53/opencode-harness.git
 cd opencode-harness
 ```
 
-**Step 3 — Install**
+**Step 4 — Install**
+
 ```bash
 make setup
 ```
 
-During setup:
-- RTK telemetry → `n`
-- Playwright → `y`
-- Version warning → `y`
+During setup: RTK telemetry → `n`, Playwright → `y`, version warning → `y`
 
-**Step 4 — Authorize**
+**Step 5 — Authorize**
+
 ```bash
 opencode auth login
 ```
 
-Pick a provider (Anthropic, OpenRouter) and enter your API key.
+You need an API key. Register at [opencode.ai](https://opencode.ai) — the
+built-in model is free for basic use. Or use any provider (Anthropic, OpenRouter)
+with your own key.
 
-**Step 5 — Edit config**
+**Step 6 — Edit config**
+
 ```bash
 nano ~/.config/opencode/opencode.jsonc
 ```
 
-Replace `/YOUR/HOME/PATH` with `/home/your-username`. If no Directus — delete the `YOUR_DIRECTUS_TOKEN` line.
+Replace `/YOUR/HOME/PATH` with `/home/your-username`.
+If no Directus — delete the `YOUR_DIRECTUS_TOKEN` line.
 
-**Step 6 — Verify**
+**Step 7 — Verify**
+
 ```bash
 make verify
 ls ~/.config/opencode/skills/ | wc -l   # 70
 ```
 
-**Step 7 — First run**
+**Step 8 — First run**
+
 ```bash
 mkdir ~/my-project && cd ~/my-project
 opencode
@@ -197,11 +213,57 @@ opencode
 
 Inside OpenCode, type `new` to start project setup.
 
-### Updating
+### Daily workflow
+
+Every time you work with the harness — open Ubuntu terminal (or the Ubuntu
+tab in Windows Terminal). Everything works exactly like on macOS: type `new`,
+`start`, `analyze` inside any OpenCode session.
+
+Your Windows files are accessible from Ubuntu:
 
 ```bash
-cd ~/opencode-harness
-make update
+# Projects on drive C:
+cd /mnt/c/Users/YourName/Documents/my-project
+
+# Projects on drive D:
+cd /mnt/d/server/my-project
+```
+
+Ubuntu files are visible from Windows Explorer at:
+`\\wsl$\Ubuntu\home\your-username\`
+
+### Tips
+
+**Paste in terminal:** right mouse click, or enable Ctrl+Shift+V in terminal
+settings (right-click title bar → Properties → Options).
+
+**Windows Terminal** (recommended): install free from Microsoft Store.
+Gives you PowerShell and Ubuntu as tabs in one window. Recommended over
+the default WSL terminal — better copy/paste, tabs, themes.
+
+**Working with existing projects on Windows drives:**
+You don't need to move your projects into Ubuntu. Access them directly:
+
+```bash
+cd /mnt/c/Users/YourName/Documents/my-project
+opencode
+```
+
+Everything works the same way. Slightly slower than native Ubuntu paths
+but perfectly functional.
+
+### Uninstalling
+
+**Full removal** (harness + OpenCode + RTK):
+```bash
+cd ~/opencode-harness && make uninstall
+rm -rf ~/opencode-harness
+```
+
+**Harness only** (keep OpenCode and RTK):
+```bash
+cd ~/opencode-harness && make uninstall-lite
+rm -rf ~/opencode-harness
 ```
 
 ### What differs from macOS
@@ -211,6 +273,8 @@ make update
 | opencode | npm | npm |
 | uv | brew | curl installer |
 | RTK | brew | curl installer |
+| Projects location | ~/Documents/ | ~/ or /mnt/c/ /mnt/d/ |
+| Terminal | any | Ubuntu tab in Windows Terminal |
 | make verify | 8/8 | 8/8 |
 
 ---
