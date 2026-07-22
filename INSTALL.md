@@ -8,47 +8,174 @@ cd opencode-harness
 make setup
 ```
 
-Setup chain:
-
-```
-git clone → cd opencode-harness
-  ↓
-make setup → scripts/install.sh
-  ├── npm install -g opencode-ai                     # OpenCode CLI
-  ├── brew install uv                                 # uv for MCP git+fetch
-  ├── brew install rtk → rtk init -g --opencode       # RTK token optimizer
-  ├── npm i -g @modelcontextprotocol/server-filesystem
-  ├── npm i -g @modelcontextprotocol/server-sequential-thinking
-  ├── npm i -g chrome-devtools-mcp
-  ├── npm i -g @playwright/mcp
-  ├── npx playwright install                           # Browsers
-  ├── opencode plugin add superpowers@git+...          # 40+ skills
-  ├── cp global/AGENTS.md → ~/.config/opencode/       # Global rules
-  ├── cp global/opencode-config.example.jsonc → ...    # MCP config
-  └── cp -r global/skills/* → ~/.config/opencode/skills/  # Custom skills
-       ↓
-Manual steps:
-  ├── opencode auth login
-  ├── Copy & edit ~/.config/opencode/opencode.jsonc   # MCP servers + plugins
-  └── opencode → select model
-       ↓
-First run: load AGENTS.md → load skills
-  → using-agent-skills/SKILL.md (every session)
-  → git log, PROGRESS.md, roadmap.md, task context
-```
-
 A symlink `~/.opencode-harness` is created pointing to your clone.
 This enables the `update-harness` and `sync-templates` shortcuts.
 
+### What `make setup` installs
+
+| Package | Purpose |
+|---------|---------|
+| `opencode-ai` (npm) | OpenCode CLI — AI coding assistant |
+| `uv` (brew) | Fast Python package manager — runs git + fetch MCP servers |
+| `rtk` (brew) | Token optimizer — compresses terminal output (~80% savings) |
+| `@modelcontextprotocol/server-filesystem` (npm) | MCP: read/write project files |
+| `@modelcontextprotocol/server-sequential-thinking` (npm) | MCP: structured reasoning |
+| `chrome-devtools-mcp` (npm) | MCP: browser DevTools control |
+| `@playwright/mcp` (npm) | MCP: browser automation |
+| Playwright browsers (npx) | Chromium ~300MB for browser testing |
+| `~/.config/opencode/AGENTS.md` | Global agent rules (safety, process, language) |
+| `~/.config/opencode/opencode.jsonc` | MCP server config — edit paths + Directus token |
+| `~/.config/opencode/skills/` (70 skills) | Reusable agent skills for debugging, security, UI, etc. |
+| `~/.opencode-harness` symlink | Enables `update-harness` and `sync-templates` shortcuts |
+
+### What `make setup` does NOT do (manual)
+
+- `opencode auth login` — authorize AI provider (API key)
+- Select a model on first `opencode` launch
+
 Then complete manual steps:
 1. `opencode auth login`
-2. Copy config: `cp global/opencode-config.example.jsonc ~/.config/opencode/opencode.jsonc`
-3. Edit the config — replace `/YOUR/HOME/PATH` and `YOUR_DIRECTUS_TOKEN`
-   (If you don't use Directus — delete the `YOUR_DIRECTUS_TOKEN` line entirely)
-4. Run `opencode` — select your model on first launch
-5. Run `rtk gain` — verify RTK is working
+2. Check `~/.config/opencode/opencode.jsonc` — created automatically.
+   Edit if needed: replace `/YOUR/HOME/PATH` with your actual home path.
+   If you don't use Directus — delete the `YOUR_DIRECTUS_TOKEN` line entirely.
+3. Run `opencode` — select your model on first launch
 
-**Windows without WSL:** run `scripts\install.bat` instead of `make setup`
+**Windows:** see [Installing on Windows](#installing-on-windows) below
+
+---
+
+## Installing on macOS
+
+> If you already have Xcode CLI Tools, Homebrew, and Node.js — skip to step 3.
+
+### Prerequisites (one-time for clean machines)
+
+Run these if your machine doesn't have them yet:
+
+```bash
+# Step 0 — Xcode CLI Tools (git + make)
+xcode-select --install
+
+# Step 1 — Homebrew
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Step 2 — Node.js 20
+brew install node@20
+```
+
+Verify: `git --version && make --version && node --version && npm --version`
+
+### Steps
+
+**Step 3 — Clone**
+```bash
+cd ~/Documents
+git clone https://github.com/Dimas53/opencode-harness.git
+cd opencode-harness
+```
+
+**Step 4 — Install**
+```bash
+make setup
+```
+
+During setup:
+- RTK telemetry → `n`
+- Playwright → `y`
+- Version warning → `y`
+
+**Step 5 — Authorize**
+```bash
+opencode auth login
+```
+
+Pick a provider (Anthropic, OpenRouter) and enter your API key.
+
+**Step 6 — Edit config**
+```bash
+nano ~/.config/opencode/opencode.jsonc
+```
+
+Replace `/YOUR/HOME/PATH` with `/Users/your-username`. If no Directus — delete the `YOUR_DIRECTUS_TOKEN` line.
+
+**Step 7 — Verify**
+```bash
+make verify
+ls ~/.config/opencode/skills/ | wc -l   # 70
+```
+
+**Step 8 — First run**
+```bash
+mkdir ~/Documents/test-project && cd ~/Documents/test-project
+opencode
+```
+
+Inside OpenCode, type `new` to start project setup.
+
+### Updating
+
+```bash
+cd ~/Documents/opencode-harness
+make update
+```
+
+`make update` runs `git pull` then copies skills to `~/.config/opencode/skills/`.
+
+---
+
+## Installing on Windows
+
+Windows requires **WSL2** (Windows Subsystem for Linux). All bash scripts and Make commands run inside WSL.
+
+```powershell
+# In PowerShell as Admin
+wsl --install
+```
+
+Then inside WSL (Ubuntu):
+```bash
+sudo apt update && sudo apt install make
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+source ~/.bashrc
+nvm install 20
+cd ~ && git clone https://github.com/Dimas53/opencode-harness.git
+cd opencode-harness && make setup
+```
+
+See [instructions/GUIDE.md](instructions/GUIDE.md) for full WSL setup.
+
+---
+
+## Uninstalling
+
+Run `make uninstall` in the harness directory, or follow the steps below.
+
+To remove the harness from your machine (without removing OpenCode or RTK):
+
+**Step 1 — Remove harness files**
+```bash
+rm ~/.opencode-harness                          # symlink
+rm -rf ~/.config/opencode/skills                # skills
+rm ~/.config/opencode/AGENTS.md                 # global rules
+```
+
+> `~/.config/opencode/opencode.jsonc` is not deleted automatically — it may contain
+> Directus tokens for your projects. Delete it manually if needed.
+
+**Step 2 — Remove the repo** (optional)
+```bash
+rm -rf ~/Documents/opencode-harness
+```
+
+**Step 3 — Remove OpenCode CLI** (optional)
+```bash
+npm uninstall -g opencode-ai
+```
+
+**Step 4 — Remove RTK** (optional)
+```bash
+brew uninstall rtk
+```
 
 ---
 
@@ -132,7 +259,7 @@ cd ~/.opencode-harness && git pull && make update
 opencode --version      # OpenCode installed
 rtk --version           # RTK installed
 opencode mcp list       # MCP servers connected
-ls ~/.config/opencode/skills/ | wc -l   # should show 60+ skills
+ls ~/.config/opencode/skills/ | wc -l   # should show 70 skills
 ```
 
 ---

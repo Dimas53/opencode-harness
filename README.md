@@ -2,33 +2,65 @@
 
 One command to set up AI-assisted development on any machine.
 
-**OpenCode version:** v1.17.20 (tested)
-
-See [INSTALL.md](./INSTALL.md) for full installation guide.
-
 ## Quick Start
 
 ```bash
-git clone git@github.com:Dimas53/opencode-harness.git
+git clone https://github.com/Dimas53/opencode-harness.git
 cd opencode-harness
 make setup
 ```
 
-## Already Installed? Update to Latest
+## Installing on macOS
 
-Already have the harness? Just pull and update:
+One block from zero to running:
+
+> **Prerequisites:** `git`, `make`, `node 20+` required.
+> Missing something? → [INSTALL.md — macOS prerequisites](./INSTALL.md#prerequisites)
 
 ```bash
-cd ~/path/to/opencode-harness
-git pull
+# 1 — Clone the harness
+cd ~/Documents
+git clone https://github.com/Dimas53/opencode-harness.git
+cd opencode-harness
+
+# 2 — Install
+make setup
+# During setup: RTK telemetry → n, Playwright → y, version warning → y
+
+# 3 — Authorize OpenCode
+opencode auth login
+
+# 4 — Edit MCP paths
+nano ~/.config/opencode/opencode.jsonc     # replace /YOUR/HOME/PATH
+
+# 5 — Verify
+make verify
+
+# 6 — First project
+mkdir -p ~/Documents/my-project && cd ~/Documents/my-project
+opencode                                    # type `new` inside
+```
+
+### Update
+```bash
+cd ~/Documents/opencode-harness && make update
+```
+
+### Uninstall
+```bash
+cd ~/Documents/opencode-harness && make uninstall
+```
+
+## Already Installed?
+
+```bash
+cd ~/Documents/opencode-harness
 make update
 ```
 
 ## After Setup — Start Any Project
 
-Open OpenCode in any directory and type one of these (the only commands you need
-day to day — everything else lives in [INSTALL.md](./INSTALL.md) /
-[instructions/GUIDE.md](./instructions/GUIDE.md)):
+Open OpenCode in any directory and type one of these:
 - `new` — new project: interview → full doc structure generated
 - `adopt` — existing project: auto-analysis first → fills missing docs
 - `analyze` — read-only audit: architecture map + security review + risk report
@@ -40,33 +72,27 @@ day to day — everything else lives in [INSTALL.md](./INSTALL.md) /
 Configured per project from the project's `.env` (see
 [Directus MCP Setup](instructions/directus-mcp-setup.md)). There is no global
 Directus MCP config — each project generates its own gitignored `opencode.jsonc`
-pointing at that project's Directus instance. Open each project in its own
-OpenCode window.
+pointing at that project's Directus instance.
 
 Generate the config (run from the project root):
 - `make mcp` — generate `opencode.jsonc` from `.env`. Re-run after editing
-  `.env` or the global OpenCode config, so new common MCPs are picked up.
-- `make start` — same as `make mcp`, then launches OpenCode. Prefer this over
-  launching OpenCode directly so the config stays current.
+- `make start` — same as `make mcp`, then launches OpenCode
 
 ## Daily Workflow
 
 ### Automatically (no command needed)
-
 - **`git commit`** — pre-commit hook runs `make dod` (6 checks) automatically.
-  If any check fails, the commit is blocked.
 
 ### Trigger words inside OpenCode
-
 | Say this | What happens |
 |----------|-------------|
 | `Start` | Session Start — 7-step init sequence |
 | `end` / `done` / `Ende` | Session End — docs lag check, PROGRESS.md update |
-| `dod` | Definition of Done — 6 checks manually (same as pre-commit) |
+| `dod` | Definition of Done — 6 checks manually |
 
 ## Documentation
 
 - [INSTALL.md](./INSTALL.md) — full installation guide
 - [instructions/GUIDE.md](./instructions/GUIDE.md) — how the harness works
-- [instructions/reference/](./instructions/reference/) — OpenCode commands, models, RTK workflow
-- [instructions/diagrams/](./instructions/diagrams/) — architecture and installation diagrams
+- [instructions/reference/](./instructions/reference/) — reference docs
+- [instructions/diagrams/](./instructions/diagrams/) — architecture diagrams
