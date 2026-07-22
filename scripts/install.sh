@@ -8,7 +8,7 @@ fi
 
 npm install -g opencode-ai
 
-REQUIRED_VERSION="v1.17.20"
+REQUIRED_VERSION="v1.18.4"
 INSTALLED_VERSION=$(opencode --version 2>&1 | head -1)
 if [ "$INSTALLED_VERSION" != "$REQUIRED_VERSION" ]; then
   echo "⚠️  OpenCode version mismatch."
@@ -68,11 +68,8 @@ ln -sf "$(pwd)" ~/.opencode-harness
 echo "✓ Symlink created: ~/.opencode-harness → $(pwd)"
 
 echo ""
-echo "✓ Done. Manual steps:"
+echo "✓ Done. Next steps:"
 echo "1. opencode auth login"
-echo "2. Copy and rename config:"
-echo "   cp global/opencode-config.example.jsonc ~/.config/opencode/opencode.jsonc"
-echo "   Then edit: replace /YOUR/HOME/PATH and YOUR_DIRECTUS_TOKEN"
-echo "   Skip if opencode.jsonc already exists — do NOT overwrite"
+echo "2. Check ~/.config/opencode/opencode.jsonc — replace /YOUR/HOME/PATH"
+echo "   (If you don't use Directus — delete the YOUR_DIRECTUS_TOKEN line)"
 echo "3. On first run — select your model"
-echo "4. opencode mcp list — verify servers"

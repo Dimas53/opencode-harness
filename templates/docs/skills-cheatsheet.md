@@ -119,13 +119,13 @@ Map your project stack to the skills the agent needs. At `new`-time the agent
 reads this section, matches it against the interview stack, and checks each
 skill folder with `ls ~/.config/opencode/skills/<name>`.
 
-| Technology | Skill folder | Install command (if missing) |
-|---|---|---|
-| Nuxt | `nuxt` | `npx superpowers install` + `antfu/skills` |
-| Nuxt UI | `nuxt-ui` | `npx superpowers install` + `nuxt/ui` |
-| Vue | `vue` | `npx superpowers install` + `onmax/nuxt-skills` |
-| Directus | `directus` | `npx skills add directus` |
-| Tailwind | `tailwind-design-system` | `npx superpowers install` + `wshobson/agents` |
-| Docker | `docker-expert` | `npx superpowers install` + `sickn33/antigravity-awesome-skills` |
-| TDD / tests | `tdd` | `npx superpowers install` + `mattpocock/skills` |
+| Technology | Skill folder | Notes |
+|---|---|---|---|
+| Nuxt | `nuxt` | Vendored in harness |
+| Nuxt UI | `nuxt-ui` | Vendored in harness |
+| Vue | `vue` | Vendored in harness |
+| Directus | `directus` | Vendored in harness |
+| Tailwind | `tailwind-design-system` | Vendored in harness |
+| Docker | `docker-expert` | Vendored in harness |
+| TDD / tests | `tdd` | Vendored in harness |
 | TypeScript | covered by `tdd` + `test-driven-development` (no standalone skill) | — |

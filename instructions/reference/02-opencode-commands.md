@@ -7,7 +7,7 @@
 - **`opencode auth list`** — show authorized AI providers.
 - **`opencode auth login`** — authorize a new provider (enter API key or configure a local address).
 - **`opencode --model <ID>`** — start a session with a specific model (e.g. `ollama/llama3`).
-- **`opencode plugin add <url>`** — install a plugin from a URL (e.g. `opencode plugin add superpowers@git+https://github.com/obra/superpowers.git`).
+- **`opencode plugin add <url>`** — install a plugin from a URL.
 - **`opencode upgrade`** — upgrade OpenCode to the latest version.
 
 ---

@@ -1,4 +1,4 @@
-.PHONY: help link setup init init-adopt analyze verify update dod mcp
+.PHONY: help link setup init init-adopt analyze verify update dod mcp uninstall uninstall-full
 
 .DEFAULT_GOAL := help
 
@@ -16,6 +16,8 @@ help:
 	@echo "  make update         -- update harness from repository"
 	@echo "  make dod            -- run Definition of Done checks"
 	@echo "                        (uncommitted check + cyrillic scan + docs lag)"
+	@echo "  make uninstall      -- remove harness files (symlink, skills, AGENTS.md)"
+	@echo "  make uninstall-full -- remove harness + OpenCode CLI + RTK"
 	@echo ""
 	@echo "  make link          -- create ~/.opencode-harness symlink"
 	@echo ""
@@ -54,6 +56,22 @@ update:
 
 dod:
 	@./scripts/dod.sh
+
+uninstall:
+	@echo "Removing opencode-harness files..."
+	@rm -f ~/.opencode-harness
+	@rm -rf ~/.config/opencode/skills
+	@rm -f ~/.config/opencode/AGENTS.md
+	@echo "✓ Harness files removed."
+	@echo "  ~/.config/opencode/opencode.jsonc kept (may contain project tokens)."
+	@echo "  Delete manually if you want a clean slate."
+
+uninstall-full: uninstall
+	@echo "Removing OpenCode CLI..."
+	@npm uninstall -g opencode-ai 2>/dev/null && echo "✓ OpenCode removed" || echo "  (not installed)"
+	@echo "Removing RTK..."
+	@brew uninstall rtk 2>/dev/null && echo "✓ RTK removed" || echo "  (not installed)"
+	@echo "✓ Full uninstall complete. The repo directory remains."
 
 session-end:
 	@./scripts/session-end.sh

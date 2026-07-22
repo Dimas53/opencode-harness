@@ -14,6 +14,10 @@ then fill the scaffolded template files with the project's context.
 ## Steps
 
 ### Phase 0 — Scaffold (BEFORE the interview)
+0. Ask the user: "I need to scaffold the project structure (AGENTS.md, MEMORY.md,
+   PLAN.md, PROGRESS.md, docs/, memory/, .gitignore, .env.example). Proceed?"
+   Wait for explicit `y`/`yes` before continuing. If they say no — stop and explain
+   that the scaffold is required for the harness to work.
 1. Run the harness scaffold so the project has the full structure
    (HARNESS.md, MEMORY.md, PLAN.md, PROGRESS.md, memory/, docs/ tree,
    and the project AGENTS.md skeleton):

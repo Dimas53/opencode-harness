@@ -116,22 +116,18 @@ Before every task, the agent:
 
 | Source | Count | Install method |
 |--------|-------|---------------|
-| superpowers plugin | 45 | `opencode plugin add superpowers@git+https://github.com/obra/superpowers.git` |
-| Custom (harness repo) | 11 | Copied by `make setup` from `global/skills/` |
+| Vendored (harness repo) | ~70 | Copied by `make setup` from `global/skills/` |
 | find-skills ecosystem | 6 | Installed on demand, tracked in `~/.agents/.skill-lock.json` |
 
 ### How to add a new skill
 
 ```bash
-# From GitHub (superpowers-style)
-opencode plugin add user/repo
+# From the find-skills ecosystem — discover and install
+# Use the find-skills skill
 
-# From the find-skills ecosystem
-# Use the find-skills skill to discover and install
+# Manually: create a directory in ~/.config/opencode/skills/your-skill/
+# with a SKILL.md file. The agent will discover it on next session.
 ```
-
-Or manually: create a directory in `~/.config/opencode/skills/your-skill/`
-with a `SKILL.md` file. The agent will discover it on next session.
 
 ### The `harness-init` skill
 
@@ -663,10 +659,7 @@ npm install -g @modelcontextprotocol/server-filesystem
 npm install -g @playwright/mcp
 npx playwright install
 
-# 4. Install superpowers plugin
-opencode plugin add superpowers@git+https://github.com/obra/superpowers.git
-
-# 5. Copy global files from the cloned repo
+# 4. Copy global files from the cloned repo
 mkdir -p ~/.config/opencode/skills
 cp global/AGENTS.md ~/.config/opencode/AGENTS.md
 cp global/opencode-config.example.jsonc ~/.config/opencode/opencode.jsonc

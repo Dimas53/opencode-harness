@@ -84,7 +84,7 @@ Insgesamt installiert: **52 Fähigkeiten** in `~/.config/opencode/skills/`. Alle
 
 > **Security-Audit 2026-06-28** durchgeführt mit `security/`-Skill. Gefunden: 3 CRITICAL (einschließlich unrestricted `directus_users` read), 2 HIGH, 2 MEDIUM. Alle behoben. Vollständiger Bericht: `docs/audits/security-audit.md`.
 
-### 3.2 Superpowers-Skills (via `npx superpowers`)
+### 3.2 Harness-Skills (aus `global/skills/`)
 
 | Skill | Verwendung | Gelöstes Problem |
 |-------|-----------|-----------------|
@@ -115,10 +115,10 @@ Insgesamt installiert: **52 Fähigkeiten** in `~/.config/opencode/skills/`. Alle
 | `prototype/` | Schneller Prototyp | Throwaway-Prototyp zur Ideenprüfung |
 | `teach/` | Lernen | Schrittweise Konzepterklärung |
 | `write-a-skill/` | Skill-Erstellung | SKILL.md-Struktur mit gebündelten Ressourcen |
-| `writing-skills/` | Skill-Erstellung (superpowers) | Erstellen, Bearbeiten, Verifizieren |
+| `writing-skills/` | Skill-Erstellung | Erstellen, Bearbeiten, Verifizieren |
 | `receiving-code-review/` | Review erhalten | Technische Verifikation von Feedback |
 | `requesting-code-review/` | Review anfordern | Prüfung vor Merge |
-| `using-superpowers/` | Meta-Skill | (bereits zu Sessionsbeginn geladen) |
+| `using-agent-skills/` | Meta-Skill | (bereits zu Sessionsbeginn geladen) |
 | `using-git-worktrees/` | Isolation | Arbeit via git worktree |
 | `subagent-driven-development/` | Unteraufgaben | Ausführung durch Kind-Agenten |
 | `setup-matt-pocock-skills/` | Ersteinrichtung | Repository-Konfiguration |

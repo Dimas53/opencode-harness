@@ -19,7 +19,7 @@ check "OpenCode installed" "opencode --version" "run: npm install -g opencode-ai
 check "RTK installed" "rtk --version" "run: brew install rtk-ai/tap/rtk"
 check "uv installed" "uv --version" "run: brew install uv"
 check "Playwright installed" "npx playwright --version" "run: npm install -g @playwright/mcp"
-check "Skills present" "[ $(ls ~/.config/opencode/skills/ | wc -l) -gt 10 ]" "run: make setup (superpowers plugin)"
+check "Skills present" "[ $(ls ~/.config/opencode/skills/ | wc -l) -gt 10 ]" "run: make setup"
 check "Global AGENTS.md exists" "[ -f ~/.config/opencode/AGENTS.md ]" "run: make setup"
 check "opencode.jsonc exists" "[ -f ~/.config/opencode/opencode.jsonc ]" "copy from global/opencode-config.example.jsonc"
 check "opencode run works" "opencode run 'echo ok' 2>/dev/null" "opencode run not supported"

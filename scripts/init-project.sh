@@ -2,6 +2,9 @@
 # Scaffold a new project and open OpenCode TUI for harness-init
 # Usage: make init PROJECT=/path/to/project [--no-open]
 
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+TEMPLATES_DIR="$SCRIPT_DIR/../templates"
+
 PROJECT=""
 NO_OPEN=0
 
@@ -31,22 +34,22 @@ if [ -z "$PROJECT" ]; then
 fi
 
 mkdir -p "$PROJECT"
-cp -r templates/docs/ "$PROJECT/docs/"
-cp -r templates/memory/ "$PROJECT/memory/"
-cp templates/AGENTS.md "$PROJECT/AGENTS.md"
-cp templates/MEMORY.md "$PROJECT/MEMORY.md"
-cp templates/PLAN.md "$PROJECT/PLAN.md"
-cp templates/PROGRESS.md "$PROJECT/PROGRESS.md"
-cp templates/HARNESS.md "$PROJECT/HARNESS.md"
+cp -r "$TEMPLATES_DIR/docs/" "$PROJECT/docs/"
+cp -r "$TEMPLATES_DIR/memory/" "$PROJECT/memory/"
+cp "$TEMPLATES_DIR/AGENTS.md" "$PROJECT/AGENTS.md"
+cp "$TEMPLATES_DIR/MEMORY.md" "$PROJECT/MEMORY.md"
+cp "$TEMPLATES_DIR/PLAN.md" "$PROJECT/PLAN.md"
+cp "$TEMPLATES_DIR/PROGRESS.md" "$PROJECT/PROGRESS.md"
+cp "$TEMPLATES_DIR/HARNESS.md" "$PROJECT/HARNESS.md"
 
 if [ ! -f "$PROJECT/.gitignore" ]; then
-  cp templates/.gitignore "$PROJECT/.gitignore"
+  cp "$TEMPLATES_DIR/.gitignore" "$PROJECT/.gitignore"
   echo "  ✓ .gitignore copied"
 fi
 
 ENV_FILE="$PROJECT/.env"
 if [ ! -f "$ENV_FILE" ]; then
-  cp templates/.env.example "$ENV_FILE"
+  cp "$TEMPLATES_DIR/.env.example" "$ENV_FILE"
   echo "  ✓ .env created from template (fill DIRECTUS_URL + MCP_DIRECTUS_TOKEN)"
 else
   # Never overwrite an existing .env — only append the Directus MCP vars if missing.

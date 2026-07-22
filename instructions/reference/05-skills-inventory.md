@@ -7,78 +7,78 @@ Machine: DSAITO's MacBook
 
 ## 1. Complete Skill Table
 
-| Skill name | Location | Source | Install command / URL |
-|---|---|---|---|
-| `api-and-interface-design` | `.config/opencode/skills/` | superpowers | `npx superpowers install` (plugin: `superpowers@git+https://github.com/obra/superpowers.git`) |
-| `archify` | `.config/opencode/skills/` | superpowers | same as above |
-| `brainstorming` | `.config/opencode/skills/` | superpowers | same as above |
-| `browser-testing-with-devtools` | `.config/opencode/skills/` | superpowers | same as above |
-| `caveman` | both | superpowers + find-skills | `npx superpowers install` + `mattpocock/skills` |
-| `ci-cd-and-automation` | `.config/opencode/skills/` | superpowers | `npx superpowers install` |
-| `code-review-and-quality` | `.config/opencode/skills/` | superpowers | same as above |
-| `code-simplification` | `.config/opencode/skills/` | superpowers | same as above |
-| `code-reviewer` | `.config/opencode/skills/` | custom (project-specific) | N/A — written by hand for ItoCook |
-| `codebase-health-check` | `.config/opencode/skills/` | unknown (no YAML frontmatter, no project refs) | Possibly manual install or old superpowers version |
-| `startup` | `global/skills/startup/SKILL.md` | custom (harness) | Part of opencode-harness — full 12-step startup ritual |
-| `session-end` | `global/skills/session-end/SKILL.md` | custom (harness) | Part of opencode-harness — session end protocol with edge cases |
-| `dod` | `global/skills/dod/SKILL.md` | custom (harness) | Part of opencode-harness — Definition of Done with per-step checklists |
-| `frontend` | `global/skills/frontend/SKILL.md` | custom (harness) | Part of opencode-harness — CSS/Layout + Design System rules |
-| `documentation` | `global/skills/documentation/SKILL.md` | custom (harness) | Part of opencode-harness — documentation session triggers and script |
-| `context-engineering` | `.config/opencode/skills/` | superpowers | `npx superpowers install` |
-| `debugging-and-error-recovery` | `.config/opencode/skills/` | superpowers | same as above |
-| `deprecation-and-migration` | `.config/opencode/skills/` | superpowers | same as above |
-| `diagnose` | both | superpowers + find-skills | `npx superpowers install` + `mattpocock/skills` |
-| `dispatching-parallel-agents` | `.config/opencode/skills/` | superpowers | `npx superpowers install` |
-| `docker-expert` | both | superpowers + find-skills | `npx superpowers install` + `sickn33/antigravity-awesome-skills` |
-| `documentation-and-adrs` | `.config/opencode/skills/` | superpowers | `npx superpowers install` |
-| `doubt-driven-development` | `.config/opencode/skills/` | superpowers | same as above |
-| `executing-plans` | `.config/opencode/skills/` | superpowers | same as above |
+| Skill name | Location | Source | Notes |
+|---|---|---|---|---|
+| `api-and-interface-design` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `archify` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `brainstorming` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `browser-testing-with-devtools` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `caveman` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `ci-cd-and-automation` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `code-review-and-quality` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `code-simplification` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `code-reviewer` | `.config/opencode/skills/` | custom (ItoCook) | Written by hand |
+| `codebase-health-check` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `startup` | `global/skills/startup/SKILL.md` | custom (harness) | Part of opencode-harness |
+| `session-end` | `global/skills/session-end/SKILL.md` | custom (harness) | Part of opencode-harness |
+| `dod` | `global/skills/dod/SKILL.md` | custom (harness) | Part of opencode-harness |
+| `frontend` | `global/skills/frontend/SKILL.md` | custom (harness) | Part of opencode-harness |
+| `documentation` | `global/skills/documentation/SKILL.md` | custom (harness) | Part of opencode-harness |
+| `context-engineering` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `debugging-and-error-recovery` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `deprecation-and-migration` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `diagnose` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `dispatching-parallel-agents` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `docker-expert` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `documentation-and-adrs` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `doubt-driven-development` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `executing-plans` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
 | `find-skills` | `.agents/skills/` only | find-skills ecosystem | `vercel-labs/skills` |
-| `frontend-ui-engineering` | `.config/opencode/skills/` | superpowers | `npx superpowers install` |
-| `git-workflow-and-versioning` | `.config/opencode/skills/` | superpowers | same as above |
-| `grill-me` | both | superpowers + find-skills | `npx superpowers install` + `mattpocock/skills` |
-| `grill-with-docs` | both | superpowers + find-skills | `npx superpowers install` + `mattpocock/skills` |
-| `handoff` | both | superpowers + find-skills | `npx superpowers install` + `mattpocock/skills` |
-| `idea-refine` | `.config/opencode/skills/` | superpowers | `npx superpowers install` |
-| `improve-codebase-architecture` | both | superpowers + find-skills | `npx superpowers install` + `mattpocock/skills` |
-| `incremental-implementation` | `.config/opencode/skills/` | superpowers | `npx superpowers install` |
-| `interview-me` | `.config/opencode/skills/` | superpowers | same as above |
-| `make-interfaces-feel-better` | `.config/opencode/skills/` | superpowers | same as above |
-| `nuxt` | both | superpowers + find-skills | `npx superpowers install` + `antfu/skills` |
-| `nuxt-ui` | both | superpowers + find-skills | `npx superpowers install` + `nuxt/ui` |
-| `performance-optimization` | `.config/opencode/skills/` | superpowers | `npx superpowers install` |
-| `planning-and-task-breakdown` | `.config/opencode/skills/` | superpowers | same as above |
+| `frontend-ui-engineering` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `git-workflow-and-versioning` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `grill-me` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `grill-with-docs` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `handoff` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `idea-refine` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `improve-codebase-architecture` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `incremental-implementation` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `interview-me` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `make-interfaces-feel-better` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `nuxt` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `nuxt-ui` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `performance-optimization` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `planning-and-task-breakdown` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
 | `prototype` | `.agents/skills/` only | find-skills | `mattpocock/skills` |
-| `requesting-code-review` | `.config/opencode/skills/` | superpowers | `npx superpowers install` |
-| `security` | `.config/opencode/skills/` | custom (project-specific) | N/A — written by hand for ItoCook |
-| `security-and-hardening` | `.config/opencode/skills/` | superpowers | `npx superpowers install` |
-| `session-start` | `.config/opencode/skills/` | custom (project-specific) | N/A — written by hand for ItoCook |
+| `requesting-code-review` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `security` | `.config/opencode/skills/` | custom (ItoCook) | Written by hand |
+| `security-and-hardening` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `session-start` | `.config/opencode/skills/` | custom (ItoCook) | Written by hand |
 | `setup-matt-pocock-skills` | `.agents/skills/` only | find-skills | `mattpocock/skills` |
-| `shipping-and-launch` | `.config/opencode/skills/` | superpowers | `npx superpowers install` |
-| `source-driven-development` | `.config/opencode/skills/` | superpowers | same as above |
-| `spec-driven-development` | `.config/opencode/skills/` | superpowers | same as above |
-| `systematic-debugging` | `.config/opencode/skills/` | superpowers | same as above |
-| `tailwind-design-system` | both | superpowers + find-skills | `npx superpowers install` + `wshobson/agents` |
-| `tdd` | both | superpowers + find-skills | `npx superpowers install` + `mattpocock/skills` |
+| `shipping-and-launch` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `source-driven-development` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `spec-driven-development` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `systematic-debugging` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `tailwind-design-system` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `tdd` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
 | `teach` | `.agents/skills/` only | find-skills | `mattpocock/skills` |
-| `test-driven-development` | `.config/opencode/skills/` | superpowers | `npx superpowers install` |
-| `to-issues` | both | superpowers + find-skills | `npx superpowers install` + `mattpocock/skills` |
-| `to-prd` | both | superpowers + find-skills | `npx superpowers install` + `mattpocock/skills` |
+| `test-driven-development` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `to-issues` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `to-prd` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
 | `triage` | `.agents/skills/` only | find-skills | `mattpocock/skills` |
-| `using-agent-skills` | `.config/opencode/skills/` | superpowers | `npx superpowers install` |
-| `verification-before-completion` | `.config/opencode/skills/` | superpowers | same as above |
-| `vue` | both | superpowers + find-skills | `npx superpowers install` + `onmax/nuxt-skills` |
+| `using-agent-skills` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `verification-before-completion` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `vue` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
 | `write-a-skill` | `.agents/skills/` only | find-skills | `mattpocock/skills` |
-| `writing-plans` | `.config/opencode/skills/` | superpowers | `npx superpowers install` |
-| `zoom-out` | both | superpowers + find-skills | `npx superpowers install` + `mattpocock/skills` |
+| `writing-plans` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
+| `zoom-out` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
 
-**Totals:** 62 unique skills (51 in `.config/opencode/skills/`, 5 in `global/skills/` (startup, session-end, dod, frontend, documentation), 21 in `.agents/skills/`, 15 overlap)
+**Totals:** 62 unique skills (52 in `.config/opencode/skills/` from harness, 5 custom harness skills in `global/skills/`, 7 in `.agents/skills/` from find-skills)
 
 ---
 
 ## 2. Custom Skills — Must Copy Into Harness
 
-These 8 skills were written by hand for ItoCook and opencode-harness. Only they need to live in `opencode-harness/global/skills/` (superpowers skills are reinstallable).
+These skills were written by hand for ItoCook and opencode-harness. They live in `opencode-harness/global/skills/`. All other skills are vendored from the superpowers repository.
 
 | Skill | Files | Total size | Notes |
 |---|---|---|---|
@@ -99,7 +99,7 @@ These 8 skills were written by hand for ItoCook and opencode-harness. Only they 
 - No project-specific references (unlike custom skills)
 - Not in `.agents/skills/`
 
-**Recommendation:** Check if it's useful and either keep as custom or remove. If it's a version of a superpowers skill that lost its frontmatter, it can be regenerated.
+**Recommendation:** Check if it's useful and either keep as custom or remove.
 
 ---
 
@@ -110,27 +110,18 @@ These 8 skills were written by hand for ItoCook and opencode-harness. Only they 
 # 1. Install OpenCode (via npm)
 npm install -g opencode-ai
 
-# 2. Install superpowers skills (47 skills)
-npx superpowers install
+# 2. Clone harness and run setup
+git clone https://github.com/Dimas53/opencode-harness.git
+cd opencode-harness
+make setup
+# This copies all skills from global/skills/ to ~/.config/opencode/skills/
 
-# 3. Install find-skills ecosystem (21 skills — installed on demand)
+# 3. Install find-skills ecosystem (installed on demand)
 # Triggered by opening a project and running find-skills
-# Sources:
-#   - mattpocock/skills: caveman, diagnose, grill-me, grill-with-docs, handoff,
-#     improve-codebase-architecture, prototype, setup-matt-pocock-skills, tdd,
-#     teach, to-issues, to-prd, triage, write-a-skill, zoom-out
-#   - antfu/skills: nuxt
-#   - nuxt/ui: nuxt-ui
-#   - onmax/nuxt-skills: vue
-#   - wshobson/agents: tailwind-design-system
-#   - sickn33/antigravity-awesome-skills: docker-expert
-#   - vercel-labs/skills: find-skills
-
-# 4. Copy custom skills (8 skills)
-cp -r global/skills/* ~/.config/opencode/skills/
+# Sources: mattpocock/skills, antfu/skills, vercel-labs/skills
 ```
 
-**Important:** The harness-init skill's `install.sh` must include `npx superpowers install` AND copying custom skills.
+**Note:** All skills are vendored in `global/skills/`. No external plugin or skill download needed — `make setup` handles everything.
 
 ---
 
@@ -149,8 +140,6 @@ cp -r global/skills/* ~/.config/opencode/skills/
 
 ## 5. Overlap Notes
 
-- 15 skills exist in both `.config/opencode/skills/` (from superpowers) and `.agents/skills/` (from find-skills)
-- Content is identical — separate copies, different inodes
+- All harness skills are vendored in `global/skills/` and copied to `~/.config/opencode/skills/` during `make setup`
+- `.agents/skills/` is maintained by the `find-skills` ecosystem — installed on-demand
 - OpenCode looks at `.config/opencode/skills/` first
-- The `.agents/skills/` directory is maintained by the multi-platform `find-skills` mechanism
-- On a fresh install, only superpowers skills would be installed. The find-skills ecosystem skills (`.agents/skills/` only) are installed on-demand when `find-skills` is first invoked.
