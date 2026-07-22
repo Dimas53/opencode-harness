@@ -395,3 +395,30 @@ Session language: ru
 
 ### Next
 - Live-test cycle: run `new` with Q-1 files on a real project (test_6)
+
+## Session 2026-07-22 (uninstall, bugs #5 #6 #8, clean superpowers refs)
+
+Session language: ru
+
+### Done
+- **make uninstall** — added `uninstall` (+ symlink, skills, AGENTS.md) and
+  `uninstall-full` (+ OpenCode CLI, RTK) targets
+- **Bug #5**: `init-project.sh` — replaced relative `templates/` paths with
+  `$SCRIPT_DIR/../templates/` (works from any directory)
+- **Bug #6**: `install.sh` version check updated `v1.17.20` → `v1.18.4`
+- **Bug #8**: `agent-new-project.md` — Phase 0 now asks user confirmation
+  before scaffold
+- **README.md** — restructured: Quick Start → macOS install block (one code
+  block, 6 steps) → Update/Uninstall; removed `chmod +x` workaround,
+  removed `git pull` from Already Installed (handled by `make update`)
+- **INSTALL.md** — removed `chmod +x` workaround, fixed outdated manual steps
+  (config already auto-copied)
+- **Superpowers references** — cleaned from GUIDE.md, 03-skills-cheatsheet.md,
+  05-skills-inventory.md, 02-opencode-commands.md, 01-harness-overview.de.md,
+  templates/docs/skills-cheatsheet.md, verify.sh
+- **Makefile** — added `uninstall` + `uninstall-full` to .PHONY and help
+- `make verify`: 8/8, `bash -n`: all scripts pass, committed + pushed
+
+### Next
+- Windows WSL2 testing when available
+- Bug backlog (none remaining in ostatok)

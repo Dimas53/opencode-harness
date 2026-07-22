@@ -125,24 +125,93 @@ make update
 
 ## Installing on Windows
 
-Windows requires **WSL2** (Windows Subsystem for Linux). All bash scripts and Make commands run inside WSL.
+Windows requires **WSL2** (Windows Subsystem for Linux). Your Windows system stays completely untouched — WSL2 installs Ubuntu as an app alongside Windows. You get a separate Ubuntu terminal that you open when needed; everything else on your machine stays as-is.
+
+### Prerequisites (one-time for clean machines)
+
+Run in PowerShell as Administrator:
 
 ```powershell
-# In PowerShell as Admin
 wsl --install
 ```
 
-Then inside WSL (Ubuntu):
+Restart your computer. After restart, Ubuntu opens automatically — create a username and password.
+
+Then inside the Ubuntu terminal:
+
 ```bash
-sudo apt update && sudo apt install make
+# Step 1 — Install make and Node.js
+sudo apt update && sudo apt install -y make curl
+
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
 source ~/.bashrc
 nvm install 20
-cd ~ && git clone https://github.com/Dimas53/opencode-harness.git
-cd opencode-harness && make setup
 ```
 
-See [instructions/GUIDE.md](instructions/GUIDE.md) for full WSL setup.
+Verify: `make --version && node --version && npm --version`
+
+### Steps
+
+**Step 2 — Clone**
+```bash
+cd ~
+git clone https://github.com/Dimas53/opencode-harness.git
+cd opencode-harness
+```
+
+**Step 3 — Install**
+```bash
+make setup
+```
+
+During setup:
+- RTK telemetry → `n`
+- Playwright → `y`
+- Version warning → `y`
+
+**Step 4 — Authorize**
+```bash
+opencode auth login
+```
+
+Pick a provider (Anthropic, OpenRouter) and enter your API key.
+
+**Step 5 — Edit config**
+```bash
+nano ~/.config/opencode/opencode.jsonc
+```
+
+Replace `/YOUR/HOME/PATH` with `/home/your-username`. If no Directus — delete the `YOUR_DIRECTUS_TOKEN` line.
+
+**Step 6 — Verify**
+```bash
+make verify
+ls ~/.config/opencode/skills/ | wc -l   # 70
+```
+
+**Step 7 — First run**
+```bash
+mkdir ~/my-project && cd ~/my-project
+opencode
+```
+
+Inside OpenCode, type `new` to start project setup.
+
+### Updating
+
+```bash
+cd ~/opencode-harness
+make update
+```
+
+### What differs from macOS
+
+| | macOS | WSL2 |
+|---|---|---|
+| opencode | npm | npm |
+| uv | brew | curl installer |
+| RTK | brew | curl installer |
+| make verify | 8/8 | 8/8 |
 
 ---
 

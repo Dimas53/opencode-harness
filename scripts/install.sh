@@ -1,4 +1,5 @@
 #!/bin/bash
+OS=$(uname -s)
 echo "=== OpenCode Harness Setup ==="
 
 if ! command -v node &> /dev/null; then
@@ -20,8 +21,11 @@ if [ "$INSTALLED_VERSION" != "$REQUIRED_VERSION" ]; then
 fi
 
 # Install uv (required for git and fetch MCP servers)
-if command -v brew &> /dev/null; then
+if [[ "$OS" == "Darwin" ]]; then
   brew install uv
+  echo "✓ uv installed"
+elif [[ "$OS" == "Linux" ]]; then
+  curl -LsSf https://astral.sh/uv/install.sh | sh
   echo "✓ uv installed"
 else
   echo "⚠ uv not installed — install manually: https://docs.astral.sh/uv/"
@@ -29,13 +33,19 @@ else
 fi
 
 # RTK — token optimization for OpenCode
-if command -v brew &> /dev/null; then
+if [[ "$OS" == "Darwin" ]]; then
 	echo "Installing RTK..."
 	brew install rtk-ai/tap/rtk
 	rtk init -g --opencode
 	echo "✓ RTK installed. Run 'rtk gain' to see token savings."
+elif [[ "$OS" == "Linux" ]]; then
+	echo "Installing RTK..."
+	curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh
+	export PATH="$HOME/.local/bin:$PATH"
+	rtk init -g --opencode
+	echo "✓ RTK installed. Run 'rtk gain' to see token savings."
 else
-	echo "⚠ RTK skipped — brew not found. Install manually: https://github.com/rtk-ai/rtk"
+	echo "⚠ RTK skipped — unsupported OS: $OS. Install manually: https://github.com/rtk-ai/rtk"
 fi
 
 npm install -g @modelcontextprotocol/server-filesystem

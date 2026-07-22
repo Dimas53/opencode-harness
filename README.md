@@ -51,6 +51,56 @@ cd ~/Documents/opencode-harness && make update
 cd ~/Documents/opencode-harness && make uninstall
 ```
 
+## Installing on Windows
+
+One block from zero to running:
+
+> **Prerequisites:** WSL2 required. Ubuntu installs alongside Windows as an app — your Windows stays untouched.
+> Missing something? → [INSTALL.md — Windows prerequisites](./INSTALL.md#installing-on-windows)
+
+```powershell
+# 0 — PowerShell as Admin: install WSL2 + Ubuntu
+wsl --install
+# Restart your computer, then open Ubuntu and create a user
+```
+
+```bash
+# 1 — Inside Ubuntu terminal: install make and Node.js
+sudo apt update && sudo apt install -y make curl
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+source ~/.bashrc && nvm install 20
+
+# 2 — Clone the harness
+git clone https://github.com/Dimas53/opencode-harness.git
+cd opencode-harness
+
+# 3 — Install
+make setup
+# During setup: RTK telemetry → n, Playwright → y, version warning → y
+
+# 4 — Authorize OpenCode
+opencode auth login
+
+# 5 — Edit MCP paths
+nano ~/.config/opencode/opencode.jsonc     # replace /YOUR/HOME/PATH with /home/your-username
+
+# 6 — Verify
+make verify
+
+# 7 — First project
+mkdir -p ~/my-project && cd ~/my-project
+opencode                                    # type `new` inside
+```
+
+### Update
+```bash
+cd ~/opencode-harness && make update
+```
+
+### Uninstall
+```bash
+cd ~/opencode-harness && make uninstall
+
 ## Already Installed?
 
 ```bash

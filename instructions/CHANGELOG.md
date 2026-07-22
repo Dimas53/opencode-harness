@@ -16,6 +16,26 @@ All notable changes to opencode-harness are documented here.
 - **global/opencode-config.example.jsonc**: removed superpowers from `plugin` array.
 - **`.agents/skills/`** deleted from repo (all skills now in `global/skills/`).
 
+### WSL2/Linux support — install, verify, docs
+
+- **scripts/install.sh**: added `OS=$(uname -s)` dispatch — uv and RTK installed
+  via `brew` on macOS, via `curl` installers on Linux. `export PATH` added before
+  `rtk init` to ensure `~/.local/bin` is on PATH in the current shell.
+- **INSTALL.md**: full Windows installation section — WSL2 setup, prerequisites,
+  step-by-step clone/install/auth/verify/first-run, comparison table (macOS vs WSL2).
+- **README.md**: added `## Installing on Windows` — one-block quick-start with
+  PowerShell + bash code blocks, matching macOS section structure.
+
+- **All skills now in-repo** (`global/skills/`): copied 70 skills from superpowers
+  plugin + JuliusBrussee directly into the harness. Zero external dependencies.
+- **install.sh/update.sh**: removed `opencode plugin add superpowers@...`,
+  `npx skills add JuliusBrussee/skills`, `.agents/skills/` copy. Only
+  `cp -r global/skills/*` remains.
+- **10 custom skills** (code-reviewer, codebase-health-check, etc.) got YAML
+  frontmatter (`---`) — required for OpenCode skill discovery.
+- **global/opencode-config.example.jsonc**: removed superpowers from `plugin` array.
+- **`.agents/skills/`** deleted from repo (all skills now in `global/skills/`).
+
 ## 2026-07-21
 
 ### agent-new-project — P20-P26 fixes
