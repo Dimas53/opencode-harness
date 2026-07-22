@@ -82,8 +82,16 @@ cd ~/opencode-harness && make update
 ```
 
 ### Uninstall
+
+**Full removal** (harness + OpenCode + RTK):
 ```bash
 cd ~/opencode-harness && make uninstall
+rm -rf ~/opencode-harness
+```
+
+**Harness only** (keep OpenCode and RTK):
+```bash
+cd ~/opencode-harness && make uninstall-lite
 rm -rf ~/opencode-harness
 ```
 
