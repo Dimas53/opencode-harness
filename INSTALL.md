@@ -335,7 +335,7 @@ then fills knowledge gaps via interview, then generates missing documentation.
 ### Primary path
 Open OpenCode in the project directory and type:
 - `analyze` — full project analysis
-- `analyze pages/cook.vue` — focused analysis of a specific file or folder
+- `analyze path/to/file.ts` — focused analysis of a specific file or folder
 
 ### Fallback (make command)
 ```bash

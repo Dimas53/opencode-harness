@@ -8,7 +8,7 @@ When user types:
 - `new` — load and run `~/.config/opencode/skills/harness-init/agent-new-project.md`
 - `adopt` — load and run `~/.config/opencode/skills/harness-init/agent-adopt.md`
 - `analyze` — load and run `~/.config/opencode/skills/harness-init/agent-analyze.md` (full project, no TARGET)
-- `analyze <path>` — load and run `~/.config/opencode/skills/harness-init/agent-analyze.md`, set TARGET=<path> (e.g. `analyze pages/cook.vue` → TARGET=pages/cook.vue)
+- `analyze <path>` — load and run `~/.config/opencode/skills/harness-init/agent-analyze.md`, set TARGET=<path> (e.g. `analyze pages/Dashboard.vue` → TARGET=pages/Dashboard.vue)
 
 - `update-harness` — pull latest updates and apply globally:
   cd ~/.opencode-harness

@@ -28,13 +28,13 @@ After all attempts — print:
 ### Target detection
 Extract TARGET from the user's last message using this pattern:
 - If message matches `analyze <path>` — set TARGET=<path>
-- Examples: "analyze pages/cook.vue" → TARGET=pages/cook.vue
+- Examples: "analyze pages/Dashboard.vue" → TARGET=pages/Dashboard.vue
 - Examples: "analyze server/api/" → TARGET=server/api/
 - If message is just "analyze" — TARGET is empty (full project mode)
 
 If TARGET is set:
 - Scope all skill runs to TARGET path only
-- Set SAFE_TARGET = TARGET with / replaced by - (e.g. pages/cook.vue → pages-cook.vue)
+- Set SAFE_TARGET = TARGET with / replaced by - (e.g. pages/Dashboard.vue → pages-Dashboard.vue)
 - Report title: # [TARGET] Analysis — [date]
 - Report filename: docs/audits/YYYY-MM-DD-analysis-[SAFE_TARGET].md
 - Sections not applicable to a single file (Architecture, Risks) → replace with one line:

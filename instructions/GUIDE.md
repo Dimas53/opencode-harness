@@ -171,7 +171,7 @@ The primary way to initialize any project is via shortcuts inside OpenCode:
 | `new` | Loads agent-new-project — interview + full doc generation |
 `adopt` | Loads agent-adopt — codebase analysis + docs |
 | `analyze` | Loads agent-analyze — full project audit, no file changes |
-| `analyze <path>` | Same, focused on a specific file or folder (e.g. `analyze pages/cook.vue`) |
+| `analyze <path>` | Same, focused on a specific file or folder (e.g. `analyze pages/Dashboard.vue`) |
 | `update-harness` | Pulls latest harness updates, applies globally (requires `make link` once) |
 | `sync-templates` | Checks for new template files missing in current project, copies with confirmation |
 
