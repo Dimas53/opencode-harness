@@ -66,7 +66,10 @@ Q0. **Language — before any analysis:** SEQUENCE RULE
    NEVER write multiple files in one turn without confirmation.
 
    a) docs/CONTEXT.md — TECHNICAL GLOSSARY ONLY, not business description:
-      Run domain-modeling skill to extract technical terms from codebase.
+      Before writing CONTEXT.md:
+      → Load and run domain-modeling skill:
+        Read ~/.config/opencode/skills/domain-modeling/SKILL.md
+        Apply to extract technical terms from codebase. Use output as CONTEXT.md content.
       Include:
       - Every composable: name → what it does → file:line
       - Every server route / API endpoint: route → purpose → file:line
@@ -84,7 +87,10 @@ Q0. **Language — before any analysis:** SEQUENCE RULE
       - Links to docs/architecture/*.md for each domain
 
    c) docs/architecture/ — one file per architectural domain:
-      Run documentation-and-adrs skill.
+      Before writing docs/architecture/*.md:
+      → Load and run documentation-and-adrs skill:
+        Read ~/.config/opencode/skills/documentation-and-adrs/SKILL.md
+        Apply to document key architectural decisions. Use output as architecture/*.md content.
       Delete or overwrite the placeholder feature-name.md.
       Identify domains from the codebase (minimum: contact form, deployment).
       For each domain create a file named after the domain (e.g. contact-form.md, deployment.md).

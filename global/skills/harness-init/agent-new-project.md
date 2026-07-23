@@ -139,12 +139,18 @@ then fill the scaffolded template files with the project's context.
     already exist from Phase 0 — DO NOT generate them from scratch, fill or
     rewrite them in place:
 
-    Run domain-modeling skill before writing CONTEXT.md:
+    Before writing docs/CONTEXT.md:
+    → Load and run domain-modeling skill:
+      Read ~/.config/opencode/skills/domain-modeling/SKILL.md
+      Apply to extract terms from interview answers. Use output as CONTEXT.md content.
     Extract terms from interview answers — entity names, key concepts, business rules.
     Format per entry: Term | Definition | Related
     EXCLUDE: company descriptions, team size, deployment targets — those go in HARNESS.md.
 
-    Run documentation-and-adrs skill before writing ARCHITECTURE.md and architecture/*.md:
+    Before writing docs/ARCHITECTURE.md and docs/architecture/*.md:
+    → Load and run documentation-and-adrs skill:
+      Read ~/.config/opencode/skills/documentation-and-adrs/SKILL.md
+      Apply to document key architectural decisions from the interview. Use output as architecture docs content.
     For each key technology decision made during interview — document:
     - What was chosen
     - Why (rationale)
