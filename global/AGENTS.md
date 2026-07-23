@@ -92,6 +92,20 @@ General — destructive actions regardless of project. Never do without explicit
 
 ---
 
+## Self-Check Rule (applies to all multi-step tasks)
+
+After every file edit, script change, or code modification:
+- Re-read the modified block
+- Verify the change is correct and doesn't conflict with adjacent code
+- Only then proceed to the next step
+
+For tasks with 3+ sequential changes — create PLAN.md with verify gates:
+- `[ ] Step description | verify: <concrete command that proves it worked>`
+Mark step `[x]` only after running the verify command and seeing expected output.
+Never mark done without running verify.
+
+---
+
 ## Safety Gates — STOP and ask user before doing any of these
 
 Project-level — configs and infrastructure that could break the project.

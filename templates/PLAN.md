@@ -16,9 +16,10 @@
 [How we'll do it]
 
 ## Milestones
-- [ ] M1: ... | verify: `<command>`
+Mark `[x]` only after passing the verify gate — not before.
+- [ ] M1: ... | verify: `<command that proves it works>`
 - [ ] M2: ... | verify: `<command>`
-- [ ] Final: all tests pass | verify: `<test command>`
+- [ ] Final: all checks passed | verify: `<final command>`
 
 ## Scope
 ### In scope:
