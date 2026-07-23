@@ -26,10 +26,10 @@ After all attempts — print:
 ## Steps
 
 Q0. **Language — before any analysis:**
-    If PROGRESS.md does NOT have a `Session language:` entry yet:
+    If PROGRESS.md does NOT have a `Chat language:` entry yet:
     - Ask the user: "What language should I respond in? / На каком языке мы общаемся? / Welche Sprache?"
-    - Write answer to PROGRESS.md: `Session language: [ru / de / en / ...]`
-    If PROGRESS.md already has `Session language:` — skip this step, use existing.
+    - Write answer to PROGRESS.md: `Chat language: [ru / de / en / ...]`
+    If PROGRESS.md already has `Chat language:` — skip this step, use existing.
     All further chat output (summary, questions to user) — in that language. The report file is always in English (see Hard rules).
 
 ### Target detection
@@ -87,7 +87,7 @@ If TARGET is set:
      ```
      If file not found or fewer than 80 lines — retry writing before proceeding.
 
-11. Print summary to chat in session language (read from PROGRESS.md: Session language: <code>).
+11. Print summary to chat in chat language (read from PROGRESS.md: Chat language: <code>).
     Format: narrative, NOT a table. Minimum 20 lines. Structure:
     - Architecture: 3-5 sentences — what the system does, why this stack, key decision
     - Health: 3-5 sentences — file count, biggest problems, duplication, linter status

@@ -32,7 +32,7 @@ Q0. **Language — before any analysis:**
     "What language should I respond in? / На каком языке мы общаемся? / Welche Sprache?"
     After answer — write to PROGRESS.md:
     ```
-    Session language: [ru / de / en / ...]
+    Chat language: [ru / de / en / ...]
     ```
     All further chat messages, questions to user, and step-by-step interaction — in that language only. Report files and generated docs are always in English (see Hard rules).
     Only after receiving the answer — proceed to Step 1.
@@ -54,7 +54,10 @@ Q0. **Language — before any analysis:**
     - Any constraints or decisions not visible in code?
     - HARNESS: Are there critical paths that must never break? (e.g., payments, auth, DB)
     - HARNESS: What is the risk level for DB operations, external API integrations, and auth?
-4. Generate documentation using docs/ in current project as reference:
+4. Generate documentation — SWITCH TO ENGLISH FOR THIS STEP:
+   Chat language applies only to chat messages. All generated files must be in English.
+   This is a hard rule — do not generate files in the chat language regardless of Q0 answer.
+   Generate files using docs/ in current project as reference:
    - ARCHITECTURE.md (from codebase-health-check findings)
    - CONTEXT.md (domain terms discovered during analysis)
    - roadmap.md (current phase + next steps)

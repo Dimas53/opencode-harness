@@ -157,10 +157,10 @@ Execute these steps in order BEFORE any response to the user:
 1. `pwd && git log --oneline -10`
 2. Load `using-agent-skills` — try filesystem path first: `Read ~/.config/opencode/skills/using-agent-skills/SKILL.md`. If not found (built-in skill), load via `skill("using-agent-skills")` instead. Also check project `docs/skills-cheatsheet.md` for relevant skills matching current task triggers.
  3. Read `PROGRESS.md` in project root — compare git log with progress status. If out of sync, update PROGRESS.md FIRST. If file doesn't exist — skip.
-    After reading PROGRESS.md, look for a line starting with `Session language:`.
-    - If present — continue the ENTIRE session in that language WITHOUT asking.
+    After reading PROGRESS.md, look for a line starting with `Chat language:`.
+    - If present — use that language for all chat messages and questions. Generated files are always in English (see hard rules in project or global AGENTS.md).
     - If absent — ask the user for their language explicitly before proceeding,
-      then WRITE `Session language: <chosen>` into `PROGRESS.md` (create the file
+      then WRITE `Chat language: <chosen>` into `PROGRESS.md` (create the file
       if it does not exist) so the choice persists and is never asked again.
  4. Read `docs/roadmap.md`
 5. Read `MEMORY.md` and `memory/YYYY-MM-DD.md` if they exist (for today or yesterday)

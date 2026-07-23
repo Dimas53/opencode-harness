@@ -190,10 +190,10 @@ then fill the scaffolded template files with the project's context.
  10. Write a brief session log into `PROGRESS.md`: what was done, which files
     were created, and the next step (start M1 from the roadmap). Do NOT leave
     PROGRESS.md as the empty scaffold.
-    Include the session language on its own line so the next session can
+    Include the chat language on its own line so the next session can
     resume in the same language without asking:
     ```
-    Session language: [language from Q0, e.g. ru or en]
+    Chat language: [language from Q0, e.g. ru or en]
     ```
 ### Phase 2 — Hand off to the working session
 11. Hand-off report — show the user a formatted visual block.

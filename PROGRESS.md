@@ -4,7 +4,7 @@
 
 Phase: v0.3 → v0.4 transition
 Last commit: a8169f9 — docs(make): add analyze <path> to help output
-Session language: ru
+Chat language: ru
 
 ## Session 2026-07-22 (auto-HOME-PATH, Accessing Windows files, make help, rm -rf fix)
 
