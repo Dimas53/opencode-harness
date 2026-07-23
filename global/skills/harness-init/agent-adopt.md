@@ -27,7 +27,25 @@ If any skill failed to load — STOP and report to user before proceeding.
    Wait for the command to complete before proceeding.
    Do NOT create files from memory — always use the script.
 
-1. Run agent-analyze first — get full picture of the project
+Q0. **Language — before any analysis:**
+    First question after bootstrap, before anything else:
+    "What language should I respond in? / На каком языке мы общаемся? / Welche Sprache?"
+    After answer — write to PROGRESS.md:
+    ```
+    Session language: [ru / de / en / ...]
+    ```
+    All further questions, analysis, output, and file generation — in that language only.
+    Only after receiving the answer — proceed to Step 1.
+
+1. **Run agent-analyze in full protocol — do not improvise:**
+   - Load all 6 sub-skills from agent-analyze.md:
+     zoom-out, codebase-health-check, junior-to-senior,
+     code-review-and-quality, security, premortem
+   - Follow agent-analyze.md step by step (steps 0–10a)
+   - Save report to docs/audits/YYYY-MM-DD-analysis.md
+   - Verify the report file was written (step 10a from agent-analyze)
+   - Print summary in session language (from Q0)
+   FORBIDDEN: reading files manually instead of running the full protocol.
 2. Present findings to user, ask for corrections
 3. Load grill-with-docs — fill gaps agent couldn't detect from code:
    - What is the business purpose?
@@ -57,7 +75,8 @@ If any skill failed to load — STOP and report to user before proceeding.
     `instructions/directus-mcp-setup.md`."
 
 ## Hard rules
-- Run agent-analyze BEFORE asking any questions
+- Q0 (language) — always after bootstrap, always before analysis. No exceptions.
+- Step 1 — always the full agent-analyze protocol with report saved. Manual file analysis instead of the protocol is a violation.
 - Never ask what you can detect from code
 - Never overwrite existing docs/ files without showing diff first
 - One file at a time, always wait for confirmation

@@ -25,6 +25,13 @@ After all attempts — print:
 
 ## Steps
 
+Q0. **Language — before any analysis:**
+    If PROGRESS.md does NOT have a `Session language:` entry yet:
+    - Ask the user: "What language should I respond in? / На каком языке мы общаемся? / Welche Sprache?"
+    - Write answer to PROGRESS.md: `Session language: [ru / de / en / ...]`
+    If PROGRESS.md already has `Session language:` — skip this step, use existing.
+    All further output (summary, questions) — in that language.
+
 ### Target detection
 Extract TARGET from the user's last message using this pattern:
 - If message matches `analyze <path>` — set TARGET=<path>
