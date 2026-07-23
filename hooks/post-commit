@@ -5,4 +5,5 @@
 
 HARNESS_ROOT="$(git rev-parse --show-toplevel)"
 cp -r "$HARNESS_ROOT/global/skills/" ~/.config/opencode/skills/
-echo "✓ Skills mirrored to ~/.config/opencode/skills/"
+cp "$HARNESS_ROOT/global/AGENTS.md" ~/.config/opencode/AGENTS.md
+echo "✓ Skills + AGENTS.md mirrored to ~/.config/opencode/"
