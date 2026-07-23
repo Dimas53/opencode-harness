@@ -195,7 +195,11 @@ echo "[ 7/7 ] Self-check (verification-before-completion)"
 echo "  → Did you verify each change actually works, not just syntactically?"
 echo "  → Run: bash -n on changed scripts"
 echo "  → Run: make verify"
-bash -n scripts/*.sh 2>&1 && check_pass "Self-check (syntax)" || check_fail "Self-check" "fix syntax errors above"
+if ls scripts/*.sh &>/dev/null 2>&1; then
+  bash -n scripts/*.sh 2>&1 && check_pass "Self-check (syntax)" || check_fail "Self-check" "fix syntax errors above"
+else
+  check_warn "No scripts/*.sh found — skipping syntax check"
+fi
 
 echo ""
 

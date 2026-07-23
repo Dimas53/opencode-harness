@@ -30,7 +30,7 @@ Q0. **Language — before any analysis:**
     - Ask the user: "What language should I respond in? / На каком языке мы общаемся? / Welche Sprache?"
     - Write answer to PROGRESS.md: `Session language: [ru / de / en / ...]`
     If PROGRESS.md already has `Session language:` — skip this step, use existing.
-    All further output (summary, questions) — in that language.
+    All further chat output (summary, questions to user) — in that language. The report file is always in English (see Hard rules).
 
 ### Target detection
 Extract TARGET from the user's last message using this pattern:
@@ -57,15 +57,14 @@ If TARGET is set:
    Include output in Health section as "Changed since last analysis: N commits".
    If 0 commits — mark report with flag `⚠️ STALE — no code changes since last analysis`.
 
-1. Load all seven skills above — skip missing ones, do not stop
+1. Load all six skills above — skip missing ones, do not stop
 2. Run zoom-out → explain architecture in plain language
-3. Run context-canary → check for context rot, degradation
-4. Run codebase-health-check → system map, duplication, priorities
-5. Run junior-to-senior → senior-level design/approach findings
-6. Run code-review-and-quality → multi-axis code review
-7. Run security → find auth, API, secrets vulnerabilities
-8. Run premortem → what could go wrong, top 5 risks
-9. Compile results into one report
+3. Run codebase-health-check → system map, duplication, priorities
+4. Run junior-to-senior → senior-level design/approach findings
+5. Run code-review-and-quality → multi-axis code review
+6. Run security → find auth, API, secrets vulnerabilities
+7. Run premortem → what could go wrong, top 5 risks
+8. Compile results into one report
 9a. Diff findings against previous report:
     ```bash
     last=$(ls -t docs/audits/*-analysis.md 2>/dev/null | head -1)
@@ -88,7 +87,15 @@ If TARGET is set:
      ```
      If file not found or fewer than 80 lines — retry writing before proceeding.
 
-11. Print summary to chat — in the session language (read from PROGRESS.md: look for `Session language: <code>` and use that language for the summary text)
+11. Print summary to chat in session language (read from PROGRESS.md: Session language: <code>).
+    Format: narrative, NOT a table. Minimum 20 lines. Structure:
+    - Architecture: 3-5 sentences — what the system does, why this stack, key decision
+    - Health: 3-5 sentences — file count, biggest problems, duplication, linter status
+    - Security: each Critical and High finding as a paragraph with file:line
+    - Risks: top 3 risks in one sentence each
+    - Recommended next steps: numbered list CRITICAL → HIGH → MEDIUM
+    Generic one-liners like "improve code quality" are not allowed.
+    Each finding must name exact file and line.
 
 **Quality gate:** every skill run must produce at least 5 concrete findings
 with specific code examples (file + line). Generic statements like
@@ -243,6 +250,7 @@ what the user sees. **Impact: X. Likelihood: Y** (reason for rating).
 4. **LOW —** ...
 
 ## Hard rules
+- Report file is always written in English regardless of session language. Session language applies only to the chat summary (Step 11).
 - NEVER modify source files
 - NEVER create docs/ structure — only write to docs/audits/
 - If docs/audits/ doesn't exist — create it first

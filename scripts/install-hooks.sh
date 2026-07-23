@@ -18,17 +18,16 @@ fi
 mkdir -p "$GIT_HOOKS_DIR"
 
 if [ -f "$GIT_HOOKS_DIR/pre-commit" ]; then
-  echo "⚠ pre-commit hook already exists — not overwriting"
-  echo "  To reinstall: rm $GIT_HOOKS_DIR/pre-commit && make install-hooks PROJECT=$TARGET_PROJECT"
-  exit 0
+  echo "⚠ Existing pre-commit hook found — backing up to pre-commit.bak"
+  mv "$GIT_HOOKS_DIR/pre-commit" "$GIT_HOOKS_DIR/pre-commit.bak"
 fi
 
 cp "$HOOK_SOURCE" "$GIT_HOOKS_DIR/pre-commit"
 chmod +x "$GIT_HOOKS_DIR/pre-commit"
 
 # Bake in HARNESS_PATH so hook can find dod.sh without env var
-sed -i.bak "s|OPENCODE_HARNESS_PATH:-\$HOME/.opencode-harness|OPENCODE_HARNESS_PATH:-$HARNESS_PATH|g" \
-  "$GIT_HOOKS_DIR/pre-commit" && rm -f "$GIT_HOOKS_DIR/pre-commit.bak"
+sed -i.sedbak "s|OPENCODE_HARNESS_PATH:-\$HOME/.opencode-harness|OPENCODE_HARNESS_PATH:-$HARNESS_PATH|g" \
+  "$GIT_HOOKS_DIR/pre-commit" && rm -f "$GIT_HOOKS_DIR/pre-commit.sedbak"
 
 echo "✓ pre-commit hook installed in $GIT_HOOKS_DIR"
 echo "  Every commit will now run: make dod"
