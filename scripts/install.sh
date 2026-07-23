@@ -85,6 +85,10 @@ cp -r global/skills/* ~/.config/opencode/skills/
 ln -sf "$(pwd)" ~/.opencode-harness
 echo "✓ Symlink created: ~/.opencode-harness → $(pwd)"
 
+cp hooks/post-commit .git/hooks/post-commit
+chmod +x .git/hooks/post-commit
+echo "✓ post-commit hook installed"
+
 # Git identity check
 if [ -z "$(git config --global user.email)" ]; then
   echo ""

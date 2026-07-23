@@ -1,0 +1,8 @@
+#!/bin/bash
+# .git/hooks/post-commit
+# Installed by: scripts/install.sh, scripts/update.sh
+# Auto-mirror global/skills/ to ~/.config/opencode/skills/ after every commit
+
+HARNESS_ROOT="$(git rev-parse --show-toplevel)"
+cp -r "$HARNESS_ROOT/global/skills/" ~/.config/opencode/skills/
+echo "✓ Skills mirrored to ~/.config/opencode/skills/"

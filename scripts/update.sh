@@ -53,5 +53,10 @@ fi
 cp -r global/skills/* "$HOME/.config/opencode/skills/"
 echo "✓ Skills updated from repo"
 
+# Install post-commit hook (for auto-mirror on future commits)
+cp hooks/post-commit .git/hooks/post-commit
+chmod +x .git/hooks/post-commit
+echo "✓ post-commit hook installed"
+
 echo ""
 echo "✓ Update complete. Run 'make verify' to check installation."
