@@ -69,16 +69,72 @@ fi
 
 mkdir -p ~/.config/opencode/skills
 
-cp global/AGENTS.md ~/.config/opencode/AGENTS.md
+# ── AGENTS.md merge ──
+if [ -f ~/.config/opencode/AGENTS.md ]; then
+  echo ""
+  echo "  → ~/.config/opencode/AGENTS.md already exists"
+  printf "    Add harness rules to the end of your existing file? (y/n): "
+  read -r answer
+  if [ "$answer" = "y" ]; then
+    cp ~/.config/opencode/AGENTS.md ~/.config/opencode/AGENTS.md.bak
+    {
+      echo ""
+      echo "# --- Harness Rules (appended by install.sh) ---"
+      cat global/AGENTS.md
+    } >> ~/.config/opencode/AGENTS.md
+    echo "  ✓ Harness rules appended (backup: AGENTS.md.bak)"
+  else
+    echo "  ⚠ Skipped — harness may work suboptimally without global rules"
+  fi
+else
+  cp global/AGENTS.md ~/.config/opencode/AGENTS.md
+  echo "  → Created ~/.config/opencode/AGENTS.md"
+fi
+
+# ── opencode.jsonc merge ──
 if [ ! -f ~/.config/opencode/opencode.jsonc ]; then
     cp global/opencode-config.example.jsonc ~/.config/opencode/opencode.jsonc
     sed -i.bak "s|/YOUR/HOME/PATH|$HOME|g" ~/.config/opencode/opencode.jsonc
     rm -f ~/.config/opencode/opencode.jsonc.bak
-    echo "  → Created ~/.config/opencode/opencode.jsonc (home path configured)"
-    echo "    If you use Directus — set YOUR_DIRECTUS_TOKEN in the file"
+    echo "  → Created ~/.config/opencode/opencode.jsonc"
 else
-    echo "  → ~/.config/opencode/opencode.jsonc already exists — not overwritten"
-    echo "    Check /YOUR/HOME/PATH and YOUR_DIRECTUS_TOKEN in the file"
+    echo ""
+    echo "  → Merging MCP servers into ~/.config/opencode/opencode.jsonc..."
+    TEMPLATE_TMP=$(mktemp)
+    sed "s|/YOUR/HOME/PATH|$HOME|g" global/opencode-config.example.jsonc > "$TEMPLATE_TMP"
+    node -e '
+      const fs = require("fs");
+      const tplPath = process.argv[1];
+      const cfgPath = process.argv[2];
+
+      function parseJSONC(filePath) {
+        const raw = fs.readFileSync(filePath, "utf8");
+        const clean = raw.replace(/\/\/.*$/gm, "").replace(/,\s*([}\]])/g, "$1");
+        return JSON.parse(clean);
+      }
+
+      const existing = parseJSONC(cfgPath);
+      const template = parseJSONC(tplPath);
+
+      existing.mcp = existing.mcp || {};
+      const tplMcp = template.mcp || {};
+      const added = [];
+
+      for (const [key, value] of Object.entries(tplMcp)) {
+        if (!existing.mcp[key]) {
+          existing.mcp[key] = value;
+          added.push(key);
+        }
+      }
+
+      if (added.length > 0) {
+        fs.writeFileSync(cfgPath, JSON.stringify(existing, null, 2) + "\n");
+        console.log("  ✓ Added MCP servers: " + added.join(", "));
+      } else {
+        console.log("  ✓ All harness MCP servers already present");
+      }
+    ' "$TEMPLATE_TMP" ~/.config/opencode/opencode.jsonc
+    rm -f "$TEMPLATE_TMP"
 fi
 cp -r global/skills/* ~/.config/opencode/skills/
 
@@ -103,6 +159,5 @@ fi
 echo ""
 echo "✓ Done. Next steps:"
 echo "1. opencode auth login"
-echo "2. Check ~/.config/opencode/opencode.jsonc — replace /YOUR/HOME/PATH"
-echo "   (If you don't use Directus — delete the YOUR_DIRECTUS_TOKEN line)"
+echo "2. Check ~/.config/opencode/opencode.jsonc — verify MCP servers are correct"
 echo "3. On first run — select your model"
