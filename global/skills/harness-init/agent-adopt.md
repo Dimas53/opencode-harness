@@ -62,8 +62,10 @@ Q0. **Language — before any analysis:** SEQUENCE RULE
 4. Generate documentation — SWITCH TO ENGLISH FOR ALL FILES IN THIS STEP.
    Session language applies only to chat messages. All generated files must be in English.
    Source: use findings from agent-analyze report (docs/audits/YYYY-MM-DD-analysis.md).
-   One file at a time: show full draft → wait for explicit "ok" → write → next file.
-   NEVER write multiple files in one turn without confirmation.
+   Before generating any files — show the user a list of all files that will be created/overwritten and ask once:
+   'Ready to generate all documentation files? (yes/no)'
+   After confirmation — generate and write ALL files without stopping between them.
+   After all files are written — print a summary list of what was created.
 
    a) docs/CONTEXT.md — TECHNICAL GLOSSARY ONLY, not business description:
       Before writing CONTEXT.md:
@@ -115,7 +117,16 @@ Q0. **Language — before any analysis:** SEQUENCE RULE
       Remove skills irrelevant to this project's stack.
 
    f) AGENTS.md:
-      - Stack Skills section with actual skills for this project's stack
+      Before writing AGENTS.md Stack Skills section:
+      Run skill gap check — same as agent-new-project.md Step 4.4:
+      - Extract technologies from analysis findings
+      - List installed skills: ls ~/.config/opencode/skills/
+      - Match by name (nuxt → nuxt skill, vue → vue skill, etc.)
+      - In AGENTS.md Stack Skills write ONLY installed skills with full paths
+      - Add comment for missing skills: # ❌ [technology] — skill not found
+      - If all found — write only installed section
+      - If some missing — write both installed and missing sections
+      Then compose the rest:
       - Framework Structure with real paths from this project
       - Critical Rules derived from analysis findings
       - DoD section
@@ -126,13 +137,19 @@ Q0. **Language — before any analysis:** SEQUENCE RULE
       - Product Contract: critical paths from grill answers
       - Risk Levels: calibrated to actual project risks
       - Decisions to Inherit: key architectural choices from analysis
-5. Each file: show full draft in chat → wait for explicit "ok" from user → write to disk → only then move to next file.
-   NEVER write multiple files in one turn without confirmation between each one.
-   NEVER batch-write all files at once.
-   Batch-writing is a VIOLATION of this protocol.
-6. Write session log to PROGRESS.md: "chore: initialize harness docs for [project name]"
-7. Commit: "chore: initialize harness docs for [project name]"
-9. Hand-off report — print formatted block in session language:
+
+   h) docs/design.md — extract design system from code:
+      Read these files to extract actual design tokens:
+      1. tailwind.config.ts — extract all colors from theme.extend.colors (name + hex)
+      2. nuxt.config.ts — extract fonts from googleFonts.families (family name + weights)
+      3. app/assets/css/*.css — extract custom CSS variables and @apply patterns
+      4. package.json — check for icon libraries (@phosphor-icons, lucide-vue, etc.)
+      Fill docs/design.md with real values found in code.
+      If a value is not found — leave as TBD.
+      Never leave design.md as an empty template if tailwind.config.ts exists.
+5. Write session log to PROGRESS.md: "chore: initialize harness docs for [project name]"
+6. Commit: "chore: initialize harness docs for [project name]"
+7. Hand-off report — print formatted block in session language:
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    ✅ [ProjectName] adopted
 
@@ -144,15 +161,13 @@ Q0. **Language — before any analysis:** SEQUENCE RULE
    🚀 BEFORE NEXT SESSION:
      1. New session → `start`
      2. Fill HARNESS.md: Product contract + Decisions to inherit
-     3. Add docs/design.md if a design system exists
-     4. Add docs/plan-main.md if a broader vision document exists
+     3. Add docs/plan-main.md if a broader vision document exists
 
    ⚠️ Critical findings from analysis:
      [list CRITICAL and HIGH findings from analysis report, max 5]
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   ▶ Done. Type `end` to close the session.
-10. Remind user: "Add docs/design.md if you have a design system.
-     Add docs/plan-main.md if you have a broader vision document.
+    ▶ Done. Type `end` to close the session.
+8. Remind user: "Add docs/plan-main.md if you have a broader vision document.
      If this project uses Directus, create a dedicated `mcp` user (service
      account) in that Directus instance and put its static access token in the
      global `~/.config/opencode/opencode.jsonc` under
@@ -168,6 +183,5 @@ Q0. **Language — before any analysis:** SEQUENCE RULE
 - If --no-verify is needed for a commit — explain the reason to the user before using it and wait for explicit confirmation.
 - Never ask what you can detect from code
 - Never overwrite existing docs/ files without showing diff first
-- One file at a time, always wait for confirmation
-- design.md is NOT generated here — user provides it manually
+- design.md is filled from existing design tokens (tailwind.config.ts, fonts, icons) — never left as empty template
 - If a task takes >30 min — create PLAN.md in project root. Use PLAN.md already present in project root. If not present — create from skill memory following standard structure. Mark milestones [x] only after running verify: command. Delete PLAN.md when task is done.
