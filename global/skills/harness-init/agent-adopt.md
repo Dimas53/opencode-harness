@@ -10,13 +10,15 @@ For projects that have code but no harness docs yet.
 
 ## Skill load check
 After loading all skills in the stack — print:
-"Loaded: agent-analyze ✓, grill-with-docs ✓, planning-and-task-breakdown ✓"
+"Loaded: agent-analyze ✓, grill-with-docs ✓, domain-modeling ✓, documentation-and-adrs ✓, planning-and-task-breakdown ✓"
 If any skill failed to load — STOP and report to user before proceeding.
 
 ## Skill stack (load in this order)
 1. ~/.config/opencode/skills/harness-init/agent-analyze.md  ← run analysis first
 2. ~/.config/opencode/skills/grill-with-docs/SKILL.md ← fill knowledge gaps
-3. ~/.config/opencode/skills/planning-and-task-breakdown/SKILL.md
+3. ~/.config/opencode/skills/domain-modeling/SKILL.md ← extract technical terms for CONTEXT.md
+4. ~/.config/opencode/skills/documentation-and-adrs/SKILL.md ← document architecture decisions
+5. ~/.config/opencode/skills/planning-and-task-breakdown/SKILL.md
 
 ## Steps
 0. **Bootstrap templates:**
@@ -27,8 +29,10 @@ If any skill failed to load — STOP and report to user before proceeding.
    Wait for the command to complete before proceeding.
    Do NOT create files from memory — always use the script.
 
-Q0. **Language — before any analysis:**
-    First question after bootstrap, before anything else:
+Q0. **Language — before any analysis:** SEQUENCE RULE
+    First question after bootstrap, before anything else.
+    Step 0 (bootstrap script) must complete fully before Q0 is shown.
+    Q0 must be shown as a standalone message — no other text, no mode confirmation, no explanations.
     "What language should I respond in? / На каком языке мы общаемся? / Welche Sprache?"
     After answer — write to PROGRESS.md:
     ```
@@ -36,6 +40,7 @@ Q0. **Language — before any analysis:**
     ```
     All further chat messages, questions to user, and step-by-step interaction — in that language only. Report files and generated docs are always in English (see Hard rules).
     Only after receiving the answer — proceed to Step 1.
+    Never combine Q0 with any other output.
 
 1. **Run agent-analyze in full protocol — do not improvise:**
    - Load all 6 sub-skills from agent-analyze.md:
@@ -54,17 +59,67 @@ Q0. **Language — before any analysis:**
     - Any constraints or decisions not visible in code?
     - HARNESS: Are there critical paths that must never break? (e.g., payments, auth, DB)
     - HARNESS: What is the risk level for DB operations, external API integrations, and auth?
-4. Generate documentation — SWITCH TO ENGLISH FOR THIS STEP:
-   Chat language applies only to chat messages. All generated files must be in English.
-   This is a hard rule — do not generate files in the chat language regardless of Q0 answer.
-   Generate files using docs/ in current project as reference:
-   - ARCHITECTURE.md (from codebase-health-check findings)
-   - CONTEXT.md (domain terms discovered during analysis)
-   - roadmap.md (current phase + next steps)
-   - AGENTS.md (project-specific rules based on stack)
-   - skills-cheatsheet.md (based on detected stack)
-    - docs/specs/phase-1.md (if project plan requested)
-    - HARNESS.md — use HARNESS.md already present in project root. If not present — create from skill memory following standard structure. Fill Entry point + Risk levels from analysis + grill answers, leave Product contract and Decisions to inherit as empty sections for user
+4. Generate documentation — SWITCH TO ENGLISH FOR ALL FILES IN THIS STEP.
+   Session language applies only to chat messages. All generated files must be in English.
+   Source: use findings from agent-analyze report (docs/audits/YYYY-MM-DD-analysis.md).
+   One file at a time: show full draft → wait for explicit "ok" → write → next file.
+   NEVER write multiple files in one turn without confirmation.
+
+   a) docs/CONTEXT.md — TECHNICAL GLOSSARY ONLY, not business description:
+      Run domain-modeling skill to extract technical terms from codebase.
+      Include:
+      - Every composable: name → what it does → file:line
+      - Every server route / API endpoint: route → purpose → file:line
+      - Architectural concepts with non-obvious behavior (CSRF setup, sendmail flow, honeypot pattern, SSG vs SSR)
+      - Gotchas that would bite a new developer — from analysis findings
+      - Format per entry: Term | Definition | file:line | Related
+      EXCLUDE: company names, partner names, product descriptions, marketing copy.
+      Those belong in HARNESS.md, not CONTEXT.md.
+
+   b) docs/ARCHITECTURE.md — high-level overview:
+      - Narrative paragraph: what the system does in one sentence, why this stack, key tradeoff
+      - Tech stack table
+      - Layer map as directory tree
+      - Key Architecture Decisions table with rationale AND alternatives considered
+      - Links to docs/architecture/*.md for each domain
+
+   c) docs/architecture/ — one file per architectural domain:
+      Run documentation-and-adrs skill.
+      Delete or overwrite the placeholder feature-name.md.
+      Identify domains from the codebase (minimum: contact form, deployment).
+      For each domain create a file named after the domain (e.g. contact-form.md, deployment.md).
+      Each file structure:
+      ## What It Does
+      ## Files Involved (with file:line)
+      ## Step-by-step Flow
+      ## Key Decisions (why this approach, what was the alternative)
+      ## Gotchas
+      Minimum 2 files. More if codebase has distinct domains.
+
+   d) docs/roadmap.md:
+      - Current phase with date
+      - Completed milestones
+      - Next: take CRITICAL and HIGH findings from analysis report, convert to tasks
+      - Icebox: LOW findings
+
+   e) docs/skills-cheatsheet.md:
+      Use ONLY 2-column tables. Format: | Skill | When to use |
+      Separator must be: |---|---|
+      NEVER use 3-column format |---|---|---|
+      Remove skills irrelevant to this project's stack.
+
+   f) AGENTS.md:
+      - Stack Skills section with actual skills for this project's stack
+      - Framework Structure with real paths from this project
+      - Critical Rules derived from analysis findings
+      - DoD section
+      - Gotchas from analysis (CRITICAL and HIGH findings)
+
+   g) HARNESS.md:
+      - Entry Point: real commands from package.json / docker-compose
+      - Product Contract: critical paths from grill answers
+      - Risk Levels: calibrated to actual project risks
+      - Decisions to Inherit: key architectural choices from analysis
 5. Each file: show full draft in chat → wait for explicit "ok" from user → write to disk → only then move to next file.
    NEVER write multiple files in one turn without confirmation between each one.
    NEVER batch-write all files at once.

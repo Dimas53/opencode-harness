@@ -120,7 +120,7 @@ reads this section, matches it against the interview stack, and checks each
 skill folder with `ls ~/.config/opencode/skills/<name>`.
 
 | Technology | Skill folder | Notes |
-|---|---|---|---|
+|---|---|---|
 | Nuxt | `nuxt` | Vendored in harness |
 | Nuxt UI | `nuxt-ui` | Vendored in harness |
 | Vue | `vue` | Vendored in harness |

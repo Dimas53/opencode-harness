@@ -8,8 +8,10 @@ then fill the scaffolded template files with the project's context.
 ## Skill stack (load in this order)
 1. ~/.config/opencode/skills/interview-me/SKILL.md
 2. ~/.config/opencode/skills/brainstorming/SKILL.md
-3. ~/.config/opencode/skills/planning-and-task-breakdown/SKILL.md
-4. ~/.config/opencode/skills/spec-driven-development/SKILL.md
+3. ~/.config/opencode/skills/domain-modeling/SKILL.md ← extract terms for CONTEXT.md
+4. ~/.config/opencode/skills/documentation-and-adrs/SKILL.md ← document architecture decisions
+5. ~/.config/opencode/skills/planning-and-task-breakdown/SKILL.md
+6. ~/.config/opencode/skills/spec-driven-development/SKILL.md
 
 ## Steps
 
@@ -136,6 +138,29 @@ then fill the scaffolded template files with the project's context.
 8. Fill the scaffolded template files with the interview context. The files
     already exist from Phase 0 — DO NOT generate them from scratch, fill or
     rewrite them in place:
+
+    Run domain-modeling skill before writing CONTEXT.md:
+    Extract terms from interview answers — entity names, key concepts, business rules.
+    Format per entry: Term | Definition | Related
+    EXCLUDE: company descriptions, team size, deployment targets — those go in HARNESS.md.
+
+    Run documentation-and-adrs skill before writing ARCHITECTURE.md and architecture/*.md:
+    For each key technology decision made during interview — document:
+    - What was chosen
+    - Why (rationale)
+    - What was the alternative
+    - What tradeoff was accepted
+
+    docs/architecture/ — create one file per major domain identified during interview.
+    Minimum: one file for the main data model domain.
+    Use same structure as adopt: What It Does → Files → Flow → Decisions → Gotchas.
+
+    docs/skills-cheatsheet.md:
+    Use ONLY 2-column tables. Format: | Skill | When to use |
+    Separator: |---|---|
+    NEVER use 3-column format.
+
+    Specific files to fill:
     - `AGENTS.md` — replace `[Project Name]`, `[Framework + version]`,
       `[path]` placeholders, stack skills, file map, backend/UI rules
     - `ARCHITECTURE.md` — write the real architecture
