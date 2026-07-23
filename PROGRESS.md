@@ -2,8 +2,8 @@
 
 ## Current Status
 
-Phase: v0.3 — Infrastructure stabilization
-Last commit: 5c46838 — refactor(harness): rename existing → adopt
+Phase: v0.3 → v0.4 transition
+Last commit: a8169f9 — docs(make): add analyze <path> to help output
 Session language: ru
 
 ## Session 2026-07-22 (auto-HOME-PATH, Accessing Windows files, make help, rm -rf fix)
@@ -226,8 +226,33 @@ Session language: ru
 - Test clean `git clone && make setup` on a fresh machine
 - On the new MacBook: run `update-harness` and verify all 70 skills land
 
+## Session 2026-07-23 (analyze TARGET, post-commit hook, agent-analyze overhaul)
+
+Session language: ru
+
+### Done
+- **agent-analyze.md** — полностью переписан Output format: narrative Architecture, Security текстом, Risks абзацами, source-маппинг к скиллам. Добавлены: Target detection, step 0 (git log diff), step 9a (findings diff), step 10a (verify file). Убран context-canary. Step 11 теперь на языке сессии.
+- **analyze <path>** — шорткат в AGENTS.md: `analyze pages/Dashboard.vue` загружает скилл с TARGET. Задокументировано в README, INSTALL, GUIDE, make help.
+- **hooks/post-commit** — авто-зеркалирование global/skills/ → ~/.config/opencode/skills/ после каждого коммита
+- **install.sh + update.sh** — установка post-commit hook при setup/update
+- **Документация** — README, INSTALL, GUIDE, Makefile help обновлены: analyze <path>, generic path examples вместо cook.vue
+- **Проверка 4 анализов** — сравнили 0→1→2→4, подтвердили что изменения улучшили качество отчётов
+
+### Known issues
+- Post-commit hook не зеркалирует global/AGENTS.md — только skills/. Нужно копировать вручную или расширять hook.
+- v0.3 ostatok практически закрыт (6 из 8 P0 решены). Можно начинать v0.4 (Sandbox).
+
+### Next
+- v0.4 Sandbox module — архитектура готова (notes/Harness/v0.4 - SANDBOX_ARCHITECTURE.md), можно начинать реализацию
+
 ## Git Log
 
+- `a8169f9` — docs(make): add analyze <path> to help output
+- `ab23863` — docs: replace project-specific path examples with generic placeholders
+- `7fef804` — docs: add analyze <path> usage to README, INSTALL, GUIDE; remove context-canary from skill stack
+- `5c4862e` — fix: support analyze <path> shortcut with TARGET argument
+- `5463601` — feat(analyze): TARGET scoping, session language for summary, report filename
+- `88f6a1e` — chore: add post-commit hook to auto-mirror skills
 - `f158e7b` — fix: replace head -1 with sed -n '1p' in dod.sh to avoid SIGPIPE
 - `c1b8b3d` — fix: remove Russian trigger words from AGENTS.md, update docs
 - `d9f5b12` — fix: dod.sh step 5 check_warn → check_fail, exclude PROGRESS.md + notes/
