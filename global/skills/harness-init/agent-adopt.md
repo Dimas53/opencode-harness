@@ -19,9 +19,13 @@ If any skill failed to load — STOP and report to user before proceeding.
 3. ~/.config/opencode/skills/planning-and-task-breakdown/SKILL.md
 
 ## Steps
-0. **Check if templates exist in project:**
-   - If `AGENTS.md` exists in current directory → templates already seeded by `make init`. Files ready: `AGENTS.md`, `HARNESS.md`, `MEMORY.md`, `PROGRESS.md`, `PLAN.md`, `docs/`, `memory/`
-   - If `AGENTS.md` does NOT exist → running via shortcut without `make init`. Create all required files from skill memory (no external `templates/` path needed): `AGENTS.md`, `HARNESS.md`, `MEMORY.md`, `PROGRESS.md`, `PLAN.md`, `docs/`, `memory/`
+0. **Bootstrap templates:**
+   Run:
+   ```bash
+   ~/.opencode-harness/scripts/init-adopt.sh "$(pwd)" --no-open
+   ```
+   Wait for the command to complete before proceeding.
+   Do NOT create files from memory — always use the script.
 
 1. Run agent-analyze first — get full picture of the project
 2. Present findings to user, ask for corrections

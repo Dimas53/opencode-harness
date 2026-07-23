@@ -245,6 +245,21 @@ Session language: ru
 ### Next
 - v0.4 Sandbox module — архитектура готова (notes/Harness/v0.4 - SANDBOX_ARCHITECTURE.md), можно начинать реализацию
 
+## Session 2026-07-23 (adopt --no-open fix)
+
+Session language: ru
+
+### Done
+- **Bug fix**: `agent-adopt.md` Step 0 no longer creates files from agent memory.
+  Now calls `init-adopt.sh "$(pwd)" --no-open` — same pattern `agent-new-project.md`
+  already uses with `init-project.sh --no-open`.
+- **scripts/init-adopt.sh**: added `--no-open` flag parsing (matching init-project.sh).
+  With `--no-open`: copies templates + hooks and exits without launching OpenCode.
+- **make verify**: 9/9 passed. **bash -n**: all scripts OK.
+
+### Next
+- Test adopt on a real project
+
 ## Git Log
 
 - `a8169f9` — docs(make): add analyze <path> to help output

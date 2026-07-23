@@ -1,8 +1,24 @@
 #!/bin/bash
 # Open OpenCode TUI in an adopt project for harness-init
-# Usage: make init-adopt PROJECT=/path/to/project
+# Usage: make init-adopt PROJECT=/path/to/project [--no-open]
 
-PROJECT=$1
+PROJECT=""
+NO_OPEN=0
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --no-open)
+      NO_OPEN=1
+      shift
+      ;;
+    *)
+      if [ -z "$PROJECT" ]; then
+        PROJECT="$1"
+      fi
+      shift
+      ;;
+  esac
+done
 
 if ! command -v opencode &>/dev/null; then
   echo "✗ opencode not found. Run: make setup"
@@ -29,6 +45,11 @@ echo "  Done."
 echo ""
 
 bash "$(dirname "$0")/install-hooks.sh" "$PROJECT"
+
+if [ "$NO_OPEN" -eq 1 ]; then
+  echo "  Templates copied. Skipping OpenCode launch."
+  exit 0
+fi
 
 cd "$PROJECT" || exit 1
 opencode --prompt "Load ~/.config/opencode/skills/harness-init/agent-adopt.md" || {
