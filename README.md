@@ -100,7 +100,8 @@ cd .. && rm -rf opencode-harness
 Open OpenCode in any directory and type one of these:
 - `new` — new project: interview → full doc structure generated
 - `adopt` — existing project: auto-analysis first → fills missing docs
-- `analyze` — read-only audit: architecture map + security review + risk report
+- `analyze` — read-only audit: architecture + security + risk report
+- `analyze pages/cook.vue` — focused audit of a specific file or folder
 - `update-harness` — pull latest harness updates and apply globally
 - `sync-templates` — check for new template files missing in current project
 - `dod` — run Definition of Done checks (6 steps)
@@ -130,6 +131,8 @@ Generate the config (run from the project root):
 | `Start` | Session Start — 7-step init sequence |
 | `end` / `done` / `Ende` | Session End — docs lag check, PROGRESS.md update |
 | `dod` | Definition of Done — 6 checks manually |
+| `analyze` | Full project analysis — architecture, security, risks, next steps |
+| `analyze pages/cook.vue` | Focused analysis of a specific file or folder |
 
 ## Documentation
 

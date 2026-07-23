@@ -333,7 +333,9 @@ then fills knowledge gaps via interview, then generates missing documentation.
 ## Analyzing a Project (without creating docs)
 
 ### Primary path
-Open OpenCode in the project directory and type `analyze`.
+Open OpenCode in the project directory and type:
+- `analyze` — full project analysis
+- `analyze pages/cook.vue` — focused analysis of a specific file or folder
 
 ### Fallback (make command)
 ```bash
@@ -342,9 +344,10 @@ make analyze PROJECT=/path/to/project
 
 Opens OpenCode in the project and automatically starts the `agent-analyze` skill.
 
-The agent runs 4 audits: codebase health, architecture zoom-out, security review,
-and premortem — then saves a report to `docs/audits/YYYY-MM-DD-analysis.md`.
-No source files are modified.
+The agent runs 6 audits: zoom-out, codebase-health-check, junior-to-senior,
+code-review-and-quality, security, and premortem — then saves a report to
+`docs/audits/YYYY-MM-DD-analysis.md`. Focused reports save as
+`docs/audits/YYYY-MM-DD-analysis-[filename].md`. No source files are modified.
 
 ---
 

@@ -13,16 +13,15 @@ Output goes to docs/audits/ only.
 For each skill below, try `Read ~/.config/opencode/skills/<path>/SKILL.md`.
 If file not found — skip that skill, continue without stopping.
 After all attempts — print:
-"Loaded: zoom-out ✓, context-canary ✓, codebase-health-check ✓, junior-to-senior ✓, code-review-and-quality ✓, security ✓, premortem ✓"
+"Loaded: zoom-out ✓, codebase-health-check ✓, junior-to-senior ✓, code-review-and-quality ✓, security ✓, premortem ✓"
 
 ## Skill stack (load in this order, skip missing)
 1. ~/.config/opencode/skills/zoom-out/SKILL.md
-2. ~/.config/opencode/skills/context-canary/SKILL.md
-3. ~/.config/opencode/skills/codebase-health-check/SKILL.md
-4. ~/.config/opencode/skills/junior-to-senior/SKILL.md
-5. ~/.config/opencode/skills/code-review-and-quality/SKILL.md
-6. ~/.config/opencode/skills/security/SKILL.md
-7. ~/.config/opencode/skills/premortem/SKILL.md
+2. ~/.config/opencode/skills/codebase-health-check/SKILL.md
+3. ~/.config/opencode/skills/junior-to-senior/SKILL.md
+4. ~/.config/opencode/skills/code-review-and-quality/SKILL.md
+5. ~/.config/opencode/skills/security/SKILL.md
+6. ~/.config/opencode/skills/premortem/SKILL.md
 
 ## Steps
 
