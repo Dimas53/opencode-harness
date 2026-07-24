@@ -23,6 +23,15 @@ Q0. **Language check:**
    If none found — report: "No reports in docs/audits/. Run `analyze` first."
    If TARGET is set (from `fix <path>`) — store for filtering in Step 1.
 
+0b. **Check for existing PLAN.md:**
+    ```bash
+    test -f PLAN.md && grep -E '^\s*- \[x\]' PLAN.md | grep -oE '[A-Z]+[0-9]+' | tr '\n' ', '
+    ```
+    If PLAN.md exists with `[x]` entries — extract fixed IDs, store as skip list for Step 1.
+    If PLAN.md exists with no `[x]` — treat as fresh start (will overwrite in Step 2).
+    If all findings in PLAN.md are `[x]` — print "All findings already fixed." and exit.
+    If no PLAN.md — create new one in Step 2 as usual.
+
 1. **Parse findings by section:**
    Read the report. Track current section by `##` headers.
    For each line matching pattern `**[X+N]**` — extract type, number, title, file:line.
@@ -47,7 +56,9 @@ Q0. **Language check:**
    ```
    Ask: "Start Phase 1? (y/n)"
 
-2. **Create PLAN.md** in project root:
+2. **Create or update PLAN.md:**
+   If PLAN.md exists (resume from Step 0b) — append new unfixed findings, keep existing `[x]` entries intact.
+   If no PLAN.md — create new one in project root:
    - [ ] C1: <title> — <file:line>
      | verify: <bash command>
    - [ ] B1: <title> — <file:line>
