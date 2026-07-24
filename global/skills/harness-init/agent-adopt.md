@@ -67,19 +67,17 @@ Q0. **Language — before any analysis:** SEQUENCE RULE
    After confirmation — generate and write ALL files without stopping between them.
    After all files are written — print a summary list of what was created.
 
-   a) docs/CONTEXT.md — TECHNICAL GLOSSARY ONLY, not business description:
-      Before writing CONTEXT.md:
-      → Load and run domain-modeling skill:
-        Read ~/.config/opencode/skills/domain-modeling/SKILL.md
-        Apply to extract technical terms from codebase. Use output as CONTEXT.md content.
-      Include:
-      - Every composable: name → what it does → file:line
-      - Every server route / API endpoint: route → purpose → file:line
-      - Architectural concepts with non-obvious behavior (CSRF setup, sendmail flow, honeypot pattern, SSG vs SSR)
-      - Gotchas that would bite a new developer — from analysis findings
-      - Format per entry: Term | Definition | file:line | Related
+   a) docs/CONTEXT.md — run domain-modeling extraction BEFORE writing:
+      1. Read ALL files in: app/composables/, server/api/, app/components/
+         For each file — extract: name, what it does, file:line, related files
+      2. Write extracted terms table FIRST (Term | Definition | File:Line | Related)
+      3. Then add Patterns from analysis report (repeating architectural concepts)
+      4. Then add Gotchas from analysis CRITICAL and HIGH findings
+      5. ONLY THEN add anything from grill answers as additional context
+      Source priority: code extraction first, analysis report second, grill answers last.
       EXCLUDE: company names, partner names, product descriptions, marketing copy.
       Those belong in HARNESS.md, not CONTEXT.md.
+      Minimum 10 terms with file:line. If fewer found — read deeper into components.
 
    b) docs/ARCHITECTURE.md — high-level overview:
       - Narrative paragraph: what the system does in one sentence, why this stack, key tradeoff
@@ -148,26 +146,36 @@ Q0. **Language — before any analysis:** SEQUENCE RULE
       If a value is not found — leave as TBD.
       Never leave design.md as an empty template if tailwind.config.ts exists.
 5. Write session log to PROGRESS.md: "chore: initialize harness docs for [project name]"
-6. Commit: "chore: initialize harness docs for [project name]"
-7. Hand-off report — print formatted block in session language:
+6. Hand-off — print this block in session language:
+
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    ✅ [ProjectName] adopted
 
-   📋 IN THIS SESSION:
+   📋 В ЭТОЙ СЕССИИ:
      → Analysis: docs/audits/YYYY-MM-DD-analysis.md
-     → Files created: AGENTS.md, HARNESS.md, ARCHITECTURE.md, CONTEXT.md, roadmap.md, PROGRESS.md
-     → Commit: [hash]
+     → Файлы: [список всех созданных файлов]
 
-   🚀 BEFORE NEXT SESSION:
-     1. New session → `start`
-     2. Fill HARNESS.md: Product contract + Decisions to inherit
-     3. Add docs/plan-main.md if a broader vision document exists
+   ⚠️ Критические findings:
+     [CRITICAL и HIGH из отчёта, максимум 5]
 
-   ⚠️ Critical findings from analysis:
-     [list CRITICAL and HIGH findings from analysis report, max 5]
+   🚀 ПЕРЕД СЛЕДУЮЩЕЙ СЕССИЕЙ:
+     1. Новая сессия → `start`
+     2. Заполнить HARNESS.md: Product contract + Decisions to inherit
+     3. Запустить `fix` для исправления критических находок
+
+   📦 Незакоммиченные файлы:
+     [список файлов из git status]
+   Коммитить? (да/нет)
+
+   После коммита:
+   Пушить? (да/нет)
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    ▶ Done. Type `end` to close the session.
-8. Remind user: "Add docs/plan-main.md if you have a broader vision document.
+
+   If user says yes to commit → run: git add + git commit -m "chore: initialize harness docs for [project name]"
+   If commit succeeded → ask: "Push?" If yes → git push
+   If user says no to commit → skip, remind: "Не забудьте закоммитить позже"
+
+7. Remind user: "Add docs/plan-main.md if you have a broader vision document.
      If this project uses Directus, create a dedicated `mcp` user (service
      account) in that Directus instance and put its static access token in the
      global `~/.config/opencode/opencode.jsonc` under
