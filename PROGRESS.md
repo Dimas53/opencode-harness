@@ -3,7 +3,7 @@
 ## Current Status
 
 Phase: v0.3 → v0.4 transition
-Last commit: a8169f9 — docs(make): add analyze <path> to help output
+Last commit: baf84f7 — fix: P21-P24: ISO language code, dod.sh Cyrillic exceptions, skills-cheatsheet template, skill gap in hand-off
 Chat language: ru
 
 ## Session 2026-07-22 (auto-HOME-PATH, Accessing Windows files, make help, rm -rf fix)
@@ -506,3 +506,31 @@ Session language: ru
 ### Next
 - Windows WSL2 testing when available
 - Bug backlog (none remaining in ostatok)
+
+## Session 2026-07-24 (adopt stabilization — P16-P24)
+
+Chat language: ru
+
+### Done
+- **P16**: per-file confirmation → batch approval before generation
+- **P17**: design.md extraction from tailwind.config.ts, fonts, CSS, icons
+- **P18**: skill gap check for AGENTS.md Stack Skills
+- **P19**: hand-off with commit/push questions after summary
+- **P20**: CONTEXT.md source priority: code → analysis → grill, min 10 terms
+- **P21**: ISO language code enforced in Q0 (ru not русский)
+- **P22**: dod.sh Cyrillic scan — line-level with docs/audits/ and Chat language exceptions
+- **P23**: skills-cheatsheet — copy template, append project section
+- **P24**: skill gap section in hand-off block
+- Restored domain-modeling skill loading after P20 accidentally removed it
+- Fixed hand-off to auto-commit then show summary, push after end
+- Fixed Russian text in skill files (English-only policy)
+- Two successful adopt test runs (ducito + ticket_tracker) — confirmed stable
+- Created agent-fix.md design spec
+
+### Known issues
+- Context.md quality still varies between runs (domain-modeling skill application is inconsistent)
+- Chat language instruction still competes with file generation (agent writes files in session language before reading Step 4 switch)
+
+### Next
+- Implement agent-fix.md (fix shortcut)
+- Test adopt on a non-trivial project stack
