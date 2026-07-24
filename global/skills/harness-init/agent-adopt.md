@@ -68,6 +68,9 @@ Q0. **Language — before any analysis:** SEQUENCE RULE
    After all files are written — print a summary list of what was created.
 
    a) docs/CONTEXT.md — run domain-modeling extraction BEFORE writing:
+      → Load and run domain-modeling skill:
+        Read ~/.config/opencode/skills/domain-modeling/SKILL.md
+        Apply methodology to the steps below.
       1. Read ALL files in: app/composables/, server/api/, app/components/
          For each file — extract: name, what it does, file:line, related files
       2. Write extracted terms table FIRST (Term | Definition | File:Line | Related)
