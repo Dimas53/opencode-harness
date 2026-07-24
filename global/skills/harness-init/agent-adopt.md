@@ -34,10 +34,11 @@ Q0. **Language — before any analysis:** SEQUENCE RULE
     Step 0 (bootstrap script) must complete fully before Q0 is shown.
     Q0 must be shown as a standalone message — no other text, no mode confirmation, no explanations.
     "What language should I respond in? / На каком языке мы общаемся? / Welche Sprache?"
-    After answer — write to PROGRESS.md:
+    After answer — write to PROGRESS.md as ISO code (not full word):
     ```
-    Chat language: [ru / de / en / ...]
+    Chat language: ru   # example: user said "русский" → write "ru"
     ```
+    Map: русский → ru, Deutsch → de, English → en, español → es, français → fr, etc.
     All further chat messages, questions to user, and step-by-step interaction — in that language only. Report files and generated docs are always in English (see Hard rules).
     Only after receiving the answer — proceed to Step 1.
     Never combine Q0 with any other output.
@@ -152,7 +153,8 @@ Q0. **Language — before any analysis:** SEQUENCE RULE
 6. **Commit** — auto, no question:
    git add AGENTS.md HARNESS.md PROGRESS.md docs/ memory/ PLAN.md
    git commit -m "chore: initialize harness docs for [ProjectName]"
-7. **Hand-off** — print this block in session language (translate all labels to session language):
+7. **Hand-off** — print EXACTLY this structure. Do NOT rephrase, merge, or skip any section.
+   Translate only section labels to session language. Keep all items and formatting.
 
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    ✅ [ProjectName] adopted
@@ -171,10 +173,10 @@ Q0. **Language — before any analysis:** SEQUENCE RULE
      → Commit: [hash]
 
    ⚠️ Critical findings from analysis:
-     🔴 CRITICAL — [description] at [file:line]
-     🟠 HIGH — [description]
-     🟡 MEDIUM — [description]
-     (max 5, take from docs/audits/)
+     List findings from docs/audits/YYYY-MM-DD-analysis.md in EXACT priority order:
+     🔴 CRITICAL first, then 🟠 HIGH, then 🟡 MEDIUM
+     Maximum 5 total. Use exact severity from report — do NOT downgrade CRITICAL to HIGH.
+     Format: 🔴 CRITICAL — [description] в [file:line]
 
    🚀 BEFORE NEXT SESSION:
      1. New session → `start`

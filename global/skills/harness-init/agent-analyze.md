@@ -28,7 +28,8 @@ After all attempts — print:
 Q0. **Language — before any analysis:**
     If PROGRESS.md does NOT have a `Chat language:` entry yet:
     - Ask the user: "What language should I respond in? / На каком языке мы общаемся? / Welche Sprache?"
-    - Write answer to PROGRESS.md: `Chat language: [ru / de / en / ...]`
+    - Write answer to PROGRESS.md as ISO code (not full word): `Chat language: ru`
+      Map: русский → ru, Deutsch → de, English → en, español → es, français → fr, etc.
     If PROGRESS.md already has `Chat language:` — skip this step, use existing.
     All further chat output (summary, questions to user) — in that language. The report file is always in English (see Hard rules).
 
