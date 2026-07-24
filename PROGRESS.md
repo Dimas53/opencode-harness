@@ -571,3 +571,6 @@ Chat language: ru
 - Test full flow: analyze → [U] findings → fix U1 → agent-e2e writes test
 - Test `ui pages/Login.vue` standalone
 - Consider pre-commit hook running make verify
+
+### Fix 2026-07-24 (same session)
+- **frontend-behavior/SKILL.md** — Fixed -pw suffix generation: replaced `→ **[U1-pw]**` with `→ Finding (e2e)` in checklist, added explicit numbering rule (e2e → `[U<N>-pw]`). Expanded API detection to include `useAsyncData`, `useLazyAsyncData`, store actions, `ref()` + `onMounted()`, `api/` paths.
