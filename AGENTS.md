@@ -30,7 +30,7 @@ Makefile            → build orchestration (caution: has bugs)
 | `new` | `make init PROJECT=$(pwd)` |
 | `adopt` | `make init-adopt PROJECT=$(pwd)` |
 | `analyze` | `make analyze PROJECT=$(pwd)` |
-| `fix` | `make fix PROJECT=$(pwd)` |
+| `fix` | Inside OpenCode: reads last analysis report, fixes findings (3-phase) — no make fallback |
 | `update-harness` | cd ~/.opencode-harness && git pull && make update |
 | `sync-templates` | inline (check + copy missing) |
 

@@ -65,6 +65,8 @@
 - **`make init PROJECT=/path`** — new project: copy templates + interview via OpenCode
 - **`make init-adopt PROJECT=/path`** — existing project: analyze + docs generation
 - **`make analyze PROJECT=/path`** — read‑only audit: architecture + security + risk
+- **`fix` (inside OpenCode)** — fix CRITICAL/BLOCKER → HIGH/MAJOR → MEDIUM findings from last analysis report
+- **`fix <path>`** — fix findings only for a specific file, folder, or ID (e.g. `fix main.py`, `fix C2`)
 
 ---
 

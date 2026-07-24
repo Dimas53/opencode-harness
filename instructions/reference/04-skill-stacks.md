@@ -71,6 +71,16 @@ Output: docs/audits/YYYY-MM-DD-analysis.md
 
 ---
 
+## fix-findings
+
+Trigger: user says "fix" / "fix <path>" / "fix <ID>" after an analysis report exists
+
+Delegated to: `~/.config/opencode/skills/harness-init/agent-fix.md`
+
+No sub-skill stack — agent-fix.md is self-contained (parses report → PLAN.md → 3-phase fix cycle with verify gates).
+
+---
+
 ## feature-development
 
 Trigger: starting work on a new feature
