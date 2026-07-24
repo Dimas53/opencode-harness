@@ -149,42 +149,48 @@ Q0. **Language — before any analysis:** SEQUENCE RULE
       If a value is not found — leave as TBD.
       Never leave design.md as an empty template if tailwind.config.ts exists.
 5. Write session log to PROGRESS.md: "chore: initialize harness docs for [project name]"
-6. Hand-off — print this block in session language:
+6. **Commit** — auto, no question:
+   git add AGENTS.md HARNESS.md PROGRESS.md docs/ memory/ PLAN.md
+   git commit -m "chore: initialize harness docs for [ProjectName]"
+7. **Hand-off** — print this block in session language (translate all labels to session language):
 
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    ✅ [ProjectName] adopted
 
-   📋 В ЭТОЙ СЕССИИ:
-     → Analysis: docs/audits/YYYY-MM-DD-analysis.md
-     → Файлы: [список всех созданных файлов]
+   📋 IN THIS SESSION:
+     ✅ Done:
+     → Analysis:  docs/audits/YYYY-MM-DD-analysis.md
+     → CONTEXT:   docs/CONTEXT.md
+     → ARCH:      docs/ARCHITECTURE.md + docs/architecture/*.md
+     → ROADMAP:   docs/roadmap.md
+     → DESIGN:    docs/design.md
+     → CHEATS:    docs/skills-cheatsheet.md
+     → AGENTS:    AGENTS.md
+     → HARNESS:   HARNESS.md
+     → PROGRESS:  PROGRESS.md
+     → Commit: [hash]
 
-   ⚠️ Критические findings:
-     [CRITICAL и HIGH из отчёта, максимум 5]
+   ⚠️ Critical findings from analysis:
+     🔴 CRITICAL — [description] at [file:line]
+     🟠 HIGH — [description]
+     🟡 MEDIUM — [description]
+     (max 5, take from docs/audits/)
 
-   🚀 ПЕРЕД СЛЕДУЮЩЕЙ СЕССИЕЙ:
-     1. Новая сессия → `start`
-     2. Заполнить HARNESS.md: Product contract + Decisions to inherit
-     3. Запустить `fix` для исправления критических находок
+   🚀 BEFORE NEXT SESSION:
+     1. New session → `start`
+     2. Fill HARNESS.md: Product contract + Decisions to inherit
+        (basically filled, can be extended)
+     3. Add/edit docs/design.md if needed
+     4. Run `fix` to resolve critical findings
 
-   📦 Незакоммиченные файлы:
-     [список файлов из git status]
-   Коммитить? (да/нет)
-
-   После коммита:
-   Пушить? (да/нет)
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   ▶ Done. Type `end` to close the session.
 
-   If user says yes to commit → run: git add + git commit -m "chore: initialize harness docs for [project name]"
-   If commit succeeded → ask: "Push?" If yes → git push
-   If user says no to commit → skip, remind: "Не забудьте закоммитить позже"
+   Remind: if project uses Directus — configure MCP via make mcp
+   (see instructions/directus-mcp-setup.md).
 
-7. Remind user: "Add docs/plan-main.md if you have a broader vision document.
-     If this project uses Directus, create a dedicated `mcp` user (service
-     account) in that Directus instance and put its static access token in the
-     global `~/.config/opencode/opencode.jsonc` under
-     `mcpServers.directus.headers.Authorization: \"Bearer <token>\"`. Scope
-     (read-only vs read+write) is the developer's choice. See
-     `instructions/directus-mcp-setup.md`."
+   **After user types `end` — only then ask:**
+   Push to remote? (y/n)
 
 ## Hard rules
 - Q0 (language) — always after bootstrap, always before analysis. No exceptions.
