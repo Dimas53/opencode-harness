@@ -34,11 +34,11 @@ Q0. **Language — before any analysis:** SEQUENCE RULE
     Step 0 (bootstrap script) must complete fully before Q0 is shown.
     Q0 must be shown as a standalone message — no other text, no mode confirmation, no explanations.
     "What language should I respond in? / На каком языке мы общаемся? / Welche Sprache?"
-    After answer — write to PROGRESS.md as ISO code (not full word):
+    After answer — write to PROGRESS.md as ISO code only:
     ```
-    Chat language: ru   # example: user said "русский" → write "ru"
+    Chat language: ru / de / en
     ```
-    Map: русский → ru, Deutsch → de, English → en, español → es, français → fr, etc.
+    NEVER write full word: "русский", "Deutsch", "English" — always use 2-letter ISO code.
     All further chat messages, questions to user, and step-by-step interaction — in that language only. Report files and generated docs are always in English (see Hard rules).
     Only after receiving the answer — proceed to Step 1.
     Never combine Q0 with any other output.
@@ -112,11 +112,20 @@ Q0. **Language — before any analysis:** SEQUENCE RULE
       - Next: take CRITICAL and HIGH findings from analysis report, convert to tasks
       - Icebox: LOW findings
 
-   e) docs/skills-cheatsheet.md:
-      Use ONLY 2-column tables. Format: | Skill | When to use |
-      Separator must be: |---|---|
-      NEVER use 3-column format |---|---|---|
-      Remove skills irrelevant to this project's stack.
+   e) docs/skills-cheatsheet.md — DO NOT generate from memory:
+      1. Copy the existing template file as-is from the harness templates
+      2. Add a new section at the bottom:
+
+      ## Project-specific skills
+      Based on this project's stack — list relevant skills:
+      Run: ls ~/.config/opencode/skills/
+      Match installed skills to project technologies.
+      Format:
+      | Skill | When to use | Status |
+      |---|---|---|
+      | `skill-name` | When to use it | ✅ installed / ❌ not installed |
+
+      DO NOT replace the template content — only append the project-specific section.
 
    f) AGENTS.md:
       Before writing AGENTS.md Stack Skills section:
@@ -177,6 +186,11 @@ Q0. **Language — before any analysis:** SEQUENCE RULE
      🔴 CRITICAL first, then 🟠 HIGH, then 🟡 MEDIUM
      Maximum 5 total. Use exact severity from report — do NOT downgrade CRITICAL to HIGH.
      Format: 🔴 CRITICAL — [description] в [file:line]
+
+   🔧 SKILL GAP:
+     [results from Step 4f skill gap check]
+     ✅ [installed skills relevant to this project's stack]
+     ❌ [missing skills] — not installed, consider adding
 
    🚀 BEFORE NEXT SESSION:
      1. New session → `start`

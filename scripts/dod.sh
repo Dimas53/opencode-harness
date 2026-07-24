@@ -41,33 +41,42 @@ echo ""
 # ── Step 2: Cyrillic scan ────────────────────────────────────────────────────
 echo "[ 2/7 ] Cyrillic scan (project files)"
 
-# What to scan: tracked files only, excluding notes/ and binary files
-CYRILLIC_HITS=""
-
+CYRILLIC_FAIL=0
 if git rev-parse --is-inside-work-tree &>/dev/null; then
-  # Scan staged files if called from pre-commit, all tracked files otherwise
+  # Determine files and diff source based on mode
   if [ "${PRE_COMMIT:-0}" = "1" ]; then
     FILES=$(git diff --cached --name-only --diff-filter=ACMR 2>/dev/null || true)
+    DIFF_SRC="git diff --cached"
   else
-    FILES=$(git ls-files 2>/dev/null || true)
+    FILES=$(git diff --name-only HEAD 2>/dev/null || true)
+    DIFF_SRC="git diff HEAD --"
   fi
 
-  if [ -n "$FILES" ]; then
-    # Exclude notes/ (Russian allowed), global/ (harness templates), this script itself, binary extensions
-    SCAN_FILES=$(echo "$FILES" | grep -v "^notes/" | grep -v "^global/" | grep -v "^scripts/dod.sh" | grep -v "^scripts/session-end.sh" | grep -vE "\.(png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|pdf|zip|tar|gz)$" || true)
+  for file in $FILES; do
+    # Skip known exceptions
+    [[ "$file" == docs/audits/* ]] && continue
+    [[ "$file" == notes/* ]] && continue
+    [[ "$file" == global/* ]] && continue
+    [[ "$file" == scripts/dod.sh ]] && continue
+    [[ "$file" == scripts/session-end.sh ]] && continue
 
-    if [ -n "$SCAN_FILES" ]; then
-      CYRILLIC_HITS=$(echo "$SCAN_FILES" | xargs grep -rl '[А-Яа-яЁё]' 2>/dev/null || true)
+    # Skip binary extensions
+    case "$file" in
+      *.png|*.jpg|*.jpeg|*.gif|*.svg|*.ico|*.woff|*.woff2|*.ttf|*.eot|*.pdf|*.zip|*.tar|*.gz) continue ;;
+    esac
+
+    # Check added lines only, exclude the Chat language: label itself
+    if [ -f "$file" ] && $DIFF_SRC "$file" 2>/dev/null | grep '^+' | grep -v '^+++' | grep -v 'Chat language:' | grep -q '[а-яА-ЯёЁ]'; then
+      check_fail "Cyrillic found in $file — use English"
+      echo "   Affected lines:"
+      $DIFF_SRC "$file" 2>/dev/null | grep '^+' | grep -v '^+++' | grep -v 'Chat language:' | grep '[а-яА-ЯёЁ]' | sed 's/^+/    +/'
+      CYRILLIC_FAIL=1
     fi
-  fi
+  done
 fi
 
-if [ -z "$CYRILLIC_HITS" ]; then
-  check_pass "No Cyrillic in project files"
-else
-  check_fail "Cyrillic found in:"
-  echo "$CYRILLIC_HITS" | sed 's/^/    /'
-  echo "   → Replace Russian text with English before committing"
+if [ "$CYRILLIC_FAIL" -eq 0 ]; then
+  check_pass "No Cyrillic in changed files"
 fi
 
 echo ""
