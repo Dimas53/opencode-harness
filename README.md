@@ -102,6 +102,8 @@ Open OpenCode in any directory and type one of these:
 - `adopt` — existing project: auto-analysis first → fills missing docs
 - `analyze` — read-only audit: architecture + security + risk report
 - `analyze path/to/Component.vue` — focused audit of a specific file or folder
+- `fix` — fix findings from the last analysis report (3-phase: CRITICAL → HIGH → MEDIUM)
+- `fix path/to/file.ts` — fix findings only for a specific file or folder
 - `update-harness` — pull latest harness updates and apply globally
 - `sync-templates` — check for new template files missing in current project
 - `dod` — run Definition of Done checks (6 steps)
@@ -133,6 +135,8 @@ Generate the config (run from the project root):
 | `dod` | Definition of Done — 6 checks manually |
 | `analyze` | Full project analysis — architecture, security, risks, next steps |
 | `analyze path/to/file.ts` | Focused analysis of a specific file or folder |
+| `fix` | Fix CRITICAL/HIGH/MEDIUM findings from the last analysis report |
+| `fix path/to/file.ts` | Fix findings only for a specific file or folder |
 
 ## Documentation
 

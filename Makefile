@@ -32,6 +32,8 @@ help:
 	@echo "  adopt             -- connect harness to existing project"
 	@echo "  analyze           -- read-only audit, full project"
 	@echo "  analyze <path>    -- focused audit of a file or folder"
+	@echo "  fix               -- fix findings from last analysis report"
+	@echo "  fix <path>        -- fix findings only for a specific file/folder"
 	@echo "  update-harness    -- pull latest harness updates"
 	@echo "  sync-templates    -- check for missing template files"
 	@echo "  dod               -- run Definition of Done checks"

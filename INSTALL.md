@@ -336,6 +336,8 @@ then fills knowledge gaps via interview, then generates missing documentation.
 Open OpenCode in the project directory and type:
 - `analyze` — full project analysis
 - `analyze path/to/file.ts` — focused analysis of a specific file or folder
+- `fix` — fix findings from the last analysis report (3-phase: CRITICAL → HIGH → MEDIUM)
+- `fix path/to/file.ts` — fix findings only for a specific file or folder
 
 ### Fallback (make command)
 ```bash

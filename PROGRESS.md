@@ -3,7 +3,7 @@
 ## Current Status
 
 Phase: v0.3 → v0.4 transition
-Last commit: baf84f7 — fix: P21-P24: ISO language code, dod.sh Cyrillic exceptions, skills-cheatsheet template, skill gap in hand-off
+Last commit: c4f6ede — chore: update PROGRESS.md and memory for 2026-07-24 session
 Chat language: ru
 
 ## Session 2026-07-22 (auto-HOME-PATH, Accessing Windows files, make help, rm -rf fix)
@@ -532,5 +532,24 @@ Chat language: ru
 - Chat language instruction still competes with file generation (agent writes files in session language before reading Step 4 switch)
 
 ### Next
-- Implement agent-fix.md (fix shortcut)
+- Implement agent-fix.md (fix shortcut) ← DONE
 - Test adopt on a non-trivial project stack
+
+## Session 2026-07-24 (fix shortcut implementation)
+
+Chat language: ru
+
+### Done
+- **agent-fix.md** — new skill: reads latest analysis report from docs/audits/, parses findings by section (Security C/H/M, Senior Review B/M), fixes in 3 phases (CRITICAL+BLOCKER → HIGH+MAJOR → MEDIUM) with per-finding verify gates and user confirmation (y/n/stop) after each fix
+- **Q0 language check** — added to agent-fix.md matching agent-adopt.md/agent-analyze.md
+- **Empty phase handling** — if section has no [C]/[H] findings, skip phase gracefully
+- **Shorcuts** — `fix` and `fix <path>` added to global/AGENTS.md and ~/.config/opencode/AGENTS.md
+- **Verified on 2 real reports** — ticket_tracker + ducito confirmed section format and M-prefix collision (Senior Review Majors vs Security Medium)
+- **self-check:** `make verify` 9/9 passed, `bash -n` all OK, no Cyrillic in changes, no trailing whitespace
+
+### Known issues
+- (none new)
+
+### Next
+- Test `fix` on a real project with audit report
+- If needed: add `stop` → auto-commit and exit logic (planned but not tested yet)*
