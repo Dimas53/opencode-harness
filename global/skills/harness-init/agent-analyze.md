@@ -117,6 +117,15 @@ Follow this template strictly. Deviations are not allowed.
 or
 ✅ [N] commits since [date] — new findings possible.
 
+## Quick Fix Reference
+| File | Findings |
+|------|----------|
+| [file] | [ID1], [ID2] |
+
+Commands: `fix` (all) · `fix <file>` · `fix <ID>`
+
+Rules: one row per unique file from findings with file:line. Merge multiple IDs into one row. Skip findings without file:line. The Commands line is always the same text.
+
 ---
 
 ## Architecture     ← source: zoom-out

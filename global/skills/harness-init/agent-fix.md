@@ -22,6 +22,7 @@ Q0. **Language check:**
    ```
    If none found — report: "No reports in docs/audits/. Run `analyze` first."
    If TARGET is set (from `fix <path>`) — store for filtering in Step 1.
+   If TARGET matches pattern `[CBMH][0-9]+` (e.g. C2, H1, B2) — treat as ID filter, not path filter. Store as TARGET_ID. In Step 1 — keep only findings where prefix+number matches TARGET_ID.
 
 0b. **Check for existing PLAN.md:**
     ```bash
@@ -113,6 +114,7 @@ Q0. **Language check:**
 | Env var findings | If finding involves env var / secret key — scope extends to `.env.example` and `docker-compose.yml` in addition to the source file |
 | TARGET no arg | Full latest report |
 | TARGET with arg | `fix server/api/` — filter findings by path prefix; `fix auth.py` — exact file match |
+| TARGET as ID | `fix C2` — only this finding by ID. Pattern: letter + number (C2, H1, B2, M3) |
 | Playwright | Only if finding is about browser UI behavior. Otherwise grep, curl, npm test |
 | B-prefix | Blockers from Senior Review = CRITICAL-equivalent → Phase 1 |
 | M-prefix | Majors (Senior Review) = HIGH-equivalent → Phase 2 |
