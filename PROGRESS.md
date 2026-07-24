@@ -3,7 +3,7 @@
 ## Current Status
 
 Phase: v0.3 → v0.4 transition
-Last commit: c4f6ede — chore: update PROGRESS.md and memory for 2026-07-24 session
+Last commit: 47a62b7 — feat: add fix shortcut (agent-fix.md)
 Chat language: ru
 
 ## Session 2026-07-22 (auto-HOME-PATH, Accessing Windows files, make help, rm -rf fix)

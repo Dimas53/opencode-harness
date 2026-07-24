@@ -36,6 +36,7 @@ Q0. **Language check:**
    | `## Senior Review` → `### Majors` | M (no leading `- `) | Phase 2 (HIGH-equivalent) |
    Skip `## Recommended Next Steps` — summary, not source findings.
    If TARGET is set — keep only findings where file:line contains TARGET.
+   **Deduplicate by file:line:** if two findings share the same file:line — merge into one entry. Keep the higher-priority prefix (C > B > H > M), combine titles with " + ". Fix once, verify once.
    Report summary to user: "Found: N CRITICAL/BLOCKER, M HIGH/MAJOR, K MEDIUM. Start? (y/n)"
 
 2. **Create PLAN.md** in project root:
@@ -52,17 +53,20 @@ Q0. **Language check:**
    2. If finding requires a choice (library, approach) — offer 2-3 options with rationale → wait for user selection
    3. If purely technical — fix without asking
    4. Run verify gate from PLAN.md
-    5. If verify fails — revert change, explain why, propose alternative
-    6. If verify passes — mark [x] in PLAN.md → ask: "Next? (y / n / stop)"
-       y → continue to next finding
-       n → skip this finding, keep it marked [ ], continue to next
-       stop → commit current progress, update report with resolved, exit
+   5. If verify fails — revert change, explain why, propose alternative
+   6. If verify passes — mark [x] in PLAN.md
+   7. **After each finding: ask "Next? (y / n / stop)"**
+      y → continue to next finding
+      n → skip this finding (keep [ ]), continue to next
+      stop → commit current progress, append Resolved section to report, then commit, exit
    After all done — "Phase 1 complete. Proceed to Phase 2? (y/n)"
 
-4. **Phase 2 — HIGH + MAJOR:** Same cycle as Phase 1 (including stop flow).
+4. **Phase 2 — HIGH + MAJOR:**
+   Same cycle as Phase 1 (including sub-step 7 with "Next? (y/n/stop)").
    After done — "Phase 2 complete. Proceed to Phase 3? (y/n)"
 
-5. **Phase 3 — MEDIUM:** Same cycle as Phase 1 (including stop flow).
+5. **Phase 3 — MEDIUM:**
+   Same cycle as Phase 1 (including sub-step 7 with "Next? (y/n/stop)").
 
 6. **Update docs/roadmap.md if exists:**
    ```bash
@@ -70,14 +74,13 @@ Q0. **Language check:**
    ```
    Append list of resolved findings.
 
-7. **git add + commit:**
-   Message: "fix: resolve N CRITICAL/B M HIGH findings from $(date +%Y-%m-%d) analysis"
-
-8. **Append resolved section to the original analysis report:**
+7. **Append Resolved section to the original analysis report:**
    ## Resolved (YYYY-MM-DD)
    - C1: ✅ <title> — <what was done>
    - B1: ✅ <title> — <what was done>
-   Append before commit (step 7) so the report update is included.
+
+8. **git add + commit:**
+   Message: "fix: resolve N CRITICAL/B M HIGH findings from $(date +%Y-%m-%d) analysis"
 
 ## Hard Rules
 
@@ -88,6 +91,7 @@ Q0. **Language check:**
 | Scope per finding | Only the file from the finding, do not touch adjacent files |
 | Verify gate | Concrete bash command, exit code or output check, never verbal |
 | Choice of approach | Agent offers 2-3 options with rationale → user picks |
+| Env var findings | If finding involves env var / secret key — scope extends to `.env.example` and `docker-compose.yml` in addition to the source file |
 | TARGET no arg | Full latest report |
 | TARGET with arg | `fix server/api/` — filter findings by path prefix; `fix auth.py` — exact file match |
 | Playwright | Only if finding is about browser UI behavior. Otherwise grep, curl, npm test |
