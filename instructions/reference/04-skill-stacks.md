@@ -63,11 +63,25 @@ Trigger: `make analyze PROJECT=/path` or user says "analyze" / "audit"
 Delegated to: `~/.config/opencode/skills/harness-init/agent-analyze.md`
 
 Internal stack (defined in agent-analyze.md):
-1. codebase-health-check — system map, duplication, priorities
-2. zoom-out — explain architecture in plain language
-3. security — auth, API, secrets vulnerabilities
-4. premortem — top 5 risks
+1. zoom-out — explain architecture in plain language
+2. codebase-health-check — system map, duplication, priorities
+3. frontend-behavior — static UI analysis (forms, buttons, nav, states, auth)
+4. junior-to-senior — senior-level design/approach findings
+5. code-review-and-quality — multi-axis code review
+6. security — auth, API, secrets vulnerabilities
+7. premortem — top 5 risks
 Output: docs/audits/YYYY-MM-DD-analysis.md
+
+---
+
+## ui-analysis
+
+Trigger: user says "ui" / "ui <path>" — static UI analysis of frontend code.
+
+Delegated to: `~/.config/opencode/skills/frontend-behavior/SKILL.md` (standalone mode)
+
+Standalone mode: runs the same checklist as analyze but on one file/directory.
+After analysis: asks "Run Playwright tests? (y/n)" and loads agent-e2e.md if yes.
 
 ---
 
@@ -77,7 +91,13 @@ Trigger: user says "fix" / "fix <path>" / "fix <ID>" after an analysis report ex
 
 Delegated to: `~/.config/opencode/skills/harness-init/agent-fix.md`
 
-No sub-skill stack — agent-fix.md is self-contained (parses report → PLAN.md → 3-phase fix cycle with verify gates).
+Sub-protocol: agent-e2e.md — Playwright verify gate (loaded when finding has U-pw prefix or path matches UI files).
+
+Verify gate types:
+- U-pw finding → PLAYWRIGHT (writes + runs Playwright test via agent-e2e.md)
+- U finding → static (grep/check the fix exists)
+- Path-based (vue/component file) → ask user, then PLAYWRIGHT or grep
+- All other → bash command (grep, curl, pytest)
 
 ---
 

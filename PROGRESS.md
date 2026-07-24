@@ -553,3 +553,21 @@ Chat language: ru
 ### Next
 - Test `fix` on a real project with audit report — DONE (ticket_tracker, 3 test runs: all, file, ID)
 - If needed: add `stop` → auto-commit and exit logic (planned but not tested yet)*
+
+## Session 2026-07-24 (frontend-behavior + Playwright verify gate)
+
+Chat language: ru
+
+### Done
+- **frontend-behavior/SKILL.md** (new) — static UI analysis for forms, buttons, nav, states, modals, accessibility, auth. 9 categories, [U1]/[U1-pw] findings. Two modes: analyze + standalone `ui <path>` shortcut.
+- **agent-analyze.md** — frontend-behavior added to skill stack (position 3), new `## UI Behavior` section in report, `[U` added to diff grep.
+- **agent-fix.md** — U prefix added to section mapping (Phase 2). Verify: U-pw → PLAYWRIGHT direct, U → static, path-based → ask. TARGET pattern `[CBMHU]`. Dedup: C > B > U > H > M.
+- **agent-e2e.md** (new) — Playwright verify gate sub-protocol. Called from agent-fix when verify is PLAYWRIGHT. Writes + runs test, returns PASS/FAIL.
+- **global/AGENTS.md** — added `ui` and `ui <path>` shortcuts.
+- Architecture: single Playwright engine (agent-e2e) shared between fix and ui shortcut. Path-based detection replaced by explicit [U/U-pw] prefix.
+- make verify 9/9, bash -n all clean, no Cyrillic.
+
+### Next
+- Test full flow: analyze → [U] findings → fix U1 → agent-e2e writes test
+- Test `ui pages/Login.vue` standalone
+- Consider pre-commit hook running make verify
