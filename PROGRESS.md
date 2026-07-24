@@ -3,7 +3,7 @@
 ## Current Status
 
 Phase: v0.3 → v0.4 transition
-Last commit: 47a62b7 — feat: add fix shortcut (agent-fix.md)
+Last commit: 4f764e3 — fix: per-finding (y/n/stop), dedup, env scope, step order in agent-fix.md
 Chat language: ru
 
 ## Session 2026-07-22 (auto-HOME-PATH, Accessing Windows files, make help, rm -rf fix)

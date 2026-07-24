@@ -37,7 +37,15 @@ Q0. **Language check:**
    Skip `## Recommended Next Steps` — summary, not source findings.
    If TARGET is set — keep only findings where file:line contains TARGET.
    **Deduplicate by file:line:** if two findings share the same file:line — merge into one entry. Keep the higher-priority prefix (C > B > H > M), combine titles with " + ". Fix once, verify once.
-   Report summary to user: "Found: N CRITICAL/BLOCKER, M HIGH/MAJOR, K MEDIUM. Start? (y/n)"
+   Print summary as exact table (no other format):
+   ```
+   | Phase | Count | IDs |
+   |-------|-------|-----|
+   | Phase 1 CRITICAL/BLOCKER | N | C1, B1, ... |
+   | Phase 2 HIGH/MAJOR | N | H1, M1, ... |
+   | Phase 3 MEDIUM | N | M1, M2, ... |
+   ```
+   Ask: "Start Phase 1? (y/n)"
 
 2. **Create PLAN.md** in project root:
    - [ ] C1: <title> — <file:line>
