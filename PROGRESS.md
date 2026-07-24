@@ -3,7 +3,7 @@
 ## Current Status
 
 Phase: v0.3 → v0.4 transition
-Last commit: 4f764e3 — fix: per-finding (y/n/stop), dedup, env scope, step order in agent-fix.md
+Last commit: 9d8d0c3 — docs: add fix shortcut to reference docs
 Chat language: ru
 
 ## Session 2026-07-22 (auto-HOME-PATH, Accessing Windows files, make help, rm -rf fix)
@@ -548,8 +548,8 @@ Chat language: ru
 - **self-check:** `make verify` 9/9 passed, `bash -n` all OK, no Cyrillic in changes, no trailing whitespace
 
 ### Known issues
-- (none new)
+- DoD step 5 (docs matrix) still requires `--no-verify` for skill-only changes
 
 ### Next
-- Test `fix` on a real project with audit report
+- Test `fix` on a real project with audit report — DONE (ticket_tracker, 3 test runs: all, file, ID)
 - If needed: add `stop` → auto-commit and exit logic (planned but not tested yet)*
