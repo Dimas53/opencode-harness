@@ -136,10 +136,25 @@ Note: source code fix must already be applied before this phase.
      echo "FAIL after 3 attempts"
    fi
    ```
-   If FAIL after 3 retries — extract last 10 lines of error output,
-   write one sentence root cause, then ask user "Skip? (y/n)":
-     y → mark finding as skipped, return to agent-fix
-     n → stop entirely, commit current progress, exit
+    If FAIL after 3 retries — extract last 10 lines of error output,
+    write one sentence root cause, then ask user "Skip? (y/n)":
+      y → mark finding as skipped, return to agent-fix
+      n → stop entirely, commit current progress, exit
+
+### Between-retry restrictions
+
+Between retry attempts, you may ONLY:
+- read the error output from the failed test run
+- edit the ONE spec file, if the test itself (not the source fix) has a bug
+
+Between retry attempts, you may NEVER:
+- open chrome-devtools or any browser tool manually
+- create any file anywhere (including /tmp) other than the one spec file — this includes files later copied into tests/e2e/
+- run context7 or other research tools
+- kill processes, clear caches (.nuxt, node_modules), or restart dev servers
+- change the port or playwright.config.ts
+
+If all 3 attempts fail with the SAME error — before asking "Skip?", state explicitly whether this looks like a source code bug or a test design flaw (e.g. race condition — state changes faster than the assertion can catch it). Do not attempt manual debugging via devtools or browser tools to investigate further — just report the hypothesis and ask the user how to proceed.
 
 5. **Return to agent-fix:**
    - PASS → `"PASS. Test saved at tests/e2e/<finding-slug>.spec.ts"`
