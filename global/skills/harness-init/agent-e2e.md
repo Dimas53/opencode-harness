@@ -5,6 +5,10 @@
 > This protocol does NOT fix code — the fix was already applied by the
 > caller BEFORE calling this verify phase.
 
+## Before you start
+
+Confirm you have read this entire file, including "Between-retry restrictions" in step 4 below. If resuming a fix where a spec file or playwright.config.ts already exists from a previous session — you still follow this protocol from step 3 (pre-flight checks) onward, not skip directly to running the test with npx/rtk playwright commands.
+
 ## Input (from agent-fix-ui)
 
 - file:line — the file and line from the finding
@@ -67,7 +71,7 @@ Note: source code fix must already be applied before this phase.
 
 2. **Write ONE spec file:**
    `tests/e2e/<finding-slug>.spec.ts`
-   - Must be runnable: `npx playwright test tests/e2e/<finding-slug>.spec.ts`
+   - Must be runnable via the retry-guard script: `bash ~/.opencode-harness/scripts/run-playwright-verify.sh tests/e2e/<finding-slug>.spec.ts`
    - Must use the same helpers and conventions as existing tests
    - Must cover the acceptance criteria from the finding
    - NEVER create additional files — no debug-*.spec.ts, no helpers, no temp files.
@@ -116,25 +120,10 @@ Note: source code fix must already be applied before this phase.
        done
        ```
 
-4. **Run the test (with retry guard):**
-   **Execution rule:** Set `workdir` to the project root and run the block below as a standalone multi-line bash command.
-   Do NOT prepend `cd ... &&` to this block — compound commands (`while`/`if`) after `&&` break in zsh.
+4. **Run the test via the retry-guard script:**
+   NEVER call `npx playwright test` directly — always through this script.
    ```bash
-   RETRY=0
-   PASSED=""
-   while [ $RETRY -lt 3 ]; do
-     if npx playwright test tests/e2e/<finding-slug>.spec.ts; then
-       PASSED=1; break
-     else
-       RETRY=$((RETRY + 1))
-       echo "Attempt $RETRY/3 failed" >&2
-     fi
-   done
-   if [ -n "$PASSED" ]; then
-     echo "PASS"
-   else
-     echo "FAIL after 3 attempts"
-   fi
+   bash ~/.opencode-harness/scripts/run-playwright-verify.sh tests/e2e/<finding-slug>.spec.ts
    ```
     If FAIL after 3 retries — extract last 10 lines of error output,
     write one sentence root cause, then ask user "Skip? (y/n)":
