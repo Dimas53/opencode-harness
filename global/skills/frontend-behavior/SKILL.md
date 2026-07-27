@@ -47,85 +47,85 @@ For each category below:
 For each form element found (search: `<form`, `useForm`, `vee-validate`, `zod`, `ref` with submit):
 
 - **Validation:** Client-side validation exists (required, pattern, minlength, zod schema, vee-validate rules)
-  If missing → **[U1]**
+  If missing → static
 - **Error display:** Validation or API error shown to user (not just console.log)
-  If error response ignored → Finding (e2e)
+  If error response ignored → e2e
 - **Submit disabled:** Submit button has `:disabled` when form invalid or loading
-  If no disabled binding → Finding (e2e)
+  If no disabled binding → e2e
 - **Form reset:** Form clears or redirects after successful submit
-  If neither reset nor redirect → **[U1]**
+  If neither reset nor redirect → static
 - **Labels:** Every `<input>`/`<select>`/`<textarea>` has a `<label>` (not just placeholder)
-  If placeholder-only → **[U1]**
+  If placeholder-only → static
 
 ### Buttons
 
 For each button with a side effect (search: `@click` with API call, delete, remove, save, submit):
 
 - **Loading state:** Button text/content changes during request (spinner, "Saving...")
-  If button text stays same during loading → Finding (e2e)
+  If button text stays same during loading → e2e
 - **Double-click guard:** Button disabled while request in progress
-  If no `:disabled="loading"` → **[U1]**
+  If no `:disabled="loading"` → static
 - **Destructive confirmation:** Delete/remove action has confirmation dialog or undo
-  If delete fires immediately → Finding (e2e)
+  If delete fires immediately → e2e
 
 ### Navigation
 
 - **Broken links:** Router-link `to` paths corresponding to existing route files
-  If `to="/unknown"` and no matching route → **[U1]**
+  If `to="/unknown"` and no matching route → static
 - **Active state:** Navbar item highlights for current route
-  If nuxt-link without active class → **[U1]**
+  If nuxt-link without active class → static
 - **Auth guard:** Protected pages check auth before render
-  If page has sensitive data but no `useAuth()` or middleware → Finding (e2e)
+  If page has sensitive data but no `useAuth()` or middleware → e2e
 
 ### Component States
 
 For each component that loads data via API (search: `useFetch`, `$fetch`, `fetch()`, `useAsyncData`, `useLazyAsyncData`, `onMounted` + API call, api/ in any fetch, store action):
 
 - **Loading state:** Template shows spinner/skeleton/placeholder while data loads
-  If no conditional `loading` in template → Finding (e2e)
+  If no conditional `loading` in template → e2e
 - **Empty state:** User sees meaningful message when list is empty
-  If no `v-if="items.length === 0"` → Finding (e2e)
+  If no `v-if="items.length === 0"` → e2e
 - **Error state:** User sees error message when request fails
-  If no `v-if="error"` → Finding (e2e)
+  If no `v-if="error"` → e2e
 
 ### Modals and Dialogs
 
 - **Escape close:** Modal closes on Escape key
-  If no `@keydown.escape` → **[U1]**
+  If no `@keydown.escape` → static
 - **Outside click:** Modal closes on click outside content area
-  If no backdrop click handler → **[U1]**
+  If no backdrop click handler → static
 - **Scroll lock:** Body scroll blocked while modal is open
-  If no `overflow: hidden` on body → **[U1]**
+  If no `overflow: hidden` on body → static
 
 ### Dropdowns and Selects
 
 - **Close on select:** Dropdown closes after selecting an option
-  If `open` stays `true` after select → **[U1]**
+  If `open` stays `true` after select → static
 - **Selection display:** Currently selected value visible in trigger
-  If button shows placeholder text after selection → **[U1]**
+  If button shows placeholder text after selection → static
 
 ### Tables and Lists
 
 - **Live update:** List refreshes after CREATE/UPDATE/DELETE without page reload
-  If API call returns 200 but list doesn't re-render → Finding (e2e)
+  If API call returns 200 but list doesn't re-render → e2e
 - **Pagination:** Pagination or infinite scroll for large datasets
-  If all items fetched at once without limit → **[U1]**
+  If all items fetched at once without limit → static
 
 ### Accessibility (basic)
 
 - **Image alt:** Every `<img>` has non-empty `alt` attribute
-  If `<img src="..." >` without alt → **[U1]**
+  If `<img src="..." >` without alt → static
 - **Icon labels:** Icon-only buttons/links have `aria-label`
-  If `<button><Icon/></button>` without aria-label → **[U1]**
+  If `<button><Icon/></button>` without aria-label → static
 
 ### Authentication
 
 - **Login redirect:** Unauthenticated user redirected to /login
-  If no middleware/guard on protected routes → Finding (e2e)
+  If no middleware/guard on protected routes → e2e
 - **Dashboard redirect:** Already-authenticated user on /login sent to /
-  If login page loads without checking existing session → Finding (e2e)
+  If login page loads without checking existing session → e2e
 - **Logout cleanup:** Token/session data cleared on logout
-  If `clear()` or `removeItem()` not called → **[U1]**
+  If `clear()` or `removeItem()` not called → static
 
 ## Finding output format
 
@@ -138,12 +138,12 @@ Description. Test: <step-by-step Playwright acceptance criteria>
 ```
 
 **Numbering rule:**
-- Each finding in the checklist is marked as either `→ **[U1]**` (static) or `→ Finding (e2e)` (Playwright-testable).
+- Each checklist item is marked as either `→ static` or `→ e2e`.
 - When enumerating findings, number them sequentially: U1, U2, U3...
-- For findings marked `→ Finding (e2e)` → append `-pw` suffix: `[U1-pw]`, `[U2-pw]`
-- For findings marked `→ **[U1]**` → no suffix: `[U1]`, `[U2]`
+- For `→ e2e` items → output as `[U<N>-pw]` with `-pw` suffix
+- For `→ static` items → output as `[U<N]` without suffix
 - Always include file:line when possible.
-- Each (e2e) finding MUST include a `Test:` line with step-by-step Playwright criteria.
+- Each `[U<N>-pw]` finding MUST include a `Test:` line with step-by-step Playwright criteria.
 
 ## After Analysis (standalone mode only)
 

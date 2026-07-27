@@ -156,6 +156,24 @@ if [ -z "$(git config --global user.email)" ]; then
   echo "✓ Git identity configured"
 fi
 
+# ── Playwright availability check (project context only) ──
+if [ -f package.json ]; then
+  if ! npx playwright --version >/dev/null 2>&1; then
+    echo ""
+    echo "⚠️  @playwright/test not found in this project."
+    echo "    Required for e2e UI verification via agent-e2e."
+    printf "    Install now? (y/n): "
+    read -r answer
+    if [ "$answer" = "y" ]; then
+      npm install -D @playwright/test && npx playwright install
+      echo "✓ Playwright installed"
+    else
+      echo "  ⚠ Skipped — e2e UI verification will not work until installed."
+      echo "    Run later: npm install -D @playwright/test && npx playwright install"
+    fi
+  fi
+fi
+
 echo ""
 echo "✓ Done. Next steps:"
 echo "1. opencode auth login"

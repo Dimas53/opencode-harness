@@ -19,6 +19,33 @@
    If it exists — scan for page objects, fixtures, login setup helpers.
    Use the same conventions as existing tests.
 
+1b. **Generate playwright.config.ts if missing:**
+    ```bash
+    test -f playwright.config.ts || test -f playwright.config.js || echo "MISSING"
+    ```
+    If no playwright config found:
+    a) Find a free port:
+       ```bash
+       port=3000
+       while lsof -i :$port >/dev/null 2>&1; do port=$((port + 1)); done
+       echo "FREE_PORT=$port"
+       ```
+    b) Create `playwright.config.ts` with:
+       ```ts
+       import { defineConfig } from '@playwright/test';
+       export default defineConfig({
+         testDir: './tests/e2e',
+         use: {
+           baseURL: 'http://localhost:<FREE_PORT>',
+           headless: false,
+           launchOptions: { slowMo: 2000 },
+         },
+         timeout: 30000,
+       });
+       ```
+       Replace `<FREE_PORT>` with the port found above.
+    If playwright.config already exists — skip generation, use existing.
+
 2. **Write ONE spec file:**
    `tests/e2e/<finding-slug>.spec.ts`
    - Must be runnable: `npx playwright test tests/e2e/<finding-slug>.spec.ts`
