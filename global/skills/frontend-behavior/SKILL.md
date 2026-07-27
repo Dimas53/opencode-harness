@@ -47,6 +47,8 @@ For each category below:
 - For `→ static` items → output without suffix: `[U1]`, `[U2]`
 - Always include file:line when possible.
 - Each `[U-pw]` finding MUST include a `Test:` line with step-by-step Playwright criteria.
+- Never combine findings. If one element has multiple failed checklist items (e.g. a button missing both disabled state AND loading state) — each failed item is a SEPARATE [U<N>], even if same file:line.
+- Before writing the report — scan every file under scope (components/, pages/, layouts/) and print: "Scanned: file1.vue ✓, file2.vue ✓, ..." for ALL files, not just ones with findings. If a file exists in scope but is missing from this list, it's a violation.
 
 ## Checklist
 

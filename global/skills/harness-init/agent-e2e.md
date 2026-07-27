@@ -1,15 +1,27 @@
 # agent-e2e — Playwright verify gate
 
-> Sub-protocol. Called from agent-fix.md when finding requires UI verification.
+> Sub-protocol. Called from agent-fix-ui.md to verify a UI fix via Playwright.
 > Not a standalone shortcut.
+> This protocol does NOT fix code — the fix was already applied by the
+> caller BEFORE calling this verify phase.
 
-## Input (from agent-fix)
+## Input (from agent-fix-ui)
 
 - file:line — the file and line from the finding
 - finding description — what the issue is
 - acceptance criteria — extracted from finding text, describes expected behavior
 
-## Phase 1 — Write test + Run (no autofix)
+## Phase 1 — Verify the fix (write test + run)
+Note: source code fix must already be applied before this phase.
+
+0. **Check @playwright/test is installed:**
+   ```bash
+   grep -q '"@playwright/test"' package.json || echo "MISSING"
+   ```
+   If MISSING:
+   - Ask user: "Install @playwright/test + browsers? (y/n)"
+   - If y → run `npm install -D @playwright/test && npx playwright install`
+   - If n → stop, cannot proceed without it
 
 1. **Check existing test patterns:**
    ```bash
@@ -50,6 +62,7 @@
         });
         ```
         Replace `<PORT>` with the free port found above.
+        **Guard:** Do not deviate from these values (`headless: false`, `slowMo: 2000` at top-level `use:`) without explicit user confirmation.
      If playwright.config already exists — skip generation, use existing.
 
 2. **Write ONE spec file:**
@@ -57,15 +70,37 @@
    - Must be runnable: `npx playwright test tests/e2e/<finding-slug>.spec.ts`
    - Must use the same helpers and conventions as existing tests
    - Must cover the acceptance criteria from the finding
-   - Before interacting with any element, use `scrollIntoView({ block: 'center' })`
-     via `page.evaluate()` to scroll with center offset, then add
-     `await page.waitForTimeout(1000)` — pause after scroll to let
-     the page settle before clicks or fills.
+   - NEVER create additional files — no debug-*.spec.ts, no helpers, no temp files.
+     Only ONE spec file per run. To debug — edit the same file, not create a new one.
+   - Before interacting with an element, use this copy-paste block
+     (replace '#your-selector' with the actual CSS selector):
+     ```ts
+     await page.evaluate((sel) => {
+       document.querySelector(sel)?.scrollIntoView({ block: 'center' });
+     }, '#your-selector');
+     await page.waitForTimeout(1000);
+     ```
 
 3. **Pre-flight checks** before running the test:
 
     a) Verify playwright.config.ts exists. If missing — run step 1b (generate it).
-    b) Check port in config is still valid:
+    b) If config exists — check and patch it:
+       - Check for `webServer` block: `grep -q 'webServer' playwright.config.ts`
+       - If NO webServer → add it before the last `}`:
+         Extract PORT from existing baseURL (`grep -oE 'localhost:[0-9]+' | grep -oE '[0-9]+'`)
+         Append to config (before trailing `}`):
+         ```
+           webServer: {
+             command: 'npm run dev -- --port <PORT>',
+             url: 'http://localhost:<PORT>',
+             reuseExistingServer: true,
+             timeout: 60000,
+           },
+         ```
+       - If webServer exists → keep config unchanged.
+       - Check slowMo location: if `slowMo` is inside `launchOptions` — keep as is.
+         If `slowMo` is NOT in config at all — add `launchOptions: { slowMo: 2000 }` inside `use:`.
+    c) Check port in config is still valid:
        ```bash
        port=$(grep -oE 'localhost:[0-9]+' playwright.config.ts | grep -oE '[0-9]+')
        if lsof -i :$port >/dev/null 2>&1; then
@@ -74,21 +109,41 @@
          echo "Port $port is free — webServer will start automatically"
        fi
        ```
-    c) Check .gitignore for test artifacts:
+    d) Check .gitignore for test artifacts:
        ```bash
        for entry in "test-results/" "playwright-report/"; do
          grep -qxF "$entry" .gitignore 2>/dev/null || echo "$entry" >> .gitignore
        done
        ```
 
-4. **Run the test:**
+4. **Run the test (with retry guard):**
+   **Execution rule:** Set `workdir` to the project root and run the block below as a standalone multi-line bash command.
+   Do NOT prepend `cd ... &&` to this block — compound commands (`while`/`if`) after `&&` break in zsh.
    ```bash
-   npx playwright test tests/e2e/<finding-slug>.spec.ts
+   RETRY=0
+   PASSED=""
+   while [ $RETRY -lt 3 ]; do
+     if npx playwright test tests/e2e/<finding-slug>.spec.ts; then
+       PASSED=1; break
+     else
+       RETRY=$((RETRY + 1))
+       echo "Attempt $RETRY/3 failed" >&2
+     fi
+   done
+   if [ -n "$PASSED" ]; then
+     echo "PASS"
+   else
+     echo "FAIL after 3 attempts"
+   fi
    ```
+   If FAIL after 3 retries — extract last 10 lines of error output,
+   write one sentence root cause, then ask user "Skip? (y/n)":
+     y → mark finding as skipped, return to agent-fix
+     n → stop entirely, commit current progress, exit
 
-4. **Return to agent-fix:**
+5. **Return to agent-fix:**
    - PASS → `"PASS. Test saved at tests/e2e/<finding-slug>.spec.ts"`
-   - FAIL → `"FAIL. Output: <error>. Test saved as regression doc."`
+   - FAIL → `"FAIL after 3 attempts. Output: <last 10 lines>. Test saved as regression doc."`
 
 ## Output
 
@@ -106,7 +161,4 @@
 | No delete | Never delete existing passing tests |
 | No push | Only write files, agent-fix handles commit |
 | Playwright only | Never use curl/grep as verify here |
-| Max retries | If test fails — try fix max 3 times. After 3rd attempt — STOP |
-| On stop | Show last error output (max 10 lines) + one sentence root cause + ask "Skip? (y/n)" |
 | Never | Modify test file to make it pass |
-| Scroll | Always scroll to element with `{ block: 'center' }` + `waitForTimeout(1000)` before interacting |
