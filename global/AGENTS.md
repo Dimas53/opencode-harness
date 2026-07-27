@@ -13,8 +13,11 @@ When user types:
 - `fix` — load and run `~/.config/opencode/skills/harness-init/agent-fix.md`
 - `fix <path>` — load and run `~/.config/opencode/skills/harness-init/agent-fix.md`, set TARGET=<path> (e.g. `fix server/api/` → TARGET=server/api/)
 
-- `ui` — load and run `~/.config/opencode/skills/frontend-behavior/SKILL.md` (standalone mode, full frontend scan)
-- `ui <path>` — load and run `~/.config/opencode/skills/frontend-behavior/SKILL.md`, set TARGET=<path> (standalone mode, e.g. `ui pages/Login.vue`)
+- `analyze-ui` — load and run `~/.config/opencode/skills/harness-init/agent-analyze-ui.md`
+- `analyze-ui <path>` — load and run `~/.config/opencode/skills/harness-init/agent-analyze-ui.md`, set TARGET=<path>
+- `fix-ui` — load and run `~/.config/opencode/skills/harness-init/agent-fix-ui.md`
+- `fix-ui <path>` — load and run `~/.config/opencode/skills/harness-init/agent-fix-ui.md`, set TARGET=<path>
+- `fix-ui <ID>` — load and run `~/.config/opencode/skills/harness-init/agent-fix-ui.md`, set TARGET=<ID> (e.g. `fix-ui U1`)
 
 - `update-harness` — pull latest updates and apply globally:
   cd ~/.opencode-harness

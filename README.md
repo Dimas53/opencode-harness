@@ -104,6 +104,11 @@ Open OpenCode in any directory and type one of these:
 - `analyze path/to/Component.vue` — focused audit of a specific file or folder
 - `fix` — fix findings from the last analysis report (3-phase: CRITICAL → HIGH → MEDIUM)
 - `fix path/to/file.ts` — fix findings only for a specific file or folder
+- `analyze-ui` — UI behavior analysis: forms, buttons, navigation, states, auth
+- `analyze-ui path/to/Component.vue` — focused UI analysis of a specific file
+- `fix-ui` — fix UI findings from the last UI analysis report
+- `fix-ui path/to/Component.vue` — fix UI findings for a specific file
+- `fix-ui U1` — fix a specific UI finding by ID (e.g. `fix-ui U1-pw`)
 - `update-harness` — pull latest harness updates and apply globally
 - `sync-templates` — check for new template files missing in current project
 - `dod` — run Definition of Done checks (6 steps)
@@ -137,6 +142,10 @@ Generate the config (run from the project root):
 | `analyze path/to/file.ts` | Focused analysis of a specific file or folder |
 | `fix` | Fix CRITICAL/HIGH/MEDIUM findings from the last analysis report |
 | `fix path/to/file.ts` | Fix findings only for a specific file or folder |
+| `analyze-ui` | UI behavior analysis — forms, buttons, navigation, states, auth |
+| `analyze-ui path/to/file.vue` | Focused UI analysis of a specific file |
+| `fix-ui` | Fix UI findings from the last UI analysis report |
+| `fix-ui path/to/file.vue` | Fix UI findings for a specific file |
 
 ## Documentation
 

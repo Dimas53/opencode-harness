@@ -13,16 +13,15 @@ Output goes to docs/audits/ only.
 For each skill below, try `Read ~/.config/opencode/skills/<path>/SKILL.md`.
 If file not found — skip that skill, continue without stopping.
 After all attempts — print:
-"Loaded: zoom-out ✓, codebase-health-check ✓, frontend-behavior ✓, junior-to-senior ✓, code-review-and-quality ✓, security ✓, premortem ✓"
+"Loaded: zoom-out ✓, codebase-health-check ✓, junior-to-senior ✓, code-review-and-quality ✓, security ✓, premortem ✓"
 
 ## Skill stack (load in this order, skip missing)
 1. ~/.config/opencode/skills/zoom-out/SKILL.md
 2. ~/.config/opencode/skills/codebase-health-check/SKILL.md
-3. ~/.config/opencode/skills/frontend-behavior/SKILL.md
-4. ~/.config/opencode/skills/junior-to-senior/SKILL.md
-5. ~/.config/opencode/skills/code-review-and-quality/SKILL.md
-6. ~/.config/opencode/skills/security/SKILL.md
-7. ~/.config/opencode/skills/premortem/SKILL.md
+3. ~/.config/opencode/skills/junior-to-senior/SKILL.md
+4. ~/.config/opencode/skills/code-review-and-quality/SKILL.md
+5. ~/.config/opencode/skills/security/SKILL.md
+6. ~/.config/opencode/skills/premortem/SKILL.md
 
 ## Steps
 
@@ -59,32 +58,29 @@ If TARGET is set:
    Include output in Health section as "Changed since last analysis: N commits".
    If 0 commits — mark report with flag `⚠️ STALE — no code changes since last analysis`.
 
-1. Load all seven skills above — skip missing ones, do not stop
+1. Load all six skills above — skip missing ones, do not stop
 2. Run zoom-out → explain architecture in plain language
 3. Run codebase-health-check → system map, duplication, priorities
-4. Run frontend-behavior (analysis mode) → static UI analysis
-   Note: load frontend-behavior/SKILL.md, follow checklist and output format
-   sections only. Skip "After Analysis" section — that is for standalone mode.
-5. Run junior-to-senior → senior-level design/approach findings
-6. Run code-review-and-quality → multi-axis code review
-7. Run security → find auth, API, secrets vulnerabilities
-8. Run premortem → what could go wrong, top 5 risks
-9. Compile results into one report
-10a. Diff findings against previous report:
+4. Run junior-to-senior → senior-level design/approach findings
+5. Run code-review-and-quality → multi-axis code review
+6. Run security → find auth, API, secrets vulnerabilities
+7. Run premortem → what could go wrong, top 5 risks
+8. Compile results into one report
+9a. Diff findings against previous report:
     ```bash
     last=$(ls -t docs/audits/*-analysis.md 2>/dev/null | head -1)
     if [ -f "$last" ]; then
       echo "=== DIFF vs previous report ==="
-      diff <(grep -E '\[C[0-9]|\[H[0-9]|\[M[0-9]|\[R[0-9]|\[U[0-9]' "$last") \
-           <(grep -E '\[C[0-9]|\[H[0-9]|\[M[0-9]|\[R[0-9]|\[U[0-9]' docs/audits/$(date +%F)-analysis.md) || true
+      diff <(grep -E '\[C[0-9]|\[H[0-9]|\[M[0-9]|\[R[0-9]' "$last") \
+           <(grep -E '\[C[0-9]|\[H[0-9]|\[M[0-9]|\[R[0-9]' docs/audits/$(date +%F)-analysis.md) || true
     fi
     ```
     If diff is empty — add warning to report: `⚠️ All findings match previous report — analysis may not have found new issues or may not have refreshed`.
 
-11. Save report to:
+10. Save report to:
     - If TARGET is empty: docs/audits/YYYY-MM-DD-analysis.md
     - If TARGET is set: docs/audits/YYYY-MM-DD-analysis-[SAFE_TARGET].md
-11a. Verify report file was written:
+10a. Verify report file was written:
     ```bash
     # Use correct filename based on TARGET
     REPORT_FILE="docs/audits/$(date +%F)-analysis${SAFE_TARGET:+-$SAFE_TARGET}.md"
@@ -92,7 +88,7 @@ If TARGET is set:
     ```
     If file not found or fewer than 80 lines — retry writing before proceeding.
 
-12. Print summary to chat in chat language (read from PROGRESS.md: Chat language: <code>).
+11. Print summary to chat in chat language (read from PROGRESS.md: Chat language: <code>).
     Format: narrative, NOT a table. Minimum 20 lines. Structure:
     - Architecture: 3-5 sentences — what the system does, why this stack, key decision
     - Health: 3-5 sentences — file count, biggest problems, duplication, linter status
@@ -185,18 +181,6 @@ how a senior would split it, specific composable/component names]
 
 ### Changed since last analysis
 [git log output or "0 commits — stale check"]
-
----
-
-## UI Behavior      ← source: frontend-behavior
-
-**[U1-pw] Title** — `file:line`
-Description. Test: step-by-step Playwright acceptance criteria.
-
-**[U1] Title** — `file:line`
-Description. Static check only — no Playwright test needed.
-
----
 
 ## Senior Review    ← source: junior-to-senior
 

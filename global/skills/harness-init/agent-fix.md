@@ -22,7 +22,7 @@ Q0. **Language check:**
    ```
     If none found — report: "No reports in docs/audits/. Run `analyze` first."
     If TARGET is set (from `fix <path>`) — store for filtering in Step 1.
-    If TARGET matches pattern `[CBMHU][0-9]+` (e.g. C2, H1, B2, U1) — treat as ID filter, not path filter. Store as TARGET_ID. In Step 1 — keep only findings where prefix+number matches TARGET_ID. U-pw suffix is stripped during matching (U1 matches U1-pw).
+    If TARGET matches pattern `[CBMH][0-9]+` (e.g. C2, H1, B2) — treat as ID filter, not path filter. Store as TARGET_ID. In Step 1 — keep only findings where prefix+number matches TARGET_ID.
 
 0b. **Check for existing PLAN.md:**
     ```bash
@@ -44,10 +44,9 @@ Q0. **Language check:**
     | `## Security` → `### Medium` | M (with leading `- `) | Phase 3 (MEDIUM) |
     | `## Senior Review` → `### Blockers` | B | Phase 1 (CRITICAL-equivalent) |
     | `## Senior Review` → `### Majors` | M (no leading `- `) | Phase 2 (HIGH-equivalent) |
-    | `## UI Behavior` | U | Phase 2 (HIGH-equivalent) |
     Skip `## Recommended Next Steps` — summary, not source findings.
     If TARGET is set — keep only findings where file:line contains TARGET.
-    **Deduplicate by file:line:** if two findings share the same file:line — merge into one entry. Keep the higher-priority prefix (C > B > U > H > M), combine titles with " + ". Fix once, verify once.
+    **Deduplicate by file:line:** if two findings share the same file:line — merge into one entry. Keep the higher-priority prefix (C > B > H > M), combine titles with " + ". Fix once, verify once.
    Print summary as exact table (no other format):
    ```
    | Phase | Count | IDs |
@@ -65,12 +64,7 @@ Q0. **Language check:**
      | verify: <bash command>
    - [ ] B1: <title> — <file:line>
      | verify: <bash command>
-   Verify gate selection (check in order):
-     - Finding prefix is U-pw → write `| verify: PLAYWRIGHT`
-     - Finding prefix is U → write `| verify: static` — grep/check the fix exists
-     - File in UI path (pages/, components/, layouts/, app.vue, middleware/, frontend/)
-       → write `| verify: PLAYWRIGHT`, but ask user to confirm at verify time
-     - All other → concrete bash command (grep, curl, python -c, pytest)
+   Verify gate must be a concrete bash command (grep, curl, python -c, pytest).
    Never a verbal check.
 
 3. **Phase 1 — CRITICAL + BLOCKER:**
@@ -78,18 +72,9 @@ Q0. **Language check:**
    1. Read file:line — scope: only this file, do not touch adjacent files
    2. If finding requires a choice (library, approach) — offer 2-3 options with rationale → wait for user selection
    3. If purely technical — fix without asking
-   4. Run verify gate from PLAN.md:
-      If verify is PLAYWRIGHT:
-        If prefix is U-pw → load agent-e2e.md directly (no question needed —
-            U-pw explicitly marks this as Playwright-testable)
-          on return: PASS → mark [x] in PLAN.md, skip to step 7
-                     FAIL → show output, ask "Skip this finding? (y/n)"
-                       y → mark [x] in PLAN.md (skipped), skip to step 7
-                       n → fall through to step 5
-        Else → ask "UI finding. Verify through Playwright? (y/n)"
-          if y → load agent-e2e.md (same as above)
-          if n → run bash fallback verify — PASS → step 6, FAIL → step 5
-      Else → run bash verify command from PLAN.md — PASS → step 6, FAIL → step 5
+    4. Run verify gate from PLAN.md
+    5. If verify fails — revert change, explain why, propose alternative
+    6. If verify passes — mark [x] in PLAN.md
    5. If verify fails — revert change, explain why, propose alternative
    6. If verify passes — mark [x] in PLAN.md
    7. **After each finding: ask "Next? (y / n / stop)"**
@@ -126,13 +111,13 @@ Q0. **Language check:**
 | Phase confirmation | User confirms each phase before start |
 | Empty phase | No [C] / [H] / [B] in section — skip phase, not an error. Report: "Phase N: only <prefix>-findings (N items)" |
 | Scope per finding | Only the file from the finding, do not touch adjacent files |
-| Verify gate | Bash for non-UI files, PLAYWRIGHT for UI (see path rules below) |
+| Verify gate | Concrete bash command, exit code or output check, never verbal |
 | Choice of approach | Agent offers 2-3 options with rationale → user picks |
 | Env var findings | If finding involves env var / secret key — scope extends to `.env.example` and `docker-compose.yml` in addition to the source file |
 | TARGET no arg | Full latest report |
 | TARGET with arg | `fix server/api/` — filter findings by path prefix; `fix auth.py` — exact file match |
 | TARGET as ID | `fix C2` — only this finding by ID. Pattern: letter + number (C2, H1, B2, M3) |
-| Playwright verify | File in pages/, components/, layouts/, app.vue, middleware/, frontend/ → `| verify: PLAYWRIGHT` in PLAN.md |
+| Playwright | Only if finding is about browser UI behavior. Otherwise grep, curl, npm test |
 | B-prefix | Blockers from Senior Review = CRITICAL-equivalent → Phase 1 |
 | M-prefix | Majors (Senior Review) = HIGH-equivalent → Phase 2 |
 | | Medium (Security) = MEDIUM → Phase 3 |

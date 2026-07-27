@@ -40,6 +40,14 @@ For each category below:
    If API-connected → ALWAYS check error/loading/empty state.
    Missing state = finding.
 
+**Numbering rule (read this BEFORE running the checklist):**
+- Each checklist item is marked as either `→ static` or `→ e2e`.
+- When enumerating findings, number them sequentially: U1, U2, U3...
+- For `→ e2e` items → output with `-pw` suffix: `[U1-pw]`, `[U2-pw]`
+- For `→ static` items → output without suffix: `[U1]`, `[U2]`
+- Always include file:line when possible.
+- Each `[U-pw]` finding MUST include a `Test:` line with step-by-step Playwright criteria.
+
 ## Checklist
 
 ### Forms and Inputs
@@ -136,14 +144,6 @@ Short description of what is missing and why it matters.
 **[U<N>-pw] Title** — `file:line`
 Description. Test: <step-by-step Playwright acceptance criteria>
 ```
-
-**Numbering rule:**
-- Each checklist item is marked as either `→ static` or `→ e2e`.
-- When enumerating findings, number them sequentially: U1, U2, U3...
-- For `→ e2e` items → output as `[U<N>-pw]` with `-pw` suffix
-- For `→ static` items → output as `[U<N]` without suffix
-- Always include file:line when possible.
-- Each `[U<N>-pw]` finding MUST include a `Test:` line with step-by-step Playwright criteria.
 
 ## After Analysis (standalone mode only)
 

@@ -338,6 +338,11 @@ Open OpenCode in the project directory and type:
 - `analyze path/to/file.ts` — focused analysis of a specific file or folder
 - `fix` — fix findings from the last analysis report (3-phase: CRITICAL → HIGH → MEDIUM)
 - `fix path/to/file.ts` — fix findings only for a specific file or folder
+- `analyze-ui` — UI behavior analysis: forms, buttons, navigation, states, auth
+- `analyze-ui path/to/Component.vue` — focused UI analysis of a specific file
+- `fix-ui` — fix UI findings from the last UI analysis report
+- `fix-ui path/to/Component.vue` — fix UI findings for a specific file
+- `fix-ui U1` — fix a specific UI finding by ID
 
 ### Fallback (make command)
 ```bash
