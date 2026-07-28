@@ -3,7 +3,7 @@
 ## Current Status
 
 Phase: v0.3 → v0.4 transition
-Last commit: 9d8d0c3 — docs: add fix shortcut to reference docs
+Last commit: 84ca4e2 — fix: aggregate all reports in fix-ui, expand modals search, align scroll block on existing spec
 Chat language: ru
 
 ## Session 2026-07-22 (auto-HOME-PATH, Accessing Windows files, make help, rm -rf fix)
@@ -574,3 +574,40 @@ Chat language: ru
 
 ### Fix 2026-07-24 (same session)
 - **frontend-behavior/SKILL.md** — Fixed -pw suffix generation: replaced `→ **[U1-pw]**` with `→ Finding (e2e)` in checklist, added explicit numbering rule (e2e → `[U<N>-pw]`). Expanded API detection to include `useAsyncData`, `useLazyAsyncData`, store actions, `ref()` + `onMounted()`, `api/` paths.
+
+## Session 2026-07-27/28 — agent-e2e full overhaul + fix-ui hardening
+
+### Done
+- **agent-e2e.md**: added @playwright/test check (step 0), guard on config values (headless:false, slowMo:2000), between-retry restrictions (only read error/edit spec, never devtools/context7/kill processes), `run-playwright-verify.sh` script (replaces fragile bash while-loop that broke in zsh), canonical scroll block alignment when reusing existing spec files
+- **agent-fix-ui.md**: step 3.4 rewritten from optional advice to MANDATORY gate (must load agent-e2e before any playwright command), step 0 changed from `head -1` to aggregate ALL reports + dedup by file:line
+- **frontend-behavior/SKILL.md**: new numbering rules (never combine findings, scan-all-files list), expanded Modals/Dialogs search to catch `<transition>`+`v-show`/`v-if` overlay pattern
+- **agent-fix-ui.md Hard Rules**: three TARGET types documented: ID/report path/component path
+- **run-playwright-verify.sh**: created in `scripts/` (not `global/scripts/`), 100755 in git, auto-available via `~/.opencode-harness` symlink
+
+### Key bugs caught
+- zsh parse error on `&& while` — compound command after `&&` breaks. Fixed by extracting retry loop into standalone script
+- agent skipped loading agent-e2e.md entirely, ran playwright directly from fix-ui context. Fixed by MANDATORY gate
+
+### Next
+- Deploy to target project, run `fix-ui U2-pw` to verify the full chain: MANDATORY gate → agent-e2e load → retry-guard script
+
+## Session 2026-07-28 (afternoon) — agent-fix.md: verify strength + UNIT_TEST_REDGREEN
+
+### Done
+- **agent-fix.md** — complete overhaul:
+  - New Step 1a (classify verify strength): C/B → FUNCTIONAL, H/M-major → FUNCTIONAL_PREF, M-medium/L → GREP_OK. grep-only is a violation for C/B.
+  - Pure function detection criteria + UNIT_TEST_REDGREEN verify gate type
+  - Vitest session flag (ask once per session, never again)
+  - Red-green protocol in fix loop: write test → FAIL → fix → PASS
+  - Fallback for no-Vitest: `curl / node -e / python3 -c / grep` per function nature
+  - Dedup + verify tier by highest-severity prefix
+  - `tests/unit/` directory auto-created if absent
+  - 11 new Hard Rules (verify strength tiers, unit test scope, Vitest flag, red-green order)
+- `PROGRESS.md` — Last commit synced to HEAD (84ca4e2)
+- `make test-quick`: 20/20 pass, `make self-check`: OK
+
+### Known issues
+- Need live test on target project to confirm agent actually follows red-green protocol (yesterday's principle: text rules get bypassed)
+
+### Next
+- Commit + make update → test on ticket_tracker/ducito: `fix C1` with pure function expectation
