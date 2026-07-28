@@ -130,24 +130,39 @@ Q0. **Language check:**
              ```
              Set `VITEST_READY = yes`
          n → Set `VITEST_READY = no` (applies to all further findings this session)
-   1b. If verify gate is `UNIT_TEST_REDGREEN` and `VITEST_READY = yes`:
-       **Red-green protocol (run BEFORE fixing the code):**
-       i.   Write ONE test file: `tests/unit/<finding-slug>.test.ts`
-            (create `tests/unit/` if it does not exist)
-            — covers the specific buggy behavior described in the finding
-            — must be minimal: one or two test cases, not full coverage
-            — NEVER create additional files
-       ii.  Run test — it MUST fail:
-            ```bash
-            npx vitest run tests/unit/<finding-slug>.test.ts
-            ```
-            If it passes immediately → the test does not target the actual bug.
-            Rewrite it until it fails before proceeding.
-       iii. Now apply the fix to the source file (step 2 below)
-       iv.  Re-run the same test — it MUST pass. This re-run IS the verify gate.
-            If it fails → revert fix, explain, propose alternative (step 5)
-        v.   Output the verify+Next? template (step 4) and wait for user answer.
-             Do NOT mark [x] before user answers.
+    1b. If verify gate is `UNIT_TEST_REDGREEN` and `VITEST_READY = yes`:
+        **Red-green protocol (run BEFORE fixing the code):**
+        i.   Write ONE test file: `tests/unit/<finding-slug>.test.ts`
+             (create `tests/unit/` if it does not exist)
+             — covers the specific buggy behavior described in the finding
+             — must be minimal: one or two test cases, not full coverage
+             — NEVER create additional files
+        ii.  Run test — it MUST fail:
+             ```bash
+             npx vitest run tests/unit/<finding-slug>.test.ts
+             ```
+             If it passes immediately → the test does not target the actual bug.
+             Rewrite it until it fails before proceeding.
+        ii-b. If test fails with ReferenceError on framework globals (ref,
+              computed, defineEventHandler, etc.) — this is a test environment
+              problem, not a source bug. Fix via setup file:
+              (1) Create tests/unit/setup.ts with vi.stubGlobal calls for each
+                  missing global
+              (2) Add setupFiles: ['./tests/unit/setup.ts'] to vitest.config.ts
+              (3) Update the test import to import the function directly from
+                  the source file instead of through the framework wrapper
+              (4) Re-run test. If still fails for same reason — report to user.
+              NEVER modify the source file's module structure or add exports
+              to work around import errors.
+        iii. Now apply the fix to the source file (step 2 below)
+        iv.  Re-run the same test — it MUST pass. This re-run IS the verify gate.
+             If it fails → revert fix, explain, propose alternative (step 5)
+        iv-b. MANDATORY — after GREEN, output one sentence:
+              "This test will fail if [X] breaks because [Y]"
+              Cannot be skipped. X = the business rule or logic being tested.
+              Y = the concrete consequence.
+         v.   Output the verify+Next? template (step 4) and wait for user answer.
+              Do NOT mark [x] before user answers.
    1c. If verify gate is `UNIT_TEST_REDGREEN` and `VITEST_READY = no`:
        Replace verify gate with a functional check without a test runner.
        Choose the appropriate tool based on the function's nature:
@@ -211,6 +226,7 @@ Q0. **Language check:**
 | Unit test scope | ONE test file, one or two cases on the specific fixed function — not full file coverage |
 | Vitest session flag | Ask once per session on first UNIT_TEST_REDGREEN finding. Never ask again. |
 | Red-green order | Write test → confirm FAIL → fix code → confirm PASS. Never fix first. |
+| Framework auto-imports | If test fails with ReferenceError on framework globals (ref, computed, defineEventHandler, etc.) — fix via vitest setup file (vi.stubGlobal or setupFiles). Never modify source file structure. Try in order: (1) vi.stubGlobal in tests/unit/setup.ts, (2) official test-utils package for the framework. If neither works — report to user, do NOT touch source. |
 | Choice of approach | Agent offers 2-3 options with rationale → user picks |
 | Env var findings | If finding involves env var / secret key — scope extends to `.env.example` and `docker-compose.yml` in addition to the source file |
 | TARGET no arg | Full latest report |
