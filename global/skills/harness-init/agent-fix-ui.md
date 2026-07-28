@@ -52,20 +52,25 @@ Q0. **Language check — same as agent-fix.md:**
    3. Fix the code in file:line — do this BEFORE loading agent-e2e
    4. MANDATORY — before running ANY playwright command for this finding, you MUST load ~/.config/opencode/skills/harness-init/agent-e2e.md via Read tool. This applies even if tests/e2e/*.spec.ts or playwright.config.ts already exist from a previous attempt — loading is not conditional on whether files exist.
       NEVER call `npx playwright test` or any playwright command directly from agent-fix-ui logic. All test execution for this finding must go through agent-e2e.md's retry-guard (its step 4), no exceptions.
-      If verify is PLAYWRIGHT → load agent-e2e.md now:
-        pass: file:line, description, acceptance criteria
-        on return: PASS → mark [x] in PLAN.md, skip to step 6
-                   FAIL → show output, ask "Skip this finding? (y/n)"
-                     y → mark [x] in PLAN.md (skipped), skip to step 6
-                     n → fall through to step 5
-      If verify is static → grep check the fix exists — PASS → step 6, FAIL → step 5
-   5. If verify fails — revert change, explain why, propose alternative
-   6. If verify passes — mark [x] in PLAN.md
-   7. After each finding: ask "Next? (y / n / stop)"
-      y → continue
-      n → skip, continue
-      stop → append Resolved to report, update PLAN.md, exit.
-            Then ask: "Commit current changes? (y/n)" — user decides.
+       If verify is PLAYWRIGHT → load agent-e2e.md now:
+         pass: file:line, description, acceptance criteria
+         on return: PASS → go to step 6
+                    FAIL → show output, ask "Skip this finding? (y/n)"
+                      y → mark [x] (bypassed), go to step 6
+                      n → fall through to step 5
+       If verify is static → grep check the fix exists — PASS → step 6, FAIL → step 5
+    5. If verify fails — revert change, explain why, propose alternative
+    6. **After verify (PASS or FAIL after revert):**
+       Output EXACTLY:
+         > [ID] — verify: [TOOL] (PASS/FAIL)
+         > Next? (y / n / stop)
+       Wait for user answer BEFORE any action:
+       - PASS + y → mark [x] in PLAN.md, continue to next finding
+       - PASS + n → mark [x] (bypassed), continue
+       - PASS + stop → append Resolved to report, update PLAN.md, exit.
+         Then ask: "Commit? (y/n)" — user decides.
+       - FAIL → revert change, explain why, propose alternative.
+         Then ask "Next?" again with same template.
 
 4. **Append Resolved section to the UI analysis report:**
    ## Resolved (YYYY-MM-DD)

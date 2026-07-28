@@ -144,7 +144,8 @@ Q0. **Language check:**
        iii. Now apply the fix to the source file (step 2 below)
        iv.  Re-run the same test — it MUST pass. This re-run IS the verify gate.
             If it fails → revert fix, explain, propose alternative (step 5)
-       v.   Mark [x] in PLAN.md → skip to step 7
+        v.   Output the verify+Next? template (step 4) and wait for user answer.
+             Do NOT mark [x] before user answers.
    1c. If verify gate is `UNIT_TEST_REDGREEN` and `VITEST_READY = no`:
        Replace verify gate with a functional check without a test runner.
        Choose the appropriate tool based on the function's nature:
@@ -155,22 +156,28 @@ Q0. **Language check:**
    2. If finding requires a choice (library, approach) — offer 2-3 options with
       rationale → wait for user selection
    3. If purely technical — fix without asking
-   4. Run verify gate from PLAN.md (skip if already handled in step 1b)
-   5. If verify fails — revert change, explain why, propose alternative
-   6. If verify passes — mark [x] in PLAN.md
-   7. **After each finding: ask "Next? (y / n / stop)"**
-      y → continue to next finding
-      n → skip this finding (keep [ ]), continue to next
-      stop → append Resolved section to report, update PLAN.md, exit.
-            Then ask: "Commit current changes? (y/n)" — user decides.
+    4. **Run verify gate — output + Next? are one block:**
+       After verify produces PASS or FAIL, output EXACTLY:
+         > [ID] — verify: [TOOL] (PASS/FAIL)
+         > Next? (y / n / stop)
+       Wait for user answer BEFORE any action:
+       - PASS + y → mark [x] in PLAN.md, continue to next finding
+       - PASS + n → mark [x] in PLAN.md (bypassed), continue
+       - PASS + stop → append Resolved to report, update PLAN.md,
+         exit. Then ask: "Commit? (y/n)" — user decides.
+       - FAIL → revert change, explain why, propose alternative.
+         Then ask "Next?" again with same template.
+       For UNIT_TEST_REDGREEN findings: the re-run in step 1b.iv
+       IS the verify gate. After step 1b.iv, output the same
+       template and wait — do NOT repeat step 4.
    After all done — "Phase 1 complete. Proceed to Phase 2? (y/n)"
 
 4. **Phase 2 — HIGH + MAJOR:**
-   Same cycle as Phase 1 (including sub-steps 1a–1c and step 7 with "Next? (y/n/stop)").
+   Same cycle as Phase 1 (including sub-steps 1a–1c and step 4 verify+Next? block).
    After done — "Phase 2 complete. Proceed to Phase 3? (y/n)"
 
 5. **Phase 3 — MEDIUM:**
-   Same cycle as Phase 1 (including sub-steps 1a–1c and step 7 with "Next? (y/n/stop)").
+   Same cycle as Phase 1 (including sub-steps 1a–1c and step 4 verify+Next? block).
 
 6. **Update docs/roadmap.md if exists:**
    ```bash
