@@ -39,6 +39,7 @@ When user types:
 - `dod` — run `make dod` in current project directory
 - `docs` — run `make session-end` and remind to update docs if code changed
 
+- `unadopt` — run `make unadopt` in current project directory to remove all harness files (AGENTS.md, MEMORY.md, PLAN.md, PROGRESS.md, HARNESS.md, memory/, pre-commit hook). Keeps docs/ unless confirmed.
 - `sync-templates` — check for new harness template files missing in current project:
   missing=0
   for f in ~/.opencode-harness/templates/*.md; do

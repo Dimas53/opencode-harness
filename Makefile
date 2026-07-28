@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: help link setup init init-adopt analyze verify update dod mcp self-check uninstall uninstall-lite
+.PHONY: help link setup init init-adopt analyze verify update dod mcp self-check uninstall uninstall-lite unadopt
 
 .DEFAULT_GOAL := help
 
@@ -20,7 +20,8 @@ help:
 	@echo "                        (uncommitted check + cyrillic scan + docs lag)"
 	@echo "  make self-check     -- verify syntax, permissions and diff before committing"
 	@echo "  make uninstall      -- remove everything (harness + OpenCode + RTK + uv)"
-	@echo "  make uninstall-lite -- remove harness only, keep OpenCode and RTK"
+ 	@echo "  make uninstall-lite -- remove harness only, keep OpenCode and RTK"
+	@echo "  make unadopt        -- remove all harness files from current project"
 	@echo ""
 	@echo "  make link          -- create ~/.opencode-harness symlink"
 	@echo "  make session-end   -- run Session End protocol"
@@ -107,6 +108,29 @@ uninstall-lite:
 	@echo "✓ Harness files removed. OpenCode and RTK kept."
 	@echo ""
 	@echo "  Last step: rm -rf $(CURDIR)"
+
+unadopt:
+	@test -f MEMORY.md || (echo "✗ Harness files not found here. Run from project root."; exit 1)
+	@rm -f AGENTS.md MEMORY.md PLAN.md PROGRESS.md HARNESS.md
+	@rm -rf memory/
+	@if [ -f .git/hooks/pre-commit.bak ]; then \
+		mv .git/hooks/pre-commit.bak .git/hooks/pre-commit; \
+		echo "  Hook: restored from backup"; \
+	else \
+		rm -f .git/hooks/pre-commit; \
+		echo "  Hook: removed"; \
+	fi
+	@echo ""
+	@printf "docs/ may contain files created during harness sessions.\nDelete docs/ too? [y/N] "; \
+		read answer; \
+		if [ "$$answer" = "y" ] || [ "$$answer" = "Y" ]; then \
+			rm -rf docs/; \
+			echo "  docs/: deleted"; \
+		else \
+			echo "  docs/: kept"; \
+		fi
+	@echo ""
+	@echo "✓ Harness removed from project"
 
 session-end:
 	@./scripts/session-end.sh

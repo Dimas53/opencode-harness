@@ -83,17 +83,24 @@ cd ~/opencode-harness && make update
 
 ### Uninstall
 
-**Full removal** (harness + OpenCode + RTK):
+**From your machine** (global harness installation):
 ```bash
 cd ~/opencode-harness && make uninstall
 cd .. && rm -rf opencode-harness
 ```
 
-**Harness only** (keep OpenCode and RTK):
+**Harness only from machine** (keep OpenCode and RTK):
 ```bash
 cd ~/opencode-harness && make uninstall-lite
 cd .. && rm -rf opencode-harness
 ```
+
+**From a project** (remove all files that adopt/new installed):
+```bash
+cd /path/to/project && make unadopt
+```
+This removes: AGENTS.md, MEMORY.md, PLAN.md, PROGRESS.md, HARNESS.md, memory/, pre-commit hook.
+Asks before deleting docs/. Run from project root.
 
 ## After Setup — Start Any Project
 
