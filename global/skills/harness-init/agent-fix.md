@@ -85,9 +85,9 @@ Q0. **Language check:**
     If UNIT_TEST_REDGREEN applies — mark the finding's verify gate as
     `UNIT_TEST_REDGREEN` in PLAN.md instead of a bash command.
 
-    **Vitest session flag** — set once per session, not per finding:
-    - `VITEST_READY = unknown` initially
-    - First time a `UNIT_TEST_REDGREEN` finding is reached → check and set flag
+    **Test runner session flag** — set once per session, not per finding:
+    - `RUNNER_READY = unknown` initially, `TEST_RUNNER = unknown`
+    - First time a `UNIT_TEST_REDGREEN` finding is reached → detect runner and set flag
       (see Step 3, sub-step 1a)
     - All subsequent `UNIT_TEST_REDGREEN` findings use the stored flag without
       asking again
@@ -113,57 +113,135 @@ Q0. **Language check:**
 3. **Phase 1 — CRITICAL + BLOCKER:**
    Show list → ask user to confirm → for each finding:
    1. Read file:line — scope: only this file, do not touch adjacent files
-   1a. If verify gate is `UNIT_TEST_REDGREEN` and `VITEST_READY = unknown`:
-       ```bash
-       grep -q '"vitest"' package.json 2>/dev/null && echo "FOUND" || echo "MISSING"
-       ```
-       If FOUND → set `VITEST_READY = yes`
-       If MISSING → ask user once: "No Vitest found. Install it for unit test
-         verify? (y/n — choosing n means curl-based verify for all pure function
-         findings this session)"
-         y → `npm install -D vitest` then create minimal config if missing:
-             ```bash
-             test -f vitest.config.ts || cat > vitest.config.ts << 'EOF'
-             import { defineConfig } from 'vitest/config'
-             export default defineConfig({ test: { environment: 'node' } })
-             EOF
-             ```
-             Set `VITEST_READY = yes`
-         n → Set `VITEST_READY = no` (applies to all further findings this session)
-    1b. If verify gate is `UNIT_TEST_REDGREEN` and `VITEST_READY = yes`:
-        **Red-green protocol (run BEFORE fixing the code):**
+    1a. If verify gate is `UNIT_TEST_REDGREEN` and `RUNNER_READY = unknown`:
+        **Test runner detection (once per session, before first UNIT_TEST_REDGREEN):**
+        ```bash
+        # JS/TS runners
+        PKG_JSON=$(find . -name "package.json" -not -path "*/node_modules/*" \
+          -exec grep -lE '"vitest"|"jest"|"jasmine"' {} \; 2>/dev/null | head -3)
+        # Python
+        PY_FILES=$(find . \( -name "requirements*.txt" -o -name "pyproject.toml" \) \
+          2>/dev/null | head -1)
+        # PHP
+        COMPOSER=$(find . -name "composer.json" -not -path "*/vendor/*" 2>/dev/null | head -1)
+        # Go
+        GOMOD=$(find . -name "go.mod" 2>/dev/null | head -1)
+        ```
+        Result mapping (check in order):
+        - vitest in package.json → TEST_RUNNER = vitest
+        - jest in package.json → TEST_RUNNER = jest
+        - jasmine in package.json → TEST_RUNNER = jasmine
+        - requirements.txt / pyproject.toml → TEST_RUNNER = pytest
+        - composer.json → TEST_RUNNER = phpunit
+        - go.mod → TEST_RUNNER = go_test
+        - nothing found → ask user: "No test runner detected. Which one? (vitest / jest / pytest / phpunit / other)"
+
+        Then verify runner is installed:
+        - vitest → `grep -q '"vitest"' package.json 2>/dev/null`
+        - jest → `grep -q '"jest"' package.json 2>/dev/null`
+        - pytest → `python3 -m pytest --version 2>/dev/null`
+        - phpunit → `./vendor/bin/phpunit --version 2>/dev/null`
+        - go_test → always ready (built-in)
+
+        If not installed → ask user once:
+        "TEST_RUNNER not installed. Install now? (y/n — choosing n means
+        write-only mode for all UNIT_TEST_REDGREEN findings this session)"
+        On y → install with the appropriate command (ask only, auto-install):
+        - vitest → `npm install -D vitest`
+        - jest → `npm install -D jest @types/jest ts-jest`
+        - pytest → ask: "Install pytest? (pip install pytest)"
+        - phpunit → ask: "Install PHPUnit? (composer require --dev phpunit/phpunit)"
+        On n → Set `RUNNER_READY = no` (write-only mode, no test execution)
+
+        Set `RUNNER_READY = yes` when runner is confirmed installed.
+        Store TEST_RUNNER value for all subsequent steps.
+    1b. If verify gate is `UNIT_TEST_REDGREEN` and `RUNNER_READY = yes` and finding prefix is NOT `L`:
+        **Red-green protocol (bug findings only — code must be incorrect):**
         i.   Write ONE test file: `tests/unit/<finding-slug>.test.ts`
              (create `tests/unit/` if it does not exist)
              — covers the specific buggy behavior described in the finding
              — must be minimal: one or two test cases, not full coverage
              — NEVER create additional files
+             Use correct test syntax per TEST_RUNNER:
+             - vitest/jest → describe/it/expect with vi.mock()/jest.mock()
+             - pytest → functions with assert, unittest.mock.patch()
+             - phpunit → class extending TestCase, methods starting with test
+             - go_test → func TestXxx(t *testing.T)
         ii.  Run test — it MUST fail:
              ```bash
-             npx vitest run tests/unit/<finding-slug>.test.ts
+             # Command per TEST_RUNNER:
+             # vitest:  npx vitest run tests/unit/<finding-slug>.test.ts
+             # jest:    npx jest tests/unit/<finding-slug>.test.ts
+             # pytest:  python3 -m pytest tests/unit/<finding-slug>.py -v
+             # phpunit: ./vendor/bin/phpunit tests/unit/<finding-slug>.php
+             # go_test: go test ./... -run TestFunctionName -v
              ```
              If it passes immediately → the test does not target the actual bug.
              Rewrite it until it fails before proceeding.
         ii-b. If test fails with ReferenceError on framework globals (ref,
-              computed, defineEventHandler, etc.) — this is a test environment
-              problem, not a source bug. Fix via setup file:
-              (1) Create tests/unit/setup.ts with vi.stubGlobal calls for each
-                  missing global
-              (2) Add setupFiles: ['./tests/unit/setup.ts'] to vitest.config.ts
+              computed, defineEventHandler, etc.) — this is ONLY for vitest/jest.
+              Fix via setup file:
+              (1) Create tests/unit/setup.ts with vi.stubGlobal / jest.fn() calls
+              (2) Add setupFiles: ['./tests/unit/setup.ts'] to vitest/jest config
               (3) Update the test import to import the function directly from
                   the source file instead of through the framework wrapper
               (4) Re-run test. If still fails for same reason — report to user.
               NEVER modify the source file's module structure or add exports
               to work around import errors.
-        iii. Now apply the fix to the source file (step 2 below)
-        iv.  Re-run the same test — it MUST pass. This re-run IS the verify gate.
-             If it fails → revert fix, explain, propose alternative (step 5)
-        iv-b. MANDATORY — after GREEN, output one sentence:
-              "This test will fail if [X] breaks because [Y]"
-              Cannot be skipped. X = the business rule or logic being tested.
-              Y = the concrete consequence.
-         v.   Output the verify+Next? template (step 4) and wait for user answer.
-              Do NOT mark [x] before user answers.
-   1c. If verify gate is `UNIT_TEST_REDGREEN` and `VITEST_READY = no`:
+              For pytest/phpunit/go: framework globals are not auto-imported —
+              use explicit imports in the test file instead.
+         iii. Now apply the fix to the source file (step 2 below)
+         iv.  Re-run the same test — it MUST pass. This re-run IS the verify gate:
+              ```bash
+              # Same command as step ii per TEST_RUNNER
+              ```
+              If it fails → revert fix, explain, propose alternative (step 5)
+
+        MANDATORY OUTPUT BLOCK — cannot skip, cannot reorder, must appear after GREEN:
+        "This test will fail if [X] breaks because [Y]"
+        X = specific business rule being tested. Y = concrete consequence.
+        > [ID] — verify: UNIT_TEST_REDGREEN (PASS)
+        > Next? (y / n / stop)
+        Wait for user answer before any action.
+    1b-L. If verify gate is `UNIT_TEST_REDGREEN` and `RUNNER_READY = yes` and finding prefix is `L`:
+          **Coverage protocol (L-findings only — code is correct, no bug to fix):**
+
+          All chat output in this protocol (confirmations, explanations, verify output)
+          must be in session language. Read from PROGRESS.md: `Chat language: <code>`.
+
+          Before writing test — check finding Type and enforce minimum scenarios:
+          - pure function   → (1) happy path  (2) null/undefined/zero input  (3) boundary value
+          - composable      → (1) success path  (2) API error (mock rejects)  (3) missing/null dependency
+          - server route    → (1) valid request  (2) missing required fields → 400  (3) unauthorized → 401
+          Each test case must use expect()/assert() with concrete values. toBeTruthy() alone is not allowed.
+          Minimum 3 test cases per finding — one per scenario above.
+
+          Use correct test syntax per TEST_RUNNER (same as step 1b.i).
+
+          i.   Write ONE test file: `tests/unit/<finding-slug>.test.ts`
+               (or .py / .php per TEST_RUNNER convention)
+               — use ALL test cases from the finding exactly as listed
+               — for composables (vitest/jest): apply setup.ts with vi.stubGlobal if needed
+                 (see step 1b.ii-b for ReferenceError handling — same approach)
+               — NEVER create additional files except setup.ts if needed
+          ii.  Run test — it SHOULD pass immediately (code is correct):
+               ```bash
+               # Command per TEST_RUNNER (same as step 1b.ii)
+               ```
+               If it FAILS:
+               - ReferenceError on framework globals → apply step 1b.ii-b
+                 (vitest/jest only). Re-run.
+               - Logic failure (wrong output) → this may be a real bug.
+                 Report to user before proceeding. Do NOT fix source
+                 without user confirmation.
+
+          MANDATORY OUTPUT BLOCK — cannot skip, cannot reorder, must appear after test run:
+          "This test will fail if [X] breaks because [Y]"
+          X = specific business rule being tested. Y = concrete consequence.
+          > [ID] — verify: UNIT_TEST_REDGREEN (PASS)
+          > Next? (y / n / stop)
+          Wait for user answer before any action.
+    1c. If verify gate is `UNIT_TEST_REDGREEN` and `RUNNER_READY = no`:
        Replace verify gate with a functional check without a test runner.
        Choose the appropriate tool based on the function's nature:
        - HTTP behavior (status codes, headers) → curl with response assertion
@@ -184,9 +262,9 @@ Q0. **Language check:**
          exit. Then ask: "Commit? (y/n)" — user decides.
        - FAIL → revert change, explain why, propose alternative.
          Then ask "Next?" again with same template.
-       For UNIT_TEST_REDGREEN findings: the re-run in step 1b.iv
-       IS the verify gate. After step 1b.iv, output the same
-       template and wait — do NOT repeat step 4.
+       For UNIT_TEST_REDGREEN findings: the MANDATORY OUTPUT BLOCK
+       in step 1b/1b-L already includes the verify result + Next? prompt.
+       Do NOT output step 4 template again — the block IS the verify gate.
    After all done — "Phase 1 complete. Proceed to Phase 2? (y/n)"
 
 4. **Phase 2 — HIGH + MAJOR:**
@@ -224,7 +302,8 @@ Q0. **Language check:**
 | Verify strength L | UNIT_TEST_REDGREEN always — never curl, never grep |
 | Dedup + verify | Merged findings use highest-severity prefix to determine verify tier |
 | Unit test scope | ONE test file, one or two cases on the specific fixed function — not full file coverage |
-| Vitest session flag | Ask once per session on first UNIT_TEST_REDGREEN finding. Never ask again. |
+| Test runner session flag | Detect once per session on first UNIT_TEST_REDGREEN finding. Never ask again. |
+| Test runner install | Always ask user before installing any test runner package. Never install silently. |
 | Red-green order | Write test → confirm FAIL → fix code → confirm PASS. Never fix first. |
 | Framework auto-imports | If test fails with ReferenceError on framework globals (ref, computed, defineEventHandler, etc.) — fix via vitest setup file (vi.stubGlobal or setupFiles). Never modify source file structure. Try in order: (1) vi.stubGlobal in tests/unit/setup.ts, (2) official test-utils package for the framework. If neither works — report to user, do NOT touch source. |
 | Choice of approach | Agent offers 2-3 options with rationale → user picks |
