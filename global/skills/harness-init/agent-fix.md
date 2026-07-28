@@ -39,14 +39,15 @@ Q0. **Language check:**
 1. **Parse findings by section:**
    Read the report. Track current section by `##` headers.
    For each line matching pattern `**[X+N]**` — extract type, number, title, file:line.
-   Section mapping:
-   | Report section | Prefix | Maps to |
-   |---|---|---|
-   | `## Security` → `### Critical` | C | Phase 1 (CRITICAL) |
-   | `## Security` → `### High` | H | Phase 2 (HIGH) |
-   | `## Security` → `### Medium` | M (with leading `- `) | Phase 3 (MEDIUM) |
-   | `## Senior Review` → `### Blockers` | B | Phase 1 (CRITICAL-equivalent) |
-   | `## Senior Review` → `### Majors` | M (no leading `- `) | Phase 2 (HIGH-equivalent) |
+    Section mapping:
+    | Report section | Prefix | Maps to |
+    |---|---|---|
+    | `## Security` → `### Critical` | C | Phase 1 (CRITICAL) |
+    | `## Security` → `### High` | H | Phase 2 (HIGH) |
+    | `## Security` → `### Medium` | M (with leading `- `) | Phase 3 (MEDIUM) |
+    | `## Senior Review` → `### Blockers` | B | Phase 1 (CRITICAL-equivalent) |
+    | `## Senior Review` → `### Majors` | M (no leading `- `) | Phase 2 (HIGH-equivalent) |
+    | `## Logic Analysis` | L | Phase 1 (UNIT_TEST_REDGREEN always) |
    Skip `## Recommended Next Steps` — summary, not source findings.
    If TARGET is set — keep only findings where file:line contains TARGET.
    **Deduplicate by file:line:** if two findings share the same file:line —
@@ -70,7 +71,8 @@ Q0. **Language check:**
     |--------|-------------|-----------------|
     | C, B | FUNCTIONAL | curl with response code assertion, or UNIT_TEST_REDGREEN for pure functions. grep-only is a violation. |
     | H, M (Senior Majors) | FUNCTIONAL_PREF | Functional preferred; grep acceptable only for purely structural facts (duplicate IDs, missing `lang="ts"`, file existence). |
-    | M (Security Medium), L | GREP_OK | grep is sufficient. |
+    | M (Security Medium) | GREP_OK | grep is sufficient. |
+    | L | UNIT_TEST_REDGREEN always | Never curl, never grep — always write a unit test. |
 
     **Pure function detection:** a finding's fix qualifies for `UNIT_TEST_REDGREEN`
     if ALL of the following are true:
@@ -203,7 +205,8 @@ Q0. **Language check:**
 | Verify gate | Concrete bash command, exit code or output check, never verbal |
 | Verify strength C/B | FUNCTIONAL required — curl+response code or UNIT_TEST_REDGREEN. grep-only is a violation. |
 | Verify strength H/M-major | FUNCTIONAL preferred — grep only for structural facts (file existence, attribute presence) |
-| Verify strength M-medium/L | GREP_OK — grep is sufficient |
+| Verify strength M-medium | GREP_OK — grep is sufficient |
+| Verify strength L | UNIT_TEST_REDGREEN always — never curl, never grep |
 | Dedup + verify | Merged findings use highest-severity prefix to determine verify tier |
 | Unit test scope | ONE test file, one or two cases on the specific fixed function — not full file coverage |
 | Vitest session flag | Ask once per session on first UNIT_TEST_REDGREEN finding. Never ask again. |

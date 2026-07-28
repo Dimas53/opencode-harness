@@ -3,7 +3,7 @@
 ## Current Status
 
 Phase: v0.3 → v0.4 transition
-Last commit: 84ca4e2 — fix: aggregate all reports in fix-ui, expand modals search, align scroll block on existing spec
+Last commit: 5a078d2 — docs: sync full command list across README, INSTALL, GUIDE (15 shortcuts)
 Chat language: ru
 
 ## Session 2026-07-22 (auto-HOME-PATH, Accessing Windows files, make help, rm -rf fix)
@@ -628,3 +628,21 @@ Chat language: ru
 ### Next
 - Fix remaining findings in ducito (H2, H3, M1-M10)
 - Ship v0.4 Sandbox module
+
+## Session 2026-07-28 (analyze-logic skill)
+
+Chat language: ru
+
+### Done
+- **agent-analyze-logic.md** (new) — skill for finding uncovered business logic: grep for export function/use[A-Z]/defineEventHandler, priority rules (finance=HIGH / flows=MEDIUM / formatting=LOW), mandatory test cases >=3 with business rules extracted from code, mock annotations for composables
+- **agent-fix.md** — added L-prefix: section mapping (Logic Analysis -> Phase 1), verify tier (UNIT_TEST_REDGREEN always, never curl/grep)
+- **global/AGENTS.md** — shortcuts: analyze-logic, analyze-logic <path>, fix-logic, fix-logic <ID>
+- **~/.config/opencode/** — mirrored AGENTS.md + skills
+- `make test-quick`: 14/14 pass, `make self-check`: OK
+
+### Known issues
+- Post-commit hook does not mirror global/AGENTS.md — only skills/. Need to copy manually or extend the hook.
+
+### Next
+- Test analyze-logic on itocook project
+- Consider adding AGENTS.md mirroring to post-commit hook

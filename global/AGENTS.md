@@ -19,6 +19,11 @@ When user types:
 - `fix-ui <path>` — load and run `~/.config/opencode/skills/harness-init/agent-fix-ui.md`, set TARGET=<path>
 - `fix-ui <ID>` — load and run `~/.config/opencode/skills/harness-init/agent-fix-ui.md`, set TARGET=<ID> (e.g. `fix-ui U1`)
 
+- `analyze-logic` — load and run `~/.config/opencode/skills/harness-init/agent-analyze-logic.md`
+- `analyze-logic <path>` — load and run `~/.config/opencode/skills/harness-init/agent-analyze-logic.md`, set TARGET=<path>
+- `fix-logic` — load and run `~/.config/opencode/skills/harness-init/agent-fix.md`, set SOURCE=docs/audits/logic-*.md (latest)
+- `fix-logic <ID>` — load and run `~/.config/opencode/skills/harness-init/agent-fix.md`, set TARGET=<ID> (e.g. `fix-logic L1`)
+
 - `update-harness` — pull latest updates and apply globally:
   cd ~/.opencode-harness
   GIT_OUTPUT=$(git pull 2>&1)
