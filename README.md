@@ -98,22 +98,34 @@ cd .. && rm -rf opencode-harness
 ## After Setup — Start Any Project
 
 Open OpenCode in any directory and type one of these:
+
+### Core (project setup + bug fixes)
 - `new` — new project: interview → full doc structure generated
 - `adopt` — existing project: auto-analysis first → fills missing docs
 - `analyze` — read-only audit: architecture + security + risk report
-- `analyze path/to/Component.vue` — focused audit of a specific file or folder
+- `analyze <path>` — focused audit of a specific file or folder
 - `fix` — fix findings from the last analysis report (3-phase: CRITICAL → HIGH → MEDIUM)
-- `fix path/to/file.ts` — fix findings only for a specific file or folder
+- `fix <path>` — fix findings only for a specific file or folder
 - `fix <ID>` — fix a specific finding by ID (e.g. `fix C1`, `fix H2`)
+
+### Testing & Coverage (write + verify tests automatically)
+- `analyze-logic` — find uncovered business logic, generate test cases
+- `analyze-logic <path>` — focused scan of a specific directory or file
+- `fix-logic` — write tests for all uncovered logic (coverage, no source changes)
+- `fix-logic <ID>` — write test for a specific finding (e.g. `fix-logic L1`)
 - `analyze-ui` — UI behavior analysis: forms, buttons, navigation, states, auth
-- `analyze-ui path/to/Component.vue` — focused UI analysis of a specific file
+- `analyze-ui <path>` — focused UI analysis of a specific file
 - `fix-ui` — fix UI findings from the last UI analysis report
-- `fix-ui path/to/Component.vue` — fix UI findings for a specific file
-- `fix-ui <ID>` — fix a specific UI finding by ID (e.g. `fix-ui U1`, `fix-ui U1-pw`)
+- `fix-ui <path>` — fix UI findings for a specific file
+- `fix-ui <ID>` — fix a specific UI finding by ID (e.g. `fix-ui U1`)
+
+### Utility
 - `update-harness` — pull latest harness updates and apply globally
 - `sync-templates` — check for new template files missing in current project
 - `dod` — run Definition of Done checks (6 steps)
 - `docs` — session end + prompt to update docs if code changed
+
+> Full reference: [Test Workflows](instructions/reference/09-test-workflows.md) — how all testing skills chain together.
 
 Or run `make help` in the harness directory to list all available commands.
 
@@ -139,16 +151,20 @@ Generate the config (run from the project root):
 | `Start` | Session Start — 7-step init sequence |
 | `end` / `done` / `Ende` | Session End — docs lag check, PROGRESS.md update |
 | `dod` | Definition of Done — 6 checks manually |
-| `analyze` | Full project analysis — architecture, security, risks, next steps |
-| `analyze path/to/file.ts` | Focused analysis of a specific file or folder |
-| `fix` | Fix CRITICAL/HIGH/MEDIUM findings from the last analysis report |
-| `fix path/to/file.ts` | Fix findings only for a specific file or folder |
-| `fix <ID>` | Fix a specific finding by ID (e.g. `fix C1`, `fix H2`) |
-| `analyze-ui` | UI behavior analysis — forms, buttons, navigation, states, auth |
-| `analyze-ui path/to/file.vue` | Focused UI analysis of a specific file |
-| `fix-ui` | Fix UI findings from the last UI analysis report |
-| `fix-ui path/to/file.vue` | Fix UI findings for a specific file |
-| `fix-ui <ID>` | Fix a specific UI finding by ID (e.g. `fix-ui U1`, `fix-ui U1-pw`) |
+| `analyze` | Full project audit — architecture, security, risks |
+| `analyze <path>` | Focused audit of a specific file or folder |
+| `fix` | Fix CRITICAL/HIGH/MEDIUM findings |
+| `fix <path>` | Fix findings for a specific path |
+| `fix <ID>` | Fix finding by ID (e.g. `fix C1`, `fix H2`) |
+| `analyze-logic` | Find uncovered business logic, generate test cases |
+| `analyze-logic <path>` | Focused logic scan of a directory or file |
+| `fix-logic` | Write tests for all uncovered logic findings |
+| `fix-logic <ID>` | Write test for specific finding (e.g. `fix-logic L1`) |
+| `analyze-ui` | UI behavior analysis — forms, buttons, nav, auth |
+| `analyze-ui <path>` | Focused UI analysis of a specific file |
+| `fix-ui` | Fix UI findings from the last UI report |
+| `fix-ui <path>` | Fix UI findings for a specific file |
+| `fix-ui <ID>` | Fix a specific UI finding by ID (e.g. `fix-ui U1`) |
 
 ## Documentation
 

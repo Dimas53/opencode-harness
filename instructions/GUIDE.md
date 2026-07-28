@@ -196,6 +196,10 @@ The primary way to initialize any project is via shortcuts inside OpenCode:
 | `fix-ui` | Loads agent-fix-ui — fixes UI findings from last UI analysis |
 | `fix-ui <path>` | Same, focused on a specific file (e.g. `fix-ui app/Contact.vue`) |
 | `fix-ui <ID>` | Same, single UI finding by ID (e.g. `fix-ui U1`, `fix-ui U1-pw`) |
+| `analyze-logic` | Loads agent-analyze-logic — finds uncovered business logic, generates test cases |
+| `analyze-logic <path>` | Same, focused on a specific directory or file (e.g. `analyze-logic utils/`) |
+| `fix-logic` | Loads agent-fix (L-mode) — writes tests for uncovered logic findings, no source changes |
+| `fix-logic <ID>` | Same, single logic finding by ID (e.g. `fix-logic L1`, `fix-logic L4`) |
 | `update-harness` | Pulls latest harness updates, applies globally |
 | `sync-templates` | Checks for new template files missing in current project, copies with confirmation |
 | `dod` | Run Definition of Done checks (6 steps) |
@@ -786,6 +790,9 @@ Load ~/.config/opencode/skills/harness-init/agent-adopt.md
 The harness was built and tested on macOS. Linux (Ubuntu, Debian) and WSL2
 are fully compatible. Native Windows (PowerShell) and other Linux distros
 may require adjustments.
+
+For a detailed overview of all test-related skills (coverage, UI, E2E) and
+how they chain together — see [Test Workflows](reference/09-test-workflows.md).
 
 If you encounter issues, run the manual steps instead of Make commands,
 and report the problem so the harness can be updated.
