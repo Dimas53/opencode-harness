@@ -646,3 +646,26 @@ Chat language: ru
 ### Next
 - Test analyze-logic on itocook project
 - Consider adding AGENTS.md mirroring to post-commit hook
+
+## Session 2026-07-28 (multi-runner + mandatory output block)
+
+Chat language: ru
+
+### Done
+- **agent-fix.md** — universal test runner detection: vitest/jest/pytest/phpunit/go_test
+  with per-runner install confirmation (always ask)
+- Runner-specific test syntax and run commands per runner
+- MANDATORY OUTPUT BLOCK: 'will fail if X breaks because Y' consolidated
+  with verify result + Next?
+- ReferenceError handling restricted to vitest/jest only
+- VITEST_READY renamed to RUNNER_READY throughout
+- PATH fix: uncommented .local/bin in .zshrc
+- 3 commits this session: c8fd0de, fbdc1c5, 8f2a1a2
+
+### Known issues
+- Post-commit hook does not mirror global/AGENTS.md — only skills/
+- mcp-server-git crashes with Python error on stdio (pre-existing)
+
+### Next
+- Test fix-logic L4 on itocook with new coverage protocol
+- Test on non-JS project (pytest/phpunit) when available
