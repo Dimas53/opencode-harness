@@ -100,6 +100,13 @@ For each component that loads data via API (search: `useFetch`, `$fetch`, `fetch
 
 ### Modals and Dialogs
 
+Search for components matching any of:
+- Named `<Modal>`/`<Dialog>`/`<Drawer>` components
+- `<transition>` wrapping a `v-show`/`v-if` toggle with fixed/absolute positioning + high z-index
+- Common overlay/dropdown classes: `fixed`, `overlay`, `backdrop`, `menu-overlay`
+
+All matched elements are checked against the same criteria below.
+
 - **Escape close:** Modal closes on Escape key
   If no `@keydown.escape` → static
 - **Outside click:** Modal closes on click outside content area

@@ -84,6 +84,7 @@ Note: source code fix must already be applied before this phase.
      }, '#your-selector');
      await page.waitForTimeout(1000);
      ```
+   - If adding a test to an EXISTING spec file — check the existing scroll block against the canonical pattern above. If it differs (e.g. `block: 'start'`, different timeout), align it to match as part of the same edit.
 
 3. **Pre-flight checks** before running the test:
 

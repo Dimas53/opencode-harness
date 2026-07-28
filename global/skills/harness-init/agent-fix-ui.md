@@ -10,14 +10,17 @@ Q0. **Language check — same as agent-fix.md:**
     - Ask the user → write to PROGRESS.md as ISO code.
     If PROGRESS.md already has `Chat language:` — skip, use existing.
 
-0. **Find latest UI analysis report:**
+0. **Aggregate findings from ALL UI analysis reports:**
    ```bash
-   ls -t docs/audits/ui/*-ui-analysis.md 2>/dev/null | head -1
+   ls docs/audits/ui/*-ui-analysis*.md 2>/dev/null
    ```
    If none found — report: "No UI reports in docs/audits/ui/. Run `analyze-ui` first."
+   Parse findings from ALL report files, not just the latest.
+   Deduplicate findings by file:line (same bug in multiple reports = one entry).
    If TARGET matches pattern `U[0-9]+` (e.g. U1, U2-pw) — treat as ID filter.
      Strip -pw suffix for matching (U1 matches U1-pw).
-   If TARGET is a path — filter by file:line in Step 1.
+   If TARGET is a path matching a report file (`*-ui-analysis*.md`) — parse only that report.
+   If TARGET is a path matching a component (`app/Contact.vue`, `pages/`, etc.) — filter by file:line in Step 1 across all reports.
 
 0b. **Check for existing PLAN.md:**
    ```bash
@@ -46,9 +49,10 @@ Q0. **Language check — same as agent-fix.md:**
 3. **Fix cycle** (for each finding in PLAN.md):
    1. Read file:line — scope: only this file
    2. If finding requires a choice (library, approach) — offer 2-3 options → wait
-   3. If purely technical — fix without asking
-   4. Run verify:
-      If verify is PLAYWRIGHT → load ~/.config/opencode/skills/harness-init/agent-e2e.md
+   3. Fix the code in file:line — do this BEFORE loading agent-e2e
+   4. MANDATORY — before running ANY playwright command for this finding, you MUST load ~/.config/opencode/skills/harness-init/agent-e2e.md via Read tool. This applies even if tests/e2e/*.spec.ts or playwright.config.ts already exist from a previous attempt — loading is not conditional on whether files exist.
+      NEVER call `npx playwright test` or any playwright command directly from agent-fix-ui logic. All test execution for this finding must go through agent-e2e.md's retry-guard (its step 4), no exceptions.
+      If verify is PLAYWRIGHT → load agent-e2e.md now:
         pass: file:line, description, acceptance criteria
         on return: PASS → mark [x] in PLAN.md, skip to step 6
                    FAIL → show output, ask "Skip this finding? (y/n)"
@@ -80,5 +84,6 @@ Q0. **Language check — same as agent-fix.md:**
 | U verify | static — grep/check fix exists |
 | Scope per finding | Only the file from the finding |
 | Phase confirmation | User confirms before start |
-| TARGET as ID | `fix-ui U1` — matches U1 or U1-pw |
-| TARGET as path | `fix-ui app/Contact.vue` — filter by file |
+| TARGET as ID | `fix-ui U1` — matches U1 or U1-pw across all reports |
+| TARGET as report path | `fix-ui docs/audits/ui/FILE.md` — findings from this report only |
+| TARGET as component path | `fix-ui app/Contact.vue` — filter by file across all reports |
