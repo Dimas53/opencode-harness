@@ -1,5 +1,21 @@
 # OpenCode Harness — Guide
 
+## Table of Contents
+
+- [1. What Is This](#1-what-is-this)
+- [2. Two-Layer System (global vs project AGENTS.md)](#2-two-layer-system-global-vs-project-agentsmd)
+- [3. Skills — What They Are and How They Work](#3-skills--what-they-are-and-how-they-work)
+- [3.5 Choosing a Model](#35-choosing-a-model)
+- [3.7 Starting a Project — Shortcuts](#37-starting-a-project--shortcuts)
+- [3.8 Fix Cycle — How `fix` Works](#38-fix-cycle--how-fix-works)
+- [4. How to Start a Session](#4-how-to-start-a-session)
+- [5. Session Lifecycle](#5-session-lifecycle)
+- [6. Definition of Done](#6-definition-of-done)
+- [7. Hard Limits & Safety Gates](#7-hard-limits--safety-gates)
+- [8. How to Initialize a Project](#8-how-to-initialize-a-project)
+- [9. Troubleshooting](#9-troubleshooting)
+- [10. Windows / Cross-Platform](#10-windows--cross-platform)
+
 ---
 
 ## 1. What Is This

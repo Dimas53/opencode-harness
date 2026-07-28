@@ -1,5 +1,21 @@
 # Installation Guide
 
+## Table of Contents
+
+- [Installation](#installation)
+- [Installing on macOS](#installing-on-macos)
+- [Installing on Windows](#installing-on-windows)
+- [Uninstalling](#uninstalling)
+- [Starting a New Project](#starting-a-new-project)
+- [Starting an Existing Project](#starting-an-existing-project)
+- [Analyzing a Project (without creating docs)](#analyzing-a-project-without-creating-docs)
+- [Keeping the Harness Updated](#keeping-the-harness-updated)
+- [Verify Installation](#verify-installation)
+- [Directus MCP (per project)](#directus-mcp-per-project)
+- [MCP Security — Restricting Filesystem Access](#mcp-security--restricting-filesystem-access)
+
+---
+
 ## Installation
 
 ```bash
