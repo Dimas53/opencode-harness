@@ -611,3 +611,20 @@ Chat language: ru
 
 ### Next
 - Commit + make update → test on ticket_tracker/ducito: `fix C1` with pure function expectation
+
+## Session 2026-07-28 (late) — live test on ducito + "Next?" barrier fix
+
+### Done
+- **Live test on ducito**: `fix C1` — agent correctly followed UNIT_TEST_REDGREEN protocol (vitest install → write test → FAIL → fix → PASS → verify). Configuration workaround: setup.ts + export for vitest compatibility with Nuxt server routes.
+- **Stop no longer auto-commits**: agent-fix.md + agent-fix-ui.md — `stop` now appends Resolved, updates PLAN.md, exits. User decides when to commit.
+- **Verify + "Next?" merged**: agent-fix.md + agent-fix-ui.md — verify output template now REQUIRES `> [ID] — verify: [TOOL] (PASS/FAIL)` + `> Next? (y/n/stop)`. Agent cannot show verify result without asking "Next?" and waiting for answer before `mark [x]`.
+- Commits: `15d96a3` (feat: verify strength), `b4af051` (fix: stop no auto-commit), `01692fa` (fix: verify+Next? merged)
+- `make test-quick`: 20/20 pass, `make self-check`: OK
+
+### Known issues
+- dod.sh docs matrix fails for `global/` changes (known, requires --no-verify for skill-only commits)
+- Nuxt server routes can't be directly imported in vitest (requires setup.ts mock) — documented in memory
+
+### Next
+- Fix remaining findings in ducito (H2, H3, M1-M10)
+- Ship v0.4 Sandbox module
