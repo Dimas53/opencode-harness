@@ -64,7 +64,8 @@ Q0. **Language check — same as agent-fix.md:**
    7. After each finding: ask "Next? (y / n / stop)"
       y → continue
       n → skip, continue
-      stop → commit current progress, append Resolved to report, exit
+      stop → append Resolved to report, update PLAN.md, exit.
+            Then ask: "Commit current changes? (y/n)" — user decides.
 
 4. **Append Resolved section to the UI analysis report:**
    ## Resolved (YYYY-MM-DD)

@@ -161,7 +161,8 @@ Q0. **Language check:**
    7. **After each finding: ask "Next? (y / n / stop)"**
       y → continue to next finding
       n → skip this finding (keep [ ]), continue to next
-      stop → commit current progress, append Resolved section to report, then commit, exit
+      stop → append Resolved section to report, update PLAN.md, exit.
+            Then ask: "Commit current changes? (y/n)" — user decides.
    After all done — "Phase 1 complete. Proceed to Phase 2? (y/n)"
 
 4. **Phase 2 — HIGH + MAJOR:**
