@@ -172,8 +172,9 @@ The primary way to initialize any project is via shortcuts inside OpenCode:
 `adopt` | Loads agent-adopt — codebase analysis + docs |
 | `analyze` | Loads agent-analyze — full project audit, no file changes |
 | `analyze <path>` | Same, focused on a specific file or folder (e.g. `analyze pages/Dashboard.vue`) |
-| `fix` | Loads agent-fix — fixes findings from last analysis report (3-phase) |
+| `fix` | Loads agent-fix — fixes findings from last analysis report (3-phase). See §3.8 for mechanics |
 | `fix <path>` | Same, focused on a specific file or folder (e.g. `fix server/api/`) |
+| `fix <ID>` | Same, single finding by ID (e.g. `fix C1`, `fix H2`) |
 | `update-harness` | Pulls latest harness updates, applies globally (requires `make link` once) |
 | `sync-templates` | Checks for new template files missing in current project, copies with confirmation |
 
@@ -184,6 +185,57 @@ Fallback if shortcuts don't trigger:
 ```bash
 cd ~/path/to/opencode-harness && make init PROJECT=$(pwd)
 ```
+
+---
+
+## 3.8 Fix Cycle — How `fix` Works
+
+When you run `fix` (or `fix C1`, `fix server/api/`), the agent follows a structured
+3-phase process:
+
+### Phase flow
+
+```
+analyze report → parse findings → classify verify strength → PLAN.md → 
+Phase 1 (C/B) → Phase 2 (H/M-major) → Phase 3 (M-medium/L)
+```
+
+### Verify strength by severity
+
+| Prefix | Required verify | Allowed tools |
+|--------|----------------|--------------|
+| C, B | FUNCTIONAL — must assert behavior, grep-only is a violation | curl + response code, or UNIT_TEST_REDGREEN |
+| H, M (Senior Majors) | FUNCTIONAL_PREF — functional preferred; grep OK only for structural facts (duplicate IDs, missing `lang="ts"`) | curl, grep on file content |
+| M (Security Medium), L | GREP_OK — simple existence check is sufficient | grep |
+
+### UNIT_TEST_REDGREEN (for pure functions)
+
+If a finding's fix is a **pure function** (no network/DB/filesystem — e.g. input
+validation, sanitization, formatting), the agent runs **red-green protocol**:
+
+1. Write one test in `tests/unit/<finding>.test.ts`
+2. Run it — must FAIL (proves the bug)
+3. Fix the source code
+4. Re-run — must PASS (this IS the verify gate)
+
+On first `UNIT_TEST_REDGREEN` finding, agent asks to install Vitest once per
+session. If declined, falls back to `curl / node -e / python3 -c / grep`.
+
+### Verify + "Next?" are one block
+
+After every verify (PASS or FAIL), the agent outputs:
+```
+> [ID] — verify: [TOOL] (PASS/FAIL)
+> Next? (y / n / stop)
+```
+
+The agent waits for user answer before marking `[x]` in PLAN.md. This prevents
+the agent from silently continuing without confirmation.
+
+### The `stop` option
+
+`stop` does NOT auto-commit. It appends the resolved finding to the analysis
+report and updates PLAN.md. User decides when to commit.
 
 ---
 
