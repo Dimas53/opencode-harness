@@ -185,14 +185,21 @@ The primary way to initialize any project is via shortcuts inside OpenCode:
 | Type | What happens |
 |------|-------------|
 | `new` | Loads agent-new-project — interview + full doc generation |
-`adopt` | Loads agent-adopt — codebase analysis + docs |
+| `adopt` | Loads agent-adopt — codebase analysis + docs |
 | `analyze` | Loads agent-analyze — full project audit, no file changes |
 | `analyze <path>` | Same, focused on a specific file or folder (e.g. `analyze pages/Dashboard.vue`) |
 | `fix` | Loads agent-fix — fixes findings from last analysis report (3-phase). See §3.8 for mechanics |
 | `fix <path>` | Same, focused on a specific file or folder (e.g. `fix server/api/`) |
 | `fix <ID>` | Same, single finding by ID (e.g. `fix C1`, `fix H2`) |
-| `update-harness` | Pulls latest harness updates, applies globally (requires `make link` once) |
+| `analyze-ui` | Loads agent-analyze-ui — UI behavior analysis (forms, buttons, nav, states, a11y) |
+| `analyze-ui <path>` | Same, focused on a specific file (e.g. `analyze-ui app/Contact.vue`) |
+| `fix-ui` | Loads agent-fix-ui — fixes UI findings from last UI analysis |
+| `fix-ui <path>` | Same, focused on a specific file (e.g. `fix-ui app/Contact.vue`) |
+| `fix-ui <ID>` | Same, single UI finding by ID (e.g. `fix-ui U1`, `fix-ui U1-pw`) |
+| `update-harness` | Pulls latest harness updates, applies globally |
 | `sync-templates` | Checks for new template files missing in current project, copies with confirmation |
+| `dod` | Run Definition of Done checks (6 steps) |
+| `docs` | Session end + prompt to update docs if code changed |
 
 These shortcuts work from any directory inside an open OpenCode session.
 No make commands needed — just open OpenCode and type the shortcut.

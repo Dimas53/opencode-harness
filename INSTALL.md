@@ -350,15 +350,22 @@ then fills knowledge gaps via interview, then generates missing documentation.
 
 ### Primary path
 Open OpenCode in the project directory and type:
+- `new` — new project: interview → full doc structure generated
+- `adopt` — existing project: auto-analysis first → fills missing docs
 - `analyze` — full project analysis
 - `analyze path/to/file.ts` — focused analysis of a specific file or folder
 - `fix` — fix findings from the last analysis report (3-phase: CRITICAL → HIGH → MEDIUM)
 - `fix path/to/file.ts` — fix findings only for a specific file or folder
+- `fix <ID>` — fix a specific finding by ID (e.g. `fix C1`, `fix H2`)
 - `analyze-ui` — UI behavior analysis: forms, buttons, navigation, states, auth
 - `analyze-ui path/to/Component.vue` — focused UI analysis of a specific file
 - `fix-ui` — fix UI findings from the last UI analysis report
 - `fix-ui path/to/Component.vue` — fix UI findings for a specific file
-- `fix-ui U1` — fix a specific UI finding by ID
+- `fix-ui <ID>` — fix a specific UI finding by ID (e.g. `fix-ui U1`, `fix-ui U1-pw`)
+- `update-harness` — pull latest harness updates and apply globally
+- `sync-templates` — check for new template files missing in current project
+- `dod` — run Definition of Done checks (6 steps)
+- `docs` — session end + prompt to update docs if code changed
 
 ### Fallback (make command)
 ```bash
