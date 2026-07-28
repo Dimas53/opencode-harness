@@ -109,10 +109,14 @@ Open OpenCode in any directory and type one of these:
 - `fix <ID>` — fix a specific finding by ID (e.g. `fix C1`, `fix H2`)
 
 ### Testing & Coverage (write + verify tests automatically)
+
+**Coverage (business logic)**
 - `analyze-logic` — find uncovered business logic, generate test cases
 - `analyze-logic <path>` — focused scan of a specific directory or file
 - `fix-logic` — write tests for all uncovered logic (coverage, no source changes)
 - `fix-logic <ID>` — write test for a specific finding (e.g. `fix-logic L1`)
+
+**UI Behavior**
 - `analyze-ui` — UI behavior analysis: forms, buttons, navigation, states, auth
 - `analyze-ui <path>` — focused UI analysis of a specific file
 - `fix-ui` — fix UI findings from the last UI analysis report

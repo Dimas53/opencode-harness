@@ -511,64 +511,43 @@ Every gate exists because it caused a real problem in production:
 
 ## 8. How to Initialize a Project
 
-Three Makefile commands covering different scenarios.
+Three shortcut-based workflows:
 
-### New project — interview + documentation
+### New project — type `new` inside OpenCode
 
-```bash
-make init PROJECT=/path/to/new-project
-```
-
-This runs `init-project.sh` which:
-1. Copies template documentation (`docs/`, `AGENTS.md`, `HARNESS.md`, `MEMORY.md`, `PLAN.md`, `PROGRESS.md`, `memory/`) into the project
-2. Opens OpenCode TUI automatically with `--prompt` flag
-3. The `agent-new-project` skill interviews you and generates docs
-
-The interview (9 questions, one at a time):
-- Project name and purpose
-- Tech stack (framework, backend, database, deployment)
-- Team size
-- Stage (MVP vs production-critical)
-- External integrations (APIs, payments, auth providers)
-- Sensitive data (affects security priority)
-- Deployment target
-- Design system needs
-- Project plan preference
-
-Generated files (each shown as draft, confirmed one at a time):
+The agent interviews you (9 questions, one at a time), then generates:
 - `AGENTS.md`, `ARCHITECTURE.md`, `CONTEXT.md`, `roadmap.md`, `skills-cheatsheet.md`
 - `PROGRESS.md`, `MEMORY.md`, `PLAN.md`, `HARNESS.md` — session continuity, experience, task planning, safety context
 - `memory/` folder — per-session workaround notes
 - `docs/specs/phase-1.md` (if project plan requested)
-- `docs/design.md` — user provides manually, not auto-generated
-- `docs/plan-main.md` — user fills in vision document
 
-### Existing project — analyze first, then documentation
+Each file is shown as draft, confirmed one at a time.
 
-```bash
-make init-adopt PROJECT=/path/to/adopt-project
-```
+### Existing project — type `adopt` inside OpenCode
 
-This runs `init-adopt.sh` which:
-1. Opens OpenCode TUI in your project with `--prompt` flag
-2. The `agent-adopt` skill runs `agent-analyze` first to map the codebase,
-   then fills knowledge gaps via interview, then generates missing docs
+The agent first runs `agent-analyze` to map the codebase,
+then fills knowledge gaps via interview, then generates missing documentation.
 
-### Analyze only — audit, no modifications
+### Analyze only — type `analyze` inside OpenCode
 
-```bash
-make analyze PROJECT=/path/to/project
-```
-
-Opens OpenCode in the project with `--prompt` flag and automatically starts the `agent-analyze` skill.
-
-The skill runs 4 audits in sequence:
-1. Codebase health check — system map, duplication, priorities
-2. Zoom-out — architecture explanation in plain language
-3. Security review — auth, API, secrets vulnerabilities
-4. Premortem — top 5 risks
+Runs 6 audits in sequence:
+1. Zoom-out — architecture explanation in plain language
+2. Codebase health check — system map, duplication, priorities
+3. Junior-to-senior — senior-level design/approach findings
+4. Code review and quality — multi-axis code review
+5. Security review — auth, API, secrets vulnerabilities
+6. Premortem — top 5 risks
 
 Results saved to `docs/audits/YYYY-MM-DD-analysis.md`. No source files modified.
+
+> **Fallback** (if shortcuts don't trigger in OpenCode):
+> ```bash
+> cd ~/opencode-harness
+> make init PROJECT=$(pwd)       # new project
+> make init-adopt PROJECT=$(pwd) # existing project
+> make analyze PROJECT=$(pwd)    # audit only
+> ```
+> These run the same scripts and open OpenCode automatically.
 
 ---
 

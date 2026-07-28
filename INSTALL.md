@@ -305,79 +305,40 @@ cd .. && rm -rf opencode-harness
 
 ---
 
-## Starting a New Project
+## Starting a Project
 
-### Primary path
-Open OpenCode in any directory and type `new`.
-The agent starts the interview immediately — no make command needed.
+Open OpenCode in any directory and type a shortcut:
 
-### Fallback (make command)
-After setup, run:
-
-```bash
-make init PROJECT=/path/to/new-project
-```
-
-This copies docs templates + AGENTS.md into the project, then opens OpenCode
-and automatically starts the `agent-new-project` skill.
-
-The skill interviews you (9 questions), analyzes your stack,
-and generates all project documentation automatically. One file at a time — confirm each.
-
----
-
-## Starting an Existing Project
-
-### Primary path
-Open OpenCode in the project directory and type `adopt`.
-
-### Fallback (make command)
-```bash
-make init-adopt PROJECT=/path/to/existing-project
-```
-
-This opens OpenCode in your project and automatically starts the `agent-adopt` skill.
-
-The skill first runs `agent-analyze` to map the codebase,
-then fills knowledge gaps via interview, then generates missing documentation.
-
-> **Note:** All three commands pass the skill reference via `--prompt` flag,
-> so the agent starts working immediately — no manual typing needed.
-
----
-
-## Analyzing a Project (without creating docs)
-
-### Primary path
-Open OpenCode in the project directory and type:
+### Project setup
 - `new` — new project: interview → full doc structure generated
 - `adopt` — existing project: auto-analysis first → fills missing docs
-- `analyze` — full project analysis
-- `analyze path/to/file.ts` — focused analysis of a specific file or folder
-- `fix` — fix findings from the last analysis report (3-phase: CRITICAL → HIGH → MEDIUM)
-- `fix path/to/file.ts` — fix findings only for a specific file or folder
-- `fix <ID>` — fix a specific finding by ID (e.g. `fix C1`, `fix H2`)
-- `analyze-ui` — UI behavior analysis: forms, buttons, navigation, states, auth
-- `analyze-ui path/to/Component.vue` — focused UI analysis of a specific file
+
+### Audit & fix (bugs, security, architecture)
+- `analyze` — full project audit (6 analyses)
+- `analyze <path>` — focused audit of a specific file or folder
+- `fix` — fix findings from the last report (3-phase)
+- `fix <path>` — fix findings for a specific path
+- `fix <ID>` — fix a specific finding by ID (e.g. `fix C1`)
+
+### Testing & coverage
+- `analyze-logic` — find uncovered business logic, generate test cases
+- `fix-logic` — write tests for all uncovered logic findings
+- `analyze-ui` — UI behavior analysis: forms, buttons, nav, auth
 - `fix-ui` — fix UI findings from the last UI analysis report
-- `fix-ui path/to/Component.vue` — fix UI findings for a specific file
-- `fix-ui <ID>` — fix a specific UI finding by ID (e.g. `fix-ui U1`, `fix-ui U1-pw`)
-- `update-harness` — pull latest harness updates and apply globally
-- `sync-templates` — check for new template files missing in current project
-- `dod` — run Definition of Done checks (6 steps)
-- `docs` — session end + prompt to update docs if code changed
 
-### Fallback (make command)
-```bash
-make analyze PROJECT=/path/to/project
-```
+See full reference: [Test Workflows](instructions/reference/09-test-workflows.md)
 
-Opens OpenCode in the project and automatically starts the `agent-analyze` skill.
+### Utility
+- `update-harness` / `sync-templates` / `dod` / `docs`
 
-The agent runs 6 audits: zoom-out, codebase-health-check, junior-to-senior,
-code-review-and-quality, security, and premortem — then saves a report to
-`docs/audits/YYYY-MM-DD-analysis.md`. Focused reports save as
-`docs/audits/YYYY-MM-DD-analysis-[filename].md`. No source files are modified.
+> **Fallback** (if shortcuts don't trigger):
+> ```bash
+> cd ~/opencode-harness
+> make init PROJECT=$(pwd)       # new project
+> make init-adopt PROJECT=$(pwd) # existing project
+> make analyze PROJECT=$(pwd)    # audit only
+> ```
+> These open OpenCode with the skill pre-loaded.
 
 ---
 

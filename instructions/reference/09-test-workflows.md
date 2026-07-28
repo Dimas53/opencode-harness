@@ -79,7 +79,7 @@ analyze
   └─ saves to docs/audits/YYYY-MM-DD-analysis.md
 
 fix
-  └─ Phase 1: Critical + Blocker → red-green unit test cycle
+  └─ Phase 1: Critical + Blocker → red-green unit test cycle (test FAILS first, then fix, then PASS)
   └─ Phase 2: High + Major → fix + verify
   └─ Phase 3: Medium → fix + grep
 ```
