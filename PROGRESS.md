@@ -588,6 +588,11 @@ Chat language: ru
 - zsh parse error on `&& while` — compound command after `&&` breaks. Fixed by extracting retry loop into standalone script
 - agent skipped loading agent-e2e.md entirely, ran playwright directly from fix-ui context. Fixed by MANDATORY gate
 
+### Note — templates/AGENTS.md
+- This file is a PROJECT TEMPLATE with `{{PLACEHOLDER}}` syntax, used by `make new` / `make adopt`.
+- Do NOT overwrite with `global/AGENTS.md`. Only sync relevant shortcut additions.
+- Other templates checked: HARNESS.md, MEMORY.md, PLAN.md, PROGRESS.md — all clean.
+
 ### Next
 - Deploy to target project, run `fix-ui U2-pw` to verify the full chain: MANDATORY gate → agent-e2e load → retry-guard script
 

@@ -51,9 +51,9 @@ Makefile            → build orchestration (caution: has bugs)
 ## File-Specific Rules
 
 ### global/AGENTS.md
-- This is the **template** installed to other projects.
+- This is the **global config** installed to `~/.config/opencode/AGENTS.md`.
 - Changing it changes behavior of agents in ALL harness-enabled projects.
-- Every edit to `global/AGENTS.md` MUST be mirrored to `templates/AGENTS.md`.
+- `templates/AGENTS.md` is a **project-specific template** (`{{PLACEHOLDER}}` format). Do NOT replace it with `global/AGENTS.md`. Only sync relevant global shortcut additions if they affect the template structure.
 - Don't add rules that only make sense for Harness itself.
 
 ### scripts/*.sh
