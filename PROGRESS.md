@@ -669,3 +669,15 @@ Chat language: ru
 ### Next
 - Test fix-logic L4 on itocook with new coverage protocol
 - Test on non-JS project (pytest/phpunit) when available
+
+## Session 2026-07-29 — Makefile tab fix + .env denied handling in security skill
+
+Chat language: ru
+
+### Done
+- **Makefile line 23**: fixed missing tab separator in `uninstall-lite` help echo (two spaces before tab → just tab)
+- **security/01-auth-and-secrets.md**: added `.env access denied handling` section — when user denies `.env` access, agent skips gracefully, notes `⚠️ .env not scanned — user denied access`, and continues analysis. Applied to both `global/skills/` and `~/.config/opencode/skills/`
+- `make verify`: 9/9 passed, `bash -n`: all scripts OK, no trailing whitespace
+
+### Known issues
+- (none new)

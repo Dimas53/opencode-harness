@@ -20,7 +20,7 @@ help:
 	@echo "                        (uncommitted check + cyrillic scan + docs lag)"
 	@echo "  make self-check     -- verify syntax, permissions and diff before committing"
 	@echo "  make uninstall      -- remove everything (harness + OpenCode + RTK + uv)"
- 	@echo "  make uninstall-lite -- remove harness only, keep OpenCode and RTK"
+	@echo "  make uninstall-lite -- remove harness only, keep OpenCode and RTK"
 	@echo "  make unadopt        -- remove all harness files from current project"
 	@echo ""
 	@echo "  make link          -- create ~/.opencode-harness symlink"

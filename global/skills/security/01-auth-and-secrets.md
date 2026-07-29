@@ -98,6 +98,12 @@ runtimeConfig: {
   ```
 - Use `git-secrets` or similar tool to block accidental commits
 
+**.env access denied handling:**
+If the user denies access to `.env`:
+- Note in report: `⚠️ .env not scanned — user denied access`
+- Do NOT block or wait — skip `.env` checks and continue analysis
+- Still check `.gitignore`, `.env.example`, and git history for committed secrets
+
 ---
 
 ## 4. API Keys
