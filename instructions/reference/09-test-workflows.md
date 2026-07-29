@@ -67,6 +67,7 @@ fix-ui
 - `fix-ui` — fix all U-findings
 - `fix-ui U1` — fix specific finding
 - `fix-ui U2-pw` — fix + write Playwright test
+- `fix-ui all-pw` — fix only Playwright findings across all reports
 
 ### 3. Bug/Security: analyze → fix
 

@@ -18,6 +18,7 @@ When user types:
 - `fix-ui` — load and run `~/.config/opencode/skills/harness-init/agent-fix-ui.md`
 - `fix-ui <path>` — load and run `~/.config/opencode/skills/harness-init/agent-fix-ui.md`, set TARGET=<path>
 - `fix-ui <ID>` — load and run `~/.config/opencode/skills/harness-init/agent-fix-ui.md`, set TARGET=<ID> (e.g. `fix-ui U1`)
+- `fix-ui all-pw` — load and run `~/.config/opencode/skills/harness-init/agent-fix-ui.md`, set TARGET=all-pw (Playwright findings only)
 
 - `analyze-logic` — load and run `~/.config/opencode/skills/harness-init/agent-analyze-logic.md`
 - `analyze-logic <path>` — load and run `~/.config/opencode/skills/harness-init/agent-analyze-logic.md`, set TARGET=<path>
@@ -254,7 +255,7 @@ Execute these steps in order BEFORE any response to the user:
 5. **Safety check:** No Russian text in project files. No .env, docker-compose, or lock files modified without confirmation.
 5b. **Skill feedback:** If any skill behaved unexpectedly or missed an important step — note in memory/YYYY-MM-DD.md what happened and what behavior was expected. Human decides whether to update SKILL.md.
 6. **Respond with results** only after ALL steps are confirmed.
-7. **Self-check:** Before saying "готово" — run `make self-check` in the harness repo.
+7. **Self-check:** Before saying "done" — run `make self-check` in the harness repo.
 
 NEVER mark `[✓]` before executing. `[•]` = in progress, `[ ]` = todo, `[✓]` = confirmed done.
 

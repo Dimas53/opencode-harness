@@ -129,6 +129,7 @@ Open OpenCode in any directory and type one of these:
 - `fix-ui` — fix UI findings from the last UI analysis report
 - `fix-ui <path>` — fix UI findings for a specific file
 - `fix-ui <ID>` — fix a specific UI finding by ID (e.g. `fix-ui U1`)
+- `fix-ui all-pw` — fix only Playwright-testable UI findings, skip static
 
 ### Utility
 - `update-harness` — pull latest harness updates and apply globally
@@ -176,6 +177,7 @@ Generate the config (run from the project root):
 | `fix-ui` | Fix UI findings from the last UI report |
 | `fix-ui <path>` | Fix UI findings for a specific file |
 | `fix-ui <ID>` | Fix a specific UI finding by ID (e.g. `fix-ui U1`) |
+| `fix-ui all-pw` | Fix only Playwright-testable U-pw findings |
 
 ## Documentation
 

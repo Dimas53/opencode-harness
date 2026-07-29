@@ -39,7 +39,7 @@ Extract TARGET from user message:
    |------|----------|
    | [file] | [U1-pw], [U2] |
 
-   Commands: `fix-ui` (all) · `fix-ui <file>` · `fix-ui <ID>`
+   Commands: `fix-ui` (all) · `fix-ui all-pw` · `fix-ui <file>` · `fix-ui <ID>`
 
    ---
 

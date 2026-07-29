@@ -196,6 +196,7 @@ The primary way to initialize any project is via shortcuts inside OpenCode:
 | `fix-ui` | Loads agent-fix-ui — fixes UI findings from last UI analysis |
 | `fix-ui <path>` | Same, focused on a specific file (e.g. `fix-ui app/Contact.vue`) |
 | `fix-ui <ID>` | Same, single UI finding by ID (e.g. `fix-ui U1`, `fix-ui U1-pw`) |
+| `fix-ui all-pw` | Same, only Playwright-testable U-pw findings, skip static |
 | `analyze-logic` | Loads agent-analyze-logic — finds uncovered business logic, generates test cases |
 | `analyze-logic <path>` | Same, focused on a specific directory or file (e.g. `analyze-logic utils/`) |
 | `fix-logic` | Loads agent-fix (L-mode) — writes tests for uncovered logic findings, no source changes |
