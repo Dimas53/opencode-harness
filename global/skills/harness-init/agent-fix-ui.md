@@ -21,6 +21,7 @@ Q0. **Language check — same as agent-fix.md:**
      Strip -pw suffix for matching (U1 matches U1-pw).
    If TARGET is a path matching a report file (`*-ui-analysis*.md`) — parse only that report.
    If TARGET is a path matching a component (`app/Contact.vue`, `pages/`, etc.) — filter by file:line in Step 1 across all reports.
+   If TARGET is `all-pw` — keep only findings with `-pw` suffix, drop static U findings entirely.
 
 0b. **Check for existing PLAN.md:**
    ```bash
@@ -31,6 +32,11 @@ Q0. **Language check — same as agent-fix.md:**
 
 1. **Parse findings** — from `## UI Behavior` section only.
    For each line matching `**[U+N]**` — extract prefix (U or U-pw), number, title, file:line.
+   If TARGET is `all-pw` — drop all findings without `-pw` suffix (static only).
+   Print mode line if applicable:
+   ```
+   Mode: Playwright-only (TARGET=all-pw)
+   ```
    Print table:
    ```
    | Type | Count | IDs |
@@ -38,6 +44,7 @@ Q0. **Language check — same as agent-fix.md:**
    | Playwright (U-pw) | N | U1-pw, U2-pw |
    | Static (U) | N | U3, U4 |
    ```
+   (If a type has 0 findings — omit its row.)
    Ask: "Start fixing? (y/n)"
 
 2. **Create PLAN.md:**
@@ -93,3 +100,4 @@ Q0. **Language check — same as agent-fix.md:**
 | TARGET as ID | `fix-ui U1` — matches U1 or U1-pw across all reports |
 | TARGET as report path | `fix-ui docs/audits/ui/FILE.md` — findings from this report only |
 | TARGET as component path | `fix-ui app/Contact.vue` — filter by file across all reports |
+| TARGET all-pw | `fix-ui all-pw` — only U*-pw findings, skip static, auto-PLAYWRIGHT verify |
