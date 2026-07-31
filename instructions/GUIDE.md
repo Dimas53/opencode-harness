@@ -341,6 +341,13 @@ The agent asks: "Ready to commit?"
 The pre‑commit hook automatically runs `make dod` before every `git commit` —
 no command needed. If any of the 6 checks fail, the commit is blocked.
 
+The docs‑lag check compares against git history (last commit touching `docs/`,
+lag threshold = 3). In pre‑commit mode it first looks at the staged files: if the
+commit itself stages files under `docs/`, the check passes — that commit resets
+the lag. This avoids the self‑deadlock where the very docs commit that would fix
+the lag got blocked because HEAD hadn't updated yet. A commit that does NOT touch
+`docs/` while docs lag by more than 3 commits is still blocked.
+
 ### Definition of Done
 
 After commit, BEFORE push, the agent runs the 6-step DoD checklist:

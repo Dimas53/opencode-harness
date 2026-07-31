@@ -305,6 +305,30 @@ Session language: ru
 ### Known issues
 - (none new)
 
+## Session 2026-07-31 (dod.sh — docs-lag self-deadlock fix)
+
+Chat language: ru
+
+### Done
+- **scripts/dod.sh step 3 (docs-lag)** — fixed self-deadlock in PRE_COMMIT mode:
+  if the staged commit contains files under `docs/`, the check passes (that
+  commit resets the lag). Previously the history-based check ran before HEAD
+  updated, so the very docs commit that would fix the lag was blocked forever.
+- Docs update: instructions/GUIDE.md + instructions/reference/02-opencode-commands.md
+  now document the staged-docs behavior.
+- Verified with A/B test on a temp repo (lag=4):
+  - OLD dod.sh + staged docs file → blocked (deadlock reproduced)
+  - NEW dod.sh + staged docs file → passed (fix works)
+  - NEW dod.sh + staged non-doc file → still blocked (hook not weakened)
+- `make test-quick`: 14/14 pass, `bash -n`: OK.
+
+### Known issues
+- (none new)
+
+### Next
+- Propagate fix to target projects: projects using the harness symlink get it
+  automatically (no re-install needed).
+
 ## Session 2026-07-19 (rename existing → adopt)
 
 Session language: ru

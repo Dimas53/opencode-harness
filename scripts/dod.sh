@@ -88,7 +88,14 @@ if ! git rev-parse --is-inside-work-tree &>/dev/null; then
   check_warn "Not inside a git repo — skipping docs lag check"
 else
   DOCS_DIR="docs"
-  if [ ! -d "$DOCS_DIR" ]; then
+
+  # Pre-commit: if this commit stages docs/, it resets the lag once landed.
+  # The history check below would still see the OLD lag (HEAD is unchanged
+  # until the commit is created), deadlocking the very docs commit that
+  # should fix the lag.
+  if [ "${PRE_COMMIT:-0}" = "1" ] && git diff --cached --name-only 2>/dev/null | grep -q "^$DOCS_DIR/"; then
+    check_pass "Docs updated in this commit — lag resets after commit"
+  elif [ ! -d "$DOCS_DIR" ]; then
     check_warn "No docs/ directory — skipping"
   else
     # Last commit touching docs/
