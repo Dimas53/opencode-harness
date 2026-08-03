@@ -7,9 +7,10 @@ HARNESS_PATH="${OPENCODE_HARNESS_PATH:-$HOME/.opencode-harness}"
 DOD_SCRIPT="$HARNESS_PATH/scripts/dod.sh"
 
 if [ ! -f "$DOD_SCRIPT" ]; then
-  echo "⚠ pre-commit: dod.sh not found at $DOD_SCRIPT"
-  echo "  Set OPENCODE_HARNESS_PATH or re-run make setup"
-  exit 0
+  echo "✗ pre-commit: dod.sh not found at $DOD_SCRIPT" >&2
+  echo "  Set OPENCODE_HARNESS_PATH or re-run: make setup" >&2
+  echo "  Harness is misconfigured — refusing to commit until fixed." >&2
+  exit 1
 fi
 
 PRE_COMMIT=1 bash "$DOD_SCRIPT"

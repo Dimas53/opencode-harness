@@ -4,6 +4,15 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-03
 
+### T0.2 — pre-commit hook fails closed when dod.sh is missing
+
+- **hooks/pre-commit**: a missing `dod.sh` (broken `~/.opencode-harness`
+  symlink, wrong `OPENCODE_HARNESS_PATH`) previously printed a warning and
+  `exit 0` — git treated the hook as passed and the commit went through with
+  zero checks run. Now prints to stderr and `exit 1`, refusing the commit
+  until the harness path is fixed.
+- Source: `notes/Harness/implementation-plan/01-wave0-stop-the-bleeding.md` T0.2.
+
 ### T0.1 — init-adopt/init-project no longer overwrite existing project files
 
 - **scripts/init-adopt.sh, scripts/init-project.sh**: template copy over an
