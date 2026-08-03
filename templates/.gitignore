@@ -11,3 +11,4 @@ node_modules/
 .output/
 dist/
 opencode.jsonc
+.harness-unadopt-backup/

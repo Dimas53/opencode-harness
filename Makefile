@@ -111,8 +111,14 @@ uninstall-lite:
 
 unadopt:
 	@test -f MEMORY.md || (echo "✗ Harness files not found here. Run from project root."; exit 1)
+	@mkdir -p .harness-unadopt-backup
+	@for f in AGENTS.md MEMORY.md PLAN.md PROGRESS.md HARNESS.md; do \
+		[ -f "$$f" ] && cp "$$f" ".harness-unadopt-backup/$$f" && echo "  Backed up: $$f"; \
+	done || true
+	@[ -d memory ] && cp -r memory .harness-unadopt-backup/memory && echo "  Backed up: memory/" || true
 	@rm -f AGENTS.md MEMORY.md PLAN.md PROGRESS.md HARNESS.md
 	@rm -rf memory/
+	@echo "  → Full backup at .harness-unadopt-backup/ (delete manually when confirmed safe)"
 	@if [ -f .git/hooks/pre-commit.bak ]; then \
 		mv .git/hooks/pre-commit.bak .git/hooks/pre-commit; \
 		echo "  Hook: restored from backup"; \

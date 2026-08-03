@@ -4,6 +4,22 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-03
 
+### T0.7 — make unadopt backs up harness files before deleting them
+
+- **Makefile `unadopt` target**: previously deleted `AGENTS.md`, `MEMORY.md`,
+  `PLAN.md`, `PROGRESS.md`, `HARNESS.md` and `memory/` with no backup — any
+  pre-adopt custom `AGENTS.md` or months of `PROGRESS.md` history was gone
+  with no recovery path. Now copies each existing file (and `memory/`) to
+  `.harness-unadopt-backup/` before removing it.
+- **templates/.gitignore**: added `.harness-unadopt-backup/` so the backup
+  directory doesn't get committed in adopted projects.
+- Bug found during verify: the original ticket's `for`/`cp` pattern let the
+  exit code of the *last* missing optional file abort the whole `make`
+  target midway (before the actual `rm`), since a for-loop's exit status is
+  its last command's. Added `|| true` after the loop and the `memory/` line
+  so a missing optional file is a graceful skip, not a mid-target abort.
+- Source: `notes/Harness/implementation-plan/01-wave0-stop-the-bleeding.md` T0.7.
+
 ### T0.6 — dod.sh: manual `make dod` no longer false-fails on Step 1
 
 - **scripts/dod.sh Step 1**: outside the pre-commit hook, `make dod` is
