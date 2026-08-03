@@ -4,6 +4,19 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-03
 
+### T0.5 — dod.sh: docs-lag sees instructions/, tests-skipped warning is explicit
+
+- **scripts/dod.sh Step 3 (docs-lag)**: `DOCS_DIR` was hardcoded to `"docs"`,
+  so in this repo (which documents itself under `instructions/`) the check
+  always short-circuited to "No docs/ directory — skipping" even when
+  `instructions/` was genuinely stale. Now checks `docs/` first, falls back
+  to `instructions/`, matching the pattern already used in `session-end.sh`.
+- **scripts/dod.sh Step 6 (tests)**: when `bats` isn't installed, the warning
+  now says explicitly "TESTS NOT RUN" with an install hint, instead of the
+  easy-to-miss "skipping tests". Real enforcement stays in CI (Wave 3) — this
+  is not a fail here, only a louder warning.
+- Source: `notes/Harness/implementation-plan/01-wave0-stop-the-bleeding.md` T0.5.
+
 ### T0.3 — dod.sh docs matrix: legal cheap pass for skill-only commits
 
 - **scripts/dod.sh Step 5**: a commit touching only `global/skills/**` was

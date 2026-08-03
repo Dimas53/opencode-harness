@@ -87,16 +87,22 @@ echo "[ 3/7 ] Docs lag check"
 if ! git rev-parse --is-inside-work-tree &>/dev/null; then
   check_warn "Not inside a git repo — skipping docs lag check"
 else
-  DOCS_DIR="docs"
+  if [ -d "docs" ]; then
+    DOCS_DIR="docs"
+  elif [ -d "instructions" ]; then
+    DOCS_DIR="instructions"
+  else
+    DOCS_DIR=""
+  fi
 
   # Pre-commit: if this commit stages docs/, it resets the lag once landed.
   # The history check below would still see the OLD lag (HEAD is unchanged
   # until the commit is created), deadlocking the very docs commit that
   # should fix the lag.
-  if [ "${PRE_COMMIT:-0}" = "1" ] && git diff --cached --name-only 2>/dev/null | grep -q "^$DOCS_DIR/"; then
+  if [ -n "$DOCS_DIR" ] && [ "${PRE_COMMIT:-0}" = "1" ] && git diff --cached --name-only 2>/dev/null | grep -q "^$DOCS_DIR/"; then
     check_pass "Docs updated in this commit — lag resets after commit"
-  elif [ ! -d "$DOCS_DIR" ]; then
-    check_warn "No docs/ directory — skipping"
+  elif [ -z "$DOCS_DIR" ]; then
+    check_warn "No docs/ or instructions/ directory — skipping"
   else
     # Last commit touching docs/
     DOCS_COMMIT=$(git log --oneline -- "$DOCS_DIR" 2>/dev/null | sed -n '1p' | awk '{print $1}')
@@ -226,7 +232,7 @@ if command -v bats &>/dev/null && [ -f "Makefile" ]; then
     echo "   $TEST_OUTPUT" | head -5 | sed 's/^/    /'
   fi
 else
-  check_warn "bats or Makefile not found — skipping tests"
+  check_warn "bats or Makefile not found — TESTS NOT RUN. Install: brew install bats-core (or see README). Real enforcement happens in CI regardless of local bats."
 fi
 
 echo ""
