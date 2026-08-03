@@ -677,7 +677,9 @@ Chat language: ru
 - **self-check:** `make verify` 9/9 passed, `bash -n` all OK, no Cyrillic in changes, no trailing whitespace
 
 ### Known issues
-- DoD step 5 (docs matrix) still requires `--no-verify` for skill-only changes
+- DoD step 5 (docs matrix) — false positive on skill-only changes FIXED
+  (2026-07-30): same-day instructions/CHANGELOG.md entry now satisfies the
+  check. See scripts/dod.sh Step 5.
 
 ### Next
 - Test `fix` on a real project with audit report — DONE (ticket_tracker, 3 test runs: all, file, ID)
@@ -756,7 +758,9 @@ Chat language: ru
 - `make test-quick`: 20/20 pass, `make self-check`: OK
 
 ### Known issues
-- dod.sh docs matrix fails for `global/` changes (known, requires --no-verify for skill-only commits)
+- dod.sh docs matrix — skill-only `global/skills/` changes now pass via a
+  same-day instructions/CHANGELOG.md entry (fixed 2026-07-30). `--no-verify`
+  is never required; see Hard Limits in AGENTS.md for why not to use it.
 - Nuxt server routes can't be directly imported in vitest (requires setup.ts mock) — documented in memory
 
 ### Next

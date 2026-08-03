@@ -4,6 +4,28 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-04
 
+### T2.5 — remove `--no-verify` legitimization from active docs
+
+- **PROGRESS.md** (two "Known issues" entries, lines shifted from the
+  ticket's 551/630 to 680/759 after prior waves' edits — found by text
+  search): both said the docs-matrix false positive "still requires
+  `--no-verify`". Rewritten to describe the actual fix (T0.3's
+  same-day-CHANGELOG fallback, T2.1's DOCS_FILES check) instead of
+  recommending a bypass that disables all 7 DoD checks.
+- **memory/2026-07-22.md**: this file is committed to git and read at
+  Session Start (unlike `notes/`, which is gitignored) — the only one of
+  the five sites the audit flagged that needed a real content fix, not just
+  a superseded-marker. "Fix: commit with `--no-verify`" replaced with the
+  actual fix and an explicit "do not use it" note.
+- Grepped `PROGRESS.md memory/ instructions/ global/AGENTS.md` for
+  remaining `no-verify` mentions: all surviving ones describe it as the
+  problem being avoided/fixed (correct usage), none recommend it as a
+  solution.
+- Not touched (per ticket scope): `notes/Harness/v0.5 -
+  harness-roadmap.full.md:75` (already SUPERSEDED in T2.4) and
+  `notes/Harness/ostatok-po-versii-0.3.full.md:140` (archival source doc).
+- Source: `notes/Harness/implementation-plan/03-wave2-transplant-cleanup.md` T2.5.
+
 ### T2.4 — consolidate multiple roadmaps into one canon
 
 - **instructions/roadmap.md**: replaced stale Phase 2/3 content (referenced a
