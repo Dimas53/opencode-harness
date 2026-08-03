@@ -114,7 +114,7 @@ skill folder with `ls ~/.config/opencode/skills/<name>`.
 | Nuxt | `nuxt` | Vendored in harness |
 | Nuxt UI | `nuxt-ui` | Vendored in harness |
 | Vue | `vue` | Vendored in harness |
-| Directus | `directus` | Vendored in harness |
+| Directus | — (not vendored) | Partial coverage: `security/06-directus-nuxt.md`. Skill-gap-check will correctly flag this as ❌ missing — point developer to https://mcpmarket.com/tools/skills or https://www.skills.sh/ |
 | Tailwind | `tailwind-design-system` | Vendored in harness |
 | Docker | `docker-expert` | Vendored in harness |
 | TDD / tests | `tdd` | Vendored in harness |

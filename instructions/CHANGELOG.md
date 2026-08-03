@@ -4,6 +4,24 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-04
 
+### T2.3 — Directus: remove false "Vendored in harness" claim
+
+- **templates/docs/skills-cheatsheet.md `Stack → Required Skills`**: the
+  Directus row claimed `directus` was "Vendored in harness" — no such skill
+  folder exists under `global/skills/`. Directus is the harness's primary
+  target-stack backend (see `templates/docs/ARCHITECTURE.md`,
+  `.env.example`), so this false positive meant skill-gap-check
+  (`agent-new-project.md` step 4.4) would report ✅ on the single most common
+  project scenario instead of ❌.
+- Replaced with an honest "— (not vendored)" plus a pointer to the partial
+  coverage that does exist (`security/06-directus-nuxt.md`) and to external
+  skill marketplaces.
+- Did **not** write a full `global/skills/directus/SKILL.md` in this ticket
+  — that's a separate content task (scope: schema management, permissions
+  model, MCP tool usage, Flows) that needs its own ticket with explicit user
+  review, not a drive-by inside a cleanup wave. Recommended as a follow-up.
+- Source: `notes/Harness/implementation-plan/03-wave2-transplant-cleanup.md` T2.3.
+
 ### T2.2 — remove 10 phantom skills from skills-cheatsheet.md
 
 - **templates/docs/skills-cheatsheet.md**: removed 10 table rows referencing
