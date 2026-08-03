@@ -30,7 +30,6 @@ When initializing a new project:
 | `writing-plans` | Break task into 2-5 minute steps with exact file paths |
 | `handoff` | Session is long — pack context for a fresh session |
 | `diagnose` | Something is broken — run diagnostic cycle |
-| `find-skills` | Find the right skill for any task |
 | `nuxt` | Working with Nuxt — apply Nuxt patterns |
 | `nuxt-ui` | Use Nuxt UI components, don't build custom ones |
 | `vue` | Apply Vue 3 / script setup / composables patterns |
@@ -48,7 +47,6 @@ When initializing a new project:
 | `source-driven-development` | Check official docs before implementing |
 | `to-prd` | Turn our conversation into a PRD |
 | `to-issues` | Break PRD into individual issues |
-| `prototype` | Quick throwaway prototype to validate an idea — UI or logic |
 | `codebase-design` | Vocabulary for deep module design — interface, seam, depth, adapter. Before creating a new module |
 | `domain-modeling` | Refine domain model: clarify terms, create ADR, update CONTEXT.md. Before complex architecture decisions |
 | `research` | Investigate from primary sources (docs, API, specs) via background agent. Don't start code without research |
@@ -70,10 +68,8 @@ When initializing a new project:
 | `code-review-and-quality` | Review this code across all quality axes |
 | `systematic-debugging` | Fix bugs with 8-step cycle: reproduce → minimize → hypothesize → fix |
 | `debugging-and-error-recovery` | Debug systematically: reproduce → minimise → fix |
-| `triage` | Prioritize accumulated bugs by severity |
 | `doubt-driven-development` | Adversarial review before critical changes (prod, security, irreversible) |
 | `browser-testing-with-devtools` | Debug/test in browser — console, network, DOM, screenshots via Chrome DevTools |
-| `receiving-code-review` | Got a review — verify feedback technically, don't blindly agree |
 
 ---
 
@@ -101,14 +97,8 @@ When initializing a new project:
 |---|---|
 | `dispatching-parallel-agents` | 2+ independent tasks — run them in parallel |
 | `executing-plans` | Have a ready plan — execute with checkpoints |
-| `setup-matt-pocock-skills` | First time in a new repo — set up all skills |
 | `archify` | Architecture diagrams — workflow, sequence, data-flow, lifecycle, export PNG/SVG |
-| `write-a-skill` | Want to create a new custom skill |
-| `teach` | Explain this concept step by step |
 | `docker-expert` | Docker / docker-compose issues |
-| `finishing-a-development-branch` | Implementation done, tests pass — decide: merge, PR, or cleanup |
-| `using-git-worktrees` | Want to isolate new feature from current working directory |
-| `subagent-driven-development` | Have a plan with independent steps — run sub-agents in parallel |
 | `premortem` | Stress-test a plan/release/decision — imagine it failed 6 months from now and explain why |
 
 ---

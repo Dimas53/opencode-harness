@@ -4,6 +4,21 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-04
 
+### T2.2 — remove 10 phantom skills from skills-cheatsheet.md
+
+- **templates/docs/skills-cheatsheet.md**: removed 10 table rows referencing
+  skills that don't exist under `global/skills/` (`find-skills`, `triage`,
+  `receiving-code-review`, `prototype`, `setup-matt-pocock-skills`,
+  `write-a-skill`, `teach`, `finishing-a-development-branch`,
+  `using-git-worktrees`, `subagent-driven-development`). These are dead
+  references in a file that ships to every new project via `make init`/
+  `adopt` — following one would 404 on `Read
+  ~/.config/opencode/skills/<name>/SKILL.md`.
+- Confirmed all 10 missing via `[ -d global/skills/<name>]` before editing;
+  none had reappeared since the audit. `directus` is also phantom but has a
+  separate fix (T2.3), left untouched here per the ticket's scope split.
+- Source: `notes/Harness/implementation-plan/03-wave2-transplant-cleanup.md` T2.2.
+
 ### T2.1 — dod.sh docs-matrix recognizes INSTALL.md/README.md
 
 - **scripts/dod.sh Step 5**: added a `DOCS_FILES="INSTALL.md README.md"`
