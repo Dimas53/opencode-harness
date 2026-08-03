@@ -26,68 +26,14 @@ When user types:
 - `fix-logic <ID>` — load and run `~/.config/opencode/skills/harness-init/agent-fix.md`, set TARGET=<ID> (e.g. `fix-logic L1`)
 
 - `update-harness` — pull latest updates and apply globally:
-  cd ~/.opencode-harness
-  GIT_OUTPUT=$(git pull 2>&1)
-  if echo "$GIT_OUTPUT" | grep -q "Already up to date"; then
-    echo "✓ git pull: up to date"
-  else
-    echo "✓ git pull: commits pulled"
-  fi
-  make update
-  echo "✓ AGENTS.md: check output above"
-  echo "✓ Skills: check output above"
+  Run: `bash ~/.opencode-harness/scripts/update-harness-shortcut.sh`
 
 - `dod` — run `make dod` in current project directory
 - `docs` — run `make session-end` and remind to update docs if code changed
 
 - `unadopt` — run `make unadopt` in current project directory to remove all harness files (AGENTS.md, MEMORY.md, PLAN.md, PROGRESS.md, HARNESS.md, memory/, pre-commit hook). Keeps docs/ unless confirmed.
 - `sync-templates` — check for new harness template files missing in current project:
-  missing=0
-  for f in ~/.opencode-harness/templates/*.md; do
-    fname=$(basename "$f")
-    [ "$fname" = "AGENTS.md" ] && continue
-    if [ ! -f "$(pwd)/$fname" ]; then
-      echo "  + $fname — not in project"
-      missing=1
-    fi
-  done
-  [ ! -d "$(pwd)/memory" ] && echo "  + memory/ — directory not in project" && missing=1
-  # .gitignore — merge, never overwrite (keep project's existing entries)
-  gt="~/.opencode-harness/templates/.gitignore"
-  if [ ! -f "$(pwd)/.gitignore" ]; then
-    echo "  + .gitignore — not in project"
-    missing=1
-  else
-    gt_missing=0
-    while IFS= read -r line; do
-      [ -z "$line" ] && continue
-      grep -qxF "$line" "$(pwd)/.gitignore" || gt_missing=1
-    done < "$gt"
-    if [ "$gt_missing" = "1" ]; then
-      echo "  ~ .gitignore — missing entries (merge manually):"
-      while IFS= read -r line; do
-        [ -z "$line" ] && continue
-        grep -qxF "$line" "$(pwd)/.gitignore" || echo "    + $line"
-      done < "$gt"
-    fi
-  fi
-  if [ "$missing" = "1" ]; then
-    printf "Copy missing files to project? (y/n): "
-    read -r answer
-    if [ "$answer" = "y" ]; then
-      for f in ~/.opencode-harness/templates/*.md; do
-        fname=$(basename "$f")
-        [ "$fname" = "AGENTS.md" ] && continue
-        [ ! -f "$(pwd)/$fname" ] && cp "$f" "$(pwd)/$fname" && echo "✓ Copied $fname"
-      done
-      [ ! -d "$(pwd)/memory" ] && mkdir -p "$(pwd)/memory" && echo "✓ Created memory/"
-      if [ ! -f "$(pwd)/.gitignore" ]; then
-        cp ~/.opencode-harness/templates/.gitignore "$(pwd)/.gitignore" && echo "✓ Copied .gitignore"
-      fi
-    fi
-  else
-    echo "✓ Nothing to add — project is up to date"
-  fi
+  Run: `bash ~/.opencode-harness/scripts/sync-templates.sh`
 
 **Fallback** (if shortcuts don't work):
 ```bash

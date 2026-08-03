@@ -4,6 +4,30 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-04
 
+### T2.6 — AGENTS.md: extract inline bash from Harness Shortcuts
+
+- **scripts/update-harness-shortcut.sh (new)** and **scripts/sync-templates.sh
+  (new)**: the `update-harness` (~10 lines) and `sync-templates` (~55 lines,
+  loops/conditionals/`.gitignore` merge logic) shortcut bodies moved out of
+  `global/AGENTS.md` verbatim — no logic changes, just added shebang +
+  `set -euo pipefail` + a header comment. Both `chmod +x`.
+- **global/AGENTS.md `## Harness Shortcuts`**: both blocks replaced with a
+  one-line `Run: bash ~/.opencode-harness/scripts/<name>.sh` pointer.
+  467→444 lines is less reduction than the roadmap's ~90-100 estimate — the
+  actual inline blocks were ~65 lines combined, not ~90-100.
+- Scope: mechanical code relocation ONLY. Did NOT touch the Hard
+  Limits/Safety Gates/Behavior/Access Restrictions consolidation or the
+  skills-auto-loading table trim that the same roadmap phase also lists —
+  those change safety-critical text and need explicit human review per-line,
+  not a drive-by in a cleanup wave. Left for a future ticket if wanted.
+- Noted risk (not fixed, out of scope): `sync-templates.sh` line `gt="~/.opencode-harness/templates/.gitignore"`
+  is quoted, so `~` never tilde-expands — a pre-existing bug carried over
+  verbatim from the original inline block (this ticket's job was moving code,
+  not fixing it).
+- Verified: `bash -n` clean on both new scripts; manual line-by-line
+  comparison against the pre-edit AGENTS.md content confirms identical logic.
+- Source: `notes/Harness/implementation-plan/03-wave2-transplant-cleanup.md` T2.6.
+
 ### T2.5 — remove `--no-verify` legitimization from active docs
 
 - **PROGRESS.md** (two "Known issues" entries, lines shifted from the
