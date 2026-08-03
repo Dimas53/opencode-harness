@@ -4,6 +4,17 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-03
 
+### T0.6 — dod.sh: manual `make dod` no longer false-fails on Step 1
+
+- **scripts/dod.sh Step 1**: outside the pre-commit hook, `make dod` is
+  normally run right before a commit — exactly when uncommitted changes are
+  expected to exist. It previously `check_fail`ed on that every single time,
+  training agents/users to distrust the manual check and rely only on the
+  hook (which is one step away from `--no-verify`). Now: unstaged changes
+  are a warning in manual mode, still a hard fail inside the pre-commit hook
+  (`PRE_COMMIT=1`) where it correctly means "unstaged changes at commit time."
+- Source: `notes/Harness/implementation-plan/01-wave0-stop-the-bleeding.md` T0.6.
+
 ### T0.5 — dod.sh: docs-lag sees instructions/, tests-skipped warning is explicit
 
 - **scripts/dod.sh Step 3 (docs-lag)**: `DOCS_DIR` was hardcoded to `"docs"`,

@@ -29,6 +29,9 @@ else
   fi
   if [ -z "$UNCOMMITTED" ]; then
     check_pass "No uncommitted changes"
+  elif [ "${PRE_COMMIT:-0}" != "1" ]; then
+    check_warn "Uncommitted changes present (expected before a commit):"
+    echo "$UNCOMMITTED" | sed 's/^/    /'
   else
     check_fail "Uncommitted changes found:"
     echo "$UNCOMMITTED" | sed 's/^/    /'
