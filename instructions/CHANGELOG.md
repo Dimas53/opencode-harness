@@ -4,6 +4,25 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-04
 
+### T2.4 — consolidate multiple roadmaps into one canon
+
+- **instructions/roadmap.md**: replaced stale Phase 2/3 content (referenced a
+  since-deleted `recruitment-app` test project) with a pointer to
+  `notes/Harness/v0.5 - harness-roadmap.new.md` as the canonical roadmap.
+  Phase 1 checkboxes verified still true (repo structure, install scripts —
+  now under `scripts/`, AGENTS.md, harness-init, templates/docs/,
+  instructions/ all present). Phase 2/3 items left unchecked — no clear
+  evidence in PROGRESS.md/git log that "test on Windows machine" or "update
+  GUIDE.md from real experience" were completed as discrete milestones (GUIDE.md
+  has been edited many times, but not traceable to a single real-usage test).
+  Confirmed no active Session-Start hook loads this file — only two
+  historical mentions in PROGRESS.md/CHANGELOG citing a line number.
+- **notes/Harness/v0.5 - harness-roadmap.md and .full.md**: added a
+  `SUPERSEDED` banner pointing to `.new.md` as canonical. These two files are
+  under `notes/` (gitignored — "Local notes, not versioned"), so the banner
+  edits are on-disk only and don't appear in this commit's diff.
+- Source: `notes/Harness/implementation-plan/03-wave2-transplant-cleanup.md` T2.4.
+
 ### T2.3 — Directus: remove false "Vendored in harness" claim
 
 - **templates/docs/skills-cheatsheet.md `Stack → Required Skills`**: the
