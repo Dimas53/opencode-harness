@@ -2,9 +2,57 @@
 
 ## Current Status
 
-Phase: v0.3 → v0.4 transition
-Last commit: 5a078d2 — docs: sync full command list across README, INSTALL, GUIDE (15 shortcuts)
+Phase: implementation-plan Wave 0 (stop the bleeding) — complete
+Last commit: 375fee2 — fix(T0.7): make unadopt backs up harness files before deleting them
 Chat language: ru
+
+## Session 2026-08-03 (implementation-plan Wave 0 — T0.1 through T0.7)
+
+Chat language: ru
+
+### Done
+- Working from `notes/Harness/implementation-plan/01-wave0-stop-the-bleeding.md`,
+  one ticket = one commit, verify run and shown before each commit.
+- **T0.1** (`e28bf01`): `init-adopt.sh`/`init-project.sh` no longer overwrite
+  an existing project's AGENTS.md/MEMORY.md/PLAN.md/PROGRESS.md/HARNESS.md —
+  differing files back up to `<file>.bak` first; `docs/`/`memory/` copy with
+  `cp -rn`. Added `set -euo pipefail` to both scripts.
+- **T0.2** (`43033ec`): `hooks/pre-commit` now `exit 1` (was `exit 0`) when
+  `dod.sh` is missing — a broken harness path no longer lets commits through
+  silently with zero checks run.
+- **T0.3** (`2081e0d`): `dod.sh` Step 5 docs-matrix — skill-only commits
+  (`global/skills/**` only) can satisfy the check with a same-day
+  `instructions/CHANGELOG.md` entry instead of the only prior legal escape
+  being `--no-verify` (which disables all 7 checks).
+- **T0.4 — SKIPPED, finding stale**: `session-end.sh` already had a real
+  `exit 1` in the FAIL branch on HEAD before this session started (fixed in
+  some earlier uncommitted-to-plan change). No functional edit needed.
+- **T0.5** (`1e724b3`): `dod.sh` Step 3 docs-lag now checks `instructions/`
+  as a fallback when `docs/` doesn't exist (this repo documents itself under
+  `instructions/` — the check was always a no-op skip before). Step 6's
+  "skipping tests" warning is now an explicit "TESTS NOT RUN" with an
+  install hint.
+- **T0.6** (`70606a8`): manual `make dod` no longer `check_fail`s on
+  uncommitted changes (expected right before a commit) — now a warning in
+  manual mode, still a hard fail inside the actual pre-commit hook.
+- **T0.7** (`375fee2`): `make unadopt` backs up AGENTS.md/MEMORY.md/PLAN.md/
+  PROGRESS.md/HARNESS.md/memory/ to `.harness-unadopt-backup/` before
+  deleting. Bug found during verify and fixed: the ticket's own `for`-loop
+  pattern let a missing optional file (e.g. no HARNESS.md) abort the whole
+  `make` target midway via the loop's exit code, before the real `rm` ran —
+  fixed with `|| true`.
+
+### Known issues
+- None new. Wave 0 close-out per `01-wave0-stop-the-bleeding.md`: the one
+  direct irreversible user-data-loss hole is stopped (T0.1, T0.7), pre-commit
+  no longer lets commits through silently (T0.2), the docs matrix gives a
+  cheap legal pass instead of pushing toward --no-verify (T0.3), the gates
+  stopped lying about their strictness (T0.4 already true, T0.5), and manual
+  make dod no longer undermines trust with a false FAIL (T0.6).
+
+### Next
+- `notes/Harness/implementation-plan/02-wave1-single-source-of-truth.md` —
+  Wave 1 (consolidates 3 versions of DoD and 2 versions of Session Start into one).
 
 ## Session 2026-07-22 (auto-HOME-PATH, Accessing Windows files, make help, rm -rf fix)
 
