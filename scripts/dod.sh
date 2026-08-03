@@ -178,9 +178,34 @@ else
       if echo "$FILTERED" | grep -q "^$d"; then DOCS_CHANGED=1; fi
     done
     if [ "$CODE_CHANGED" = "1" ] && [ "$DOCS_CHANGED" = "0" ]; then
-      check_fail "Code changed but no docs update found"
-      echo "   Changed: $(echo "$CHANGED" | tr '\n' ' ')"
-      echo "   → Update docs/ or instructions/ before committing"
+      # Skill-only fallback: if EVERY non-doc changed file lives under
+      # global/skills/, accept a same-day dated section in
+      # instructions/CHANGELOG.md as the docs update. This does NOT apply
+      # to any other CODE_DIRS path (scripts/, hooks/, tests/, templates/,
+      # Makefile) — those still require a real docs/ or instructions/ update.
+      SKILL_ONLY=1
+      for f in $FILTERED; do
+        case "$f" in
+          global/skills/*) ;;
+          *) SKILL_ONLY=0 ;;
+        esac
+      done
+      TODAY=$(date +%Y-%m-%d)
+      if [ "$SKILL_ONLY" = "1" ] && [ -f "instructions/CHANGELOG.md" ] \
+         && grep -q "^## $TODAY" instructions/CHANGELOG.md; then
+        check_pass "Skill-only change — same-day CHANGELOG.md entry found ($TODAY)"
+      else
+        check_fail "Code changed but no docs update found"
+        echo "   Changed: $(echo "$CHANGED" | tr '\n' ' ')"
+        if [ "$SKILL_ONLY" = "1" ]; then
+          echo "   → Skill-only change detected. Add a dated section to"
+          echo "     instructions/CHANGELOG.md before committing:"
+          echo "       ## $TODAY"
+          echo "       - what changed in the skill and why"
+        else
+          echo "   → Update docs/ or instructions/ before committing"
+        fi
+      fi
     else
       check_pass "Code changes accompanied by docs update (or docs-only change)"
     fi

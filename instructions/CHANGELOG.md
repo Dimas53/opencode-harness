@@ -4,6 +4,19 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-03
 
+### T0.3 — dod.sh docs matrix: legal cheap pass for skill-only commits
+
+- **scripts/dod.sh Step 5**: a commit touching only `global/skills/**` was
+  classified as "code changed" (global/ is in `CODE_DIRS`) with no legal cheap
+  way to satisfy the docs-matrix check other than `--no-verify` (which
+  disables all 7 checks, not just this one). Now: if every non-doc changed
+  file lives under `global/skills/`, a same-day dated section in
+  `instructions/CHANGELOG.md` (like this one) satisfies the check. Any other
+  `CODE_DIRS` path (`scripts/`, `hooks/`, `tests/`, `templates/`, `Makefile`)
+  still requires a real docs/instructions update — this fallback does not
+  weaken the rule for those.
+- Source: `notes/Harness/implementation-plan/01-wave0-stop-the-bleeding.md` T0.3.
+
 ### T0.2 — pre-commit hook fails closed when dod.sh is missing
 
 - **hooks/pre-commit**: a missing `dod.sh` (broken `~/.opencode-harness`
