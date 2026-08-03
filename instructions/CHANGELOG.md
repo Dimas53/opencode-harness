@@ -4,6 +4,30 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-03
 
+### T1.1 — one Definition of Done, not three
+
+- **global/AGENTS.md `## Definition of Done`**: now the single source of
+  truth (9 steps: Session scan, Update docs, JSDoc, Tests, Commit Gate,
+  Safety check, Skill feedback, Cleanup, Respond). Added a new explicit
+  **Commit Gate** step wrapping `make dod` — previously the mechanical
+  `scripts/dod.sh` gate wasn't mentioned in the behavioral checklist at all.
+  `[ENFORCEMENT RULES: COMMIT & DOD]` no longer hardcodes a step count
+  ("all 6 steps") that can silently drift out of sync with the list below it.
+- **global/skills/dod/SKILL.md**: rewritten to mirror AGENTS.md 1:1 (same 9
+  steps, same order, same numbering) instead of its own independent 7-step
+  list (STEP 0-6 + 5b) that had already drifted from AGENTS.md's "6 steps."
+- **instructions/GUIDE.md**: removed a THIRD independent hardcoded DoD
+  description (a 6-item list under "### Definition of Done" that matched
+  neither AGENTS.md nor dod/SKILL.md) — replaced with a reference to
+  AGENTS.md as source of truth. Also dropped stale "(6 steps)" mentions in
+  two command-reference tables.
+- **README.md**: dropped stale "(6 steps)" from the `dod` shortcut description.
+- Also fixed: `global/AGENTS.md` Step 7 (formerly Step 9, "Self-check") used
+  to say "run `make self-check` in the harness repo" unconditionally — that
+  target doesn't exist in projects that adopt the harness (only in this
+  meta-repo). Now scoped as optional/harness-repo-only.
+- Source: `notes/Harness/implementation-plan/02-wave1-single-source-of-truth.md` T1.1.
+
 ### T0.7 — make unadopt backs up harness files before deleting them
 
 - **Makefile `unadopt` target**: previously deleted `AGENTS.md`, `MEMORY.md`,

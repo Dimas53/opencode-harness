@@ -134,7 +134,7 @@ Open OpenCode in any directory and type one of these:
 ### Utility
 - `update-harness` — pull latest harness updates and apply globally
 - `sync-templates` — check for new template files missing in current project
-- `dod` — run Definition of Done checks (6 steps)
+- `dod` — run Definition of Done checks
 - `docs` — session end + prompt to update docs if code changed
 
 > Full reference: [Test Workflows](instructions/reference/09-test-workflows.md) — how all testing skills chain together.

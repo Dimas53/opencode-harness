@@ -70,7 +70,7 @@ Installed by `make setup`. Contains universal rules that apply to any project:
 | Code style | TypeScript strict, conventional commits, PEP8, PSR-12 |
 | Skills loading | 62 skills with trigger-based auto-loading |
 | Session Start | Mandatory 8-step sequence at every session beginning |
-| Definition of Done | 6-step checklist before saying "done" |
+| Definition of Done | Checklist before saying "done" (see global/AGENTS.md) |
 | Documentation Session | Trigger + script for updating docs |
 | Session End Protocol | Runs after git push |
 | External projects | Restricted mode for client work |
@@ -203,7 +203,7 @@ The primary way to initialize any project is via shortcuts inside OpenCode:
 | `fix-logic <ID>` | Same, single logic finding by ID (e.g. `fix-logic L1`, `fix-logic L4`) |
 | `update-harness` | Pulls latest harness updates, applies globally |
 | `sync-templates` | Checks for new template files missing in current project, copies with confirmation |
-| `dod` | Run Definition of Done checks (6 steps) |
+| `dod` | Run Definition of Done checks |
 | `docs` | Session end + prompt to update docs if code changed |
 
 These shortcuts work from any directory inside an open OpenCode session.
@@ -350,17 +350,18 @@ the lag got blocked because HEAD hadn't updated yet. A commit that does NOT touc
 
 ### Definition of Done
 
-After commit, BEFORE push, the agent runs the 6-step DoD checklist:
-1. PROGRESS.md updated
-2. Architecture docs checked/updated
-3. JSDoc added for new code
-4. Tests run and pass
-5. roadmap.md checked
-6. Safety check (no Russian in files, no forbidden files touched)
+After commit, BEFORE push, the agent runs the DoD checklist. `global/AGENTS.md`
+`## Definition of Done` is the single source of truth for which steps exist
+and in what order — `global/skills/dod/SKILL.md` mirrors it 1:1 with examples.
+Don't duplicate the step list here; it will drift out of sync (this section
+used to, which is exactly the bug Wave 1 T1.1 fixed).
 
-Most checks are automated via `make dod` (pre‑commit hook): tests,
-Cyrillic scan, docs matrix (SIGPIPE-safe, uses `sed` instead of `head`). The agent handles the rest manually.
-Only after all steps pass does the agent report "done".
+The mechanical part (`make dod`, Commit Gate step) runs: uncommitted changes,
+Cyrillic scan, docs lag (SIGPIPE-safe, uses `sed` instead of `head`),
+PROGRESS.md freshness, docs matrix, quick tests, self-check. The remaining
+steps (docs update, JSDoc, safety check, skill feedback, cleanup) are
+judgment calls the agent handles manually. Only after all steps pass does
+the agent report "done".
 
 ### Push
 

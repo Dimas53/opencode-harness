@@ -154,7 +154,9 @@ Project-level — configs and infrastructure that could break the project.
 
 [ENFORCEMENT RULES: COMMIT & DOD]
 - TRIGGER-LOCK: Before every `git commit` — Definition of Done MUST execute first. You are forbidden to run `git commit` without completing DoD.
-- MANDATORY: Execute all 6 steps in ## Definition of Done below before saying "done", "ready", or "finished".
+- MANDATORY: Execute every step listed in ## Definition of Done below, in the
+  order given, before saying "done", "ready", or "finished". Do not
+  paraphrase or hardcode the step count anywhere — read the section itself.
 - NO-BYPASS: "I only did X in this prompt" is not an excuse. Scan entire conversation.
 - VERIFY-BEFORE-MARK: Do NOT mark any DoD step `[✓]` until confirmed executed. Use `[•]` in progress, `[ ]` todo.
 
@@ -233,9 +235,18 @@ Execute these steps in order BEFORE any response to the user:
 
 ## Definition of Done
 
-**Triggers:** before saying "done" / "ready" / "finished" — execute ALL steps below. Must also run before every `git commit` (Session End calls this first). Skipping any step is a violation.
+**Single source of truth for this checklist.** `global/skills/dod/SKILL.md`
+mirrors this list exactly, step for step, for elaboration and examples only —
+it must never define its own step or its own numbering. If the two ever
+disagree, THIS section wins and the skill file is stale.
 
-1. **Session scan:** `git log --oneline origin/main..HEAD`. List everything created/modified/deployed this session.
+**Triggers:** before saying "done" / "ready" / "finished" — execute every step
+below, in order. Also runs before every `git commit` (Session End calls this
+first). Skipping any step is a violation. "I only did X in this prompt" is not
+an excuse — scan the entire conversation.
+
+1. **Session scan:** `git log --oneline origin/main..HEAD`. List everything
+   created/modified/deployed this session.
 2. **Update docs (mandatory per item):**
 
    | What changed | Must update |
@@ -249,15 +260,33 @@ Execute these steps in order BEFORE any response to the user:
    | risk level / product contract / security config change | `HARNESS.md` + `PROGRESS.md` |
    | anything else | `PROGRESS.md` always |
 
-   `PROGRESS.md`: add completed items, known issues (per-task detail)
-3. **JSDoc:** Add for new composables, modules, server routes, utility functions, components with non-trivial logic.
-4. **Tests:** If test suite exists — run it. All tests must pass. If new feature — add at least one test.
-5. **Safety check:** No Russian text in project files. No .env, docker-compose, or lock files modified without confirmation.
-5b. **Skill feedback:** If any skill behaved unexpectedly or missed an important step — note in memory/YYYY-MM-DD.md what happened and what behavior was expected. Human decides whether to update SKILL.md.
-6. **Respond with results** only after ALL steps are confirmed.
-7. **Self-check:** Before saying "done" — run `make self-check` in the harness repo.
+   `PROGRESS.md`: add completed items, known issues (per-task detail).
+3. **JSDoc:** Add for new composables, modules, server routes, utility
+   functions, components with non-trivial logic.
+4. **Tests:** If test suite exists — run it. All tests must pass. If new
+   feature — add at least one test.
+5. **Commit Gate:** Run `make dod` (executes `scripts/dod.sh` — the
+   mechanical, exit-code-enforced git-hygiene gate: uncommitted changes,
+   Cyrillic scan, docs lag, PROGRESS.md freshness, docs matrix, quick tests,
+   self-check). It must exit 0. This is a DIFFERENT check from steps 1-4 —
+   those are judgment calls about product completeness, this is an automated
+   mechanical gate. Both are required.
+6. **Safety check:** No Russian text in project files. No `.env`,
+   docker-compose, or lock files modified without confirmation.
+7. **Skill feedback:** If any skill behaved unexpectedly or missed an
+   important step — note in `memory/YYYY-MM-DD.md` what happened and what
+   behavior was expected. Human decides whether to update SKILL.md.
+8. **Cleanup:** No leftover debug code (`console.log`, etc.) unless
+   intentional. No TODO/FIXME left without a note explaining why it's
+   deferred.
+9. **Respond with results** only after ALL steps above are confirmed.
 
-NEVER mark `[✓]` before executing. `[•]` = in progress, `[ ]` = todo, `[✓]` = confirmed done.
+   Optional, harness-repo only: if this project defines a `make self-check`
+   target (syntax/permissions/diff check) — run it as part of step 5. Most
+   projects do not have this target; skip if absent.
+
+NEVER mark `[✓]` before executing. `[•]` = in progress, `[ ]` = todo,
+`[✓]` = confirmed done.
 
 → Full checklists with examples: `load skills/dod/SKILL.md`
 

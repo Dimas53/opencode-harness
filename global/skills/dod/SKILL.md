@@ -1,8 +1,9 @@
 ---
 name: dod
 description: >
-  Full Definition of Done reference with per-step checklists, examples,
-  and edge cases for the mandatory 6-step DoD process.
+  Full Definition of Done reference with per-step checklists, examples, and
+  edge cases. Mirrors global/AGENTS.md ## Definition of Done exactly — same
+  steps, same numbers, same order. This file never defines its own step.
 ---
 
 # Definition of Done — Full Reference
@@ -11,8 +12,11 @@ Loaded when AGENTS.md Definition of Done section says to load this skill.
 
 ## Why this exists
 
-The compact version in AGENTS.md (6 steps) is the mandatory checklist.
-This skill adds: per-step checklists, examples, edge cases.
+`global/AGENTS.md` ## Definition of Done is the single source of truth for
+WHICH steps exist and in what order. This skill adds: per-step checklists,
+examples, edge cases. If this file and AGENTS.md ever disagree on step
+content or count — AGENTS.md wins; this file is stale and must be fixed to
+match, not the other way around.
 
 ## When to run
 
@@ -24,19 +28,18 @@ Triggered by:
 ## The full rule
 
 BEFORE saying "done", "ready", or "finished" — execute every step below.
-Skipping any step is a violation.
-"I only did X in this prompt" is NOT an excuse.
-Look at the ENTIRE conversation window, not just the last action.
+Skipping any step is a violation. "I only did X in this prompt" is NOT an
+excuse. Look at the ENTIRE conversation window, not just the last action.
 
 ---
 
-### STEP 0 — Session scan (do first)
+### STEP 1 — Session scan (do first)
 
 ```bash
 git log --oneline origin/main..HEAD
 ```
 
-Also list EVERYTHING created, modified, or deployed this session:
+List EVERYTHING created, modified, or deployed this session:
 - New Directus Flows (created/deployed to production)
 - Directus collections / fields
 - Composables / server routes / utilities
@@ -49,26 +52,13 @@ If git log shows nothing but you did work — still list what you did.
 
 ---
 
-### STEP 1 — PROGRESS.md update
+### STEP 2 — Update docs (per Docs Update Matrix in AGENTS.md)
 
 Checklist:
-- [ ] Completed items moved to "Current status"
-- [ ] New known issues added if any discovered
-- [ ] Next session plan updated
-- [ ] Git log section or commit hash noted
-- [ ] Reflects EVERYTHING from session scan, not just last action
-
----
-
-### STEP 2 — Architecture docs
-
-Checklist:
-- [ ] For each item in session scan — ask: "Is there a doc that describes this?"
-  - YES → update it now
-  - NO and item is significant → create docs/architecture/feature-name.md
-
-Significant = new page, Flow, collection, composable with business logic, external service
-NOT significant = CSS tweak, typo fix, minor UI change
+- [ ] For each item in session scan — find its row in the Docs Update Matrix table
+- [ ] Update the matching doc NOW — do not defer to next session
+- [ ] `PROGRESS.md`: completed items, known issues, reflects EVERYTHING from
+      session scan, not just the last action
 
 DO NOT WAIT. DO NOT SKIP. DO NOT DEFER TO NEXT SESSION.
 
@@ -88,13 +78,30 @@ Checklist:
 ### STEP 4 — Tests
 
 Checklist:
-- [ ] If test suite exists — run: all tests must pass
+- [ ] If test suite exists — run it: all tests must pass
 - [ ] If new feature — add at least one test
 - [ ] If no test suite exists — skip this step
 
 ---
 
-### STEP 5 — Safety check
+### STEP 5 — Commit Gate (`make dod`)
+
+This is a DIFFERENT kind of check from steps 1-4: it is a mechanical,
+exit-code-enforced script (`scripts/dod.sh`), not a judgment call.
+
+```bash
+make dod
+```
+
+Must exit 0. If it fails:
+- Read the failing step's output — it tells you exactly what to fix
+- Fix the actual problem — do NOT run `git commit --no-verify` to skip it.
+  If you believe the failure is a false positive, STOP and ask the user
+  before bypassing anything — see Hard Limits in AGENTS.md.
+
+---
+
+### STEP 6 — Safety check
 
 Checklist:
 - [ ] No Russian text introduced in project files
@@ -102,7 +109,7 @@ Checklist:
 
 ---
 
-### STEP 5b — Skill feedback
+### STEP 7 — Skill feedback
 
 Checklist:
 - [ ] Did any skill behave unexpectedly or miss an important step?
@@ -110,27 +117,31 @@ Checklist:
 
 ---
 
-### STEP 6 — Cleanup
+### STEP 8 — Cleanup
 
 Checklist:
 - [ ] Uncommitted changes are intentional (not leftover debug code)
 - [ ] No console.log or debug code committed unless intentional
-- [ ] No TODO/FIXME left without note
+- [ ] No TODO/FIXME left without a note explaining why it's deferred
 
 ---
 
-### Respond to user
+### STEP 9 — Respond to user
 
-Only after ALL steps are confirmed — respond.
+Only after ALL steps 1-8 are confirmed — respond.
+
+If this project defines a `make self-check` target — run it as part of
+Step 5, alongside `make dod`. Most projects do not have this target
+(it is specific to the opencode-harness meta-repo); skip if absent.
 
 ## Checklist format
 
 Use this format for each step in your response:
 ```
-### STEP 1 — PROGRESS.md
-[•] Updating...
+### STEP 1 — Session scan
+[•] Scanning...
 
-### STEP 2 — Architecture docs
+### STEP 2 — Docs update
 [ ] No significant changes this session
 ```
 
