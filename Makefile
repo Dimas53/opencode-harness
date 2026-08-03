@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: help link setup init init-adopt analyze verify update dod mcp self-check uninstall uninstall-lite unadopt
+.PHONY: help link setup init init-adopt analyze verify update dod mcp self-check uninstall uninstall-lite unadopt check-docs-sync
 
 .DEFAULT_GOAL := help
 
@@ -18,6 +18,7 @@ help:
 	@echo "  make update         -- update harness from repository"
 	@echo "  make dod            -- run Definition of Done checks"
 	@echo "                        (uncommitted check + cyrillic scan + docs lag)"
+	@echo "  make check-docs-sync -- verify DoD stays in sync across AGENTS.md/SKILL.md"
 	@echo "  make self-check     -- verify syntax, permissions and diff before committing"
 	@echo "  make uninstall      -- remove everything (harness + OpenCode + RTK + uv)"
 	@echo "  make uninstall-lite -- remove harness only, keep OpenCode and RTK"
@@ -74,6 +75,9 @@ update:
 
 dod:
 	@./scripts/dod.sh
+
+check-docs-sync:
+	@./scripts/check-dod-sync.sh
 
 self-check:
 	@echo "=== Self-Check ==="

@@ -2,6 +2,36 @@
 
 All notable changes to opencode-harness are documented here.
 
+## 2026-08-04
+
+### T1.3 — automatic DoD sync checker (`make check-docs-sync`)
+
+- **scripts/check-dod-sync.sh (new)**: compares step count and step titles
+  between `global/AGENTS.md ## Definition of Done` and
+  `global/skills/dod/SKILL.md`, so the two can't silently re-diverge the way
+  they already had once (T1.1). Cheap first version of the audit's
+  `rules.yaml` codegen idea — a checker, not a generator.
+- **Makefile**: added `check-docs-sync` target + `.PHONY` entry + help line.
+- Not wired into the pre-commit hook — that belongs to Wave 3 (CI, T3.4),
+  not Wave 1; this ticket only adds the manual command.
+- Two bugs found and fixed during verify, both in the ticket's own proposed
+  script (documented so a future re-implementation doesn't reintroduce them):
+  - The step-title extraction for `dod/SKILL.md` (unlike the AGENTS.md side)
+    wasn't scoped to a section, so it also matched the illustrative
+    `### STEP 1` / `### STEP 2` example lines inside "## Checklist format"
+    at the end of the file — inflating the count to 11 instead of 9 even
+    when genuinely in sync. Fixed by truncating the file at that heading
+    before extracting steps.
+  - The first-word title comparison broke on single-word AGENTS.md titles
+    like `**JSDoc:**` — the trailing colon is captured as part of the (only)
+    word, but `dod/SKILL.md`'s plain `### STEP 3 — JSDoc` heading has none,
+    so genuinely synced steps 3/4/8 reported as mismatched. Fixed by
+    stripping a trailing colon before comparing.
+- Verified: positive case (`make check-docs-sync` on the real, synced files)
+  passes; negative case (renaming a STEP heading in an isolated temp copy)
+  correctly exits 1 and reports the divergence.
+- Source: `notes/Harness/implementation-plan/02-wave1-single-source-of-truth.md` T1.3.
+
 ## 2026-08-03
 
 ### T1.2 — consolidate Session Start (drop the ItoCook-leaking duplicate)
