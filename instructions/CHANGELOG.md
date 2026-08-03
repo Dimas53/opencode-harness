@@ -4,6 +4,19 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-04
 
+### T2.1 — dod.sh docs-matrix recognizes INSTALL.md/README.md
+
+- **scripts/dod.sh Step 5**: added a `DOCS_FILES="INSTALL.md README.md"`
+  exact-match list alongside the existing `DOCS_DIRS` prefix list. Previously
+  a commit touching `Makefile` (in `CODE_DIRS`) together with `INSTALL.md`/
+  `README.md` failed the docs-matrix check, because those two root-level
+  files were in neither `CODE_DIRS` nor `DOCS_DIRS` — the check only
+  recognized `docs/` and `instructions/` as documentation.
+- Verified in an isolated clone: staging `Makefile` + `INSTALL.md` and
+  running `PRE_COMMIT=1 bash scripts/dod.sh` now passes Step 5 (previously
+  failed).
+- Source: `notes/Harness/implementation-plan/03-wave2-transplant-cleanup.md` T2.1.
+
 ### T1.3 — automatic DoD sync checker (`make check-docs-sync`)
 
 - **scripts/check-dod-sync.sh (new)**: compares step count and step titles

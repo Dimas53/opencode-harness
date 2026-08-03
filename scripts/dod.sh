@@ -163,6 +163,7 @@ echo "[ 5/7 ] Docs matrix check"
 
 CODE_DIRS="scripts/ hooks/ tests/ global/ templates/ Makefile"
 DOCS_DIRS="docs/ instructions/"
+DOCS_FILES="INSTALL.md README.md"
 
 if ! git rev-parse --is-inside-work-tree &>/dev/null; then
   check_warn "Not inside a git repo — skipping"
@@ -185,6 +186,9 @@ else
     done
     for d in $DOCS_DIRS; do
       if echo "$FILTERED" | grep -q "^$d"; then DOCS_CHANGED=1; fi
+    done
+    for f in $DOCS_FILES; do
+      if echo "$FILTERED" | grep -qx "$f"; then DOCS_CHANGED=1; fi
     done
     if [ "$CODE_CHANGED" = "1" ] && [ "$DOCS_CHANGED" = "0" ]; then
       # Skill-only fallback: if EVERY non-doc changed file lives under
