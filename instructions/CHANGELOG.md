@@ -2,6 +2,20 @@
 
 All notable changes to opencode-harness are documented here.
 
+## 2026-08-03
+
+### T0.1 — init-adopt/init-project no longer overwrite existing project files
+
+- **scripts/init-adopt.sh, scripts/init-project.sh**: template copy over an
+  existing project (`AGENTS.md`, `MEMORY.md`, `PLAN.md`, `PROGRESS.md`,
+  `HARNESS.md`) now backs up any differing existing file to `<file>.bak`
+  before installing the template, instead of overwriting silently. `docs/`
+  and `memory/` now copy with `cp -rn` (no-clobber) so existing files inside
+  are preserved.
+- Added `set -euo pipefail` to both scripts so a mid-script failure stops
+  execution instead of continuing past it.
+- Source: `notes/Harness/implementation-plan/01-wave0-stop-the-bleeding.md` T0.1.
+
 ## 2026-07-22
 
 ### Vendor all skills — removed external dependencies

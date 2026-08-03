@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # Scaffold a new project and open OpenCode TUI for harness-init
 # Usage: make init PROJECT=/path/to/project [--no-open]
 
@@ -34,13 +35,27 @@ if [ -z "$PROJECT" ]; then
 fi
 
 mkdir -p "$PROJECT"
-cp -r "$TEMPLATES_DIR/docs/" "$PROJECT/docs/"
-cp -r "$TEMPLATES_DIR/memory/" "$PROJECT/memory/"
-cp "$TEMPLATES_DIR/AGENTS.md" "$PROJECT/AGENTS.md"
-cp "$TEMPLATES_DIR/MEMORY.md" "$PROJECT/MEMORY.md"
-cp "$TEMPLATES_DIR/PLAN.md" "$PROJECT/PLAN.md"
-cp "$TEMPLATES_DIR/PROGRESS.md" "$PROJECT/PROGRESS.md"
-cp "$TEMPLATES_DIR/HARNESS.md" "$PROJECT/HARNESS.md"
+
+# Copies src -> dst. If dst already exists and differs from src, backs it up
+# to dst.bak first so nothing is silently lost. Never skips the copy — init
+# always installs the latest template; the backup is the safety net.
+safe_copy_file() {
+  local src="$1" dst="$2"
+  if [ -f "$dst" ] && ! diff -q "$src" "$dst" >/dev/null 2>&1; then
+    cp "$dst" "$dst.bak"
+    echo "  ⚠ $dst already existed and differed — backed up to $dst.bak"
+  fi
+  cp "$src" "$dst"
+}
+
+mkdir -p "$PROJECT/docs" "$PROJECT/memory"
+cp -rn "$TEMPLATES_DIR/docs/." "$PROJECT/docs/"
+cp -rn "$TEMPLATES_DIR/memory/." "$PROJECT/memory/"
+safe_copy_file "$TEMPLATES_DIR/AGENTS.md"    "$PROJECT/AGENTS.md"
+safe_copy_file "$TEMPLATES_DIR/MEMORY.md"    "$PROJECT/MEMORY.md"
+safe_copy_file "$TEMPLATES_DIR/PLAN.md"      "$PROJECT/PLAN.md"
+safe_copy_file "$TEMPLATES_DIR/PROGRESS.md"  "$PROJECT/PROGRESS.md"
+safe_copy_file "$TEMPLATES_DIR/HARNESS.md"   "$PROJECT/HARNESS.md"
 
 if [ ! -f "$PROJECT/.gitignore" ]; then
   cp "$TEMPLATES_DIR/.gitignore" "$PROJECT/.gitignore"
