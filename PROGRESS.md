@@ -2,9 +2,66 @@
 
 ## Current Status
 
-Phase: implementation-plan Wave 0 (stop the bleeding) — complete
-Last commit: 375fee2 — fix(T0.7): make unadopt backs up harness files before deleting them
+Phase: implementation-plan Wave 1 (single source of truth) — complete
+Last commit: 130210b — feat(T1.3): add make check-docs-sync — automatic DoD sync checker
 Chat language: ru
+
+## Session 2026-08-04 (implementation-plan Wave 1 — T1.1 through T1.3)
+
+Chat language: ru
+
+### Done
+- Working from `notes/Harness/implementation-plan/02-wave1-single-source-of-truth.md`,
+  one ticket = one commit, verify run and shown before each commit.
+- **T1.1** (`331a027`): consolidated three independent versions of
+  Definition of Done (`global/AGENTS.md`, `global/skills/dod/SKILL.md`, and
+  a third hardcoded list found in `instructions/GUIDE.md`) into one 9-step
+  list in `global/AGENTS.md`, with `dod/SKILL.md` mirroring it 1:1. Added an
+  explicit **Commit Gate** step (`make dod`) to the behavioral checklist —
+  previously the mechanical gate wasn't listed there. Removed hardcoded step
+  counts from enforcement blocks so they can't silently drift again.
+- **T1.2** (`d6e4a16`): consolidated Session Start. Fixed a hardcoded
+  "Execute all 7 steps" (actually 8) plus inconsistent list indentation in
+  `global/AGENTS.md`. Removed `global/skills/session-start/SKILL.md` — an
+  orphaned duplicate of `startup/SKILL.md` that leaked a specific client
+  project name ("ItoCook") into its trigger phrase and referenced a
+  nonexistent template file (`docs/project-state.md`). Carried its two
+  useful behavioral rules (keep report under 10 lines, ask ONE clarifying
+  question) into `startup/SKILL.md` before deleting it.
+  **Flagged, not touched** (outside this ticket's file list, belongs to
+  Wave 2 T2.2/T2.3 "phantom skills in cheatsheet"): `session-start` is still
+  listed as an available skill in `templates/docs/skills-cheatsheet.md` and
+  three `instructions/reference/*.md` files — now phantom entries after
+  this deletion. `instructions/roadmap.md:22`'s "Consider generic version
+  of session-start" TODO is now moot for the session-start half. Separately,
+  "ItoCook" also appears in `global/skills/security/` reference docs and
+  `global/skills/archify/notes/` — pre-existing, unrelated to Session Start.
+- **T1.3** (`130210b`): added `scripts/check-dod-sync.sh` + `make
+  check-docs-sync` — compares step count/titles between `AGENTS.md` and
+  `dod/SKILL.md` so they can't silently re-diverge. Not wired into
+  pre-commit (that's Wave 3/CI). Found and fixed two bugs in the ticket's
+  own proposed script during verify: (1) the SKILL.md step extraction
+  wasn't scoped past its own "Checklist format" illustrative example
+  section, inflating the count from 9 to 11; (2) the first-word title
+  comparison broke on single-word titles with a trailing colon
+  (`**JSDoc:**` vs `JSDoc`), false-flagging steps 3/4/8. Both fixed and
+  verified (clean positive run + isolated-copy negative run).
+- Incident during T1.3 verify: a negative-test `sed` mutation briefly landed
+  on the real `global/skills/dod/SKILL.md` on disk (session was interrupted
+  mid-command) instead of staying inside the intended temp copy. Caught via
+  the harness's file-change notice, reverted immediately, confirmed via
+  `git diff` that the real file matches HEAD before committing T1.3. No bad
+  state was committed.
+
+### Known issues
+- Phantom `session-start` skill references (see T1.2 above) — left for
+  Wave 2 T2.2/T2.3.
+- "ItoCook" leaks outside Session Start scope (security/ docs, archify/
+  notes/) — not yet assigned to a specific ticket.
+
+### Next
+- Per explicit instruction: do NOT start Wave 2 automatically. Wait for the
+  user. Next file when resumed: `03-wave2-transplant-cleanup.md`.
 
 ## Session 2026-08-03 (implementation-plan Wave 0 — T0.1 through T0.7)
 
