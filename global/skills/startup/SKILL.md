@@ -12,8 +12,10 @@ Use when you need the full ritual with explanations and edge cases.
 
 ## Why this exists
 
-The compact version in AGENTS.md (6 steps) is the minimum viable startup.
-This skill adds depth: why each step exists, what can go wrong, edge cases.
+The compact version in AGENTS.md `## Session Start` is the minimum viable
+startup and the single source of truth for which steps exist and in what
+order. This skill adds depth: why each step exists, what can go wrong, edge
+cases.
 
 ## Full 12-Step Ritual
 
@@ -82,3 +84,7 @@ Progress status: [one line from PROGRESS.md current status]
 Working on: [what user asked for]
 Skills loaded: [list]
 ```
+
+Keep this report brief (under 10 lines). If the next step is unclear from
+PROGRESS.md/roadmap.md, ask ONE clarifying question before proceeding —
+do not guess and do not ask more than one question at this stage.

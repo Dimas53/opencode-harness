@@ -4,6 +4,39 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-03
 
+### T1.2 — consolidate Session Start (drop the ItoCook-leaking duplicate)
+
+- **global/AGENTS.md `[ENFORCEMENT RULES: STARTUP]`**: no longer hardcodes
+  "Execute all 7 steps" (the section actually has 8) — same drift class as
+  T1.1's DoD fix. Also fixed inconsistent leading-space indentation on
+  steps 3/4/6/7/8 in `## Session Start` that could break ordered-list
+  rendering in some Markdown renderers.
+- **Removed `global/skills/session-start/SKILL.md`**: it was an orphaned
+  duplicate of `global/skills/startup/SKILL.md` — `AGENTS.md` already links
+  to `startup/SKILL.md` for details, not to this file, and nothing else
+  referenced it. It also leaked a specific client project name ("ItoCook")
+  into its trigger phrase and referenced `docs/project-state.md`, a file
+  that doesn't exist in any template. Two genuinely useful behavioral rules
+  it had that `startup/SKILL.md` lacked — keep the session-start report
+  under 10 lines, ask ONE clarifying question if the next step is unclear —
+  were carried over into `startup/SKILL.md`'s Step 12 before deletion.
+- **global/skills/startup/SKILL.md**: dropped its own stale "(6 steps)"
+  reference to AGENTS.md's Session Start (it has 8, and hardcoding either
+  number invites the same drift T1.1 fixed for DoD) — now points at the
+  section itself as the source of truth instead of a number.
+- **Flagged, not touched (out of this ticket's file list, left for Wave 2
+  T2.2/T2.3 "phantom skills in cheatsheet"):** `session-start` is still
+  listed as an available skill in `templates/docs/skills-cheatsheet.md`,
+  `instructions/reference/03-skills-cheatsheet.md`,
+  `instructions/reference/05-skills-inventory.md`, and
+  `instructions/reference/01-harness-overview.de.md` — now phantom entries
+  after this deletion. `instructions/roadmap.md:22`'s "Consider generic
+  version of session-start" TODO is now moot for the session-start half.
+  Separately, "ItoCook" also appears in `global/skills/security/` reference
+  docs and `global/skills/archify/notes/` — pre-existing, unrelated to
+  Session Start, not part of this ticket's scope.
+- Source: `notes/Harness/implementation-plan/02-wave1-single-source-of-truth.md` T1.2.
+
 ### T1.1 — one Definition of Done, not three
 
 - **global/AGENTS.md `## Definition of Done`**: now the single source of

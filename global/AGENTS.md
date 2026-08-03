@@ -148,7 +148,8 @@ Project-level — configs and infrastructure that could break the project.
 ---
 
 [ENFORCEMENT RULES: STARTUP]
-- MANDATORY: Execute all 7 steps in ## Session Start below. Non-negotiable.
+- MANDATORY: Execute every step listed in ## Session Start below, in order.
+  Non-negotiable. Do not paraphrase or hardcode the step count anywhere.
 - STOP-CONDITION: Any step fails (non-zero exit, missing file, read error) — halt immediately. Report the exact error. Wait for user instruction. Do NOT proceed. Do NOT assume success.
 - OUTPUT-LOCK: The first output of this session MUST be the Session Initialized report. No preamble, no greetings, no "I'll start". The block must appear before any other text.
 
@@ -174,28 +175,28 @@ Execute these steps in order BEFORE any response to the user:
 
 1. `pwd && git log --oneline -10`
 2. Load `using-agent-skills` — try filesystem path first: `Read ~/.config/opencode/skills/using-agent-skills/SKILL.md`. If not found (built-in skill), load via `skill("using-agent-skills")` instead. Also check project `docs/skills-cheatsheet.md` for relevant skills matching current task triggers.
- 3. Read `PROGRESS.md` in project root — compare git log with progress status. If out of sync, update PROGRESS.md FIRST. If file doesn't exist — skip.
-    After reading PROGRESS.md, look for a line starting with `Chat language:`.
-    - If present — use that language for all chat messages and questions. Generated files are always in English (see hard rules in project or global AGENTS.md).
-    - If absent — ask the user for their language explicitly before proceeding,
-      then WRITE `Chat language: <chosen>` into `PROGRESS.md` (create the file
-      if it does not exist) so the choice persists and is never asked again.
- 4. Read `docs/roadmap.md`
+3. Read `PROGRESS.md` in project root — compare git log with progress status. If out of sync, update PROGRESS.md FIRST. If file doesn't exist — skip.
+   After reading PROGRESS.md, look for a line starting with `Chat language:`.
+   - If present — use that language for all chat messages and questions. Generated files are always in English (see hard rules in project or global AGENTS.md).
+   - If absent — ask the user for their language explicitly before proceeding,
+     then WRITE `Chat language: <chosen>` into `PROGRESS.md` (create the file
+     if it does not exist) so the choice persists and is never asked again.
+4. Read `docs/roadmap.md`
 5. Read `MEMORY.md` and `memory/YYYY-MM-DD.md` if they exist (for today or yesterday)
- 6. Read `HARNESS.md` if it exists — apply project constraints and risk levels to session behavior
- 7. If the project uses the Directus MCP server (`.env` has DIRECTUS_URL, or
-    HARNESS.md declares a Directus instance):
-    - If a project-level `opencode.jsonc` exists in the project root — it is
-      used automatically when OpenCode starts (it fully overrides the global
-      config). No further action needed here. This is a READ only — never
-      modify the config here.
-    - If NO local `opencode.jsonc` exists — warn the user:
-      "⚠️ Directus MCP is not configured for this project. Create `.env`
-      (DIRECTUS_URL + MCP_DIRECTUS_TOKEN) and run `make mcp`
-      (see instructions/directus-mcp-setup.md)."
-    - Do NOT modify any config. There is no global directus config to compare
-      against and no switching.
- 8. Report:
+6. Read `HARNESS.md` if it exists — apply project constraints and risk levels to session behavior
+7. If the project uses the Directus MCP server (`.env` has DIRECTUS_URL, or
+   HARNESS.md declares a Directus instance):
+   - If a project-level `opencode.jsonc` exists in the project root — it is
+     used automatically when OpenCode starts (it fully overrides the global
+     config). No further action needed here. This is a READ only — never
+     modify the config here.
+   - If NO local `opencode.jsonc` exists — warn the user:
+     "⚠️ Directus MCP is not configured for this project. Create `.env`
+     (DIRECTUS_URL + MCP_DIRECTUS_TOKEN) and run `make mcp`
+     (see instructions/directus-mcp-setup.md)."
+   - Do NOT modify any config. There is no global directus config to compare
+     against and no switching.
+8. Report:
    ```
    Session initialized. Phase: [from roadmap]. Last commit: [hash — msg].
    Progress: [from progress.md]. Skills loaded: [list].
