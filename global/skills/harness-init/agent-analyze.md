@@ -1,3 +1,13 @@
+---
+name: agent-analyze
+trigger: "analyze, analyze <path>"
+when_to_use: >
+  Read-only audit of an existing project — architecture, health, security,
+  risks. Does NOT create docs or modify files. Follow with agent-fix to
+  address findings.
+stack: any
+---
+
 # agent-analyze
 
 > Use this skill for: read-only audit of an existing project.

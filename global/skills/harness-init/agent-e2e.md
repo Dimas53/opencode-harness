@@ -1,3 +1,14 @@
+---
+name: agent-e2e
+trigger: "none — sub-protocol only, loaded by agent-fix-ui for U-pw findings"
+when_to_use: >
+  Playwright verify gate: writes and runs one spec file via the
+  run-playwright-verify.sh retry-guard to confirm a UI fix that agent-fix-ui
+  already applied. Does not fix code itself and is never invoked directly by
+  the user.
+stack: any
+---
+
 # agent-e2e — Playwright verify gate
 
 > Sub-protocol. Called from agent-fix-ui.md to verify a UI fix via Playwright.

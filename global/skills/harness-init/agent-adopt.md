@@ -1,3 +1,14 @@
+---
+name: agent-adopt
+trigger: "adopt"
+when_to_use: >
+  Connecting the harness to an existing project with code but no harness
+  docs yet — runs agent-analyze first, then generates full docs structure
+  (CONTEXT, ARCHITECTURE, roadmap, AGENTS.md, HARNESS.md). For read-only
+  audit only, use agent-analyze instead.
+stack: any
+---
+
 # agent-adopt
 
 > Use this skill for: connecting harness to an existing project.

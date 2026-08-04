@@ -1,3 +1,13 @@
+---
+name: agent-analyze-ui
+trigger: "analyze-ui, analyze-ui <path>"
+when_to_use: >
+  Static, read-only UI/frontend behavior check via the frontend-behavior
+  skill — not a full project audit. Saves findings to docs/audits/ui/.
+  Follow with fix-ui to address findings.
+stack: any
+---
+
 # agent-analyze-ui — UI Behavior Analysis
 
 > Static UI analysis. No full project audit — only frontend behavior check.

@@ -1,3 +1,13 @@
+---
+name: agent-fix-ui
+trigger: "fix-ui, fix-ui <path>, fix-ui <ID>, fix-ui all-pw"
+when_to_use: >
+  Fixes U-prefix findings from docs/audits/ui/ reports (same cycle as
+  agent-fix). U-pw findings verify via Playwright (delegates to agent-e2e),
+  plain U findings verify statically. Requires a prior analyze-ui run.
+stack: any
+---
+
 # agent-fix-ui — Fix UI findings
 
 > Reads from docs/audits/ui/. Same cycle as agent-fix but only U-prefix findings.

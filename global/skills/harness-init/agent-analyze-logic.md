@@ -1,3 +1,14 @@
+---
+name: agent-analyze-logic
+trigger: "analyze-logic, analyze-logic <path>"
+when_to_use: >
+  Finds uncovered business logic (pure functions, composables, server
+  routes) and generates L-prefix findings with concrete test cases for
+  fix-logic to consume. Does NOT write tests itself — read-only, report to
+  docs/audits/logic-YYYY-MM-DD.md.
+stack: any
+---
+
 # agent-analyze-logic
 
 > Find uncovered business logic in a project and generate testable findings.

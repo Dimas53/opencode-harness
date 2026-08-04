@@ -4,6 +4,20 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-04
 
+### T5.3 — YAML frontmatter in harness-init skills (progressive disclosure)
+
+- **global/skills/harness-init/agent-*.md (8 files)**: added a YAML
+  frontmatter block (`name`, `trigger`, `when_to_use`, `stack`) before the
+  existing `# agent-...` heading in each of `agent-new-project.md`,
+  `agent-analyze.md`, `agent-fix.md`, `agent-adopt.md`, `agent-analyze-ui.md`,
+  `agent-fix-ui.md`, `agent-analyze-logic.md`, `agent-e2e.md`. Body content
+  untouched (diff is insertions-only, 0 deletions, confirmed via
+  `git diff --stat`). Lets a strategist decide skill relevance without
+  reading full files (up to 320 lines each) — addresses the documented
+  silent-skip failure (`memory/2026-07-28.md:11`, agent skipped loading
+  `agent-e2e.md`). Full rollout to the other ~63 skills in the repo is a
+  separate future ticket per roadmap Phase 4.1 — out of scope here.
+
 ### T5.2 — file-level `.agentignore` + mechanical gate
 
 - **templates/.agentignore (new)**: default file-level restricted-pattern

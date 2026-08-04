@@ -1,3 +1,12 @@
+---
+name: agent-new-project
+trigger: "new"
+when_to_use: >
+  Scaffolding a brand new project from scratch — full interview, docs
+  generation, harness bootstrap. NOT for existing projects (use agent-adopt).
+stack: any
+---
+
 # agent-new-project
 
 ## Purpose

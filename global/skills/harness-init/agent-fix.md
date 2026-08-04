@@ -1,3 +1,13 @@
+---
+name: agent-fix
+trigger: "fix, fix <path>, fix <ID>"
+when_to_use: >
+  After an `analyze` run produced a report in docs/audits/ — fixes
+  CRITICAL/HIGH/MEDIUM findings phase by phase with verify gates. Requires a
+  prior analyze run.
+stack: any
+---
+
 # agent-fix
 
 > Fix findings from an analysis report. Reads the latest report from
