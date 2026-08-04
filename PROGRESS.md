@@ -2,9 +2,71 @@
 
 ## Current Status
 
-Phase: implementation-plan reorganization + audit annotation — done. Wave 6 (recon) still paused at T6.5 batch 1 (unchanged this session).
-Last commit: bbd5df7 (still current — this session's work is entirely in notes/, gitignored, see below)
+Phase: implementation-plan reorganization + audit annotation + v0.5 roadmap cross-check — done. Wave 6 (recon) still paused at T6.5 batch 1 (unchanged this session).
+Last commit: 9a05ffc (this follow-up round is also entirely in notes/, gitignored, see below)
 Chat language: ru
+
+## Session 2026-08-05 (follow-up — 08 reorg, source-file dedup, v0.5 roadmap cross-check)
+
+Chat language: ru
+
+Continuation of the same-day reorganization session, by user follow-up
+request. No code changes, no commits beyond this log entry — everything
+lives under `notes/Harness/`, gitignored.
+
+### Done
+
+- **Reorganized `08-open-decisions.md`**: moved the capability
+  deny-by-default entry to be the very first item in the file (marked as
+  the main conclusion) per user request to make the main finding
+  prominent. Added the remaining "keep both, no action needed" conclusions from
+  `skill-dedup-candidates.md` (security/security-and-hardening,
+  documentation/documentation-and-adrs, frontend group,
+  code-review-and-quality/code-reviewer) so the source file's full content
+  is preserved before deletion.
+- **Confirmed both `stack-specificity-decision.md` and
+  `skill-dedup-candidates.md` are now fully mirrored into
+  `08-open-decisions.md`** — attempted deletion of both source files.
+  `rm` is denied by the current permission mode (confirmed a second time,
+  not a one-off prompt) — **both files still exist on disk**, need manual
+  removal or a session with `rm` permission granted. Same for the old
+  duplicate `notes/Harness/recon-findings/` folder (English originals,
+  superseded by the Russian versions in
+  `implementation-plan/recon-findings/`) — also not removable this
+  session.
+- **Cross-checked `notes/Harness/v0.5 - harness-roadmap.new.md`** (the
+  broader, older 11-phase vision doc — not the same document the audit's
+  6 waves were built from) against current code, phase by phase. Added a
+  full new section to `GENERAL-REPORT-waves-0-5.md` covering what's done
+  vs not done from that roadmap. Headline results: Phase
+  1.5 (Behavior Evals) is essentially Wave 4 and is done; Phase 2 (Memory
+  & Context templates — PLAN.md verify gates, HARNESS.md sections,
+  CONTEXT.md, the >200-line grep rule) turned out to already be done,
+  independently of the wave work; Phase 0 (AGENTS.md compaction to
+  ~220 lines) explicitly NOT done — still 458 lines; Phase 1 (real BATS
+  behavioral tests) NOT done, matches the Wave 6 recon finding
+  independently; Phase 3/4 (interview redesign, formal agent loop, Zod
+  schemas, prompt versioning) NOT started; Phase 5 (Sandbox) only has the
+  two Wave 5 pieces (migrations, file-level .agentignore); Phase 6-11
+  (observability, own MCP server, RAG, self-improvement, multi-agent,
+  domain transfer) genuinely not started, and per the document's own
+  logic shouldn't be until Phase 1.5's eval harness proves itself.
+
+### Known issues
+
+- Three files need manual `rm` (permission denied twice this session):
+  `notes/Harness/stack-specificity-decision.md`,
+  `notes/Harness/skill-dedup-candidates.md`,
+  `notes/Harness/recon-findings/` (whole old directory, 5 files).
+
+### Next
+
+- User has the handoff package ready: `GENERAL-REPORT-waves-0-5.md` +
+  `agent-session-flow.post-waves-0-5.md` + annotated
+  `2026-07-30-audit-enforcement-gaps.md` + `08-open-decisions.md` (now
+  fully self-contained) + `recon-findings/` (kept, referenced by 08, not
+  duplicated) — intended for another model/session to pick up further
+  analysis.
 
 ## Session 2026-08-05 (implementation-plan reorganization, audit checkmarks, two new synthesis docs)
 

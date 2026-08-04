@@ -2,6 +2,40 @@
 
 All notable changes to opencode-harness are documented here.
 
+## 2026-08-05
+
+### Wave 6 recon + implementation-plan reorganization (no code changes)
+
+- **Wave 6 recon (T6.1-T6.4 + T6.5 batch 1)**: read previously-unaudited
+  files (analyze.sh/gen-opencode.sh/start.sh, install.bat, tests/*.bats,
+  instructions/GUIDE.md, first batch of 8 skills). Findings written to
+  `notes/Harness/implementation-plan/recon-findings/` (translated to
+  Russian, moved from the original `notes/Harness/recon-findings/`
+  location). Two critical findings surfaced: a secret-leak risk via
+  `gen-opencode.sh`/`init-adopt.sh`, and `instructions/GUIDE.md` §6
+  re-duplicating the DoD list it was warned against duplicating (T1.1).
+  No code fixed yet — report only, per the wave's own scope.
+- **`notes/Harness/implementation-plan/2026-07-30-audit-enforcement-gaps.md`**:
+  annotated in place with checkmarks against every finding, cross-referencing
+  which wave/ticket closed it. No text deleted, insertions only.
+- **New synthesis docs** in `notes/Harness/implementation-plan/`:
+  `agent-session-flow.post-waves-0-5.md` (successor to
+  `agent-session-flow.v0.3.md`, current Session Start/DoD/Session End
+  mechanics) and `GENERAL-REPORT-waves-0-5.md` (plain-language summary of
+  what changed across Wave 0-5, plus a phase-by-phase cross-check of
+  `v0.5 - harness-roadmap.new.md` against current code).
+- **`08-open-decisions.md`**: backfilled with the capability
+  deny-by-default finding (T3.7 spike concluded the mechanism exists in
+  OpenCode via `permission.bash` config, but the concrete recommendation
+  was never implemented) and the remaining open items from
+  `skill-dedup-candidates.md`. `stack-specificity-decision.md` and
+  `skill-dedup-candidates.md` are now fully mirrored into this file.
+
+All of the above lives under `notes/Harness/`, which is gitignored — this
+CHANGELOG entry exists solely to satisfy the docs-lag gate for this
+session's `PROGRESS.md`-only commits, per the same-day-CHANGELOG-entry
+convention established in `scripts/dod.sh`.
+
 ## 2026-08-04
 
 ### T5.3 — YAML frontmatter in harness-init skills (progressive disclosure)
