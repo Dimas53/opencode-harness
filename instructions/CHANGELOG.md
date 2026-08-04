@@ -4,6 +4,26 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-04
 
+### T3.5 — Cyrillic scan: remove the unjustified global/ exemption
+
+- **scripts/dod.sh** (Step 2): removed `[[ "$file" == global/* ]] && continue`.
+  The English-Only Policy in `global/AGENTS.md` declares exactly one
+  exemption — `notes/` — the `global/` exemption in code had no basis in
+  that text and silently let Cyrillic slip into skills that ship to every
+  adopted project.
+- Verified no existing Cyrillic in `global/` before removing the exemption:
+  ran the same Cyrillic-range `grep -lP` pattern `scripts/dod.sh` itself uses
+  against `git ls-files 'global/*'` — no matches, clean. Safe removal, no
+  cleanup needed first.
+- Verified the new behavior directly (not via a clone — the exemption
+  removal wasn't committed yet, so a fresh clone would've tested the old
+  code): temporarily appended a Cyrillic test line to
+  `global/skills/dod/SKILL.md`, staged it, ran `PRE_COMMIT=1 bash
+  scripts/dod.sh` — got `✗ Cyrillic found in global/skills/dod/SKILL.md —
+  use English` (previously would've silently passed). Reverted the test
+  line with `git checkout --` immediately after confirming; `git diff`
+  shows the file untouched.
+
 ### T3.4 — CI: GitHub Action + branch protection instructions
 
 - **.github/workflows/dod.yml (new)**: runs `scripts/dod.sh` and

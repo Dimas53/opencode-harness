@@ -84,7 +84,6 @@ if git rev-parse --is-inside-work-tree &>/dev/null; then
     # Skip known exceptions
     [[ "$file" == docs/audits/* ]] && continue
     [[ "$file" == notes/* ]] && continue
-    [[ "$file" == global/* ]] && continue
     [[ "$file" == scripts/dod.sh ]] && continue
     [[ "$file" == scripts/session-end.sh ]] && continue
 
