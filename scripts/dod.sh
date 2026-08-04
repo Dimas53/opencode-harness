@@ -5,8 +5,8 @@
 #
 # DOD_SKIP=<step-name>[,<step-name>...] — skip specific named steps only.
 # Valid names: docs-lag, progress, docs-matrix, tests, self-check
-# NEVER skippable: uncommitted (in pre-commit mode), cyrillic — these guard
-# git integrity and the Safety Check; there is no override for them.
+# NEVER skippable: uncommitted (in pre-commit mode), cyrillic, agentignore —
+# these guard git integrity and the Safety Check; there is no override for them.
 # Usage: DOD_SKIP=docs-matrix git commit -m "..."
 # Every skip is printed as a WARNING in the output — it is never silent.
 set -euo pipefail
@@ -41,7 +41,7 @@ echo "=== DoD Check ==="
 echo ""
 
 # ── Step 1: Uncommitted changes ──────────────────────────────────────────────
-echo "[ 1/7 ] Uncommitted changes"
+echo "[ 1/8 ] Uncommitted changes"
 
 if ! git rev-parse --is-inside-work-tree &>/dev/null; then
   check_warn "Not inside a git repo — skipping git checks"
@@ -67,7 +67,7 @@ fi
 echo ""
 
 # ── Step 2: Cyrillic scan ────────────────────────────────────────────────────
-echo "[ 2/7 ] Cyrillic scan (project files)"
+echo "[ 2/8 ] Cyrillic scan (project files)"
 
 CYRILLIC_FAIL=0
 if git rev-parse --is-inside-work-tree &>/dev/null; then
@@ -109,7 +109,7 @@ fi
 echo ""
 
 # ── Step 3: Docs lag ─────────────────────────────────────────────────────────
-echo "[ 3/7 ] Docs lag check"
+echo "[ 3/8 ] Docs lag check"
 
 if is_skipped "docs-lag"; then
   skip_notice "docs-lag"
@@ -160,7 +160,7 @@ fi
 echo ""
 
 # ── Step 4: PROGRESS.md ──────────────────────────────────────────────────────
-echo "[ 4/7 ] PROGRESS.md check"
+echo "[ 4/8 ] PROGRESS.md check"
 
 if is_skipped "progress"; then
   skip_notice "progress"
@@ -191,7 +191,7 @@ fi
 echo ""
 
 # ── Step 5: Docs matrix check ────────────────────────────────────────────────
-echo "[ 5/7 ] Docs matrix check"
+echo "[ 5/8 ] Docs matrix check"
 
 if is_skipped "docs-matrix"; then
   skip_notice "docs-matrix"
@@ -264,7 +264,7 @@ fi
 echo ""
 
 # ── Step 6: Quick tests ──────────────────────────────────────────────────────
-echo "[ 6/7 ] Quick tests"
+echo "[ 6/8 ] Quick tests"
 
 if is_skipped "tests"; then
   skip_notice "tests"
@@ -287,7 +287,7 @@ fi
 echo ""
 
 # ── Step 7: Self-check ───────────────────────────────────────────────────────
-echo "[ 7/7 ] Self-check (verification-before-completion)"
+echo "[ 7/8 ] Self-check (verification-before-completion)"
 if is_skipped "self-check"; then
   skip_notice "self-check"
 else
@@ -301,6 +301,37 @@ elif [ "$IS_HARNESS_REPO" = "1" ]; then
 else
   check_pass "No local scripts/ — not applicable for client projects"
 fi
+fi
+
+echo ""
+
+# ── Step 8: .agentignore file-level check ───────────────────────────────────
+echo "[ 8/8 ] .agentignore file-level check"
+
+AGENTIGNORE_FAIL=0
+if [ -f ".agentignore" ] && git rev-parse --is-inside-work-tree &>/dev/null; then
+  if [ "${PRE_COMMIT:-0}" = "1" ]; then
+    STAGED=$(git diff --cached --name-only --diff-filter=ACMR 2>/dev/null || true)
+  else
+    STAGED=$(git diff --name-only HEAD~1 2>/dev/null || true)
+  fi
+  while IFS= read -r pattern; do
+    # Skip comments and empty lines
+    [[ "$pattern" =~ ^#.*$ || -z "$pattern" ]] && continue
+    for f in $STAGED; do
+      case "$f" in
+        $pattern|$pattern*)
+          check_fail ".agentignore: staged file '$f' matches restricted pattern '$pattern'"
+          echo "   → This file requires explicit user confirmation before being touched."
+          AGENTIGNORE_FAIL=1
+          ;;
+      esac
+    done
+  done < ".agentignore"
+fi
+
+if [ "$AGENTIGNORE_FAIL" -eq 0 ]; then
+  check_pass "No staged files match .agentignore restrictions"
 fi
 
 echo ""

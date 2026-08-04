@@ -4,6 +4,28 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-04
 
+### T5.2 — file-level `.agentignore` + mechanical gate
+
+- **templates/.agentignore (new)**: default file-level restricted-pattern
+  list (`.env.production`, `docker-compose.prod.yml`, `backups/`, `dumps/`,
+  `*.sql.gz`, `*.pem`, `*.key`). File-level only — does NOT cover
+  field-level API reads (that requires `directus-guard-mcp`, an unbuilt
+  interceptor, out of scope here).
+- **global/AGENTS.md**: `## Access Restrictions` now references
+  project-level `.agentignore` — same "ask first" rule as the hardcoded
+  patterns.
+- **scripts/dod.sh**: renumbered Steps 1-7 from `/7` to `/8`, added new
+  Step 8 `.agentignore file-level check` — mechanically blocks any staged
+  file matching a `.agentignore` pattern (pre-commit and post-commit
+  modes). NOT skippable via `DOD_SKIP` — same class as `uncommitted`/
+  `cyrillic`.
+- **scripts/init-project.sh**, **scripts/init-adopt.sh**: now copy
+  `templates/.agentignore` into new/adopted projects via `safe_copy_file`.
+- Verified in an isolated scratch git repo: a staged `backups/dump.sql.gz`
+  is blocked (matches both `backups/` and `*.sql.gz`, exit 1); a staged
+  unrelated file passes cleanly. `make check-docs-sync` still passes (9
+  steps match — that check is independent of dod.sh's internal step count).
+
 ### T5.1 — UP/DOWN migration rule in templates/AGENTS.md
 
 - **templates/AGENTS.md**: new `## Database Migrations (if this project has

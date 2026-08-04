@@ -56,6 +56,7 @@ safe_copy_file "$TEMPLATES_DIR/MEMORY.md"    "$PROJECT/MEMORY.md"
 safe_copy_file "$TEMPLATES_DIR/PLAN.md"      "$PROJECT/PLAN.md"
 safe_copy_file "$TEMPLATES_DIR/PROGRESS.md"  "$PROJECT/PROGRESS.md"
 safe_copy_file "$TEMPLATES_DIR/HARNESS.md"   "$PROJECT/HARNESS.md"
+safe_copy_file "$TEMPLATES_DIR/.agentignore" "$PROJECT/.agentignore"
 
 if [ ! -f "$PROJECT/.gitignore" ]; then
   cp "$TEMPLATES_DIR/.gitignore" "$PROJECT/.gitignore"

@@ -1,0 +1,23 @@
+# .agentignore — file-level access restrictions for this project.
+# The agent treats every pattern here exactly like the hardcoded patterns in
+# global/AGENTS.md "Access Restrictions": never read/access without explicit
+# user confirmation. Enforced mechanically by scripts/dod.sh (staged files
+# are checked against this list before every commit — see Step 8).
+#
+# NOTE: this is FILE-LEVEL only. It does NOT block field-level API reads
+# (e.g. a Directus MCP call reading a PII field from an allowed collection).
+# Field-level protection requires a dedicated MCP interceptor — see
+# notes/Harness/v0.4 - SANDBOX_ARCHITECTURE.md for that (unbuilt) design.
+
+# Production environment
+.env.production
+docker-compose.prod.yml
+
+# Backups and dumps
+backups/
+dumps/
+*.sql.gz
+
+# Private keys
+*.pem
+*.key

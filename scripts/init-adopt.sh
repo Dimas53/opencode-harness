@@ -55,6 +55,7 @@ safe_copy_file "$HARNESS_PATH/templates/MEMORY.md"    "$PROJECT/MEMORY.md"
 safe_copy_file "$HARNESS_PATH/templates/PLAN.md"      "$PROJECT/PLAN.md"
 safe_copy_file "$HARNESS_PATH/templates/PROGRESS.md"  "$PROJECT/PROGRESS.md"
 safe_copy_file "$HARNESS_PATH/templates/HARNESS.md"   "$PROJECT/HARNESS.md"
+safe_copy_file "$HARNESS_PATH/templates/.agentignore" "$PROJECT/.agentignore"
 echo "  Done."
 echo ""
 

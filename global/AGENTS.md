@@ -357,6 +357,12 @@ NEVER execute these operations without explicit confirmation:
 
 If a task requires reading a restricted file — stop and ask the user first, explain why it's needed, and wait for explicit approval.
 
+**Project-specific additions:** if `.agentignore` exists in the project root,
+treat every pattern in it exactly like the patterns above — same rule, same
+"ask first" requirement. `scripts/dod.sh` mechanically blocks commits that
+touch a path matching `.agentignore` (Step 8) as a backstop, but the primary
+defense is: don't read these files in the first place.
+
 ---
 
 ## Safe to do autonomously
