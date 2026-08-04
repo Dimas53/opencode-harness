@@ -51,6 +51,14 @@ General — destructive actions regardless of project. Never do without explicit
 - Modifying `.env.production`
 - Any actions outside the current project
 - Running scripts from external sources (`curl | sh`)
+- `git commit --no-verify` (or any other way of bypassing the pre-commit
+  hook) — this disables ALL DoD checks at once, not just the one causing
+  trouble. If a specific check genuinely looks like a false positive, use
+  `DOD_SKIP=<step-name>` (documented at the top of `scripts/dod.sh`) to skip
+  ONLY that named step — never the whole gate. A post-commit guard will
+  detect a commit that bypassed DoD and roll it back automatically
+  (`git reset --soft HEAD~1` — your change is not lost, but the bad commit
+  is undone until you fix it).
 
 ---
 

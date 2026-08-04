@@ -4,6 +4,25 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-04
 
+### T3.3 — Hard Limits: document what --no-verify actually does
+
+- **global/AGENTS.md** (`## Hard Limits`): added a 6th bullet to the General
+  destructive-actions list, after the existing 5 (`git push`, `rm -rf`,
+  `.env.production`, actions outside the project, `curl | sh`). Previously
+  `--no-verify` wasn't mentioned anywhere in `## Hard Limits` at all — its
+  only prior mention was buried in
+  `global/skills/harness-init/agent-adopt.md:216`, an onboarding skill not
+  read during normal working sessions.
+- The new bullet spells out the real mechanics: `--no-verify` disables ALL 7
+  DoD checks at once (not just the one that looks wrong), points to
+  `DOD_SKIP=<step-name>` (T3.2) as the correct narrow alternative, and notes
+  the post-commit guard (T3.1) will catch and roll back a bypassed commit
+  regardless.
+- Deliberately NOT duplicated into `## Safety Gates` — that section is "stop
+  and ask", this one is "never without confirmation"; `--no-verify` is
+  semantically a hard limit, not a gate. Confirmed only one `no-verify`
+  match in the file after the edit.
+
 ### T3.2 — granular `DOD_SKIP=<step-name>` instead of binary --no-verify
 
 - **scripts/dod.sh**: added `DOD_SKIP="${DOD_SKIP:-}"` plus `is_skipped()` /
