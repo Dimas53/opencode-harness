@@ -2,9 +2,81 @@
 
 ## Current Status
 
-Phase: implementation-plan Wave 6 (recon, T6.1-T6.4 + T6.5 batch 1) — in progress, paused by design after T6.5 batch 1
-Last commit: bbd5df7 (Wave 5 session log — Wave 6 produced no commits, see below)
+Phase: implementation-plan reorganization + audit annotation — done. Wave 6 (recon) still paused at T6.5 batch 1 (unchanged this session).
+Last commit: bbd5df7 (still current — this session's work is entirely in notes/, gitignored, see below)
 Chat language: ru
+
+## Session 2026-08-05 (implementation-plan reorganization, audit checkmarks, two new synthesis docs)
+
+Chat language: ru
+
+By user request, three deliverables on top of the recon work from the
+previous Wave 6 session — all pure documentation/organization, no code
+changes, no commits (everything lives under `notes/Harness/`, gitignored
+per `.gitignore:37`):
+
+### Done
+
+- **Translated all 5 Wave 6 recon reports to Russian** (in place, same
+  filenames) — user wanted to read them directly.
+- **`notes/Harness/implementation-plan/08-open-decisions.md`** — added 3
+  new backlog entries: (1) capability deny-by-default — the T3.7 spike
+  concluded the mechanism genuinely exists in OpenCode (`permission.bash`
+  config, `allow`/`ask`/`deny`) with a concrete ready-to-implement
+  recommendation that was never picked up, not even by Wave 5 despite the
+  spike itself suggesting it; (2) three skill-dedup recommendations from
+  `skill-dedup-candidates.md` (T2.7) that were never carried into this
+  backlog file (tdd/test-driven-development merge, debugging-and-error-recovery/
+  systematic-debugging retirement + now file:line-confirmed dangling
+  `superpowers:` refs, session-start phantom references in 3
+  instructions/reference/*.md files); (3) pointers to the two Wave 6
+  critical findings (secret-leak risk, GUIDE.md §6 DoD duplication) plus
+  the other Wave 6 findings, so nothing from the recon session is at risk
+  of being lost.
+- **Confirmed via direct read**: both `stack-specificity-decision.md`
+  (T2.8) and `skill-dedup-candidates.md` (T2.7) are completed WAVE 2
+  deliverables (full analysis, decisions pending) — not leftover/unstarted
+  work. `stack-specificity-decision.md` was already fully mirrored into
+  08; `skill-dedup-candidates.md` was only partially mirrored (fixed
+  above).
+- **Moved `notes/Harness/recon-findings/` → `notes/Harness/implementation-plan/recon-findings/`**
+  so all plan-related output lives in one place. Could not remove the old
+  location — `rm`/`rm -r` denied by the current permission mode (tried
+  both recursive and per-file). **Old duplicate folder
+  `notes/Harness/recon-findings/` still exists on disk and needs manual
+  cleanup** (5 stale English-language copies of the now-Russian reports).
+- **`notes/Harness/implementation-plan/2026-07-30-audit-enforcement-gaps.md`**
+  — annotated in place with ~33 green-checkmark blockquotes against every
+  Part I/II/III finding, cross-referencing which wave/ticket closed it (or
+  ⚠️ for still-open, 🔵 for reassessed-not-a-bug). No original text
+  deleted or rewritten, insertions only.
+- **New `notes/Harness/implementation-plan/agent-session-flow.post-waves-0-5.md`**
+  — successor to `agent-session-flow.v0.3.md`, same honest
+  what-AGENTS.md-says vs what-actually-happens format, covering the
+  current (post Wave 0-5) Session Start (8 steps)/DoD (9 product steps +
+  8 mechanical dod.sh steps)/Session End mechanics, cross-checked directly
+  against current `global/AGENTS.md`, `scripts/dod.sh`, `hooks/pre-commit`,
+  `hooks/post-commit`, `scripts/session-end.sh`.
+- **New `notes/Harness/implementation-plan/GENERAL-REPORT-waves-0-5.md`**
+  — plain-language (no ticket IDs, no jargon) narrative of what actually
+  changed across all 6 waves, organized by theme (data-loss prevention,
+  silent self-disabling fixed, --no-verify handling, protocol
+  fragmentation resolved, template cleanup, deny-by-default groundwork,
+  behavior evals, Wave 6 recon findings, what's still open) — for the user
+  to build a mental model before deciding on further waves / a re-analysis.
+
+### Known issues
+
+- Old `notes/Harness/recon-findings/` duplicate directory not removable
+  this session (permission denial on `rm`) — flagged above, needs manual
+  removal or a future session with `rm` permission granted.
+
+### Next
+
+- User decides: re-run/extend the audit given the new synthesis docs,
+  continue Wave 6 T6.5 batch 2, or start on any of the now-fuller
+  `08-open-decisions.md` backlog items (capability deny-by-default has the
+  most ready-to-go concrete recommendation).
 
 ## Session 2026-08-05 (implementation-plan Wave 6 — T6.1 through T6.4, T6.5 batch 1)
 
