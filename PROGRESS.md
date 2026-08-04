@@ -2,9 +2,77 @@
 
 ## Current Status
 
-Phase: implementation-plan Wave 3 (enforcement layer) — complete
-Last commit: 96325cb (T3.6) — T3.7 produced no trackable commit, see below
+Phase: implementation-plan Wave 4 (behavior evals) — complete
+Last commit: 90f372e (T4.3)
 Chat language: ru
+
+## Session 2026-08-04 (implementation-plan Wave 4 — T4.1 through T4.3)
+
+Chat language: ru
+
+Working from `notes/Harness/implementation-plan/05-wave4-behavior-evals.md`,
+one ticket = one commit, verify run and shown before each commit — for T4.1
+and T4.2 this included actually running the fixtures/scenarios end-to-end
+against real harness scripts (not just checking fixture stdout syntax), to
+catch stale assumptions before they became misleading regression tests.
+
+### Impact on other local projects — checked, none needed
+This wave only added `tests/behavior/` (gated behind `IS_HARNESS_REPO`,
+never syncs to client projects — see `scripts/dod.sh` Step 6/7 logic) and
+`notes/Harness/red-team-findings/` (gitignored, local-only). No changes to
+`hooks/`, `scripts/dod.sh`, `global/AGENTS.md`, or `global/skills/` — the
+things that actually propagate to (or affect) other local harness projects.
+**Nothing needs to be re-synced or reinstalled in `itocook`,
+`karriere-page-ito`, or any other local project after this session.**
+
+### Done
+- **T4.1** (`fccedf3`): built `tests/behavior/{README.md,lib/assert.sh,
+  run-scenario.sh}` plus the first fixture+scenario pair
+  (`skill-only-commit`, regresses T0.3's docs-matrix false positive and the
+  original 7-commits-0-DoD incident). Semi-automated by design: fixture
+  setup is scripted, the actual agent run is manual — headless `opencode
+  run` on a multi-step task isn't confirmed reliable, only the `echo ok`
+  smoke test is (per the ticket's own explicit warning not to invent
+  headless flags). Verified fixture stdout is exactly one line (the temp
+  path), and `run-scenario.sh` reaches the `read -p` pause correctly
+  (tested via `/dev/null` stdin — `timeout` isn't available on this macOS
+  shell).
+- **T4.2** (`bef3917`): added `dirty-adopt` (T0.1), `broken-harness-path`
+  (T0.2), `pressure-to-bypass` (T3.1/T3.3), `session-end-with-failures`
+  (T0.4). Caught and corrected a stale ticket assumption while building the
+  last one: the ticket claimed removing `PROGRESS.md` forces a FAIL in
+  `session-end.sh` Step 2 — verified directly against the current script
+  and found Step 2 is `check_warn` only, never `check_fail`; the real FAIL
+  path is Step 3 (missing memory log + real session changes). Rebuilt the
+  fixture around the actual condition instead of the wrong assumption.
+  Verified all 4 scenarios end-to-end against real behavior: ran
+  `scripts/init-adopt.sh --no-open` for real against `dirty-adopt`
+  (`opencode` CLI happened to be available in this environment — confirmed
+  `AGENTS.md.bak` created with the marker preserved); ran `PRE_COMMIT=1
+  scripts/dod.sh` against `pressure-to-bypass` (Step 4 genuinely fails);
+  attempted a real commit against `broken-harness-path` (blocked by
+  pre-commit exactly as T0.2 intends); ran `scripts/session-end.sh` against
+  `session-end-with-failures` (Step 3 fails, `.session-ended` correctly
+  never created). One transient sandbox hiccup during a batch of 4
+  concurrent `git clone`s (`Operation not permitted` on a git object copy)
+  — resolved by retrying that one fixture alone; not a bug in the fixture.
+- **T4.3** (`90f372e`): added `tests/behavior/scenarios/red-team-pressure.md`
+  (4 adversarial pressure prompts reusing the `pressure-to-bypass` fixture)
+  and `notes/Harness/red-team-findings/README.md` (finding log format).
+  Infrastructure only, per the ticket's explicit scope limit — did not run
+  the scenario itself; that's a separate, recurring activity (e.g. before
+  a harness release), not part of this one-time ticket.
+
+### Notes
+- Also logged, per user request, a known gap unrelated to this wave's own
+  code: `sync-templates`/`update-harness` never re-sync hooks into already
+  -adopted client projects (only `install-hooks.sh` at project creation
+  does) — recorded as a new open decision in
+  `notes/Harness/implementation-plan/08-open-decisions.md` (on-disk only,
+  `notes/` is gitignored), not fixed in this session per the user's
+  explicit instruction to just note it for now.
+- Wave 4 itinerary complete per `05-wave4-behavior-evals.md`'s stated order
+  (T4.1 → T4.3). Next per that file: `06-wave5-bridge-to-sandbox.md`.
 
 ## Session 2026-08-04 (implementation-plan Wave 3 — T3.1 through T3.7)
 
