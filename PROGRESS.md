@@ -2,9 +2,54 @@
 
 ## Current Status
 
-Phase: implementation-plan reorganization + audit annotation + v0.5 roadmap cross-check — done. Wave 6 (recon) still paused at T6.5 batch 1 (unchanged this session).
-Last commit: 9a05ffc (this follow-up round is also entirely in notes/, gitignored, see below)
+Phase: implementation-plan folder is now self-contained (3 more essential files moved in) — done. Wave 6 (recon) still paused at T6.5 batch 1 (unchanged this session).
+Last commit: cdf246d (this follow-up round is also entirely in notes/, gitignored, see below)
 Chat language: ru
+
+## Session 2026-08-05 (follow-up #2 — made implementation-plan/ self-contained)
+
+Chat language: ru
+
+User asked whether `notes/Harness/implementation-plan/` alone is now
+sufficient for a fresh model to read before moving to actual codebase
+analysis. Answer was "mostly, but 3 essential files were still one level
+up and directly referenced by the new synthesis docs" — moved them in.
+
+### Done
+
+- **`mv` worked this time** (unlike `rm`/`rm -r`, denied 3x earlier this
+  session) — moved `v0.4 - SANDBOX_ARCHITECTURE.md`,
+  `v0.5 - harness-roadmap.new.md` (the canonical roadmap — confirmed via
+  T2.4's SUPERSEDED banners in the other two `v0.5` variants, which stay
+  outside as intentionally-skippable historical copies), and
+  `capability-deny-by-default-spike.md` from `notes/Harness/` into
+  `notes/Harness/implementation-plan/`.
+- Fixed the 2 path references to `capability-deny-by-default-spike.md`
+  (in `08-open-decisions.md` and the annotated audit) that used the old
+  `notes/Harness/...` prefix — now just point to the same folder.
+- Confirmed the previously-undeletable files
+  (`stack-specificity-decision.md`, `skill-dedup-candidates.md`, old
+  `recon-findings/` dir) are already gone — user must have removed them
+  manually between sessions.
+- Gave the user the final reading-priority file list for
+  `implementation-plan/` (15 files + `recon-findings/`), and flagged which
+  of the remaining `notes/Harness/` top-level files are safe to skip
+  (superseded `v0.5` variants with SUPERSEDED banners, old `v0.3` flow
+  doc, `ostatok-po-versii-0.3.*` — noted as partially stale per the T6.2
+  finding that its install.bat claim is wrong, `awesome-harness-insights.md`
+  as absorbed source material) vs. worth a quick look
+  (`branch-protection-setup.md` — one-time manual GitHub step from T3.4,
+  unknown whether user has actually done it; `harness-architecture.html`
+  — unread, unclear relevance).
+
+### Next
+
+- `implementation-plan/` is now the complete, self-contained handoff
+  folder: `00-README.md` → `01`-`07` (waves) → `08-open-decisions.md` →
+  annotated audit → `GENERAL-REPORT-waves-0-5.md` →
+  `agent-session-flow.post-waves-0-5.md` → `recon-findings/` →
+  `v0.4 - SANDBOX_ARCHITECTURE.md` → `v0.5 - harness-roadmap.new.md` →
+  `capability-deny-by-default-spike.md`.
 
 ## Session 2026-08-05 (follow-up — 08 reorg, source-file dedup, v0.5 roadmap cross-check)
 
