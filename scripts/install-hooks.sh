@@ -3,6 +3,11 @@
 # Installs pre-commit hook into the target project's .git/hooks/.
 # Usage: ./scripts/install-hooks.sh /path/to/project
 #        (called by init-project.sh and init-adopt.sh)
+#
+# This installs ONLY pre-commit (the DoD gate) — meant to run in every project
+# (called from init-project.sh / init-adopt.sh). post-commit (skill
+# mirroring) is intentionally NOT installed here — see scripts/install.sh
+# for why it only belongs in the harness's own repo.
 set -euo pipefail
 
 TARGET_PROJECT="${1:-$(pwd)}"

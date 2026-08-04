@@ -4,6 +4,29 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-04
 
+### T3.6 — document the pre-commit vs post-commit install scope split
+
+- **scripts/install.sh**, **scripts/install-hooks.sh**: added explanatory
+  comments. Not a bug fix — re-assessed from the original audit finding
+  ("install path desync") during this plan's authoring: `post-commit` exists
+  only to mirror `global/skills/` into `~/.config/opencode/`, which only
+  makes sense in the harness's own repo (the only place `global/skills/`
+  exists); `pre-commit` is needed in every adopted project. Different
+  install paths for the two hooks is intentional scoping, not a desync —
+  but nothing said so explicitly, so the original audit had to reconstruct
+  it from code. These comments make that reasoning explicit so it doesn't
+  need re-deriving again.
+- Note on wording: the ticket's own suggested comment text line-wraps mid
+  phrase (splits "only makes...sense where global/skills" and "meant to run
+  in every...project" across two comment lines each) — copied verbatim,
+  that breaks the ticket's own single-line `grep -q` verify commands.
+  Reflowed the line breaks so both key phrases stay on one line; meaning
+  unchanged.
+- Verified: `grep -q "only makes sense where global/skills" scripts/install.sh`
+  and `grep -q "meant to run in every project" scripts/install-hooks.sh`
+  both pass; `bash -n` on both files confirms comment-only change, zero
+  behavior difference.
+
 ### T3.5 — Cyrillic scan: remove the unjustified global/ exemption
 
 - **scripts/dod.sh** (Step 2): removed `[[ "$file" == global/* ]] && continue`.
