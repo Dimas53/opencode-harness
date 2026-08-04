@@ -4,6 +4,38 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-04
 
+### T3.1 — post-commit guard: roll back commits that bypass DoD
+
+- **hooks/post-commit**: previously only mirrored `global/skills/` +
+  `global/AGENTS.md` to `~/.config/opencode/` on every single commit,
+  unconditionally, and checked nothing. This meant `git commit --no-verify`
+  (or any other pre-commit bypass) landed a DoD-failing commit with zero
+  downstream consequence — pre-commit was the only gate, and it was trivially
+  skippable.
+- Added a DoD guard as the hook's first responsibility: runs
+  `${OPENCODE_HARNESS_PATH:-$HOME/.opencode-harness}/scripts/dod.sh` against
+  the commit that just landed (default mode, compares `HEAD~1`, not staged
+  diff). On failure, prints the reason and log path, then
+  `git reset --soft HEAD~1` — the bad commit is undone but the changes stay
+  staged, nothing is lost. `git reset --soft` doesn't create a new commit, so
+  no recursion into this same hook.
+- Mirroring is now conditional — only runs when this commit's `HEAD~1..HEAD`
+  diff actually touches `global/skills/` or `global/AGENTS.md`, instead of
+  unconditionally on every commit (previously risked clobbering local
+  `~/.config/opencode/skills/` edits on unrelated commits).
+- Reinstalled the local hook (`cp hooks/post-commit .git/hooks/post-commit`)
+  per the ticket's own instruction — this file is a template copied by
+  `scripts/install.sh` / `scripts/update.sh`, editing it alone doesn't affect
+  the already-installed local hook.
+- Verified in an isolated clone: disabled `pre-commit` (stand-in for a
+  `--no-verify` bypass — the literal flag is denied by this repo's own
+  `.claude/settings.local.json`, fittingly), committed a Makefile-only change
+  with no docs update (violates DoD Step 5, docs-matrix). Guard caught it,
+  printed the failure + log path, rolled `HEAD` back to the prior commit, and
+  left `Makefile` staged (`git status --porcelain` showed `M  Makefile`).
+  Confirmed with the correctly-edited hook copied in from the working tree
+  (not from the clone's own committed — stale — `hooks/post-commit`).
+
 ### dod.sh — quiet Step 6/7 warnings for client projects (post-Wave-2)
 
 - **scripts/dod.sh**: Steps 6 ("Quick tests") and 7 ("Self-check") warned

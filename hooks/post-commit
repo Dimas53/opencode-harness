@@ -1,9 +1,44 @@
 #!/bin/bash
 # .git/hooks/post-commit
 # Installed by: scripts/install.sh, scripts/update.sh
-# Auto-mirror global/skills/ to ~/.config/opencode/skills/ after every commit
+#
+# Two responsibilities:
+# 1. DoD guard — verify the commit that just landed actually passes DoD.
+#    Catches `git commit --no-verify` and any other pre-commit bypass. If it
+#    fails, roll the commit back with `git reset --soft HEAD~1` (changes stay
+#    staged, nothing is lost) and refuse silently-succeeding.
+# 2. Mirror global/skills/ + global/AGENTS.md to ~/.config/opencode/ — but
+#    ONLY when this commit actually touched them (not on every commit).
+#
+# Note: `git reset --soft` does not create a new commit, so it does not
+# re-trigger this hook — no recursion risk.
 
 HARNESS_ROOT="$(git rev-parse --show-toplevel)"
-cp -r "$HARNESS_ROOT/global/skills/" ~/.config/opencode/skills/
-cp "$HARNESS_ROOT/global/AGENTS.md" ~/.config/opencode/AGENTS.md
-echo "✓ Skills + AGENTS.md mirrored to ~/.config/opencode/"
+DOD_SCRIPT="${OPENCODE_HARNESS_PATH:-$HOME/.opencode-harness}/scripts/dod.sh"
+
+if [ -f "$DOD_SCRIPT" ]; then
+  LOG="/tmp/harness-post-commit-dod-$$.log"
+  if ! bash "$DOD_SCRIPT" >"$LOG" 2>&1; then
+    echo "✗ POST-COMMIT GUARD: the commit that just landed fails DoD." >&2
+    echo "  This usually means --no-verify was used, or pre-commit was" >&2
+    echo "  otherwise bypassed. DoD output saved to: $LOG" >&2
+    if git rev-parse HEAD~1 >/dev/null 2>&1; then
+      git reset --soft HEAD~1
+      echo "  Rolled back: git reset --soft HEAD~1 — your changes are still" >&2
+      echo "  staged, nothing is lost. Fix the DoD failures, then commit again." >&2
+    else
+      echo "  This is the repo's initial commit — cannot auto-rollback." >&2
+      echo "  Fix the DoD failures manually before continuing." >&2
+    fi
+    exit 1
+  fi
+  rm -f "$LOG"
+fi
+
+CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || true)
+if echo "$CHANGED" | grep -qE "^global/(skills/|AGENTS\.md$)"; then
+  mkdir -p ~/.config/opencode/skills
+  cp -r "$HARNESS_ROOT/global/skills/." ~/.config/opencode/skills/
+  cp "$HARNESS_ROOT/global/AGENTS.md" ~/.config/opencode/AGENTS.md
+  echo "✓ Skills + AGENTS.md mirrored to ~/.config/opencode/ (global/ changed in this commit)"
+fi
