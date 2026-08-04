@@ -2,9 +2,58 @@
 
 ## Current Status
 
-Phase: implementation-plan Wave 4 (behavior evals) — complete
-Last commit: 90f372e (T4.3)
+Phase: implementation-plan Wave 5 (bridge to sandbox) — complete
+Last commit: b0da261 (T5.3)
 Chat language: ru
+
+## Session 2026-08-04 (implementation-plan Wave 5 — T5.1 through T5.3)
+
+Chat language: ru
+
+Working from `notes/Harness/implementation-plan/06-wave5-bridge-to-sandbox.md`,
+one ticket = one commit, verify run and shown before each commit, fully
+autonomous per standing wave-execution instruction (no mid-session
+confirmation stops).
+
+### Done
+
+- **T5.1** (`be5fcae`) — new `## Database Migrations` section in
+  `templates/AGENTS.md` (between Git Workflow and MCP Servers Available):
+  hard rule that every schema migration ships a paired `.up.sql`/`.down.sql`
+  file (Wiederherstellung / TOMs Art. 32 GDPR). Project-specific template
+  only, not `global/AGENTS.md`.
+- **T5.2** (`6f9d255`) — file-level `.agentignore`: new
+  `templates/.agentignore` with default restricted patterns (backups,
+  dumps, prod env/compose, private keys); `global/AGENTS.md` Access
+  Restrictions now references it; `scripts/dod.sh` renumbered 7→8 steps and
+  gained a new, non-skippable Step 8 that mechanically blocks any staged
+  file matching an `.agentignore` pattern; `init-project.sh`/`init-adopt.sh`
+  now propagate `.agentignore` into new/adopted projects. Verified in an
+  isolated scratch git repo (blocked case + clean-pass case, both correct);
+  `make check-docs-sync` still 9/9 after the step renumbering.
+- **T5.3** (`b0da261`) — YAML frontmatter (`name`/`trigger`/`when_to_use`/
+  `stack`) added to all 8 `global/skills/harness-init/agent-*.md` files —
+  3 from the ticket text verbatim, 5 written after reading each file in
+  full (`agent-adopt.md`, `agent-analyze-ui.md`, `agent-fix-ui.md`,
+  `agent-analyze-logic.md`, `agent-e2e.md`). Body content untouched
+  (insertions-only diff, confirmed via `git diff --stat`).
+- All three tickets ran independently (T5.1 → T5.2 → T5.3 per plan order),
+  each with its own `instructions/CHANGELOG.md` dated entry and `make dod`
+  passing before commit.
+
+### Known issues
+
+- None new. `.agentignore`'s glob matching is a conscious simplification
+  (no `**` support) — documented as a future ticket in the T5.2 source
+  plan, not a blocker.
+
+### Next
+
+- `07-wave6-recon-unread-files.md`, OR direct read-through of
+  `notes/Harness/v0.4 - SANDBOX_ARCHITECTURE.md` in full to plan
+  `directus-guard-mcp` and the LLM Guard proxy (both R&D, out of scope for
+  the implementation-plan waves) — per the Wave 5 plan's own closing
+  summary section.
 
 ## Session 2026-08-04 (implementation-plan Wave 4 — T4.1 through T4.3)
 
