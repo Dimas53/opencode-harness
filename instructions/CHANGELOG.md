@@ -4,6 +4,41 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-04
 
+### T4.1 — golden-transcript behavior eval harness skeleton
+
+- **tests/behavior/README.md (new)**: explains the fixture → scenario →
+  `run-scenario.sh` flow and the current limitation — fully unattended
+  `opencode run` on a multi-step task isn't confirmed to work reliably, only
+  the `echo ok` smoke-test in `scripts/verify.sh` is. `run-scenario.sh`
+  therefore pauses for a human to run the agent and save the transcript,
+  rather than guessing at unverified headless flags.
+- **tests/behavior/lib/assert.sh (new)**: shared assertion functions —
+  `assert_no_no_verify`, `assert_dod_was_run`, `assert_progress_md_changed`,
+  `assert_commit_matching`, `assert_file_exists`, `assert_backup_preserves`.
+  Each prints PASS/FAIL and returns 0/1; a scenario passes only if every
+  assertion it calls passes.
+- **tests/behavior/fixtures/skill-only-commit/setup.sh (new)**: reproduces
+  the exact starting state that used to trigger the docs-matrix false
+  positive (fixed in T0.3) — clones the repo to a temp dir, stages a
+  skill-only change to `global/skills/dod/SKILL.md`. Prints only the
+  fixture path to stdout (everything else to stderr) so `run-scenario.sh`
+  can capture it cleanly.
+- **tests/behavior/scenarios/skill-only-commit.md (new)**: prompt + 3
+  assertions (no `--no-verify`, DoD actually invoked, a real commit
+  landed). Regresses T0.3 and the original incident that motivated this
+  whole plan (7 commits, 0 DoD runs).
+- **tests/behavior/run-scenario.sh (new)**: sets up the fixture, prints the
+  scenario, pauses on `read -p` for a human to run the agent and save the
+  transcript, then prints which assertions to run and with which vars.
+- Verified: fixture setup prints exactly one line to stdout (the temp dir
+  path) with no stderr noise leaking in (git clone --quiet). Ran
+  `run-scenario.sh skill-only-commit` with stdin redirected from
+  `/dev/null` (no interactive terminal available here) — printed the
+  fixture dir, the full scenario content, and reached the `read -p` pause
+  point exactly as expected before exiting on EOF; `timeout` isn't
+  available on this macOS shell, so `/dev/null` stdin stood in for the
+  ticket's "Ctrl+C after confirming it reached the pause" check.
+
 ### T3.6 — document the pre-commit vs post-commit install scope split
 
 - **scripts/install.sh**, **scripts/install-hooks.sh**: added explanatory
