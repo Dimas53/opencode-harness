@@ -4,6 +4,24 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-04
 
+### T3.4 — CI: GitHub Action + branch protection instructions
+
+- **.github/workflows/dod.yml (new)**: runs `scripts/dod.sh` and
+  `scripts/check-dod-sync.sh` on every push/PR to `main`. `fetch-depth: 0` is
+  required — `dod.sh` Steps 3/5 compare against `HEAD~1`, which a shallow
+  (`depth: 1`) checkout wouldn't have. This is the first enforcement layer
+  that lives on the server, outside a single agent session's reach.
+- **notes/Harness/branch-protection-setup.md (new, on-disk only — `notes/`
+  is gitignored, same pattern as T2.4)**: manual, one-time GitHub UI steps
+  for the user to require the `dod` check before merge into `main`. An agent
+  cannot enable this itself — it has no access to repository Settings.
+- Verified: confirmed `.github/` isn't excluded by `.gitignore` or
+  `templates/.gitignore` before creating the file; `git status --porcelain
+  .github/` shows it as untracked (not ignored). YAML syntax validated with
+  Ruby's built-in YAML library (`pyyaml` isn't installed in this
+  environment) — parses clean. A real CI run only happens after `git push`,
+  which is outside autonomous scope (Hard Limits) — left for the user.
+
 ### T3.3 — Hard Limits: document what --no-verify actually does
 
 - **global/AGENTS.md** (`## Hard Limits`): added a 6th bullet to the General
