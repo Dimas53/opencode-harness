@@ -4,6 +4,35 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-04
 
+### T3.2 — granular `DOD_SKIP=<step-name>` instead of binary --no-verify
+
+- **scripts/dod.sh**: added `DOD_SKIP="${DOD_SKIP:-}"` plus `is_skipped()` /
+  `skip_notice()` helpers right after the `PASS`/`FAIL`/`WARN` counters.
+  `DOD_SKIP=<step-name>[,<step-name>...]` now skips only the named step(s)
+  instead of `--no-verify` disabling all 7 at once.
+- Wrapped the 5 skippable steps in `if is_skipped "<name>"; then skip_notice
+  "<name>"; else ... existing logic ... fi`, without touching the logic
+  inside: Step 3 `docs-lag`, Step 4 `progress`, Step 5 `docs-matrix`, Step 6
+  `tests`, Step 7 `self-check` (including its guidance echoes, so a skipped
+  self-check doesn't also print "did you verify..." prompts for a check that
+  didn't run).
+- Step 1 (`uncommitted`, in `PRE_COMMIT=1` mode) and Step 2 (`cyrillic`)
+  deliberately left unwrapped — no `is_skipped` check added at all. These
+  guard git integrity and the Safety Check; making them skippable would
+  recreate the exact blanket-bypass risk `DOD_SKIP` exists to replace.
+- Documented the mechanism in a header comment block (after the existing
+  shebang/purpose comments, before `set -euo pipefail`): valid names, the
+  two never-skippable steps, and usage example.
+- Verified: `DOD_SKIP=docs-matrix bash scripts/dod.sh` prints `⚠ Step
+  'docs-matrix' SKIPPED via DOD_SKIP=docs-matrix — this is logged, not
+  silent`; same confirmed for `docs-lag`, `progress`, `tests`, `self-check`.
+  `DOD_SKIP=cyrillic` produces no skip message at all (Step 2 ignores it
+  entirely, as intended) — confirmed both un-wrapped, and separately that
+  `DOD_SKIP=uncommitted PRE_COMMIT=1` has no effect on Step 1 either. Ran a
+  full un-skipped `PRE_COMMIT=1` pass afterward to confirm no regression to
+  normal (non-skip) behavior — Steps 1-4, 6, 7 passed as before, Step 5
+  correctly flagged this very commit for needing a docs update (this entry).
+
 ### T3.1 — post-commit guard: roll back commits that bypass DoD
 
 - **hooks/post-commit**: previously only mirrored `global/skills/` +

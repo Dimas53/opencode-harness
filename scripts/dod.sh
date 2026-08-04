@@ -2,11 +2,29 @@
 # scripts/dod.sh — Definition of Done checks
 # Called by: make dod, pre-commit hook
 # Returns: 0 if all pass, 1 if any fail
+#
+# DOD_SKIP=<step-name>[,<step-name>...] — skip specific named steps only.
+# Valid names: docs-lag, progress, docs-matrix, tests, self-check
+# NEVER skippable: uncommitted (in pre-commit mode), cyrillic — these guard
+# git integrity and the Safety Check; there is no override for them.
+# Usage: DOD_SKIP=docs-matrix git commit -m "..."
+# Every skip is printed as a WARNING in the output — it is never silent.
 set -euo pipefail
 
 PASS=0
 FAIL=0
 WARN=0
+
+DOD_SKIP="${DOD_SKIP:-}"
+is_skipped() {
+  case ",$DOD_SKIP," in
+    *",$1,"*) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+skip_notice() {
+  check_warn "Step '$1' SKIPPED via DOD_SKIP=$DOD_SKIP — this is logged, not silent"
+}
 
 check_pass() { echo "✓ $1"; PASS=$((PASS + 1)); }
 check_fail() { echo "✗ $1"; FAIL=$((FAIL + 1)); }
@@ -94,6 +112,9 @@ echo ""
 # ── Step 3: Docs lag ─────────────────────────────────────────────────────────
 echo "[ 3/7 ] Docs lag check"
 
+if is_skipped "docs-lag"; then
+  skip_notice "docs-lag"
+else
 if ! git rev-parse --is-inside-work-tree &>/dev/null; then
   check_warn "Not inside a git repo — skipping docs lag check"
 else
@@ -135,12 +156,16 @@ else
     fi
   fi
 fi
+fi
 
 echo ""
 
 # ── Step 4: PROGRESS.md ──────────────────────────────────────────────────────
 echo "[ 4/7 ] PROGRESS.md check"
 
+if is_skipped "progress"; then
+  skip_notice "progress"
+else
 TODAY=$(date +%Y-%m-%d)
 
 if [ ! -f "PROGRESS.md" ]; then
@@ -162,12 +187,16 @@ else
     echo "   → Add today's work before committing"
   fi
 fi
+fi
 
 echo ""
 
 # ── Step 5: Docs matrix check ────────────────────────────────────────────────
 echo "[ 5/7 ] Docs matrix check"
 
+if is_skipped "docs-matrix"; then
+  skip_notice "docs-matrix"
+else
 CODE_DIRS="scripts/ hooks/ tests/ global/ templates/ Makefile"
 DOCS_DIRS="docs/ instructions/"
 DOCS_FILES="INSTALL.md README.md"
@@ -231,12 +260,16 @@ else
     fi
   fi
 fi
+fi
 
 echo ""
 
 # ── Step 6: Quick tests ──────────────────────────────────────────────────────
 echo "[ 6/7 ] Quick tests"
 
+if is_skipped "tests"; then
+  skip_notice "tests"
+else
 if command -v bats &>/dev/null && [ -f "Makefile" ]; then
   TEST_OUTPUT=$(make test-quick 2>&1) && TEST_OK=1 || TEST_OK=0
   if [ "$TEST_OK" = "1" ]; then
@@ -250,11 +283,15 @@ elif [ "$IS_HARNESS_REPO" = "1" ]; then
 else
   check_pass "No local make test-quick — expected for client projects, use the project's own test command"
 fi
+fi
 
 echo ""
 
 # ── Step 7: Self-check ───────────────────────────────────────────────────────
 echo "[ 7/7 ] Self-check (verification-before-completion)"
+if is_skipped "self-check"; then
+  skip_notice "self-check"
+else
 echo "  → Did you verify each change actually works, not just syntactically?"
 echo "  → Run: bash -n on changed scripts"
 echo "  → Run: make verify"
@@ -264,6 +301,7 @@ elif [ "$IS_HARNESS_REPO" = "1" ]; then
   check_warn "No scripts/*.sh found — skipping syntax check"
 else
   check_pass "No local scripts/ — not applicable for client projects"
+fi
 fi
 
 echo ""
