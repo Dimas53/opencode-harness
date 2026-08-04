@@ -2,9 +2,105 @@
 
 ## Current Status
 
-Phase: implementation-plan Wave 1 (single source of truth) — complete
-Last commit: 130210b — feat(T1.3): add make check-docs-sync — automatic DoD sync checker
+Phase: implementation-plan Wave 2 (transplant cleanup) — complete
+Last commit: (this session's final commit — see below)
 Chat language: ru
+
+## Session 2026-08-04 (implementation-plan Wave 2 — T2.1 through T2.8)
+
+Chat language: ru
+
+### Done
+- Working from `notes/Harness/implementation-plan/03-wave2-transplant-cleanup.md`,
+  one ticket = one commit, verify run and shown before each commit.
+- **T2.1**: `scripts/dod.sh` Step 5 — added `DOCS_FILES="INSTALL.md README.md"`
+  exact-match list alongside `DOCS_DIRS`, so a commit touching `Makefile`
+  together with `INSTALL.md`/`README.md` no longer false-fails the docs-matrix
+  check. Verified in an isolated clone.
+- **T2.2**: removed 10 phantom skill references from
+  `templates/docs/skills-cheatsheet.md` (`find-skills`, `triage`,
+  `receiving-code-review`, `prototype`, `setup-matt-pocock-skills`,
+  `write-a-skill`, `teach`, `finishing-a-development-branch`,
+  `using-git-worktrees`, `subagent-driven-development`) — none exist under
+  `global/skills/`, confirmed before editing.
+- **T2.3**: fixed Directus row in `skills-cheatsheet.md`'s
+  `Stack → Required Skills` table — falsely claimed "Vendored in harness"
+  when no `global/skills/directus/` exists. Now honestly shows "not vendored"
+  + points to the partial `security/06-directus-nuxt.md` coverage. Did NOT
+  write a full Directus skill (separate content task, flagged for a future
+  ticket with explicit review).
+- **T2.4**: consolidated 4 roadmap files into one canon. Added `SUPERSEDED`
+  banners to `notes/Harness/v0.5 - harness-roadmap.md` and `.full.md`
+  (on-disk only — `notes/` is gitignored, so these edits aren't in any
+  commit). Rewrote `instructions/roadmap.md` (the only tracked file of the
+  four) to point at `v0.5 - harness-roadmap.new.md` as canonical; left
+  Phase 2/3 checkboxes unchecked — no clear evidence in PROGRESS.md/git log
+  that "test on Windows" or "GUIDE.md from real experience" were completed
+  as discrete milestones.
+- **T2.5**: removed `--no-verify` legitimization from `PROGRESS.md` (two
+  "Known issues" entries) and `memory/2026-07-22.md` (the only one of the
+  five audit-flagged sites that's git-committed and read at Session Start —
+  the other four are either already-superseded roadmap files or archival
+  docs). All rewritten to describe the actual fix (T0.3/T2.1) instead of
+  recommending a bypass that disables all 7 DoD checks.
+- **T2.6**: extracted the `update-harness` (~10 lines) and `sync-templates`
+  (~55 lines) inline bash blocks out of `global/AGENTS.md` into new
+  `scripts/update-harness-shortcut.sh` / `scripts/sync-templates.sh`
+  (verbatim, `chmod +x`, logic manually verified against the original).
+  `global/AGENTS.md` 467→444 lines. Did NOT touch the Hard
+  Limits/Safety Gates/Behavior consolidation or the skills-table trim —
+  those change safety-critical text and need per-line human review, out of
+  this ticket's mechanical scope. Noted risk: `update-harness` now depends
+  on a valid `~/.opencode-harness` symlink more strictly than before (code
+  used to be inline and worked even without one).
+  Also carried over (not fixed, flagged): a pre-existing bug in
+  `sync-templates.sh` — `gt="~/.opencode-harness/templates/.gitignore"` is
+  quoted, so `~` never tilde-expands.
+- **T2.7** (report, no autonomous action): read all 13 SKILL.md files across
+  6 candidate duplicate pairs/groups, grepped cross-references, wrote
+  `notes/Harness/skill-dedup-candidates.md`. Key findings: most pairs are
+  NOT true duplicates once read in full (different altitude/scope, e.g.
+  `security` = stack-specific routing hub vs `security-and-hardening` =
+  generic fallback). `frontend-behavior` was mis-grouped in the original
+  audit — it's a static-analysis protocol, not a guidance skill, dropped
+  from the comparison. Weakest link found: `requesting-code-review`
+  references the now-confirmed-phantom `subagent-driven-development` skill
+  inside its own body (not just the cheatsheet table T2.2 already fixed)
+  and isn't called from any `agent-*.md` protocol — candidate for removal,
+  needs Dmitrii's call. `systematic-debugging` still has two dangling
+  `superpowers:` skill references (pre-vendoring leftover) regardless of
+  the merge decision.
+- **T2.8** (decision doc, no autonomous action): wrote
+  `notes/Harness/stack-specificity-decision.md`. Facts gathered: 12
+  Directus/Nuxt mentions in PROGRESS.md; of 13 non-`notes/Harness/` files
+  mentioning Directus/Nuxt, the two that are genuinely live client/test
+  projects (`mechanika-workflow.md`,
+  `2026-07-29-analysis-support-portal-utm-shop.md` — a real production
+  Sophos/UTMshop support portal) are both Nuxt+Directus. No evidence found
+  of the harness running end-to-end on any other stack. Recommendation
+  leans Option A (own the Nuxt+Directus specialization) given zero
+  on-record usage elsewhere — left `NOT DECIDED`, waiting for Dmitrii.
+- T2.7 and T2.8 report files live under `notes/Harness/` (gitignored) —
+  no commit exists for them; they're on-disk only, as intended (decision
+  material, not code).
+
+### Known issues
+- `requesting-code-review` skill references phantom `subagent-driven-development`
+  inside its own body (T2.7 finding) — needs a decision, not yet fixed.
+- `systematic-debugging` skill has 2 dangling `superpowers:` references
+  (T2.7 finding) — pre-vendoring leftover, needs a decision on whether the
+  skill is kept before fixing.
+- `sync-templates.sh` has a pre-existing (carried over, not introduced)
+  tilde-expansion bug on the `.gitignore` template path (T2.6 finding).
+- Three `instructions/reference/*.md` files still have phantom
+  `session-start` mentions — outside T2.2's file scope (which only covered
+  `templates/docs/skills-cheatsheet.md`), not yet assigned to a ticket.
+
+### Next
+- Wave 2 complete. Per explicit instruction: do NOT start Wave 3
+  automatically. Wait for the user. T2.7/T2.8 reports need Dmitrii's
+  decision before any skill-dedup or stack-specificity action is taken.
+  Next file when resumed: `04-wave3-enforcement.md`.
 
 ## Session 2026-08-04 (implementation-plan Wave 1 — T1.1 through T1.3)
 
