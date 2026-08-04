@@ -119,6 +119,41 @@ Follow this exact order:
 
 ---
 
+## Database Migrations (if this project has a database)
+
+Every schema migration MUST have a paired rollback file:
+```
+migrations/
+├── YYYY_MM_DD_description.up.sql    ← apply
+└── YYYY_MM_DD_description.down.sql  ← rollback, exact reverse order
+```
+
+**Hard rule: no migration PR merges without a `.down.sql` file**, especially
+when it includes any `DROP`. The agent writes BOTH files. The developer
+reviews DOWN as carefully as UP — a migration without a tested rollback is
+not "Wiederherstellung"-compliant (see
+`notes/Harness/v0.4 - SANDBOX_ARCHITECTURE.md` Rollback strategy, if this
+project uses the Sandbox module).
+
+**Example — UP:**
+```sql
+CREATE TABLE authors (id SERIAL, name VARCHAR);
+INSERT INTO authors (name) SELECT DISTINCT author FROM recipes;
+ALTER TABLE recipes ADD COLUMN author_id INTEGER;
+UPDATE recipes SET author_id = (SELECT id FROM authors WHERE name = recipes.author);
+ALTER TABLE recipes DROP COLUMN author;
+```
+
+**Example — DOWN (exact reverse order):**
+```sql
+ALTER TABLE recipes ADD COLUMN author VARCHAR;
+UPDATE recipes SET author = (SELECT name FROM authors WHERE id = recipes.author_id);
+ALTER TABLE recipes DROP COLUMN author_id;
+DROP TABLE authors;
+```
+
+---
+
 ## MCP Servers Available
 
 | MCP | Use for |

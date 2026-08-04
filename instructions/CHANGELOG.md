@@ -4,6 +4,16 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-04
 
+### T5.1 — UP/DOWN migration rule in templates/AGENTS.md
+
+- **templates/AGENTS.md**: new `## Database Migrations (if this project has
+  a database)` section, inserted between `## Git Workflow` and `## MCP
+  Servers Available`. Requires every schema migration to ship a paired
+  `.up.sql`/`.down.sql` file — Wiederherstellung requirement (TOMs, Art. 32
+  GDPR) per `notes/Harness/v0.4 - SANDBOX_ARCHITECTURE.md`. Project-specific
+  template only (not `global/AGENTS.md`) since not every project has a
+  database.
+
 ### T4.3 — red-team scenario infrastructure
 
 - **tests/behavior/scenarios/red-team-pressure.md (new)**: adversarial
