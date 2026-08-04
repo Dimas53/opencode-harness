@@ -2,9 +2,93 @@
 
 ## Current Status
 
-Phase: implementation-plan Wave 2 (transplant cleanup) — complete
-Last commit: (this session's final commit — see below)
+Phase: implementation-plan Wave 3 (enforcement layer) — complete
+Last commit: 96325cb (T3.6) — T3.7 produced no trackable commit, see below
 Chat language: ru
+
+## Session 2026-08-04 (implementation-plan Wave 3 — T3.1 through T3.7)
+
+Chat language: ru
+
+Working from `notes/Harness/implementation-plan/04-wave3-enforcement.md`, one
+ticket = one commit (except T3.7, see below), verify run and shown before
+each commit. Wave 1 (T1.1-T1.3) confirmed already complete before starting,
+per this wave's own prerequisite check.
+
+### Done
+- **T3.1** (`b6bc789`): `hooks/post-commit` now runs `dod.sh` against the
+  commit that just landed (`HEAD~1` diff) and `git reset --soft HEAD~1` on
+  failure — catches `--no-verify` or any other pre-commit bypass. Mirroring
+  of `global/skills/`/`AGENTS.md` to `~/.config/opencode/` is now
+  conditional on the commit touching those paths, not unconditional on
+  every commit. Reinstalled the local hook per the ticket's instruction.
+  Verified in an isolated clone: since the literal `--no-verify` flag is
+  itself denied by this repo's own `.claude/settings.local.json` (fittingly
+  on-topic), simulated the bypass by temporarily removing the clone's
+  `pre-commit` hook instead, committed a DoD-breaking change, confirmed the
+  guard caught it and rolled `HEAD` back with the change left staged.
+- **T3.2** (`f6e5ab5`): added `DOD_SKIP=<step-name>` to `scripts/dod.sh` —
+  skips one named step instead of `--no-verify` disabling all 7. Wrapped
+  Steps 3/4/5/6/7 (`docs-lag`/`progress`/`docs-matrix`/`tests`/`self-check`);
+  deliberately left Step 1 (`uncommitted`) and Step 2 (`cyrillic`)
+  unwrappable. Verified all 5 skip names print the SKIPPED warning and that
+  `DOD_SKIP=cyrillic`/`DOD_SKIP=uncommitted` have no effect at all.
+- **T3.3** (`dfd03ff`): added a 6th Hard Limits bullet in `global/AGENTS.md`
+  documenting `--no-verify`'s real mechanics (disables all 7 checks, not
+  just one), pointing to `DOD_SKIP` (T3.2) as the narrow alternative and the
+  post-commit guard (T3.1) as the backstop. Confirmed no duplicate mention
+  added to `## Safety Gates`.
+- **T3.4** (`cfc0bc4`): added `.github/workflows/dod.yml` (runs `dod.sh` +
+  `check-dod-sync.sh` on push/PR to `main`, `fetch-depth: 0` since Steps 3/5
+  compare `HEAD~1`) and `notes/Harness/branch-protection-setup.md` (manual
+  one-time GitHub UI steps — agent has no Settings access to enable branch
+  protection itself). Verified `.github/` isn't gitignored and the YAML
+  parses (validated via Ruby's `YAML.load_file`, `pyyaml` isn't installed
+  in this environment).
+- **T3.5** (`5494570`): removed the unjustified `global/*` exemption from
+  `scripts/dod.sh`'s Cyrillic scan (Step 2) — the English-Only Policy names
+  only `notes/` as exempt. Confirmed `global/` was already clean before
+  removing it; verified the scan now correctly flags Cyrillic added there
+  (tested with a temporary insertion into `global/skills/dod/SKILL.md`,
+  reverted immediately after confirming).
+- **T3.6** (`96325cb`): documented in `scripts/install.sh` +
+  `scripts/install-hooks.sh` why `post-commit` only installs in the
+  harness's own repo while `pre-commit` installs in every adopted project —
+  intentional scoping, not a desync (re-assessed from the original audit
+  finding during this plan's authoring). Note: the ticket's own suggested
+  comment text line-wraps mid-phrase, which would've broken its own
+  single-line `grep -q` verify commands if copied verbatim — reflowed the
+  wrapping, kept the meaning.
+- **T3.7** (report, no commit — `notes/` is fully gitignored, `git add -f`
+  not used, consistent with the T2.4 precedent): wrote
+  `notes/Harness/capability-deny-by-default-spike.md`. Researched via
+  WebSearch/WebFetch against `opencode.ai/docs/permissions`,
+  `/docs/agents/`, `/docs/mcp-servers/` (2026-08-04). Conclusion: **(a)
+  mechanism exists** — OpenCode's `permission` config (top-level and
+  per-agent, keys like `bash`/`edit`/`webfetch`/etc., three levels
+  allow/ask/deny) and MCP-server wildcard tool scoping
+  (`"mymcp_*": false`/`true`) let capabilities be denied at the config
+  level, not just in prose. Notably, the docs' own example denies `git
+  commit *` at the `permission.bash` level — directly applicable to
+  closing the `--no-verify` gap from T3.3/T3.2 as a structural guarantee
+  instead of a text rule. `global/opencode-config.example.jsonc` currently
+  has no `permission` section at all. Recommended next step: a follow-up
+  ticket (candidate: Wave 5, "bridge to sandbox") to add a `permission.bash`
+  block to the harness's config template — not implemented here, per the
+  ticket's own scope limit (research only, no blind implementation).
+
+### Notes
+- `--no-verify` (the literal flag) is denied by this repo's own
+  `.claude/settings.local.json` — discovered while writing T3.1's verify
+  test, had to simulate the bypass a different way (disabling the
+  `pre-commit` hook file instead of using the flag).
+- T3.5's own CHANGELOG entry initially failed the Cyrillic scan it was
+  describing — quoting the scanner's own Cyrillic-range regex character
+  class in prose contains literal Cyrillic characters. Reworded to
+  describe the pattern without quoting it literally. (Same trap hit again
+  writing this very PROGRESS.md paragraph on the first attempt.)
+- Wave 3 itinerary complete per `04-wave3-enforcement.md`'s stated order
+  (T3.1 → T3.7). Next per that file: `05-wave4-behavior-evals.md`.
 
 ## Session 2026-08-04 (implementation-plan Wave 2 — T2.1 through T2.8)
 
