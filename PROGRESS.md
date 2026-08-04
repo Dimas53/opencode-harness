@@ -2,9 +2,93 @@
 
 ## Current Status
 
-Phase: implementation-plan Wave 5 (bridge to sandbox) — complete
-Last commit: b0da261 (T5.3)
+Phase: implementation-plan Wave 6 (recon, T6.1-T6.4 + T6.5 batch 1) — in progress, paused by design after T6.5 batch 1
+Last commit: bbd5df7 (Wave 5 session log — Wave 6 produced no commits, see below)
 Chat language: ru
+
+## Session 2026-08-05 (implementation-plan Wave 6 — T6.1 through T6.4, T6.5 batch 1)
+
+Chat language: ru
+
+Working from `notes/Harness/implementation-plan/07-wave6-recon-unread-files.md`
+— a recon wave, not a fix wave: every ticket's output is a findings report
+in `notes/Harness/recon-findings/`, not an autonomous code change (per the
+wave's own scope). `notes/` is gitignored (`.gitignore:37`, "Local notes,
+not versioned") — same as the implementation-plan itself — so **none of
+this session's output is in git history**; this PROGRESS.md entry is the
+only durable record. Ran T6.1-T6.4 fully autonomously (no fix-wave-style
+commits expected here); stopped after T6.5 batch 1 because the ticket
+itself designs in a stop-and-decide checkpoint after every 8-10 skill
+batch — not a routine permission ask, so treated as the wave's own
+architecture rather than something to push past.
+
+### Done
+
+- **T6.1** → `notes/Harness/recon-findings/scripts-batch1.md` —
+  `analyze.sh`/`gen-opencode.sh`/`start.sh`. Top finding: **critical**
+  secret-leak risk — `gen-opencode.sh` writes a live Directus MCP bearer
+  token into `opencode.jsonc`, but `init-adopt.sh` never touches
+  `.gitignore` at all (zero matches on grep), and `sync-templates.sh`'s
+  merge step only *prints* missing `.gitignore` lines rather than writing
+  them — so an adopted project can commit the token with nothing in the
+  harness's own tooling ever having blocked it. Also: `start.sh`'s
+  session-end guard never actually blocks anything (major, same
+  fail-open class as pre-Wave-0 findings), and a BSD-only `date -v-1d`
+  call breaks silently on Linux (minor).
+- **T6.2** → `notes/Harness/recon-findings/windows-wsl.md` —
+  `install.bat`. Confirmed it is fully orphaned (zero references in
+  README/INSTALL.md/Makefile — the real Windows path is WSL2 running
+  `install.sh`) AND independently drifted from `install.sh` in both
+  directions (missing symlink creation, AGENTS.md backup logic,
+  opencode.jsonc auto-merge, post-commit hook, git identity check; has an
+  untested superpowers-install step `install.sh` lacks). Historical notes
+  (`ostatok-po-versii-0.3.md`/`.full.md`) claim this file was already
+  deleted — `git log --diff-filter=D` shows it never was; those notes are
+  stale.
+- **T6.3** → `notes/Harness/recon-findings/bats-tests.md` — both
+  `tests/*.bats` files (20 tests total, all passing). Every single test
+  is existence/non-empty/syntax-only — **zero tests actually execute any
+  script and assert on behavior.** None of `dod.sh`'s 8 steps, the T5.2
+  `.agentignore` gate, or `hooks/pre-commit`'s actual blocking behavior
+  are exercised. Same disease class as pre-T0.4 `session-end.sh`, one
+  layer up. Also cross-checked roadmap Phase 1.1/1.2 (A/B series
+  checkboxes) — honestly, none are complete yet (closest: A1, B5,
+  partial); did not flip any checkbox since none qualified.
+- **T6.4** → `notes/Harness/recon-findings/guide-md.md` — full 786-line
+  read. Top finding: **critical** — GUIDE.md §6 "Definition of Done"
+  fully duplicates and has drifted from the canonical DoD list in
+  `global/AGENTS.md` (missing the Commit Gate/`scripts/dod.sh` mechanical
+  check entirely), in the *same file* whose §5 explicitly warns against
+  doing exactly this, citing T1.1 by name. Also: Session Start step count
+  stated as both 7 and 8 in different sections (canon is 8; the place
+  that lists all 7 items is missing the Directus MCP step); docs-lag
+  threshold documented as 5, actually enforced as 3
+  (`scripts/dod.sh:149`).
+- **T6.5 batch 1** → `notes/Harness/recon-findings/skills-batch-1.md` —
+  8 skills (5 from the ticket's named priority list: `security`,
+  `debugging-and-error-recovery`, `planning-and-task-breakdown`,
+  `verification-before-completion`, `git-workflow-and-versioning`; 3 from
+  T2.7's dedup report needing file:line follow-up: `code-reviewer`,
+  `requesting-code-review`, `systematic-debugging`). Confirmed and pinned
+  exact locations for `systematic-debugging.md`'s dangling
+  `superpowers:test-driven-development` /
+  `superpowers:verification-before-completion` references (T2.7 had
+  flagged this without line numbers). Minor: leftover vendored-voice
+  phrasing ("your human partner", "you'll be replaced") in two files,
+  inconsistent with this harness's own tone.
+
+### Known issues
+
+- None new beyond what's captured in the recon reports themselves — this
+  wave's whole purpose is surfacing exactly this kind of thing.
+
+### Next
+
+- User decides: address any of the findings above (especially the T6.1
+  secret-leak risk and the T6.4 GUIDE.md §6 duplication — both flagged
+  critical) as their own tickets, or continue T6.5 with batch 2 (~57
+  skills remain unchecked by this pass, some already deep-read via T2.7
+  for the dedup question specifically).
 
 ## Session 2026-08-04 (implementation-plan Wave 5 — T5.1 through T5.3)
 
