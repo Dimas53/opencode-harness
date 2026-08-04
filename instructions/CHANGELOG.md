@@ -4,6 +4,35 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-04
 
+### dod.sh — quiet Step 6/7 warnings for client projects (post-Wave-2)
+
+- **scripts/dod.sh**: Steps 6 ("Quick tests") and 7 ("Self-check") warned
+  `bats or Makefile not found` / `No scripts/*.sh found` on every single DoD
+  run in every client project — these checks only make sense in the harness
+  repo itself (which has its own `Makefile` + `scripts/*.sh`); client
+  projects never get a copy of either (confirmed: `init-project.sh` /
+  `init-adopt.sh` never write them). The warning was accurate but alarming —
+  repeated on every commit, it read as "something's missing" when it's the
+  correct, by-design state, worrying users/colleagues unfamiliar with the
+  harness's project-vs-meta-repo split.
+- Added `IS_HARNESS_REPO` detection (`scripts/init-project.sh` present in
+  CWD — the same signal `global/AGENTS.md`'s "Code Style — Comments" section
+  already uses to distinguish harness repo from client project). Steps 6/7
+  now only `check_warn` when `IS_HARNESS_REPO=1`; client projects get a calm
+  `check_pass` instead.
+- `scripts/dod.sh` is reached via the `~/.opencode-harness` symlink from
+  every project — this fix applies immediately everywhere without touching
+  individual projects.
+- Verified: ran the updated script directly against `itocook` and
+  `karriere-page-ito` (both client projects, outside this repo) — Steps 6/7
+  now show `✓ No local make test-quick — expected for client projects...`
+  and `✓ No local scripts/ — not applicable for client projects` instead of
+  `⚠`. Re-ran inside this repo (`IS_HARNESS_REPO=1`, real Makefile/scripts
+  present) — behavior unchanged, still runs the real checks.
+- Related to (but not part of) the ticket plan — found and fixed same-day
+  during hands-on hook maintenance across live projects, not from a specific
+  T-numbered ticket.
+
 ### T2.6 — AGENTS.md: extract inline bash from Harness Shortcuts
 
 - **scripts/update-harness-shortcut.sh (new)** and **scripts/sync-templates.sh

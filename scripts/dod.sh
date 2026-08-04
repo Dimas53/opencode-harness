@@ -12,6 +12,13 @@ check_pass() { echo "✓ $1"; PASS=$((PASS + 1)); }
 check_fail() { echo "✗ $1"; FAIL=$((FAIL + 1)); }
 check_warn() { echo "⚠ $1"; WARN=$((WARN + 1)); }
 
+# Steps 6/7 below check for a local Makefile/bats and scripts/*.sh — real
+# only in the harness repo itself. Client projects never get their own copy
+# of these (see init-project.sh/init-adopt.sh), so absence there is the
+# expected, correct state, not something to warn about.
+IS_HARNESS_REPO=0
+[ -f "scripts/init-project.sh" ] && IS_HARNESS_REPO=1
+
 echo "=== DoD Check ==="
 echo ""
 
@@ -238,8 +245,10 @@ if command -v bats &>/dev/null && [ -f "Makefile" ]; then
     check_fail "Tests failed — run 'make test-quick' to see details"
     echo "   $TEST_OUTPUT" | head -5 | sed 's/^/    /'
   fi
-else
+elif [ "$IS_HARNESS_REPO" = "1" ]; then
   check_warn "bats or Makefile not found — TESTS NOT RUN. Install: brew install bats-core (or see README). Real enforcement happens in CI regardless of local bats."
+else
+  check_pass "No local make test-quick — expected for client projects, use the project's own test command"
 fi
 
 echo ""
@@ -251,8 +260,10 @@ echo "  → Run: bash -n on changed scripts"
 echo "  → Run: make verify"
 if ls scripts/*.sh &>/dev/null 2>&1; then
   bash -n scripts/*.sh 2>&1 && check_pass "Self-check (syntax)" || check_fail "Self-check" "fix syntax errors above"
-else
+elif [ "$IS_HARNESS_REPO" = "1" ]; then
   check_warn "No scripts/*.sh found — skipping syntax check"
+else
+  check_pass "No local scripts/ — not applicable for client projects"
 fi
 
 echo ""
