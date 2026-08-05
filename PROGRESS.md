@@ -28,6 +28,10 @@ versioned — see .gitignore). Summary of commits this session:
   `harness-init/SKILL.md`, `agent-adopt.md`, `templates/AGENTS.md`,
   `templates/.agentignore`, `templates/.env.example` — all now resolve from
   any client project.
+- T-H3 (partial — Problem A only, Problem B blocked by H-DEC-3): the
+  "harness project?" detector in `global/AGENTS.md` now checks for
+  client-project artifacts (`HARNESS.md`/`memory/`) instead of meta-repo
+  properties, so JSDoc requirement no longer contradicts DoD step 3.
 
 ## Session 2026-08-05 (later — post-commit gap found live, fixed + propagated)
 

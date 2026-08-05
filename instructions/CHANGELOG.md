@@ -33,6 +33,20 @@ invocation, and step counts are no longer restated outside the canonical
 DoD list in global AGENTS.md. See T-H2 in
 notes/Harness/implementation-plan-2/10-waveH-propagation.md.
 
+### "Does this project have harness files?" detector fixed (T-H3, partial)
+
+`## Code Style — Comments` in `global/AGENTS.md` checked for
+`scripts/init-project.sh`, a `Makefile` with harness targets, etc. — all
+properties of the harness's own meta-repo, so the check said "NO" in every
+real client project and disabled the JSDoc requirement there, contradicting
+Definition of Done step 3 (JSDoc required unconditionally). The detector now
+checks for the artifacts a client project actually gets when adopted
+(`HARNESS.md`, or `AGENTS.md` + `PROGRESS.md`, or `memory/`). The second
+half of this finding (the "Working in External / Client Projects" section
+contradicting DoD step 2/docs-lag) is unresolved — blocked on open decision
+H-DEC-3 (guest-mode boundary). See T-H3 in
+notes/Harness/implementation-plan-2/10-waveH-propagation.md.
+
 ### `unadopt` was leaving the post-commit rollback guard behind — fixed
 
 Since 3271144 (see 2026-08-05 (later) entry below), `post-commit` installs

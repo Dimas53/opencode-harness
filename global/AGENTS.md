@@ -314,16 +314,21 @@ Never generate, insert, copy, or preserve Russian text in project files under an
 
 ## Code Style — Comments
 
-**Check: does the current project have harness files?**
+**Check: is this project under the harness?**
 
-Look for these files (ANY match = harness project):
-- `scripts/init-project.sh`, `scripts/init-adopt.sh`, `scripts/analyze.sh`
-- `Makefile` with `init` or `init-adopt` or `analyze` targets
-- `global/AGENTS.md` with "Harness Shortcuts" section
+Look for these files in the project root (ANY match = harness-adopted):
+- `HARNESS.md`
+- `AGENTS.md` together with `PROGRESS.md`
+- `memory/` directory
 
-**If YES (harness project):** JSDoc required for composables, server routes, utilities, and complex functions. Inline comments for non-obvious logic, workarounds, and edge cases. No comments on trivial getters/setters.
+(The old check looked for `scripts/init-project.sh`, a `Makefile`, etc. —
+those are properties of the harness's own meta-repo, not of a project it
+was adopted into, so the check gave "NO" in every real client project.
+See T-H3 in notes/Harness/implementation-plan-2/10-waveH-propagation.md.)
 
-**If NO (not a harness project):** Ask the user ONCE at session start: "Should I add comments/documentation in this project?" Follow their answer for the entire session. Default to no if they don't answer.
+**If YES (harness-adopted):** JSDoc required for composables, server routes, utilities, and complex functions. Inline comments for non-obvious logic, workarounds, and edge cases. No comments on trivial getters/setters. (This matches Definition of Done step 3, which requires JSDoc unconditionally — the two must not disagree.)
+
+**If NO (not harness-adopted):** Ask the user ONCE at session start: "Should I add comments/documentation in this project?" Follow their answer for the entire session. Default to no if they don't answer.
 
 ### General rules
 - TypeScript strict mode always
