@@ -114,7 +114,7 @@ Types: `feat`, `fix`, `docs`, `chore`, `refactor`
 When user says "commit and push" (or equivalent) — do NOT execute both at once.
 Follow this exact order:
 1. Create the commit
-2. Run full Definition of Done (Steps 0-5, including architecture doc check)
+2. Run the full Definition of Done (see global AGENTS.md — do not restate the step count here)
 3. Only after DoD is verified — run `git push`
 
 ---
@@ -131,9 +131,7 @@ migrations/
 **Hard rule: no migration PR merges without a `.down.sql` file**, especially
 when it includes any `DROP`. The agent writes BOTH files. The developer
 reviews DOWN as carefully as UP — a migration without a tested rollback is
-not "Wiederherstellung"-compliant (see
-`notes/Harness/v0.4 - SANDBOX_ARCHITECTURE.md` Rollback strategy, if this
-project uses the Sandbox module).
+not recoverable.
 
 **Example — UP:**
 ```sql

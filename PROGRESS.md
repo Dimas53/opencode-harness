@@ -24,6 +24,10 @@ versioned — see .gitignore). Summary of commits this session:
 - T-H1 (partial — steps 3-4 only, steps 1-2 blocked by H-DEC-1/H-DEC-2):
   `dod.sh` steps 7-8 no longer print `✓` for checks that never ran in a
   client project.
+- T-H2: fixed 12 unreachable commands/paths in `global/AGENTS.md`,
+  `harness-init/SKILL.md`, `agent-adopt.md`, `templates/AGENTS.md`,
+  `templates/.agentignore`, `templates/.env.example` — all now resolve from
+  any client project.
 
 ## Session 2026-08-05 (later — post-commit gap found live, fixed + propagated)
 

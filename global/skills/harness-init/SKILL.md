@@ -35,7 +35,7 @@ Before generating any documentation file:
 
 ## Orchestration
 
-> Full scenario reference: see instructions/reference/04-skill-stacks.md
+> Full scenario reference: see ~/.opencode-harness/instructions/reference/04-skill-stacks.md
 
 harness-init detects the scenario and hands off to the right agent-skill.
 It does NOT run interviews or generate docs itself.

@@ -213,8 +213,9 @@ Q0. **Language — before any analysis:** SEQUENCE RULE
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    ▶ Done. Type `end` to close the session.
 
-   Remind: if project uses Directus — configure MCP via make mcp
-   (see instructions/directus-mcp-setup.md).
+   Remind: if project uses Directus — configure MCP via
+   `bash ~/.opencode-harness/scripts/gen-opencode.sh "$(pwd)"`
+   (see ~/.opencode-harness/instructions/directus-mcp-setup.md).
 
    **After user types `end` — only then ask:**
    Push to remote? (y/n)

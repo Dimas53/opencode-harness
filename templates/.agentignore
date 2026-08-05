@@ -6,8 +6,8 @@
 #
 # NOTE: this is FILE-LEVEL only. It does NOT block field-level API reads
 # (e.g. a Directus MCP call reading a PII field from an allowed collection).
-# Field-level protection requires a dedicated MCP interceptor — see
-# notes/Harness/v0.4 - SANDBOX_ARCHITECTURE.md for that (unbuilt) design.
+# Field-level enforcement is not built yet — a dedicated MCP interceptor
+# would be required for that.
 
 # Production environment
 .env.production

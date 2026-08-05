@@ -19,6 +19,20 @@ T-H1 steps 3-4 (notes/Harness/implementation-plan-2/10-waveH-propagation.md)
 — partial: steps 1-2 (docs-matrix severity, test auto-run) are blocked on
 open decisions H-DEC-1/H-DEC-2.
 
+### 12 unreachable commands/paths in delivered files — fixed (T-H2)
+
+`global/AGENTS.md`, `harness-init/SKILL.md`, `agent-adopt.md`,
+`templates/AGENTS.md`, `templates/.agentignore`, `templates/.env.example`
+all ship into client projects (K1/K2/K3) but referenced paths/commands that
+only exist in the harness repo itself: relative `scripts/dod.sh`,
+`instructions/...`, `make mcp`, `make session-end`, a hardcoded DoD step
+count ("Steps 0-5" — actually 9 steps), and a dangling link to
+`notes/Harness/v0.4 - SANDBOX_ARCHITECTURE.md` (not shipped to projects).
+All now use `~/.opencode-harness/...` prefixes or the correct script
+invocation, and step counts are no longer restated outside the canonical
+DoD list in global AGENTS.md. See T-H2 in
+notes/Harness/implementation-plan-2/10-waveH-propagation.md.
+
 ### `unadopt` was leaving the post-commit rollback guard behind — fixed
 
 Since 3271144 (see 2026-08-05 (later) entry below), `post-commit` installs

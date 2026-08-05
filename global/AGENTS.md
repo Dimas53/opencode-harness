@@ -33,7 +33,9 @@ When user types:
   `bash ~/.opencode-harness/scripts/dod.sh` directly. Client projects don't
   need this before every commit — the pre-commit hook already runs it
   automatically — this is for a manual pre-check.
-- `docs` — run `make session-end` and remind to update docs if code changed
+- `docs` — run `bash ~/.opencode-harness/scripts/session-end.sh` (in the
+  harness repo `make session-end` does the same) and remind to update docs
+  if code changed
 
 - `unadopt` — remove all harness files from the CURRENT project (AGENTS.md,
   MEMORY.md, PLAN.md, PROGRESS.md, HARNESS.md, memory/, both git hooks).
@@ -62,7 +64,7 @@ General — destructive actions regardless of project. Never do without explicit
 - `git commit --no-verify` (or any other way of bypassing the pre-commit
   hook) — this disables ALL DoD checks at once, not just the one causing
   trouble. If a specific check genuinely looks like a false positive, use
-  `DOD_SKIP=<step-name>` (documented at the top of `scripts/dod.sh`) to skip
+  `DOD_SKIP=<step-name>` (documented at the top of `~/.opencode-harness/scripts/dod.sh`) to skip
   ONLY that named step — never the whole gate. A post-commit guard will
   detect a commit that bypassed DoD and roll it back automatically
   (`git reset --soft HEAD~1` — your change is not lost, but the bad commit
@@ -154,8 +156,9 @@ Execute these steps in order BEFORE any response to the user:
      modify the config here.
    - If NO local `opencode.jsonc` exists — warn the user:
      "⚠️ Directus MCP is not configured for this project. Create `.env`
-     (DIRECTUS_URL + MCP_DIRECTUS_TOKEN) and run `make mcp`
-     (see instructions/directus-mcp-setup.md)."
+     (DIRECTUS_URL + MCP_DIRECTUS_TOKEN) and run
+     `bash ~/.opencode-harness/scripts/gen-opencode.sh "$(pwd)"`
+     (see ~/.opencode-harness/instructions/directus-mcp-setup.md)."
    - Do NOT modify any config. There is no global directus config to compare
      against and no switching.
 8. Report:
@@ -229,7 +232,7 @@ an excuse — scan the entire conversation.
 4. **Tests:** If test suite exists — run it. All tests must pass. If new
    feature — add at least one test.
 5. **Commit Gate:** The mechanical, exit-code-enforced gate
-   (`scripts/dod.sh` — uncommitted changes, Cyrillic scan, docs lag,
+   (`~/.opencode-harness/scripts/dod.sh` — uncommitted changes, Cyrillic scan, docs lag,
    PROGRESS.md freshness, docs matrix, quick tests, self-check,
    `.agentignore` file-level check) runs AUTOMATICALLY via the pre-commit
    hook on every `git commit` — no manual command needed, and it must exit
@@ -373,7 +376,7 @@ If a task requires reading a restricted file — stop and ask the user first, ex
 
 **Project-specific additions:** if `.agentignore` exists in the project root,
 treat every pattern in it exactly like the patterns above — same rule, same
-"ask first" requirement. `scripts/dod.sh` mechanically blocks commits that
+"ask first" requirement. `~/.opencode-harness/scripts/dod.sh` mechanically blocks commits that
 touch a path matching `.agentignore` (Step 8) as a backstop, but the primary
 defense is: don't read these files in the first place.
 
@@ -426,7 +429,7 @@ defense is: don't read these files in the first place.
 
 Use `docs` shortcut (see Harness Shortcuts above) when user asks to update docs. No auto-trigger.
 
-If `make dod` step 6 warns about code changes without docs — update relevant files before closing.
+If the DoD docs-matrix step reports code changed without a docs update — update relevant files before closing.
 
 → Full session reference: `load skills/documentation/SKILL.md``
 
@@ -469,4 +472,4 @@ Always load SKILL.md via filesystem path: `Read ~/.config/opencode/skills/<domai
 | Loop Factory | spec-driven loop, agent factory, loop factory, repeatable agent work, markdown specs inbox | loop-factory/SKILL.md |
 | TS Deep Modules | barrel files, dependency-cruiser, deep modules, entry points, package boundaries | setup-ts-deep-modules/SKILL.md, codebase-design/SKILL.md |
 
-→ Full reference for when to use which skill: `read instructions/reference/03-skills-cheatsheet.md`
+→ Full reference for when to use which skill: `read ~/.opencode-harness/instructions/reference/03-skills-cheatsheet.md` (harness-wide reference); in a project, `docs/skills-cheatsheet.md` is the project-local list
