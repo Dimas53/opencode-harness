@@ -35,7 +35,11 @@ When user types:
   automatically — this is for a manual pre-check.
 - `docs` — run `make session-end` and remind to update docs if code changed
 
-- `unadopt` — run `make unadopt` in current project directory to remove all harness files (AGENTS.md, MEMORY.md, PLAN.md, PROGRESS.md, HARNESS.md, memory/, pre-commit hook). Keeps docs/ unless confirmed.
+- `unadopt` — remove all harness files from the CURRENT project (AGENTS.md,
+  MEMORY.md, PLAN.md, PROGRESS.md, HARNESS.md, memory/, both git hooks).
+  Run: `bash ~/.opencode-harness/scripts/unadopt.sh`
+  Everything removed is backed up to `.harness-unadopt-backup/` first. Keeps
+  `docs/` unless confirmed.
 - `sync-templates` — check for new harness template files missing in current project:
   Run: `bash ~/.opencode-harness/scripts/sync-templates.sh`
 

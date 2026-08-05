@@ -2,6 +2,31 @@
 
 All notable changes to opencode-harness are documented here.
 
+## 2026-08-06
+
+### `unadopt` was leaving the post-commit rollback guard behind — fixed
+
+Since 3271144 (see 2026-08-05 (later) entry below), `post-commit` installs
+into every project, not just the harness repo. `make unadopt` only ever
+restored/removed `pre-commit` — `post-commit` survived unadopt, called
+`dod.sh` on every subsequent commit, and rolled each one back once
+`PROGRESS.md` no longer existed. A project the harness was removed from
+silently lost the ability to commit.
+
+- **`scripts/unadopt.sh`** (new): the `unadopt` logic, ported out of the
+  Makefile target so it can run via `~/.opencode-harness` from a client
+  project (which has no `Makefile` by design — same reasoning as the
+  `make dod` → `dod.sh` fix). Removes BOTH hooks symmetrically.
+- **`Makefile`**: `unadopt` target now delegates to the script.
+- **`global/AGENTS.md`**: `unadopt` shortcut now points at
+  `bash ~/.opencode-harness/scripts/unadopt.sh` instead of `make unadopt`,
+  which is not runnable from inside a client project.
+
+Remediation scan of known adopted projects on this machine found none
+affected (regression window was under a day, `unadopt` wasn't run on any
+of them). See `notes/Harness/implementation-plan-2/10-waveH-propagation.md`
+T-H0.
+
 ## 2026-08-05 (later)
 
 ### post-commit rollback guard was never installed in client projects — fixed

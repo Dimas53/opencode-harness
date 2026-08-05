@@ -2,9 +2,25 @@
 
 ## Current Status
 
-Phase: fixed a real production gap found live in karriere-page-ito — post-commit rollback guard was never installed in any client project. Fixed in harness + propagated to all 3 known live projects.
-Last commit: 3271144 (fix: install post-commit rollback guard in client projects, fix make-dod wording)
+Phase: autonomous overnight session executing implementation-plan-2 Wave H
+(propagation) and beyond, per notes/Harness/implementation-plan-2/00-README.md
+and 10-waveH-propagation.md. Working ticket-by-ticket, one commit each. Most
+open decisions in 06-open-decisions.md are still empty — many tickets are
+blocked; see notes/Harness/implementation-plan-2/11-open-questions-and-blocked.md
+section B for the running list.
+Last commit: (this session, see below)
 Chat language: ru
+
+## Session 2026-08-06 (autonomous — implementation-plan-2 Wave H+)
+
+Working the order H0 → H1 → H2 → H3 → C → B → A → D → E → G → H4 → F → H5 →
+H6/H7 per user's overnight instructions. Details of what's done/skipped are in
+notes/Harness/implementation-plan-2/11-open-questions-and-blocked.md (not
+versioned — see .gitignore). Summary of commits this session:
+
+- T-H0: `unadopt` now removes both git hooks (was leaving `post-commit`
+  behind, which rolled back every future commit in a project after the
+  harness was removed from it). Logic moved to `scripts/unadopt.sh`.
 
 ## Session 2026-08-05 (later — post-commit gap found live, fixed + propagated)
 

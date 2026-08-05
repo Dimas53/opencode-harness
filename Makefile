@@ -114,33 +114,7 @@ uninstall-lite:
 	@echo "  Last step: rm -rf $(CURDIR)"
 
 unadopt:
-	@test -f MEMORY.md || (echo "✗ Harness files not found here. Run from project root."; exit 1)
-	@mkdir -p .harness-unadopt-backup
-	@for f in AGENTS.md MEMORY.md PLAN.md PROGRESS.md HARNESS.md; do \
-		[ -f "$$f" ] && cp "$$f" ".harness-unadopt-backup/$$f" && echo "  Backed up: $$f"; \
-	done || true
-	@[ -d memory ] && cp -r memory .harness-unadopt-backup/memory && echo "  Backed up: memory/" || true
-	@rm -f AGENTS.md MEMORY.md PLAN.md PROGRESS.md HARNESS.md
-	@rm -rf memory/
-	@echo "  → Full backup at .harness-unadopt-backup/ (delete manually when confirmed safe)"
-	@if [ -f .git/hooks/pre-commit.bak ]; then \
-		mv .git/hooks/pre-commit.bak .git/hooks/pre-commit; \
-		echo "  Hook: restored from backup"; \
-	else \
-		rm -f .git/hooks/pre-commit; \
-		echo "  Hook: removed"; \
-	fi
-	@echo ""
-	@printf "docs/ may contain files created during harness sessions.\nDelete docs/ too? [y/N] "; \
-		read answer; \
-		if [ "$$answer" = "y" ] || [ "$$answer" = "Y" ]; then \
-			rm -rf docs/; \
-			echo "  docs/: deleted"; \
-		else \
-			echo "  docs/: kept"; \
-		fi
-	@echo ""
-	@echo "✓ Harness removed from project"
+	@bash $(CURDIR)/scripts/unadopt.sh
 
 session-end:
 	@./scripts/session-end.sh
