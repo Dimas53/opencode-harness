@@ -4,6 +4,21 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-06
 
+### DoD steps 7-8 stop claiming `✓` for checks that never ran (client profile)
+
+`scripts/dod.sh` step 7 (self-check) and step 8 (`.agentignore`) printed a
+green `✓` in every client project regardless of whether they checked
+anything — step 7 because `scripts/*.sh` doesn't exist outside the harness
+repo, step 8 because client projects don't have `.agentignore` yet (K3
+doesn't push it into existing projects). Both now say what actually
+happened: step 7 syntax-checks whatever `.sh` files the commit touches (or
+warns honestly if none), step 8 warns that the backstop is inactive instead
+of implying nothing needs restricting.
+
+T-H1 steps 3-4 (notes/Harness/implementation-plan-2/10-waveH-propagation.md)
+— partial: steps 1-2 (docs-matrix severity, test auto-run) are blocked on
+open decisions H-DEC-1/H-DEC-2.
+
 ### `unadopt` was leaving the post-commit rollback guard behind — fixed
 
 Since 3271144 (see 2026-08-05 (later) entry below), `post-commit` installs

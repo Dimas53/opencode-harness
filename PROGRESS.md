@@ -21,6 +21,9 @@ versioned — see .gitignore). Summary of commits this session:
 - T-H0: `unadopt` now removes both git hooks (was leaving `post-commit`
   behind, which rolled back every future commit in a project after the
   harness was removed from it). Logic moved to `scripts/unadopt.sh`.
+- T-H1 (partial — steps 3-4 only, steps 1-2 blocked by H-DEC-1/H-DEC-2):
+  `dod.sh` steps 7-8 no longer print `✓` for checks that never ran in a
+  client project.
 
 ## Session 2026-08-05 (later — post-commit gap found live, fixed + propagated)
 

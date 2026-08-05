@@ -299,7 +299,17 @@ if ls scripts/*.sh &>/dev/null 2>&1; then
 elif [ "$IS_HARNESS_REPO" = "1" ]; then
   check_warn "No scripts/*.sh found — skipping syntax check"
 else
-  check_pass "No local scripts/ — not applicable for client projects"
+  # Client project: no scripts/ dir by design, but that doesn't mean
+  # nothing to check — this commit may still touch shell files elsewhere
+  # in the project. Syntax-check those instead of claiming a pass for a
+  # check that never ran. propagation-ok: real check, not a stub.
+  SH_STAGED=$(echo "${FILES:-}" | tr ' ' '\n' | grep -E '\.sh$' || true)
+  if [ -n "$SH_STAGED" ]; then
+    bash -n $SH_STAGED 2>&1 && check_pass "Self-check (syntax on changed shell files)" \
+                            || check_fail "Self-check" "fix syntax errors above"
+  else
+    check_warn "Self-check is advisory in this project — verify each change actually works"
+  fi
 fi
 fi
 
@@ -330,7 +340,11 @@ if [ -f ".agentignore" ] && git rev-parse --is-inside-work-tree &>/dev/null; the
   done < ".agentignore"
 fi
 
-if [ "$AGENTIGNORE_FAIL" -eq 0 ]; then
+if [ ! -f ".agentignore" ]; then
+  # propagation-ok: honest warn, not a silent pass — the backstop this step
+  # provides is inactive, not "nothing to restrict".
+  check_warn ".agentignore not present — file-level access backstop is INACTIVE (run update-project to install it)"
+elif [ "$AGENTIGNORE_FAIL" -eq 0 ]; then
   check_pass "No staged files match .agentignore restrictions"
 fi
 
