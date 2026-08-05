@@ -2,9 +2,89 @@
 
 ## Current Status
 
-Phase: implementation-plan folder is now self-contained (3 more essential files moved in) — done. Wave 6 (recon) still paused at T6.5 batch 1 (unchanged this session).
-Last commit: cdf246d (this follow-up round is also entirely in notes/, gitignored, see below)
+Phase: fixed a real production gap found live in karriere-page-ito — post-commit rollback guard was never installed in any client project. Fixed in harness + propagated to all 3 known live projects.
+Last commit: 3271144 (fix: install post-commit rollback guard in client projects, fix make-dod wording)
 Chat language: ru
+
+## Session 2026-08-05 (later — post-commit gap found live, fixed + propagated)
+
+Chat language: ru
+
+User was live in `karriere-page-ito` (different OpenCode session, Qwen
+model) debugging why DoD protocol seemed invisible. Traced two real,
+previously-undiscovered issues — not a stale-config problem in that one
+project, a genuine harness bug affecting every client project.
+
+### Root cause investigation
+
+- Confirmed `~/.config/opencode/AGENTS.md` mirror is byte-identical to
+  `global/AGENTS.md` — ruled out.
+- Confirmed `rtk git commit` (the user's token-optimization proxy)
+  compresses successful `git commit` output to a bare `"ok <hash>"` by
+  documented design (`rtk git --help`: `commit → "ok \<hash\>"`) —
+  verified in an isolated scratch repo with fake passing/failing hooks.
+  The hook mechanism itself is NOT bypassed (failures still show through,
+  and a failing hook still blocks the commit) — only the visibility of a
+  *passing* hook's output is lost. Escape hatch: `rtk proxy git commit`
+  shows raw output. This explains why DoD looked invisible even when it
+  ran and passed.
+- Separately, karriere-page-ito's own Qwen session did its own repo
+  forensics and correctly found something real: `post-commit` (the T3.1
+  no-verify rollback guard) was not installed there. Verified this is
+  NOT project-specific — `install-hooks.sh` has only ever copied
+  `pre-commit` into any adopted/new project since Wave 3 shipped T3.1.
+  T3.6 (same wave, immediately after T3.1 in the same file) reasoned
+  post-commit should stay harness-repo-only based on its OLD, sole
+  responsibility (skill-mirroring) and never revisited that after T3.1
+  gave the same file a second, more important job.
+
+### Fixed (commit `3271144`)
+
+- `scripts/install-hooks.sh`: now installs both `pre-commit` and
+  `post-commit` (shared `install_hook()` function, same path-baking +
+  backup-existing logic). Skill-mirroring half of post-commit is a
+  harmless no-op in client repos (no `global/` dir there to match).
+- `scripts/install.sh`: fixed the stale T3.6-era comment.
+- `notes/Harness/implementation-plan/04-wave3-enforcement.md`: annotated
+  T3.6 in place (correction note added above, original text kept for the
+  historical record — same pattern as the audit checkmarks).
+- `global/AGENTS.md` DoD Step 5 + `dod` shortcut, `global/skills/dod/SKILL.md`
+  STEP 5: reworded — both used to say "run `make dod`" literally, which
+  hard-fails in every client project (no Makefile there by design, the
+  hook already runs it automatically). Also restored the missing
+  `.agentignore` mention in AGENTS.md's own step-5 description (same
+  staleness class as the GUIDE.md finding from Wave 6, caught one file
+  earlier this time).
+- Verified: isolated scratch-repo test (both hooks install correctly,
+  full commit cycle passes cleanly through both with no crash),
+  `check-dod-sync.sh` 9/9, `make test-quick` 20/20.
+
+### Propagated to all 3 known live client projects
+
+Ran the fixed `install-hooks.sh` against each (pure `.git/hooks/` file
+operation — hooks aren't git-tracked, so this touched zero tracked files
+in any of these repos, confirmed via `git status` showing only each
+project's own pre-existing uncommitted work, untouched by this):
+- `/Users/DSAITO/Documents/BackEnd/karriere-page-ito`
+- `/Users/DSAITO/Documents/BackEnd/itocook`
+- `/Users/DSAITO/Documents/Test Projekts/ducito`
+
+All three now have both hooks installed with `OPENCODE_HARNESS_PATH`
+correctly baked to this machine's harness path, both executable,
+confirmed individually.
+
+### Known issues / not done
+
+- `rtk`'s output-compression-on-success is external to this repo — not
+  "fixed", just diagnosed and explained to the user (recommended
+  `rtk proxy git commit` as the visibility workaround). Could be worth a
+  note in the user's own `~/.claude/RTK.md` if this keeps causing
+  confusion, but that file is outside this repo's scope.
+- Did not investigate whether other Makefile-dependent shortcuts (`docs`
+  → `make session-end`, `unadopt` → `make unadopt`) have the same
+  client-project wording problem as `dod` did — flagged as a possible
+  follow-up, not confirmed as a bug, out of scope for this session (user
+  asked specifically about the two issues already diagnosed).
 
 ## Session 2026-08-05 (follow-up #2 — made implementation-plan/ self-contained)
 
