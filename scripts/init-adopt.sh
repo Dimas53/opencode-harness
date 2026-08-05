@@ -56,6 +56,21 @@ safe_copy_file "$HARNESS_PATH/templates/PLAN.md"      "$PROJECT/PLAN.md"
 safe_copy_file "$HARNESS_PATH/templates/PROGRESS.md"  "$PROJECT/PROGRESS.md"
 safe_copy_file "$HARNESS_PATH/templates/HARNESS.md"   "$PROJECT/HARNESS.md"
 safe_copy_file "$HARNESS_PATH/templates/.agentignore" "$PROJECT/.agentignore"
+
+# Ensure opencode.jsonc (and other secret-bearing patterns) are git-ignored.
+# Without this, an adopted project with its own pre-existing .gitignore
+# (the common case) never gets these patterns, and gen-opencode.sh's live
+# Directus Bearer token can end up staged by `git add -A`.
+GI="$PROJECT/.gitignore"
+if [ ! -f "$GI" ]; then
+  cp "$HARNESS_PATH/templates/.gitignore" "$GI"
+  echo "  ✓ .gitignore created from template"
+else
+  for pat in "opencode.jsonc" ".env"; do
+    grep -qxF "$pat" "$GI" || { printf '%s\n' "$pat" >> "$GI"; echo "  ✓ .gitignore: added '$pat'"; }
+  done
+fi
+
 echo "  Done."
 echo ""
 

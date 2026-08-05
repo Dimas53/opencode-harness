@@ -136,7 +136,7 @@ else
     ' "$TEMPLATE_TMP" ~/.config/opencode/opencode.jsonc
     rm -f "$TEMPLATE_TMP"
 fi
-cp -r global/skills/* ~/.config/opencode/skills/
+rsync -a --exclude='*.bak' global/skills/ ~/.config/opencode/skills/
 
 ln -sf "$(pwd)" ~/.opencode-harness
 echo "✓ Symlink created: ~/.opencode-harness → $(pwd)"

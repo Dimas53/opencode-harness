@@ -70,6 +70,30 @@ affected (regression window was under a day, `unadopt` wasn't run on any
 of them). See `notes/Harness/implementation-plan-2/10-waveH-propagation.md`
 T-H0.
 
+### Wave C — script correctness (T-C1..C4)
+
+- **T-C1 (Directus token leak):** `gen-opencode.sh` now refuses to write
+  `opencode.jsonc` (which embeds a live Bearer token) unless git actually
+  ignores that path in the target project — fail-closed instead of trusting
+  the property blindly. `init-adopt.sh` now also merges `opencode.jsonc`
+  and `.env` into the project's `.gitignore` (creating one from the
+  template if none exists), closing the gap where `init-adopt` (unlike
+  `init-project`) never touched `.gitignore` at all.
+- **T-C2:** `sync-templates.sh:19` had `gt="~/.opencode-harness/templates/.gitignore"`
+  — the tilde inside quotes never expands, so the `.gitignore`-merge loop
+  read a literal nonexistent path and, under `set -e`, crashed the script
+  on any project that already had a `.gitignore`. Changed to `$HOME/...`.
+- **T-C3 (partial — step 1 only, step 2 blocked by C-DEC-startguard):**
+  `start.sh`'s "closed yesterday" check used BSD-only `date -v-1d`, silently
+  broken on Linux. Now branches on `$OSTYPE` like `dod.sh` already does.
+- **T-C4 (partial — step 2 only, step 1 blocked by a tooling permission,
+  step 3 by C-DEC-mirror):** the skill mirror (`hooks/post-commit`,
+  `install.sh`, `update.sh`) used `cp -r`, which also copied stray `.bak`
+  files into the live `~/.config/opencode/skills/`. Switched to
+  `rsync -a --exclude='*.bak'` (still additive, no `--delete`).
+
+See notes/Harness/implementation-plan-2/03-waveC-script-correctness.md.
+
 ## 2026-08-05 (later)
 
 ### post-commit rollback guard was never installed in client projects — fixed

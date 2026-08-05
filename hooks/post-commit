@@ -38,7 +38,7 @@ fi
 CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || true)
 if echo "$CHANGED" | grep -qE "^global/(skills/|AGENTS\.md$)"; then
   mkdir -p ~/.config/opencode/skills
-  cp -r "$HARNESS_ROOT/global/skills/." ~/.config/opencode/skills/
+  rsync -a --exclude='*.bak' "$HARNESS_ROOT/global/skills/." ~/.config/opencode/skills/
   cp "$HARNESS_ROOT/global/AGENTS.md" ~/.config/opencode/AGENTS.md
   echo "✓ Skills + AGENTS.md mirrored to ~/.config/opencode/ (global/ changed in this commit)"
 fi

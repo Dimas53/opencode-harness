@@ -30,7 +30,13 @@ if [ -f "$SESSION_FILE" ]; then
   SAVED_DATE=$(cat "$SESSION_FILE" | head -1)
   TODAY=$(date +%Y-%m-%d)
 
-  if [ "$SAVED_DATE" != "$TODAY" ] && [ "$SAVED_DATE" != "$(date -v-1d +%Y-%m-%d 2>/dev/null)" ]; then
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    YESTERDAY=$(date -v-1d +%Y-%m-%d)
+  else
+    YESTERDAY=$(date -d yesterday +%Y-%m-%d)
+  fi
+
+  if [ "$SAVED_DATE" != "$TODAY" ] && [ "$SAVED_DATE" != "$YESTERDAY" ]; then
     echo "⚠ Previous session not closed properly ($SAVED_DATE)."
     echo "  Run: make session-end"
     echo ""

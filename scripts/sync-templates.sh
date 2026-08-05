@@ -16,7 +16,7 @@ for f in ~/.opencode-harness/templates/*.md; do
 done
 [ ! -d "$(pwd)/memory" ] && echo "  + memory/ — directory not in project" && missing=1
 # .gitignore — merge, never overwrite (keep project's existing entries)
-gt="~/.opencode-harness/templates/.gitignore"
+gt="$HOME/.opencode-harness/templates/.gitignore"
 if [ ! -f "$(pwd)/.gitignore" ]; then
   echo "  + .gitignore — not in project"
   missing=1

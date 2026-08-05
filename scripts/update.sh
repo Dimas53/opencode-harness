@@ -50,7 +50,7 @@ else
 fi
 
 # Update skills — copy all from repo, overwriting existing
-cp -r global/skills/* "$HOME/.config/opencode/skills/"
+rsync -a --exclude='*.bak' global/skills/ "$HOME/.config/opencode/skills/"
 echo "✓ Skills updated from repo"
 
 # Install post-commit hook (for auto-mirror on future commits)

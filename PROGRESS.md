@@ -32,6 +32,12 @@ versioned — see .gitignore). Summary of commits this session:
   "harness project?" detector in `global/AGENTS.md` now checks for
   client-project artifacts (`HARNESS.md`/`memory/`) instead of meta-repo
   properties, so JSDoc requirement no longer contradicts DoD step 3.
+- Wave C (T-C1..C4): fixed Directus token leak on `init-adopt` (fail-closed
+  `gen-opencode.sh` + `.gitignore` merge), tilde bug crashing
+  `sync-templates.sh`, BSD-only `date -v` in `start.sh` (T-C3 partial —
+  step 2 blocked by C-DEC-startguard), and `.bak` files leaking into the
+  skill mirror (T-C4 partial — step 1 blocked by tooling permission, step 3
+  by C-DEC-mirror).
 
 ## Session 2026-08-05 (later — post-commit gap found live, fixed + propagated)
 

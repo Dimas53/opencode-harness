@@ -40,6 +40,20 @@ fi
 
 url="${DIRECTUS_URL%/}/mcp"
 
+# Refuse to write a file carrying a live Bearer token unless git actually
+# ignores it in this project. init-project.sh's templates/.gitignore covers
+# this for new projects, but init-adopt.sh (the common case — an existing
+# project with its own .gitignore) never touched it before this check
+# existed, so a token could go straight into `git add -A`.
+if git -C "$PROJECT_DIR" rev-parse --is-inside-work-tree &>/dev/null; then
+  if ! git -C "$PROJECT_DIR" check-ignore -q "opencode.jsonc"; then
+    echo "✗ REFUSING to write opencode.jsonc — it is NOT git-ignored in this project." >&2
+    echo "  It will embed a live Directus Bearer token. Add 'opencode.jsonc' to" >&2
+    echo "  .gitignore first (or run: echo 'opencode.jsonc' >> .gitignore), then retry." >&2
+    exit 1
+  fi
+fi
+
 python3 - "$GLOBAL_CONFIG" "$OUT_FILE" "$url" "$MCP_DIRECTUS_TOKEN" <<'PY'
 import json, sys, os
 
