@@ -1,19 +1,27 @@
 #!/bin/bash
 # scripts/install-hooks.sh
-# Installs pre-commit hook into the target project's .git/hooks/.
+# Installs pre-commit AND post-commit hooks into the target project's
+# .git/hooks/.
 # Usage: ./scripts/install-hooks.sh /path/to/project
 #        (called by init-project.sh and init-adopt.sh)
 #
-# This installs ONLY pre-commit (the DoD gate) — meant to run in every project
-# (called from init-project.sh / init-adopt.sh). post-commit (skill
-# mirroring) is intentionally NOT installed here — see scripts/install.sh
-# for why it only belongs in the harness's own repo.
+# Both hooks are meant to run in every project:
+# - pre-commit: the DoD gate (scripts/dod.sh), blocks a bad commit.
+# - post-commit: the DoD *guard* — catches `git commit --no-verify` (or any
+#   other pre-commit bypass) and rolls the commit back. This used to be
+#   installed ONLY in the harness's own repo, on the reasoning that its
+#   other job (mirroring global/skills/ to ~/.config/opencode/) only makes
+#   sense there. That reasoning went stale the moment the rollback-guard
+#   responsibility was added to the same file (Wave 3, T3.1) — the
+#   mirroring half is a harmless no-op in a client project (no global/
+#   directory there to match), but the rollback-guard half is real
+#   protection every project should have. Installing the unified hook
+#   everywhere is the correct fix, not splitting it into two files.
 set -euo pipefail
 
 TARGET_PROJECT="${1:-$(pwd)}"
 GIT_HOOKS_DIR="$TARGET_PROJECT/.git/hooks"
 HARNESS_PATH="$(cd "$(dirname "$0")/.." && pwd)"
-HOOK_SOURCE="$HARNESS_PATH/hooks/pre-commit"
 
 if [ ! -d "$TARGET_PROJECT/.git" ]; then
   echo "⚠ No .git directory in $TARGET_PROJECT — skipping hook install"
@@ -22,17 +30,28 @@ fi
 
 mkdir -p "$GIT_HOOKS_DIR"
 
-if [ -f "$GIT_HOOKS_DIR/pre-commit" ]; then
-  echo "⚠ Existing pre-commit hook found — backing up to pre-commit.bak"
-  mv "$GIT_HOOKS_DIR/pre-commit" "$GIT_HOOKS_DIR/pre-commit.bak"
-fi
+install_hook() {
+  local name="$1"
+  local source="$HARNESS_PATH/hooks/$name"
+  local dest="$GIT_HOOKS_DIR/$name"
 
-cp "$HOOK_SOURCE" "$GIT_HOOKS_DIR/pre-commit"
-chmod +x "$GIT_HOOKS_DIR/pre-commit"
+  if [ -f "$dest" ]; then
+    echo "⚠ Existing $name hook found — backing up to $name.bak"
+    mv "$dest" "$dest.bak"
+  fi
 
-# Bake in HARNESS_PATH so hook can find dod.sh without env var
-sed -i.sedbak "s|OPENCODE_HARNESS_PATH:-\$HOME/.opencode-harness|OPENCODE_HARNESS_PATH:-$HARNESS_PATH|g" \
-  "$GIT_HOOKS_DIR/pre-commit" && rm -f "$GIT_HOOKS_DIR/pre-commit.sedbak"
+  cp "$source" "$dest"
+  chmod +x "$dest"
 
-echo "✓ pre-commit hook installed in $GIT_HOOKS_DIR"
-echo "  Every commit will now run: make dod"
+  # Bake in HARNESS_PATH so the hook can find dod.sh without the env var
+  sed -i.sedbak "s|OPENCODE_HARNESS_PATH:-\$HOME/.opencode-harness|OPENCODE_HARNESS_PATH:-$HARNESS_PATH|g" \
+    "$dest" && rm -f "$dest.sedbak"
+
+  echo "✓ $name hook installed in $GIT_HOOKS_DIR"
+}
+
+install_hook "pre-commit"
+install_hook "post-commit"
+
+echo "  Every commit now runs the DoD gate (pre-commit) and the"
+echo "  no-verify rollback guard (post-commit)."

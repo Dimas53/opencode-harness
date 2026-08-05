@@ -84,13 +84,18 @@ Checklist:
 
 ---
 
-### STEP 5 — Commit Gate (`make dod`)
+### STEP 5 — Commit Gate
 
 This is a DIFFERENT kind of check from steps 1-4: it is a mechanical,
 exit-code-enforced script (`scripts/dod.sh`), not a judgment call.
 
+**This runs automatically** via the pre-commit hook on every `git commit`
+— no manual command needed, and it must exit 0 for the commit to succeed.
+To run it manually as a pre-check before committing:
+
 ```bash
-make dod
+make dod                              # only if this project has a Makefile
+bash ~/.opencode-harness/scripts/dod.sh   # works everywhere else (client projects)
 ```
 
 Must exit 0. If it fails:
@@ -131,8 +136,8 @@ Checklist:
 Only after ALL steps 1-8 are confirmed — respond.
 
 If this project defines a `make self-check` target — run it as part of
-Step 5, alongside `make dod`. Most projects do not have this target
-(it is specific to the opencode-harness meta-repo); skip if absent.
+Step 5. Most projects do not have this target (it is specific to the
+opencode-harness meta-repo); skip if absent.
 
 ## Checklist format
 

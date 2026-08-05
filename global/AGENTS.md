@@ -28,7 +28,11 @@ When user types:
 - `update-harness` — pull latest updates and apply globally:
   Run: `bash ~/.opencode-harness/scripts/update-harness-shortcut.sh`
 
-- `dod` — run `make dod` in current project directory
+- `dod` — run the DoD gate manually: `make dod` if this project has a
+  Makefile (harness repo only by design), otherwise
+  `bash ~/.opencode-harness/scripts/dod.sh` directly. Client projects don't
+  need this before every commit — the pre-commit hook already runs it
+  automatically — this is for a manual pre-check.
 - `docs` — run `make session-end` and remind to update docs if code changed
 
 - `unadopt` — run `make unadopt` in current project directory to remove all harness files (AGENTS.md, MEMORY.md, PLAN.md, PROGRESS.md, HARNESS.md, memory/, pre-commit hook). Keeps docs/ unless confirmed.
@@ -220,12 +224,18 @@ an excuse — scan the entire conversation.
    functions, components with non-trivial logic.
 4. **Tests:** If test suite exists — run it. All tests must pass. If new
    feature — add at least one test.
-5. **Commit Gate:** Run `make dod` (executes `scripts/dod.sh` — the
-   mechanical, exit-code-enforced git-hygiene gate: uncommitted changes,
-   Cyrillic scan, docs lag, PROGRESS.md freshness, docs matrix, quick tests,
-   self-check). It must exit 0. This is a DIFFERENT check from steps 1-4 —
-   those are judgment calls about product completeness, this is an automated
-   mechanical gate. Both are required.
+5. **Commit Gate:** The mechanical, exit-code-enforced gate
+   (`scripts/dod.sh` — uncommitted changes, Cyrillic scan, docs lag,
+   PROGRESS.md freshness, docs matrix, quick tests, self-check,
+   `.agentignore` file-level check) runs AUTOMATICALLY via the pre-commit
+   hook on every `git commit` — no manual command needed, and it must exit
+   0 for the commit to go through. `make dod` runs the same checks
+   manually, as a pre-check before you even attempt to commit — but it
+   only works where a Makefile exists. Client projects don't ship one by
+   design (the automatic hook already covers them); don't run `make dod`
+   there, it will just error on a missing Makefile. This is a DIFFERENT
+   check from steps 1-4 — those are judgment calls about product
+   completeness, this is an automated mechanical gate. Both are required.
 6. **Safety check:** No Russian text in project files. No `.env`,
    docker-compose, or lock files modified without confirmation.
 7. **Skill feedback:** If any skill behaved unexpectedly or missed an

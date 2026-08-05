@@ -2,6 +2,51 @@
 
 All notable changes to opencode-harness are documented here.
 
+## 2026-08-05 (later)
+
+### post-commit rollback guard was never installed in client projects — fixed
+
+Found live in the `karriere-page-ito` project: `--no-verify` bypass
+protection (the post-commit guard added by Wave 3's T3.1) only ever got
+installed into the harness's own repo, never into any adopted/new client
+project, for every project adopted since T3.1 landed. Root cause:
+`install-hooks.sh` only ever copied `pre-commit`; the decision to exclude
+`post-commit` (T3.6, same wave) was reasoned about before T3.1 gave
+`post-commit` its second, more important job and was never revisited
+after.
+
+- **`scripts/install-hooks.sh`**: now installs both `pre-commit` and
+  `post-commit` (same HARNESS_PATH-baking, same backup-existing-file
+  logic, refactored into a shared `install_hook()` function). The
+  skill-mirroring half of `post-commit` is a harmless no-op in client
+  projects (no `global/` directory there to match) — only the rollback
+  guard actually activates.
+- **`scripts/install.sh`**: updated the now-stale comment above its own
+  `post-commit` install line (used to claim this hook is intentionally
+  harness-repo-only).
+- **`notes/Harness/implementation-plan/04-wave3-enforcement.md`**:
+  annotated T3.6 in place — its "not a bug" conclusion was wrong, kept the
+  original text for the historical record, added a correction note above
+  it.
+- **`global/AGENTS.md`** DoD Step 5 and the `dod` shortcut, plus
+  **`global/skills/dod/SKILL.md`** STEP 5: reworded — both used to
+  instruct literally running `make dod`, which hard-fails with a shell
+  error in every client project (no Makefile there, by design). Now
+  explicit that the gate runs automatically via the pre-commit hook on
+  every commit, `make dod` is only a manual pre-check where a Makefile
+  exists, and `bash ~/.opencode-harness/scripts/dod.sh` is the client-project
+  equivalent. Also fixed: `global/AGENTS.md` Step 5's own step list was
+  missing the `.agentignore` file-level check (T5.2's 8th `dod.sh` step) —
+  same staleness class as the `instructions/GUIDE.md` §6 finding from
+  Wave 6 recon, just caught one file earlier this time.
+- Verified end-to-end in an isolated scratch repo: both hooks install
+  with correctly baked paths, a normal commit passes cleanly through both
+  hooks with no crash, `check-dod-sync.sh` still reports 9/9 steps
+  matching after the wording changes, `make test-quick` 20/20.
+- Next: re-run `install-hooks.sh` against the 3 known live client projects
+  (`karriere-page-ito`, `itocook`, `ducito`) to actually close the gap
+  there too — tracked separately, see `PROGRESS.md`.
+
 ## 2026-08-05
 
 ### Wave 6 recon + implementation-plan reorganization (no code changes)

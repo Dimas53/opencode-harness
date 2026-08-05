@@ -141,11 +141,11 @@ cp -r global/skills/* ~/.config/opencode/skills/
 ln -sf "$(pwd)" ~/.opencode-harness
 echo "✓ Symlink created: ~/.opencode-harness → $(pwd)"
 
-# post-commit is installed ONLY here (harness's own repo), never into
-# adopted projects via install-hooks.sh — its job (mirror global/skills/)
-# only makes sense where global/skills/ actually exists, i.e. this repo.
-# See scripts/install-hooks.sh header for the pre-commit installation path,
-# which IS meant to run in every project.
+# post-commit is also installed into every adopted project via
+# install-hooks.sh (the no-verify rollback guard applies everywhere) — this
+# copy here just covers the harness's own repo, which doesn't go through
+# init-project.sh/init-adopt.sh. See scripts/install-hooks.sh header for
+# the shared logic.
 cp hooks/post-commit .git/hooks/post-commit
 chmod +x .git/hooks/post-commit
 echo "✓ post-commit hook installed"
