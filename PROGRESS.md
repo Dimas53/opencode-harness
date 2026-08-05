@@ -38,6 +38,13 @@ versioned — see .gitignore). Summary of commits this session:
   step 2 blocked by C-DEC-startguard), and `.bak` files leaking into the
   skill mirror (T-C4 partial — step 1 blocked by tooling permission, step 3
   by C-DEC-mirror).
+- Wave B (T-B1, T-B2 partial, T-B3 partial, T-B4, T-B6 done; T-B5 skipped
+  — blocked entirely by B-DEC-2): purged/marked `superpowers:` phantom
+  refs, de-branded the plan-output path, fixed non-harness voice
+  ("human partner", "you'll be replaced"), removed `--no-verify` as a
+  presented option in `agent-adopt.md`. New out-of-scope finding logged:
+  `brainstorming/scripts/server.cjs` vendored telemetry + remote brand
+  fetch — see 11-open-questions-and-blocked.md.
 
 ## Session 2026-08-05 (later — post-commit gap found live, fixed + propagated)
 

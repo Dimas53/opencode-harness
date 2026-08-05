@@ -94,6 +94,43 @@ T-H0.
 
 See notes/Harness/implementation-plan-2/03-waveC-script-correctness.md.
 
+### Wave B — vendored skill cleanup (T-B1, T-B2 partial, T-B3 partial, T-B4, T-B6)
+
+- **T-B1:** `systematic-debugging/SKILL.md` — dropped the `superpowers:`
+  prefix on `test-driven-development` and `verification-before-completion`
+  (both exist unprefixed); reworded "your human partner" to the harness's
+  own voice ("the user").
+- **T-B2 (partial):** `executing-plans/SKILL.md` — removed the plugin ad
+  paragraph telling the user "Superpowers works much better with
+  subagents". The three `REQUIRED SUB-SKILL` refs split: `writing-plans`
+  exists (prefix dropped), `finishing-a-development-branch` and
+  `using-git-worktrees` are phantoms — marked with
+  `<!-- TODO(B-DEC-1) -->`, not resolved (open decision).
+- **T-B3 (partial):** `writing-plans/SKILL.md` — `docs/superpowers/plans/...`
+  (branded path baked into every generated plan) replaced with
+  `docs/plans/...`; confirmed no script depends on the old literal path.
+  Phantom sub-skill refs (`using-git-worktrees`,
+  `subagent-driven-development`) same TODO-marker treatment as T-B2;
+  `executing-plans` unprefixed where used.
+- **T-B4:** `verification-before-completion/SKILL.md` — reworded "you'll be
+  replaced" (a vendored threat-of-replacement line) to "Honesty is a core
+  value — never claim done without verifying." Full-tree grep for stray
+  `superpowers:`/`obra/superpowers` refs surfaced a new, out-of-scope
+  finding: `brainstorming/scripts/server.cjs` is a full vendored companion
+  server with its own telemetry env vars and a remote brand-image fetch
+  from `primeradiant.com` on every `brainstorming` run — not a text edit,
+  left untouched, logged for a separate decision.
+- **T-B5: skipped entirely** — blocked on B-DEC-2, no decision-independent
+  part exists (de-identifying the ItoCook hardcode in `security/03-05.md`
+  IS the decision).
+- **T-B6:** `harness-init/agent-adopt.md` — `--no-verify` was still
+  presented as an option ("explain the reason... wait for confirmation").
+  Replaced with the same granular `DOD_SKIP=<step>` guidance already in
+  global AGENTS.md's Hard Limits.
+
+See notes/Harness/implementation-plan-2/02-waveB-vendored-skill-cleanup.md
+and 11-open-questions-and-blocked.md.
+
 ## 2026-08-05 (later)
 
 ### post-commit rollback guard was never installed in client projects — fixed

@@ -225,7 +225,11 @@ Q0. **Language — before any analysis:** SEQUENCE RULE
 - Step 1 — always the full agent-analyze protocol with report saved. Manual file analysis instead of the protocol is a violation.
 - All generated files (ARCHITECTURE.md, CONTEXT.md, roadmap.md, AGENTS.md, HARNESS.md, PROGRESS.md) must always be written in English, regardless of session language. Session language applies only to chat messages and questions to the user.
 - File content must be entirely in English. No mixing of languages anywhere inside generated files — including inline comments, section headers, and placeholder text.
-- If --no-verify is needed for a commit — explain the reason to the user before using it and wait for explicit confirmation.
+- Never use `git commit --no-verify` — it disables ALL DoD checks at once. If
+  one specific check is a genuine false positive, use `DOD_SKIP=<step-name>`
+  (see the header of `~/.opencode-harness/scripts/dod.sh`) to skip ONLY that
+  named step. A post-commit guard rolls back any `--no-verify` bypass
+  automatically.
 - Never ask what you can detect from code
 - Never overwrite existing docs/ files without showing diff first
 - design.md is filled from existing design tokens (tailwind.config.ts, fonts, icons) — never left as empty template
