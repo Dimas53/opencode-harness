@@ -97,6 +97,12 @@ versioned — see .gitignore). Summary of commits this session:
   interleaves harness text and interview-filled project content with no
   clear boundary today; needs its own design pass, not an autonomous
   guess. See 11-open-questions-and-blocked.md.
+- Wave F: skipped almost entirely. T-F1-F4 (Block 1) need either a
+  technical investigation this session didn't run (headless agent
+  execution, OpenCode message hooks) or T-H5 landing first, and the wave's
+  own header requires human line-review for Block 1, not autonomous
+  execution. T-F5/T-F7 blocked on M1/M2/M3. T-F6 already fully satisfied
+  by T-G-U3 (hook drift detection) — verified, nothing new needed.
 - T-H4: new `scripts/check-propagation.sh` (`make check-propagation`, in
   CI) — mechanical backstop scanning delivered files for unreachable
   `make X` commands, unprefixed harness-repo-only paths, and dishonest

@@ -4,6 +4,23 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-06
 
+### Wave F — mostly skipped, T-F6 already satisfied
+
+Block 1 (T-F1 rules-codegen, T-F2 eval-gate, T-F3 skill-router, T-F4
+self-improvement loop) skipped entirely: T-F2/T-F3 need a technical
+investigation ("does OpenCode give a hook on incoming messages / does
+headless agent execution work") this session didn't run; T-F2/T-F4 also
+depend on T-H5 landing first; and the wave's own header explicitly warns
+Block 1 needs line-by-line human review before being considered done, not
+autonomous execution. T-F5 blocked on M1 (stack specificity), T-F7 blocked
+on M2/M3 — both say so in their own ticket text.
+
+T-F6 (hooks not propagated to client projects) was already fully
+satisfied by T-G-U3 earlier this session — `update-project.sh` already
+diffs and reinstalls drifted hooks. No new work needed.
+
+See notes/Harness/implementation-plan-2/07-waveF-closing-gaps-and-upgrades.md.
+
 ### T-H4 — `check-propagation.sh`: mechanical backstop against unreachable references
 
 New `scripts/check-propagation.sh` (`make check-propagation`, wired into
