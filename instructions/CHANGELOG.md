@@ -4,6 +4,20 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-06
 
+### M1 (partial, cheap subset only) — stack-agnostic quick fixes
+
+Per M1 = Option B, hybrid (confirmed by user: harness is used beyond
+Nuxt — Symfony/PHP and Python projects exist too): `global/AGENTS.md`'s
+Auto-Loading UI/Frontend row no longer hardcodes `nuxt/SKILL.md,
+vue/SKILL.md` for every UI trigger — points to the project's actual
+stack skill instead, honestly notes not every framework has one yet.
+`templates/.env.example` now says explicitly it's Directus-only/optional
+and to delete it otherwise. `templates/HARNESS.md`'s Framework example
+line broadened past Nuxt+Directus (added Symfony, FastAPI as equal
+examples). Heavy content (`ARCHITECTURE.md` generic skeleton,
+skills-cheatsheet rows for Symfony/Python) stays deferred per M1's own
+"hours of work, later" scoping — not done this session.
+
 ### T-F7 (complete) — M2/M3 skill dedup resolved
 
 Per M2: removed `global/skills/requesting-code-review/` entirely — no

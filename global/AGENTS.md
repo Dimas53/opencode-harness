@@ -465,7 +465,7 @@ Always load SKILL.md via filesystem path: `Read ~/.config/opencode/skills/<domai
 | Specification | spec, requirements, what should this do, new feature no clear scope | spec-driven-development/SKILL.md |
 | Implementation | add, implement, create, build a component/page/endpoint, new feature | incremental-implementation/SKILL.md |
 | Last 20% | last 20%, polish, finish the remaining, experiential layer, final details | last-20-percent/SKILL.md |
-| UI/Frontend | component, page, layout, form, styles, Tailwind, Nuxt UI, Vue | frontend-ui-engineering/SKILL.md, nuxt/SKILL.md, vue/SKILL.md |
+| UI/Frontend | component, page, layout, form, styles, Tailwind, Nuxt UI, Vue | frontend-ui-engineering/SKILL.md + this project's framework skill if one exists (`nuxt/SKILL.md`, `vue/SKILL.md`, `nuxt-ui/SKILL.md` — check `templates/AGENTS.md` Stack Skills for what this project actually uses; not every framework has a dedicated skill yet, frontend-ui-engineering alone still applies) |
 | Interface Design | UI design, interface design, accessible UI, animation principles | interface-kit/SKILL.md |
 | API/Backend | endpoint, API, route, schema, collection | api-and-interface-design/SKILL.md |
 | Debugging | not working, error, bug, why, broken, error in logs | debugging-and-error-recovery/SKILL.md |

@@ -5,7 +5,7 @@
 
 ## Entry Point
 
-- **Framework:** [e.g., Nuxt 4, Directus 11, PostgreSQL]
+- **Framework:** [this project's actual stack — e.g. Nuxt 4 + Directus 11 + PostgreSQL, or Symfony + PostgreSQL, or FastAPI + Python — whatever it really is]
 - **Dev server:** `npm run dev` / `docker compose up`
 - **Tests:** `npm run test` / `vitest run`
 - **Lint:** `npm run lint`
