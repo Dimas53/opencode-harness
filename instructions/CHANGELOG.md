@@ -4,6 +4,32 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-06
 
+### T-H6 (partial) — backfill delta list; `.agentignore` gap closed
+
+New `instructions/PROPAGATION-BACKFILL.md` — table of what a
+pre-`update-project` adopted project might be missing (artifact → how to
+check → how it's delivered: `update-project` handles it automatically, or
+it needs a manual look because `update-project` never touches an existing
+file's content).
+
+Writing it surfaced a real, concrete gap: `.agentignore` was never checked
+by either the original `sync-templates.sh` or the rewritten
+`update-project.sh` (T-G-U3) — the root-file loop only globs `*.md`.
+Fixed: `update-project` now detects and backfills a missing
+`.agentignore`, verified on a scratch project (detects, applies on `y`,
+idempotent on rerun).
+
+Two items stay manual by design and are documented as such: the UP/DOWN
+migration rule and phantom skill-cheatsheet entries in a project's own
+`AGENTS.md`/`docs/skills-cheatsheet.md` — `update-project` can't safely
+tell "customized" apart from "stale" for a file that already exists (same
+open question as T-G-U6).
+
+**Not run against a real project** — this session's operating constraints
+explicitly excluded modifying anything outside `opencode-harness` itself;
+running `update-project` on `karriere-page-ito`/`itocook` is left for a
+manual pass. See 11-open-questions-and-blocked.md.
+
 ### T-H5 (partial) — behavior evals moved to client-profile fixtures
 
 Fixtures that clone the harness itself to test client-project agent

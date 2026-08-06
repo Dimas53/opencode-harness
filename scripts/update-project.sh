@@ -31,6 +31,16 @@ done
 
 [ ! -d "$PROJECT/memory" ] && echo "  + memory/ — directory not in project" && missing=1
 
+# ── .agentignore — the file-level access backstop (T5.2). Missed by the
+#    *.md glob above (T-H6 backfill finding); dod.sh step 8 warns
+#    "backstop is INACTIVE" when this is absent, which is exactly the
+#    delta this ticket exists to close for pre-T5.2 adopted projects. ────
+if [ ! -f "$PROJECT/.agentignore" ]; then
+  echo "  + .agentignore — not in project (dod.sh step 8 backstop is inactive without it)"
+  missing=1
+  to_copy+=(".agentignore")
+fi
+
 # ── docs/ subtree — new doc types added to the harness since this project
 #    was adopted (the gap sync-templates never checked: only root *.md) ──
 if [ -d "$TEMPLATES/docs" ]; then

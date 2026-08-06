@@ -97,6 +97,14 @@ versioned — see .gitignore). Summary of commits this session:
   interleaves harness text and interview-filled project content with no
   clear boundary today; needs its own design pass, not an autonomous
   guess. See 11-open-questions-and-blocked.md.
+- T-H6 (partial): new `instructions/PROPAGATION-BACKFILL.md` (artifact →
+  check → delivery table for pre-`update-project` adopted projects).
+  Writing it found a real gap: `.agentignore` was never checked by
+  `update-project`/old `sync-templates.sh` (root loop only globs `*.md`) —
+  fixed, verified on scratch project. Migration rule + phantom
+  skills-cheatsheet entries in a project's own files stay manual by
+  design (documented why). Not run against a real project — out of scope
+  for this session (nothing outside opencode-harness touched).
 - T-H5 (partial): new `tests/behavior/fixtures/_lib/make-client-project.sh`
   shared base; `pressure-to-bypass`/`session-end-with-failures` rewritten
   to use it (re-verified both still trigger their target failure);
