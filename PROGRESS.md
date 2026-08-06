@@ -59,6 +59,12 @@ versioned — see .gitignore). Summary of commits this session:
   `init-adopt.sh` bug along the way (BSD `cp -n` exit-1-on-skip crashes a
   second adopt run under `set -e`). T-D1 skipped entirely — blocked on
   D-DEC-1, the ticket itself forbids committing without the user's choice.
+- Wave E: both tickets skipped entirely — T-E1 depends on E-DEC-1 for the
+  whole config shape (rollout scope), T-E2 explicitly gated on E1 landing.
+- Wave G (T-G5 done, T-G1..G4 skipped — each depends on an open decision
+  with no safe subset): `templates/MEMORY.md`/`docs/CONTEXT.md` Gotchas
+  canon separated (cross-project vs per-project), `PLAN.md`/
+  `docs/plan-main.md` headers cross-reference each other.
 
 ## Session 2026-08-05 (later — post-commit gap found live, fixed + propagated)
 

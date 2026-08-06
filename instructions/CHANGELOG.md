@@ -194,6 +194,21 @@ See notes/Harness/implementation-plan-2/01-waveA-doc-truth-resync.md.
 
 See notes/Harness/implementation-plan-2/04-waveD-install-bat-and-tests.md.
 
+### Wave G — doc-role dedup (T-G5); T-G1..G4 skipped
+
+- **T-G5:** `templates/MEMORY.md` "Known Gotchas" now explicitly scopes
+  itself to cross-project gotchas and points project-specific ones at
+  `docs/CONTEXT.md` → `## Gotchas` (the canon for those). `PLAN.md` and
+  `docs/plan-main.md` headers now cross-reference each other by name so a
+  cheap model can't confuse "task execution plan" with "project vision
+  doc". The `Phase` field in `PROGRESS.md` was already a reference to
+  `roadmap.md` (canon) — no fix needed there, verified only.
+- **T-G1..G4: skipped entirely** — each ticket's own text makes its shape
+  depend on an open decision (G-DEC-1, G-DEC-2, M1/B-DEC-2, G-DEC-3
+  respectively) with no part marked safe under any resolution.
+
+See notes/Harness/implementation-plan-2/08-waveG-doc-stack-and-update-mechanism.md.
+
 ## 2026-08-05 (later)
 
 ### post-commit rollback guard was never installed in client projects — fixed

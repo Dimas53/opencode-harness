@@ -1,8 +1,11 @@
 # PLAN.md
 
-<!-- This file is created by the agent at the start of a large task (>30 min).
-     In the `new` session it is intentionally empty — the agent fills it
-     during implementation sessions. -->
+<!-- Task-level execution plan with verify gates, one task at a time — NOT
+     the project vision (that's docs/plan-main.md, filled once by the
+     human). This file is created by the agent at the start of a large task
+     (>30 min), deleted when the task is done. In the `new` session it is
+     intentionally empty — the agent fills it during implementation
+     sessions. -->
 
 > Created at task start. Updated throughout. Deleted when task complete.
 

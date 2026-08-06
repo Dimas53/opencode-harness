@@ -1,8 +1,10 @@
 <!--
 FILL THIS FILE MANUALLY before starting the project — or at least in
-the first session. This is the human's vision document, not the agent's.
-The agent reads it at Session Start to understand the big picture.
-Keep it short — 1 page max. Update only when the vision changes.
+the first session. This is the human's vision document, not the agent's —
+NOT a task-execution plan (that's the project root's PLAN.md, created and
+deleted by the agent per task). The agent reads it at Session Start to
+understand the big picture. Keep it short — 1 page max. Update only when
+the vision changes.
 -->
 
 # Project Vision
