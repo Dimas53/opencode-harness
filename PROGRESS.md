@@ -85,6 +85,10 @@ versioned — see .gitignore). Summary of commits this session:
   while at it: the JSONC comment-stripper corrupted any config containing
   `"$schema": "https://..."` (which all of them do) by treating the `//`
   inside the URL as a comment start.
+- T-G-U4: swept remaining live `sync-templates` mentions to `update-project`
+  in `README.md`/`GUIDE.md`/`INSTALL.md`; added the "two commands, two
+  scopes, this order" bridge explanation to `INSTALL.md` that previously
+  existed nowhere.
 
 ## Session 2026-08-05 (later — post-commit gap found live, fixed + propagated)
 

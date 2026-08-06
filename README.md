@@ -132,8 +132,8 @@ Open OpenCode in any directory and type one of these:
 - `fix-ui all-pw` — fix only Playwright-testable UI findings, skip static
 
 ### Utility
-- `update-harness` — pull latest harness updates and apply globally
-- `sync-templates` — check for new template files missing in current project
+- `update-harness` — pull latest harness updates and apply globally (this machine)
+- `update-project` — bring the current project up to date with the harness (docs, hooks)
 - `dod` — run Definition of Done checks
 - `docs` — session end + prompt to update docs if code changed
 

@@ -296,6 +296,21 @@ treated as a comment when not immediately preceded by `:`.
 
 See notes/Harness/implementation-plan-2/08-waveG-doc-stack-and-update-mechanism.md.
 
+### T-G-U4 — exactly two update commands, documented responsibility
+
+Swept the remaining live (non-historical) references to the old
+`sync-templates` name and replaced them with `update-project`:
+`README.md`, `instructions/GUIDE.md`, `INSTALL.md` (3 mentions). Added a
+"Keeping the Harness Updated" bridge in `INSTALL.md` spelling out the two
+commands' scopes and the order (`update-harness` once per machine →
+`update-project` per project, as needed) — the mapping that previously
+existed nowhere as a single explanation. Historical session logs
+(`PROGRESS.md` entries, `instructions/progress.md`, past `CHANGELOG.md`
+entries) were left untouched — they're accurate records of what was true
+when written, not live reference docs.
+
+See notes/Harness/implementation-plan-2/08-waveG-doc-stack-and-update-mechanism.md.
+
 ## 2026-08-05 (later)
 
 ### post-commit rollback guard was never installed in client projects — fixed

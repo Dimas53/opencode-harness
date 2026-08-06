@@ -25,7 +25,7 @@ make setup
 ```
 
 A symlink `~/.opencode-harness` is created pointing to your clone.
-This enables the `update-harness` and `sync-templates` shortcuts.
+This enables the `update-harness` and `update-project` shortcuts.
 
 ### What `make setup` installs
 
@@ -42,7 +42,7 @@ This enables the `update-harness` and `sync-templates` shortcuts.
 | `~/.config/opencode/AGENTS.md` | Global agent rules (safety, process, language) |
 | `~/.config/opencode/opencode.jsonc` | MCP server config — edit paths + Directus token |
 | `~/.config/opencode/skills/` (70 skills) | Reusable agent skills for debugging, security, UI, etc. |
-| `~/.opencode-harness` symlink | Enables `update-harness` and `sync-templates` shortcuts |
+| `~/.opencode-harness` symlink | Enables `update-harness` and `update-project` shortcuts |
 
 ### What `make setup` does NOT do (manual)
 
@@ -329,7 +329,7 @@ Open OpenCode in any directory and type a shortcut:
 See full reference: [Test Workflows](instructions/reference/09-test-workflows.md)
 
 ### Utility
-- `update-harness` / `sync-templates` / `dod` / `docs`
+- `update-harness` / `update-project` / `dod` / `docs`
 
 > **Fallback** (if shortcuts don't trigger):
 > ```bash
@@ -344,10 +344,27 @@ See full reference: [Test Workflows](instructions/reference/09-test-workflows.md
 
 ## Keeping the Harness Updated
 
+Exactly two commands, two different scopes — don't confuse them:
+
+1. **`update-harness`** — updates the harness on THIS MACHINE: pulls the
+   repo, merges `~/.config/opencode/AGENTS.md` and `opencode.jsonc`
+   (additive, never overwrites your customizations — see
+   `instructions/CHANGELOG.md` T-G-U1/T-G-U2), refreshes skills and the
+   `post-commit` hook. Run once per machine after a harness release.
+2. **`update-project`** — brings the CURRENT PROJECT up to date with
+   whatever `update-harness` just pulled: new template files/doc
+   structure, `.gitignore` entries, git hooks. Run inside each adopted
+   project, after `update-harness`, whenever you want that project caught
+   up (existing filled docs are never overwritten — additions only).
+
+Order: `update-harness` (once, on the machine) → `update-project` (per
+project, as needed).
+
 ### Inside OpenCode (from any project)
 
 Type `update-harness` — pulls latest changes and updates global files.
-Requires `make link` to have been run once after cloning.
+Requires `make link` to have been run once after cloning. Then, in a
+project you want caught up, type `update-project`.
 
 ### Via terminal
 

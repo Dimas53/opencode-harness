@@ -201,8 +201,8 @@ The primary way to initialize any project is via shortcuts inside OpenCode:
 | `analyze-logic <path>` | Same, focused on a specific directory or file (e.g. `analyze-logic utils/`) |
 | `fix-logic` | Loads agent-fix (L-mode) — writes tests for uncovered logic findings, no source changes |
 | `fix-logic <ID>` | Same, single logic finding by ID (e.g. `fix-logic L1`, `fix-logic L4`) |
-| `update-harness` | Pulls latest harness updates, applies globally |
-| `sync-templates` | Checks for new template files missing in current project, copies with confirmation |
+| `update-harness` | Pulls latest harness updates, applies globally (this machine — repo, `~/.config/opencode/AGENTS.md`, `opencode.jsonc`, skills, hook) |
+| `update-project` | Brings the current project up to date with the harness (new template files/doc structure, `.gitignore`, git hooks), copies with confirmation, never overwrites existing content |
 | `dod` | Run Definition of Done checks |
 | `docs` | Session end + prompt to update docs if code changed |
 
