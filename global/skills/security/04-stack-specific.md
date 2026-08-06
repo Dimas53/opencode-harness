@@ -31,7 +31,7 @@ runtimeConfig: {
   public: {
     // ✅ PUBLIC — safe to expose, appears in client JS bundle
     directusUrl: 'http://localhost:8055',  // base URL only, no credentials
-    appName: 'ItoCook',
+    appName: 'YourApp',
   }
 }
 ```
@@ -259,7 +259,7 @@ services:
 **If you need to connect to DB for debugging:**
 ```bash
 # ✅ Use docker exec — no port exposure needed:
-docker exec -it itocook-postgres-1 psql -U itouser -d itocook_db
+docker exec -it app-postgres-1 psql -U dbuser -d app_db
 
 # Or SSH tunnel on the server:
 ssh -L 5433:localhost:5432 user@your-server
@@ -318,5 +318,5 @@ nginx -t
 nginx -s reload
 
 # Verify security headers are present:
-curl -I https://itocook.duckdns.org | grep -E "Strict-Transport|X-Frame|X-Content-Type|Content-Security"
+curl -I https://your-app.example.com | grep -E "Strict-Transport|X-Frame|X-Content-Type|Content-Security"
 ```

@@ -4,6 +4,17 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-06
 
+### T-B5 (complete) — de-identified ItoCook hardcode in security/
+
+Per B-DEC-2 = "anonymize": `global/skills/security/03-frontend-and-infra.md`,
+`04-stack-specific.md`, `05-release-checklist.md` had a real client's
+domain, container names, DB credentials, and app name hardcoded in an
+auto-loaded skill. Replaced with placeholders (`your-app.example.com`,
+`app-frontend-1`/`app-directus-1`/`app-postgres-1`, `dbuser`/`app_db`,
+`appName: 'YourApp'`); the GDPR note was reworded from a specific-client
+claim to a general "if internal-only" rule. Technical content (CSP, CORS,
+permission rules) untouched.
+
 ### T-B2/T-B3/T-B4 (complete) — B-DEC-1 resolved: supersede, don't rewrite
 
 Per B-DEC-1 = option "supersede": `executing-plans/SKILL.md` and `writing-plans/SKILL.md`

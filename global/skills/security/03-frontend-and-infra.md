@@ -143,10 +143,10 @@ add_header Content-Security-Policy-Report-Only "default-src 'self'; ..." always;
 All headers must use `always` so they apply to error responses (4xx, 5xx) too, not just successful ones.
 
 ```nginx
-# /etc/nginx/sites-available/itocook.conf
+# /etc/nginx/sites-available/your-app.conf
 server {
     listen 443 ssl;
-    server_name itocook.duckdns.org;
+    server_name your-app.example.com;
 
     # ── Security Headers ────────────────────────────────────────────
 
@@ -173,7 +173,7 @@ server {
 
     # ── CORS ────────────────────────────────────────────────────────
     # Restrict to your own domain only — never use wildcard *
-    add_header Access-Control-Allow-Origin "https://itocook.duckdns.org" always;
+    add_header Access-Control-Allow-Origin "https://your-app.example.com" always;
     add_header Access-Control-Allow-Methods "GET, POST, PATCH, DELETE, OPTIONS" always;
     add_header Access-Control-Allow-Headers "Content-Type, Authorization" always;
 
@@ -204,7 +204,7 @@ location /api/ {
 
 **Verify headers are live:**
 ```bash
-curl -I https://itocook.duckdns.org
+curl -I https://your-app.example.com
 # Check: Strict-Transport-Security, X-Frame-Options, X-Content-Type-Options all present
 ```
 
@@ -219,7 +219,7 @@ CORS controls which origins can make requests to your API.
 Access-Control-Allow-Origin: *
 
 ✅ Scoped — only your own frontend:
-Access-Control-Allow-Origin: https://itocook.duckdns.org
+Access-Control-Allow-Origin: https://your-app.example.com
 ```
 
 **In Directus config (docker-compose.yml):**
@@ -227,14 +227,14 @@ Access-Control-Allow-Origin: https://itocook.duckdns.org
 directus:
   environment:
     CORS_ENABLED: "true"
-    CORS_ORIGIN: "https://itocook.duckdns.org"  # exact domain, no wildcard
+    CORS_ORIGIN: "https://your-app.example.com"  # exact domain, no wildcard
     CORS_METHODS: "GET,POST,PATCH,DELETE"
     CORS_ALLOWED_HEADERS: "Content-Type,Authorization"
 ```
 
 **Dynamic CORS in Nuxt server routes (if needed):**
 ```ts
-const allowedOrigins = ['https://itocook.duckdns.org']
+const allowedOrigins = ['https://your-app.example.com']
 const origin = getHeader(event, 'origin') ?? ''
 
 if (!allowedOrigins.includes(origin)) {

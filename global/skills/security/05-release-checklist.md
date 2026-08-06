@@ -98,8 +98,9 @@ Even for internal apps, check these before adding real employee data:
 □ If yes — is there a retention policy? (how long kept, who can access)
 ```
 
-> Note: ItoCook is an internal tool, so full GDPR compliance may not apply.
-> But these questions are worth answering before going live with real users.
+> Note: if the app is internal-only, full GDPR compliance may not apply —
+> confirm scope with the client. But these questions are worth answering
+> before going live with real users.
 
 ---
 
@@ -169,7 +170,7 @@ console.log('Admin token:', config.directusAdminToken) // secret in logs
 **On the server — where to look:**
 ```bash
 # Nuxt / Docker container logs:
-docker logs itocook-frontend-1 --tail=100 -f
+docker logs app-frontend-1 --tail=100 -f
 
 # nginx access log — see all requests:
 tail -f /var/log/nginx/access.log
@@ -178,7 +179,7 @@ tail -f /var/log/nginx/access.log
 tail -f /var/log/nginx/error.log
 
 # Directus logs:
-docker logs itocook-directus-1 --tail=100 -f
+docker logs app-directus-1 --tail=100 -f
 ```
 
 **Signs of active attack to watch for:**
@@ -238,7 +239,7 @@ Address the root cause, not just the symptom.
 Who needs to know?
 
 ```
-Internal app (like ItoCook):
+Internal app:
 □ Notify management/IT immediately if employee data was accessed
 □ Inform affected users what data was exposed and what you've done
 □ Document the incident: what happened, when, what was done
@@ -281,7 +282,7 @@ npm run build && ls -la .output/public/_nuxt/
 nginx -t
 
 # Check live security headers:
-curl -I https://itocook.duckdns.org
+curl -I https://your-app.example.com
 
 # Run security audit on dependencies:
 npm audit --audit-level=high
@@ -297,5 +298,5 @@ docker compose logs -f --tail=50
 
 # Check Directus permissions for a collection via API:
 curl -H "Authorization: Bearer ADMIN_TOKEN" \
-  "https://itocook.duckdns.org/cms/permissions?filter[collection][_eq]=orders"
+  "https://your-app.example.com/cms/permissions?filter[collection][_eq]=orders"
 ```
