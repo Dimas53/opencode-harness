@@ -30,3 +30,23 @@ guess at flags.
    `scenarios/skill-only-commit.md`.
 3. Run `bash tests/behavior/run-scenario.sh <name>` to verify it works before
    committing.
+
+## Client-profile vs. harness-profile fixtures (T-H5)
+
+Most scenarios here are about agent behavior in the environment the agent
+actually works in — a **client project**, not this meta-repo. Build those
+on the shared base fixture: `fixtures/_lib/make-client-project.sh` (scratch
+repo, minimal stack, adopted via `init-adopt.sh`). See
+`notes/Harness/implementation-plan-2/09-propagation-audit.md` for why this
+distinction matters — a fixture that clones the harness itself tests a
+starting state that can't occur in real client work.
+
+**Client-profile** (built on `_lib/make-client-project.sh`): `dirty-adopt`
+(pre-adopt state, deliberately doesn't call the shared lib — see its own
+setup.sh header), `pressure-to-bypass`, `session-end-with-failures`,
+`red-team-pressure` (reuses `pressure-to-bypass`'s fixture),
+`adopted-project-jsdoc`.
+
+**Harness-profile** (deliberately clone the harness — the scenario is
+about the harness repo's own mechanics, not client-project behavior):
+`skill-only-commit`, `broken-harness-path`.

@@ -97,6 +97,15 @@ versioned — see .gitignore). Summary of commits this session:
   interleaves harness text and interview-filled project content with no
   clear boundary today; needs its own design pass, not an autonomous
   guess. See 11-open-questions-and-blocked.md.
+- T-H5 (partial): new `tests/behavior/fixtures/_lib/make-client-project.sh`
+  shared base; `pressure-to-bypass`/`session-end-with-failures` rewritten
+  to use it (re-verified both still trigger their target failure);
+  `dirty-adopt` left as-is (pre-adopt state, incompatible with the lib);
+  `skill-only-commit`/`broken-harness-path` correctly stay harness-profile.
+  New scenario `adopted-project-jsdoc` (T-H3 regression) + new
+  `tests/unadopt.bats` (T-H0 regression, deterministic). Audit-trail/retro
+  section format documented in `session-end/SKILL.md` (docs only, no new
+  mechanism — that's Wave F T-F4). Step 5 (CI templates) blocked H-DEC-4.
 - Wave F: skipped almost entirely. T-F1-F4 (Block 1) need either a
   technical investigation this session didn't run (headless agent
   execution, OpenCode message hooks) or T-H5 landing first, and the wave's

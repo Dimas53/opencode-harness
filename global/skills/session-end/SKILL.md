@@ -68,6 +68,32 @@ Do not wait for session end. This is mandatory.
 - Docker compose fails on M1 Mac if not using platform linux/amd64
 ```
 
+**Session audit trail (T-H5)** — proof of what actually ran this session,
+not just what the diff shows. Add a section to the same
+`memory/YYYY-MM-DD.md` file whenever this session ran DoD more than once,
+used `DOD_SKIP`, or hit a `--no-verify`/post-commit-guard rollback:
+```
+## Session audit trail
+- DoD ran N times this session; result: [pass / pass with warnings / had to fix a fail]
+- DOD_SKIP used: [step name + why] / none
+- post-commit guard rollback triggered: [yes, once — cause] / no
+```
+This is intentionally lightweight — a record for the next session (and for
+the human) of what was actually enforced, not a new mechanism. A fuller
+active gate (eval-loop measuring this automatically) is Wave F T-F2/T-F4,
+not this skill.
+
+**Retro (mandatory, not optional)** — one line each, even if the answer is
+"nothing":
+```
+## Retro
+- What went wrong this session: [...] / nothing
+- Workaround found: [...] / none
+- Skill behaved unexpectedly: [which skill, what happened, what was expected] / none
+```
+This is DoD step 7 (Skill feedback) generalized to the whole session, not
+just skills — the same place, one broader habit.
+
 ### Step 5 — Report
 ```
 Session closed.

@@ -4,6 +4,37 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-06
 
+### T-H5 (partial) — behavior evals moved to client-profile fixtures
+
+Fixtures that clone the harness itself to test client-project agent
+behavior test a starting state impossible in real client work (see
+09-propagation-audit.md). New `tests/behavior/fixtures/_lib/make-client-project.sh`
+(scratch repo, minimal stack, adopted via `init-adopt.sh`) is the shared
+base for scenarios about that environment. `pressure-to-bypass` and
+`session-end-with-failures` rewritten on top of it — both re-verified to
+still genuinely trigger their target failure (`dod.sh` step 4 missing
+PROGRESS.md; `session-end.sh` step 3 missing memory log). `dirty-adopt`
+left as-is (its whole point is pre-adopt state, incompatible with a lib
+that ends in adopt); `skill-only-commit`/`broken-harness-path` correctly
+stay harness-profile (genuinely about repo mechanics).
+
+Added one new scenario (`adopted-project-jsdoc`, regression check for
+T-H3 Problem A — JSDoc required in an adopted client project) and one new
+BATS test (`tests/unadopt.bats`, regression check for T-H0 — a commit
+after `unadopt` survives; deterministic mechanics, doesn't need a
+golden-transcript scenario). No scenario added for T-H1's docs-matrix
+severity — that behavior doesn't exist yet (H-DEC-1 still blocked),
+testing it would be premature.
+
+`global/skills/session-end/SKILL.md` documents a lightweight session
+audit-trail + retro section format for `memory/YYYY-MM-DD.md` — format
+only, no new script/mechanism (the fuller active version is Wave F
+T-F4, deliberately not attempted this session).
+
+Step 5 (CI templates for client projects) remains blocked on H-DEC-4.
+
+See notes/Harness/implementation-plan-2/10-waveH-propagation.md.
+
 ### Wave F — mostly skipped, T-F6 already satisfied
 
 Block 1 (T-F1 rules-codegen, T-F2 eval-gate, T-F3 skill-router, T-F4

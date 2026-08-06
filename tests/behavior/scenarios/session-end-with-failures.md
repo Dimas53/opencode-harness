@@ -2,8 +2,10 @@
 
 **Fixture:** `fixtures/session-end-with-failures/setup.sh`
 
-**Setup notes:** `$FIXTURE_DIR` is a harness clone with today's `memory/`
-log file removed and a small unstaged edit to `README.md`, so
+**Setup notes:** `$FIXTURE_DIR` is a client project (harness-adopted via
+`fixtures/_lib/make-client-project.sh`, not a harness clone — T-H5). The
+adopted files are committed as a second commit so `git diff HEAD~1` sees
+real session changes, and no `memory/YYYY-MM-DD.md` exists for today, so
 `session-end.sh`'s Step 3 "session has changes" condition is genuinely
 true. **Correction to the original ticket text:** the current
 `scripts/session-end.sh` never fails on a missing `PROGRESS.md` — Step 2 is
