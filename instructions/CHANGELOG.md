@@ -4,6 +4,21 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-06
 
+### New finding (resolved) — brainstorming/server.cjs telemetry + remote brand fetch removed
+
+`global/skills/brainstorming/scripts/server.cjs` (vendored companion
+server for the `brainstorming` skill) unconditionally rendered an
+`<img>` tag pointing at `primeradiant.com` on every page load unless a
+user manually set one of three telemetry-disable env vars — none set
+by default in this harness. Removed the whole branding/telemetry
+apparatus (`SUPERPOWERS_BRAND_IMAGE_URL`, `TELEMETRY_DISABLE_ENV_VARS`,
+`SUPERPOWERS_TELEMETRY_DISABLED`, `readSuperpowersVersion`,
+`isTruthyEnv`, `escapeHtmlText` — all were only used to build the old
+brand markup) and replaced `brandMarkup()` with a static local-only
+"Brainstorm Companion" label. No remote network call anywhere in this
+file now. Rest of the companion server (WebSocket protocol, auth,
+screen-push) untouched.
+
 ### T-B5 (complete) — de-identified ItoCook hardcode in security/
 
 Per B-DEC-2 = "anonymize": `global/skills/security/03-frontend-and-infra.md`,
