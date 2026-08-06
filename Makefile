@@ -37,7 +37,7 @@ help:
 	@echo "  fix               -- fix findings from last analysis report"
 	@echo "  fix <path>        -- fix findings only for a specific file/folder"
 	@echo "  update-harness    -- pull latest harness updates"
-	@echo "  sync-templates    -- check for missing template files"
+	@echo "  update-project    -- bring current project up to date with the harness"
 	@echo "  dod               -- run Definition of Done checks"
 	@echo "  docs              -- run session-end + update docs"
 

@@ -209,6 +209,41 @@ See notes/Harness/implementation-plan-2/04-waveD-install-bat-and-tests.md.
 
 See notes/Harness/implementation-plan-2/08-waveG-doc-stack-and-update-mechanism.md.
 
+### T-G-U3 — `update-project` (renamed from `sync-templates`): docs subtree + hook drift
+
+⚠ **Flagged for human review.** The wave's own header warns Block 2
+(work touching sensitive user files) needs line-by-line review, not
+autonomous hand-off. Not blocked by any open decision (G-U3
+has no `—` in the decision column beyond G-DEC-4, whose default this
+already matches), tested thoroughly on scratch projects below — but please
+read the diff before trusting it on a real project.
+
+`scripts/sync-templates.sh` renamed to `scripts/update-project.sh`
+(`git mv`, history preserved) and extended:
+- previously only checked root `templates/*.md` for missing files —
+  extended to walk the whole `templates/docs/` subtree, so a new doc type
+  added to the harness after a project was adopted is now detected instead
+  of silently never arriving;
+- previously never looked at git hooks at all — now compares the
+  project's installed `pre-commit`/`post-commit` against the harness's
+  current ones (ignoring the baked-in `HARNESS_PATH` value, which
+  legitimately differs per machine) and offers to reinstall via
+  `install-hooks.sh` on drift or absence;
+- still never overwrites an existing file it doesn't recognize as missing
+  — additions only, matching G-DEC-4's default ("only new + structural
+  additions").
+
+Updated the one live reference needed to keep the shortcut working:
+`global/AGENTS.md` "Harness Shortcuts" (`sync-templates` → `update-project`),
+plus `AGENTS.md` and `Makefile` help text in this repo. The broader
+consolidation (`INSTALL.md` bridge line, `README.md`, `GUIDE.md`) is
+T-G-U4.
+
+Tested on scratch projects: fresh `init-adopt` reports "up to date";
+manually-built incomplete project (missing top-level files, nested
+`docs/audits/README.md`, no hooks) is detected, applying `y` copies
+everything and installs both hooks, rerun reports "up to date" again.
+
 ## 2026-08-05 (later)
 
 ### post-commit rollback guard was never installed in client projects — fixed

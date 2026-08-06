@@ -65,6 +65,13 @@ versioned — see .gitignore). Summary of commits this session:
   with no safe subset): `templates/MEMORY.md`/`docs/CONTEXT.md` Gotchas
   canon separated (cross-project vs per-project), `PLAN.md`/
   `docs/plan-main.md` headers cross-reference each other.
+- T-G-U3 (⚠ flagged for human review, see CHANGELOG — wave header asks for
+  line-by-line review of Block 2): `scripts/sync-templates.sh` renamed to
+  `scripts/update-project.sh`, extended to check the whole `templates/docs/`
+  subtree (not just root `*.md`) and to detect+reinstall drifted/missing
+  git hooks. Never overwrites existing files. Tested on scratch projects
+  (fresh adopt = up to date; incomplete manual project = detects and fixes
+  everything, then idempotent on rerun).
 
 ## Session 2026-08-05 (later — post-commit gap found live, fixed + propagated)
 

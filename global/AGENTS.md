@@ -42,8 +42,10 @@ When user types:
   Run: `bash ~/.opencode-harness/scripts/unadopt.sh`
   Everything removed is backed up to `.harness-unadopt-backup/` first. Keeps
   `docs/` unless confirmed.
-- `sync-templates` — check for new harness template files missing in current project:
-  Run: `bash ~/.opencode-harness/scripts/sync-templates.sh`
+- `update-project` — bring THIS project up to date with the harness: new
+  template files/doc structure, `.gitignore` entries, and git hooks
+  (existing filled files are never overwritten — additions only).
+  Run: `bash ~/.opencode-harness/scripts/update-project.sh`
 
 **Fallback** (if shortcuts don't work):
 ```bash
