@@ -275,7 +275,8 @@ Every session begins with the command:
 Start
 ```
 
-That's it. A single word. The agent then runs a mandatory 7-step sequence:
+That's it. A single word. The agent then runs the mandatory sequence below
+(authoritative step list and order: `global/AGENTS.md` → `## Session Start`):
 
 1. **pwd + git log** — `git log --oneline -10`
 2. **Load global skill + task‑specific context** — reads `using-agent-skills/SKILL.md` (filesystem or built-in), then checks `docs/skills-cheatsheet.md` for skills matching your request's triggers
@@ -339,7 +340,10 @@ The commit MUST NOT happen without your explicit approval.
 The agent asks: "Ready to commit?"
 
 The pre‑commit hook automatically runs `make dod` before every `git commit` —
-no command needed. If any of the 6 checks fail, the commit is blocked.
+no command needed. If any check fails, the commit is blocked. See the header
+comment of `scripts/dod.sh` for the authoritative, numbered list of checks —
+don't restate the count here, it drifts (see the `## 6. Definition of Done`
+note above).
 
 The docs‑lag check compares against git history (last commit touching `docs/`,
 lag threshold = 3). In pre‑commit mode it first looks at the staged files: if the
@@ -358,9 +362,10 @@ used to, which is exactly the bug Wave 1 T1.1 fixed).
 
 The mechanical part (`make dod`, Commit Gate step) runs: uncommitted changes,
 Cyrillic scan, docs lag (SIGPIPE-safe, uses `sed` instead of `head`),
-PROGRESS.md freshness, docs matrix, quick tests, self-check. The remaining
-steps (docs update, JSDoc, safety check, skill feedback, cleanup) are
-judgment calls the agent handles manually. Only after all steps pass does
+PROGRESS.md freshness, docs matrix, quick tests, self-check, and the
+`.agentignore` file-level check. The remaining steps (docs update, JSDoc,
+safety check, skill feedback, cleanup) are judgment calls the agent handles
+manually. Only after all steps pass does
 the agent report "done".
 
 ### Push
@@ -404,64 +409,12 @@ closed cleanly.
 
 ## 6. Definition of Done
 
-The DoD is a mandatory 7-step checklist that runs EVERY time the agent says
-"done", "ready", or "finished". It prevents unfinished work from being reported
-as complete.
-
-### STEP 0 — Session Scan
-
-Before anything, the agent scrolls through the entire conversation window
-and lists everything that was done this session:
-- Files created or modified
-- Collections or schema changes
-- New components, routes, utilities
-- Any other change
-
-Then runs `git log --oneline origin/main..HEAD` to verify.
-
-This list is the input for all subsequent steps.
-
-### STEP 1 — Update PROGRESS.md
-
-Completed items go to "Current status".
-New bugs or issues go to "Known issues".
-Next steps go to "Next session — plan".
-Git log is appended.
-
-### STEP 2 — Check architecture docs
-
-For each changed item — is there a matching doc?
-- Yes → update it
-- No → if significant (new feature, new collection, new service), create one
-- CSS tweaks and typo fixes are exempt
-
-### STEP 3 — JSDoc
-
-Any new composable, module, server route, or utility function gets JSDoc.
-Not optional.
-
-### STEP 4 — Run tests
-
-If the project has tests — they must pass before push.
-If a new feature was added — at least one test must exist.
-If no test suite exists — skip this step.
-
-### STEP 5 — Check roadmap
-
-If the current phase is fully complete → mark with ✅ and date.
-If any checkbox changed → update the file.
-
-### STEP 5b — Skill feedback
-
-If any skill behaved unexpectedly or missed an important step — note in `memory/YYYY-MM-DD.md` what happened and what behavior was expected. Human decides whether to update SKILL.md. Do not touch SKILL.md files yourself.
-
-### STEP 6 — Safety check
-
-Two checks:
-- No Russian text in project files (English-Only Policy)
-- No forbidden files modified (`.env`, `docker-compose.yml`, lock files)
-
-Only after all 7 steps confirm — the agent says "done".
+The mandatory checklist lives in ONE place: `global/AGENTS.md` →
+`## Definition of Done`. `global/skills/dod/SKILL.md` mirrors it 1:1 with
+examples. Do not restate the steps here — this section drifted once already
+(fixed in implementation-plan T1.1) and must not reintroduce a private copy.
+The mechanical, exit-code-enforced part is `scripts/dod.sh`, run via
+`make dod` / the pre-commit hook.
 
 ---
 
@@ -603,7 +556,7 @@ git log --oneline -- docs/ | head -1
 git log --oneline | head -1
 ```
 
-If docs are more than 5 commits behind, the agent asks if you want a docs update.
+If docs are more than 3 commits behind, the agent asks if you want a docs update.
 If the agent didn't ask:
 
 ```

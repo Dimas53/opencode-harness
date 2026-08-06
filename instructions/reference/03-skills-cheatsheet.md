@@ -7,7 +7,6 @@
 | Skill | When to tell the agent |
 |---|---|
 | `using-agent-skills` | Meta-skill — auto-loads at every session start |
-| `session-start` | Session start — read progress.md and roadmap, output summary |
 | `startup` | Full startup ritual with explanations — load if inline steps fail |
 | `session-end` | Session end protocol — triggered on commit/push/"end session" |
 | `dod` | Definition of Done checklist — runs before every commit |
@@ -22,7 +21,6 @@
 | `writing-plans` | Break task into 2-5 minute steps with exact file paths |
 | `handoff` | Session is long — pack context for a fresh session |
 | `diagnose` | Something is broken — run diagnostic cycle |
-| `find-skills` | Find the right skill for any task |
 | `nuxt` | Working with Nuxt — apply Nuxt patterns |
 | `nuxt-ui` | Use Nuxt UI components, don't build custom ones |
 | `vue` | Apply Vue 3 / script setup / composables patterns |
@@ -40,7 +38,6 @@
 | `source-driven-development` | Check official docs before implementing |
 | `to-prd` | Turn our conversation into a PRD |
 | `to-issues` | Break PRD into individual issues |
-| `prototype` | Quick throwaway prototype to validate an idea — UI or logic |
 | `codebase-design` | Vocabulary for deep module design — interface, seam, depth, adapter. Before creating a new module |
 | `domain-modeling` | Refine domain model: clarify terms, create ADR, update CONTEXT.md. Before complex architecture decisions |
 | `research` | Investigate from primary sources (docs, API, specs) via background agent. Don't start code without research |
@@ -62,10 +59,8 @@
 | `code-review-and-quality` | Review this code across all quality axes |
 | `systematic-debugging` | Fix bugs with 8-step cycle: reproduce → minimize → hypothesize → fix |
 | `debugging-and-error-recovery` | Debug systematically: reproduce → minimise → fix |
-| `triage` | Prioritize accumulated bugs by severity |
 | `doubt-driven-development` | Adversarial review before critical changes (prod, security, irreversible) |
 | `browser-testing-with-devtools` | Debug/test in browser — console, network, DOM, screenshots via Chrome DevTools |
-| `receiving-code-review` | Got a review — verify feedback technically, don't blindly agree |
 
 ---
 
@@ -74,7 +69,6 @@
 | Skill | When to tell the agent |
 |---|---|
 | `tailwind-design-system` | Use Tailwind systematically, design tokens |
-| `directus` | Working with Directus — schema, permissions, MCP |
 | `api-and-interface-design` | Design API by the rules |
 | `git-workflow-and-versioning` | Apply git workflow patterns |
 | `security` | Security check — auth, secrets, API, infra |
@@ -100,14 +94,8 @@
 | `loop-factory` | Run a spec-driven agent loop with inbox → active → archive workflow |
 | `dispatching-parallel-agents` | 2+ independent tasks — run them in parallel |
 | `executing-plans` | Have a ready plan — execute with checkpoints |
-| `setup-matt-pocock-skills` | First time in a new repo — set up all skills |
 | `archify` | Architecture diagrams — workflow, sequence, data-flow, lifecycle, export PNG/SVG |
-| `write-a-skill` | Want to create a new custom skill |
-| `teach` | Explain this concept step by step |
 | `docker-expert` | Docker / docker-compose issues |
-| `finishing-a-development-branch` | Implementation done, tests pass — decide: merge, PR, or cleanup |
-| `using-git-worktrees` | Want to isolate new feature from current working directory |
-| `subagent-driven-development` | Have a plan with independent steps — run sub-agents in parallel |
 | `premortem` | Stress-test a plan/release/decision — imagine it failed 6 months from now and explain why |
 
 ---
@@ -123,7 +111,6 @@ skill folder with `ls ~/.config/opencode/skills/<name>`.
 | Nuxt | `nuxt` | Vendored in harness |
 | Nuxt UI | `nuxt-ui` | Vendored in harness |
 | Vue | `vue` | Vendored in harness |
-| Directus | `directus` | Vendored in harness |
 | Tailwind | `tailwind-design-system` | Vendored in harness |
 | Docker | `docker-expert` | Vendored in harness |
 | TDD / tests | `tdd` | Vendored in harness |

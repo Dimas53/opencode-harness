@@ -78,7 +78,7 @@ Insgesamt installiert: **52 Fähigkeiten** in `~/.config/opencode/skills/`. Alle
 | Skill | Zweck |
 |-------|-------|
 | `security/` (5 Dateien) | Sicherheit: Auth, API, Frontend, Stack, Release-Checkliste |
-| `session-start/` | Boot-Sequenz: docs lesen, Zusammenfassung ausgeben |
+| `startup/` | Boot-Sequenz: docs lesen, Zusammenfassung ausgeben |
 | `code-reviewer/` | Checkliste vor "fertig": TS, Vue, Directus, Design |
 | `code-review-and-quality/` | 5-achsiges Code-Review mit Quality Gates |
 

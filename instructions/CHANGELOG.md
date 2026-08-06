@@ -131,6 +131,43 @@ See notes/Harness/implementation-plan-2/03-waveC-script-correctness.md.
 See notes/Harness/implementation-plan-2/02-waveB-vendored-skill-cleanup.md
 and 11-open-questions-and-blocked.md.
 
+### Wave A — doc truth resync (T-A1..A5)
+
+- **T-A1:** `instructions/GUIDE.md` §6 had a full duplicated 7-step DoD list
+  (STEP 0...STEP 6 + STEP 5b) that had already drifted from the real 9-step
+  canon in `global/AGENTS.md` — the exact class of bug Wave 1 T1.1 fixed
+  once already. Replaced with a short pointer to the canon, matching the
+  pattern §5 already used correctly. Also fixed two other hardcoded counts
+  that had drifted: the Session Start "7-step" claim (real canon: 8 steps,
+  now unnumbered + points at the canon) and "5 commits behind" (real
+  threshold in `dod.sh` is `-gt 3`).
+- **T-A2:** `instructions/reference/03-skills-cheatsheet.md` advertised 12
+  skills that don't exist in `global/skills/` as if they were installed
+  harness skills (most prominently `directus`, claimed "Vendored in
+  harness" in two places — it isn't). Removed all 12 rows; cross-checked
+  every remaining skill name in the file against `ls global/skills/` — zero
+  phantoms left. While fixing this, found the same `session-start` +
+  `directus` phantoms still present in `templates/docs/skills-cheatsheet.md`
+  (the K3 template — this is the file `09-propagation-audit.md` found
+  copied verbatim into `karriere-page-ito`) and fixed those too.
+- **T-A3:** `instructions/reference/05-skills-inventory.md` claimed "62
+  unique skills" and still listed the removed `session-start`. Real count
+  is 70 (`ls -d global/skills/*/ | wc -l`); the table itself is a stale
+  2026-07-06 snapshot missing 15 skills added since, so instead of
+  re-asserting a new hardcoded number that will drift again, the totals
+  line now points at `ls global/skills/` as the live source of truth and
+  says explicitly that the table is not current.
+- **T-A4:** `instructions/reference/01-harness-overview.de.md` still listed
+  `session-start/` in its custom-skills table; replaced with `startup/`
+  (same "boot sequence" description, correct current skill name).
+- **T-A5:** new `scripts/check-docs-refs.sh` (wired to `make check-docs-refs`)
+  — mechanical backstop that fails if either skills-cheatsheet file
+  advertises a skill not present in `global/skills/` (with an allowlist for
+  skills that are legitimately external / find-skills-ecosystem). Verified
+  it catches an injected phantom row.
+
+See notes/Harness/implementation-plan-2/01-waveA-doc-truth-resync.md.
+
 ## 2026-08-05 (later)
 
 ### post-commit rollback guard was never installed in client projects — fixed

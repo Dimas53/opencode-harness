@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: help link setup init init-adopt analyze verify update dod mcp self-check uninstall uninstall-lite unadopt check-docs-sync
+.PHONY: help link setup init init-adopt analyze verify update dod mcp self-check uninstall uninstall-lite unadopt check-docs-sync check-docs-refs
 
 .DEFAULT_GOAL := help
 
@@ -78,6 +78,9 @@ dod:
 
 check-docs-sync:
 	@./scripts/check-dod-sync.sh
+
+check-docs-refs:
+	@./scripts/check-docs-refs.sh
 
 self-check:
 	@echo "=== Self-Check ==="

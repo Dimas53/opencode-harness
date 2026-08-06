@@ -52,7 +52,6 @@ Machine: DSAITO's MacBook
 | `requesting-code-review` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
 | `security` | `.config/opencode/skills/` | custom (ItoCook) | Written by hand |
 | `security-and-hardening` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
-| `session-start` | `.config/opencode/skills/` | custom (ItoCook) | Written by hand |
 | `setup-matt-pocock-skills` | `.agents/skills/` only | find-skills | `mattpocock/skills` |
 | `shipping-and-launch` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
 | `source-driven-development` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
@@ -72,7 +71,14 @@ Machine: DSAITO's MacBook
 | `writing-plans` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
 | `zoom-out` | `.config/opencode/skills/` | harness | Vendored in `global/skills/` |
 
-**Totals:** 62 unique skills (52 in `.config/opencode/skills/` from harness, 5 custom harness skills in `global/skills/`, 7 in `.agents/skills/` from find-skills)
+**Totals (as generated 2026-07-06):** 61 entries above. This table has NOT
+been kept current since then — `ls -d global/skills/*/ | wc -l` now returns
+**70** vendored skills, 15 more than listed here (added since generation
+date). Treat this table as a historical snapshot, not a live count; for the
+current total and full list, run `ls global/skills/` in the harness repo
+rather than trusting a hardcoded number here (this table drifted once
+already — see T-A3 in
+`notes/Harness/implementation-plan-2/01-waveA-doc-truth-resync.md`).
 
 ---
 
@@ -83,7 +89,6 @@ These skills were written by hand for ItoCook and opencode-harness. They live in
 | Skill | Files | Total size | Notes |
 |---|---|---|---|
 | `code-reviewer` | 1 file: `SKILL.md` (1.2K) | 4K | ItoCook-specific review rules, Russian text |
-| `session-start` | 1 file: `SKILL.md` (956B) | 4K | Russian triggers, ItoCook session flow |
 | `security` | 6 files: `SKILL.md` (3.1K), 5 sub-docs (40K total) | 60K | Multi-doc security checklist for Nuxt 4 + Directus 11 + PostgreSQL |
 | `startup` | 1 file: `SKILL.md` (2.2K) | 4K | Full 12-step startup ritual with edge cases |
 | `session-end` | 1 file: `SKILL.md` (2.1K) | 4K | Session end protocol with troubleshooting |

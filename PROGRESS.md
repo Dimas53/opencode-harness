@@ -45,6 +45,15 @@ versioned — see .gitignore). Summary of commits this session:
   presented option in `agent-adopt.md`. New out-of-scope finding logged:
   `brainstorming/scripts/server.cjs` vendored telemetry + remote brand
   fetch — see 11-open-questions-and-blocked.md.
+- Wave A (T-A1..A5, all done, no decisions blocking): GUIDE.md DoD
+  duplicate removed (pointer to canon), 12 phantom skills removed from
+  `instructions/reference/03-skills-cheatsheet.md` (incl. `directus`
+  falsely claimed "Vendored in harness") + same phantoms found and fixed
+  in the K3 template `templates/docs/skills-cheatsheet.md`, skills-inventory
+  count corrected (62 claimed → 70 real, table marked non-current instead
+  of re-hardcoding), German overview `session-start` → `startup`. New
+  `scripts/check-docs-refs.sh` (`make check-docs-refs`) is a mechanical
+  backstop against this class of drift recurring.
 
 ## Session 2026-08-05 (later — post-commit gap found live, fixed + propagated)
 
