@@ -2,19 +2,148 @@
 
 ## Current Status
 
-Phase: autonomous overnight session completed — ran the full
-implementation-plan-2 order (H0→H1→H2→H3→C→B→A→D→E→G→H4→F→H5→H6/H7).
-Waves A, B, C, D, G (mostly), H0/H2/H4/H5(mostly)/H6(mostly) done; H1/H3
-partial (one step each blocked); Wave E and most of Wave F blocked
-entirely (E needs a rollout-scope decision before any config exists to
-write; F needs two technical investigations + explicit go-ahead for
-autonomous work on its Block 1). 22 open decisions in 06-open-decisions.md
-are still empty and are the single biggest unblock — see
-notes/Harness/implementation-plan-2/11-open-questions-and-blocked.md
-section B (blocked list) and the "what to decide first" section at the
-end of it (prioritized summary) for the full picture.
+Phase: implementation-plan-2 is essentially complete. This session went
+through all 20 open decisions in 06-open-decisions.md with the user
+(one was left explicitly deferred: F-DEC-2, eval-gate CI vs local — user
+wants to think about it more), ran the two A2 technical investigations
+for real, then executed every ticket those decisions unblocked: Wave C
+tail, Wave B tail, Wave E (capability deny), Wave G Block 1 (T-G1-G4,
+T-G-U6), Wave F Block 1 (T-F1, T-F3, T-F4 — T-F2 stays deferred with
+F-DEC-2), Wave F Block 2 (T-F7), and M1's cheap subset. 14 commits.
+Only remaining known gaps: F-DEC-2 (user deferred), T-F5's actual
+stack-conventions.md feature (M1 unblocked it but the feature itself is
+new, substantial work not built this session), M1's heavy content
+(ARCHITECTURE.md generic skeleton, Symfony/Python skills-cheatsheet
+rows), T-G-U3's real run against karriere-page-ito/itocook (user
+explicitly said not yet, try later), and T-H6 step 3 (same reason).
+See the 2026-08-06 (second session) entry below for full detail per
+ticket, and 06-open-decisions.md for the actual decisions recorded.
 Last commit: (this session, see below)
 Chat language: ru
+
+## Session 2026-08-06 (second session — all 22 decisions resolved, waves executed)
+
+Chat language: ru
+
+User came back after the previous overnight session (below) had stopped
+on 22 open decisions. Went through `06-open-decisions.md`'s full list
+with the user in batches (via AskUserQuestion, mini-comment per question
+so the user could decide informed), then executed every ticket the
+decisions unblocked, in the recommended order (A4 in
+`11-open-questions-and-blocked.md`: C → B → E → G → F). Full per-ticket
+detail is in `instructions/CHANGELOG.md`'s 2026-08-06 entries (14 new
+commits); this is the cross-cutting summary.
+
+### Decisions
+All 20 decisions in `06-open-decisions.md` resolved except one
+explicitly deferred by the user: **F-DEC-2** (eval-gate: CI-job vs local
+pre-merge) — user leans CI-job but wants to think about it more, marked
+"deferred" not "decided," T-F2 stays unbuilt. Also ran the two A2
+technical investigations for real (not just "confirmed a mechanism
+exists on paper"):
+- **Headless agent run:** `opencode run --auto --format json "<prompt>"`
+  genuinely executes multi-step tasks (real file writes, real shell
+  commands) and returns a structured, parseable JSON event stream — a
+  real multi-step task, not just `echo ok`. Unblocks T-F2/T-F3 technically
+  (F-DEC-2 itself is still the user's call).
+- **OpenCode message hook (for a code-level skill-router):** confirmed via
+  cross-checked docs + a GitHub issue that no hook sees the user's message
+  text before that turn's system prompt is built —
+  `experimental.chat.system.transform` gets `{sessionID, model}` only;
+  `chat.message` sees the text but a turn too late. Same-turn
+  deterministic routing isn't buildable with the current plugin API.
+
+### Wave C tail (T-C3, T-C4)
+`hooks/post-commit`/`install.sh`/`update.sh` now print (not auto-delete)
+skills present locally but absent from the repo, after every mirror
+(C-DEC-mirror = warn-only). `start.sh`'s session-not-closed messages
+reworded from `⚠`/coercive phrasing to honest `ℹ` informational text
+(C-DEC-startguard). `install.bat` removed (D-DEC-1 — confirmed zero doc
+references, WSL2+install.sh is the only documented Windows path).
+
+### Wave B tail (T-B2/B3/B4, T-B5) + new finding
+B-DEC-1 = supersede: `executing-plans`/`writing-plans` get a SUPERSEDED
+banner pointing to `planning-and-task-breakdown` +
+`incremental-implementation`, body left untouched.
+`brainstorming/SKILL.md`'s terminal handoff redirected off the now-
+superseded `writing-plans` (5 places) — otherwise the supersede would've
+been incomplete, brainstorming was the only path in. Also fixed a
+branded-path leak the original grep missed (`docs/superpowers/specs/` →
+`docs/specs/`). B-DEC-2 = anonymize: ItoCook's real domain/container
+names/DB creds in `security/03,04,05.md` replaced with placeholders.
+New finding resolved: `brainstorming/scripts/server.cjs` (vendored
+companion server) unconditionally loaded a remote brand image from
+primeradiant.com on every page render — removed the whole
+telemetry/branding apparatus, no remote calls left in that file.
+
+### Wave E — capability deny-by-default (T-E1, T-E2)
+`global/opencode-config.example.jsonc` gets a `permission.bash` block:
+`git commit --no-verify*` = `deny` (physically blocked by OpenCode, not
+just discouraged in text), `push --force`/`push`/`reset --hard`/`rm -rf`
+= `ask`, everything else `allow` (E-DEC-1 hybrid). Checking propagation
+(E-DEC-2) found a real bug: `gen-opencode.sh` used strict `json.load()`
+on the global config, which would've crashed on the first `//` comment
+the new permission block introduces — fixed with the same JSONC-safe
+stripper `merge-opencode-config.sh` already has (T-G-U2), verified
+end-to-end in a scratch project.
+
+### Wave G Block 1 (T-G1-G4, T-G-U6)
+DoD table rows for `schema.md`/`flows.md` now explicitly stack-conditional
+(DB/Directus-only, not universal). New Step 4 in `session-end.sh` warns
+on stale doc placeholders after 4+ sessions (real bug found+fixed while
+testing: `grep -c`'s "0 + exit 1" behavior was corrupting a count via
+`|| echo 0`). `init-adopt.sh` skips `docs/design.md` for non-UI projects
+(no package.json), never touching a pre-existing file. `agent-analyze.md`
+gets honest stack detection with a generic-pass fallback instead of
+silently assuming Nuxt. `templates/AGENTS.md`'s 4 pure-harness-text
+sections wrapped in `HARNESS-MANAGED` markers + new
+`update-project.sh --refresh-agents` to pull harness rule improvements
+into already-adopted projects without touching filled-in project content
+— found and fixed a `set -e`/`pipefail` bug in the same pass. All
+verified end-to-end on real client-project fixtures, not just read.
+
+### Wave F Block 1 (T-F1, T-F3, T-F4 — T-F2 stays deferred)
+`global/rules/dod.yaml` is now the canonical DoD step list; new
+`gen-rules.sh --check` verifies both `AGENTS.md` and `dod/SKILL.md`
+against it (stronger than the old cross-file-only check). Skill-router
+degraded to a mandatory Auto-Loading text scan per the A2 finding — new
+`skill-router-auth` eval scenario (+ new `run-scenario-headless.sh`, using
+the now-confirmed headless mode) **honestly FAILED in both real runs** —
+left as a real baseline, not tuned to pass. `dod.sh` now logs every run
+to a local `.dod-run.log`; `session-end.sh` mechanizes the audit-trail
+section it already documented (T-H5) into `memory/YYYY-MM-DD.md`, plus a
+non-blocking nudge for a missing `## Retro` section.
+
+### Wave F Block 2 (T-F7)
+`requesting-code-review` skill removed entirely (M2). `tdd/` turned out
+not to exist in the tree at all (M3, nothing to merge). Ported
+`systematic-debugging`'s "3+ fix attempts → stop" rule into
+`debugging-and-error-recovery` (which lacked it), added pointers to its 3
+still-useful companion technique files, marked
+`systematic-debugging/SKILL.md` SUPERSEDED.
+
+### M1 (cheap subset only)
+Auto-Loading's UI/Frontend row no longer hardcodes nuxt/vue for every UI
+project; `.env.example` marked explicitly Directus-only/optional;
+`HARNESS.md`'s Framework example broadened past Nuxt+Directus. Heavy
+content (ARCHITECTURE.md generic skeleton, Symfony/Python
+skills-cheatsheet rows) stays deferred — M1's own scoping, hours of
+authored content, not this pass.
+
+### Explicitly NOT done this session (by user instruction or genuine scope)
+- **F-DEC-2** — deferred by the user, not decided.
+- **T-F5's actual feature** (stack-conventions.md freshness gate via
+  fetch MCP) — M1 unblocked it, but building it is separate substantial
+  new work, not a quick fix; not started.
+- **Real `update-project` run against `karriere-page-ito`/`itocook`** —
+  user explicitly said not yet this session, wants to try it himself
+  later. All the fixes accumulated over both 2026-08-06 sessions
+  (hooks, `.agentignore`, HARNESS-MANAGED markers, everything) are still
+  sitting undelivered to those two real projects until that run happens.
+- **retry-limit-escalation scenario** — written as infrastructure/
+  description only (same precedent as T4.3's red-team-pressure), not
+  actually run — calibrating a fixture that reliably needs 3+ attempts
+  is its own effort, better spent once T-F2 exists to consume it.
 
 ## Session 2026-08-06 (autonomous — implementation-plan-2 Wave H+)
 
