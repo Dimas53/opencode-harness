@@ -4,7 +4,7 @@
 > This file contains {{PROJECT_NAME}}-specific rules only. In case of conflict — this file wins.
 > 
 > ⚠️ DO NOT replace this file with global/AGENTS.md. This is a PROJECT-SPECIFIC TEMPLATE.
->    It is used by `make new` / `make adopt` to bootstrap new project AGENTS.md files.
+>    It is used by the `new` / `adopt` OpenCode shortcuts to bootstrap new project AGENTS.md files.
 >    Edit placeholders ({{...}}), not the structure.
 
 ---

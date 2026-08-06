@@ -4,6 +4,61 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-06
 
+### T-H4 — `check-propagation.sh`: mechanical backstop against unreachable references
+
+New `scripts/check-propagation.sh` (`make check-propagation`, wired into
+CI in `.github/workflows/dod.yml` alongside `check-docs-refs.sh`) scans the
+files actually delivered to client projects (`global/AGENTS.md`,
+`global/skills/harness-init|dod|session-end|startup/`, `templates/`) for
+three regression classes:
+1. `` `make <target>` `` references with no Makefile in a client project
+   (unless the target is a legitimate harness-repo-only command, or a
+   nearby caveat says so);
+2. relative paths (`instructions/`, `notes/Harness`, `tests/behavior/`,
+   `.github/`, unprefixed `scripts/...`) with no `~/.opencode-harness/`
+   prefix and no harness-repo caveat nearby;
+3. a `check_pass` inside `scripts/dod.sh`'s client-profile
+   (`IS_HARNESS_REPO=0`) branches with no `# propagation-ok: <reason>`
+   marker — the exact "fixed the noise by turning an honest `⚠` back into
+   a `✓`" regression this whole wave exists to prevent.
+
+Deliberately conservative — regex-based, not a real parser, tuned against
+this repo's actual false positives (plain-English "make" usage like "make
+changes"; the word "Makefile" appearing generically in a Safety Gate list;
+self-citations like "See T-H3 in notes/Harness/...").
+
+Built and ran it against the current tree, which surfaced two real,
+previously-unknown instances of the exact bug class this wave has been
+fixing:
+- `global/skills/dod/SKILL.md:90` — `` `scripts/dod.sh` `` with no
+  `~/.opencode-harness/` prefix (T-H2's file list didn't include this
+  file). Fixed.
+- `templates/AGENTS.md:7` — told every new/adopted project it was
+  bootstrapped by `` `make new` `` / `` `make adopt` ``, commands that
+  don't exist (the real Makefile targets are `init`/`init-adopt`; `new`/
+  `adopt` are OpenCode session shortcuts, not `make` targets). Fixed to
+  name the actual shortcuts.
+- Also removed a self-referential `(See T-H3 in notes/Harness/...)`
+  parenthetical added to `global/AGENTS.md` during T-H3 — accurate for a
+  developer reading the source repo, but unreachable once mirrored to a
+  client machine's `~/.config/opencode/AGENTS.md`; the substance is
+  already in `PROGRESS.md`/this changelog.
+
+**Correction to T-H1:** Rule 3 flagged `dod.sh`'s own step 6 client-profile
+branch (`check_pass "No local make test-quick..."`). Re-reading T-H1's own
+ticket text while investigating: H-DEC-1/H-DEC-2 was over-applied to that
+step — H-DEC-2 only gates whether tests are *auto-run*, and the ticket's
+own safe default (an honest `⚠` naming the test command from `HARNESS.md`,
+no auto-run) doesn't depend on that decision at all. Earlier work in this
+session blocked the whole step; that was too broad. Implemented the
+default now: step 6 in a client project reads `HARNESS.md`'s `**Tests:**`
+line and warns with the command (or that none is declared) instead of
+claiming success. Added two `tests/dod.bats` cases. `T-H7`'s case 3 (same
+behavior) is now covered too — see 11-open-questions-and-blocked.md for
+the corrected T-H1/T-H7 status.
+
+See notes/Harness/implementation-plan-2/10-waveH-propagation.md.
+
 ### DoD steps 7-8 stop claiming `✓` for checks that never ran (client profile)
 
 `scripts/dod.sh` step 7 (self-check) and step 8 (`.agentignore`) printed a

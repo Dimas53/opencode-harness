@@ -281,7 +281,22 @@ if command -v bats &>/dev/null && [ -f "Makefile" ]; then
 elif [ "$IS_HARNESS_REPO" = "1" ]; then
   check_warn "bats or Makefile not found — TESTS NOT RUN. Install: brew install bats-core (or see README). Real enforcement happens in CI regardless of local bats."
 else
-  check_pass "No local make test-quick — expected for client projects, use the project's own test command"
+  # Client project: no harness Makefile by design. Do NOT claim success —
+  # the project has its own test command (declared in HARNESS.md) and this
+  # gate never ran it. Say so. propagation-ok: honest warn, not a stub —
+  # auto-running the declared command is a separate, still-open decision
+  # (H-DEC-2); this default (no auto-run) doesn't need it.
+  if [ -f "HARNESS.md" ] && grep -qi "^\s*-\s*\*\*Tests:\*\*" HARNESS.md; then
+    TESTS_LINE=$(grep -i "^\s*-\s*\*\*Tests:\*\*" HARNESS.md | head -1 | sed 's/.*\*\*Tests:\*\*//' | xargs)
+    case "$TESTS_LINE" in
+      *none*|*None*|*n/a*|*N/A*|*planned*)
+        check_warn "Project declares no test suite yet (HARNESS.md: $TESTS_LINE)" ;;
+      *)
+        check_warn "TESTS NOT RUN by the gate — project test command: $TESTS_LINE — run it before saying done" ;;
+    esac
+  else
+    check_warn "No test command declared — add '- **Tests:** <command>' to HARNESS.md"
+  fi
 fi
 fi
 

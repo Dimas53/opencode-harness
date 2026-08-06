@@ -22,3 +22,9 @@ jobs:
 
       - name: Verify DoD/Session-Start sync
         run: bash scripts/check-dod-sync.sh
+
+      - name: Verify docs-refs (no phantom skills)
+        run: bash scripts/check-docs-refs.sh
+
+      - name: Verify propagation (no harness-repo-only paths in delivered files)
+        run: bash scripts/check-propagation.sh

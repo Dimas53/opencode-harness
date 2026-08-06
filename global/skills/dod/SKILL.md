@@ -87,7 +87,7 @@ Checklist:
 ### STEP 5 — Commit Gate
 
 This is a DIFFERENT kind of check from steps 1-4: it is a mechanical,
-exit-code-enforced script (`scripts/dod.sh`), not a judgment call.
+exit-code-enforced script (`~/.opencode-harness/scripts/dod.sh`), not a judgment call.
 
 **This runs automatically** via the pre-commit hook on every `git commit`
 — no manual command needed, and it must exit 0 for the commit to succeed.

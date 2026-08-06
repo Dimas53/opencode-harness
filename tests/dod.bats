@@ -82,6 +82,26 @@ QUIET_SKIP="docs-lag,progress,docs-matrix,tests,self-check"
   [[ "$output" != *"No staged files match .agentignore restrictions"* ]]
 }
 
+# ── Step 6: tests — client profile must not fake a pass (T-H1 step 2) ─────
+# (deliberately does NOT include "tests" in DOD_SKIP — that's the step under test)
+
+@test "dod.sh step 6 warns TESTS NOT RUN in a client project with a declared test command" {
+  printf -- '- **Tests:** `npm run test`\n' > HARNESS.md
+  git add HARNESS.md
+  DOD_SKIP="docs-lag,progress,docs-matrix,self-check" PRE_COMMIT=1 run bash "$HARNESS_ROOT/scripts/dod.sh"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"TESTS NOT RUN"* ]]
+  [[ "$output" == *"npm run test"* ]]
+}
+
+@test "dod.sh step 6 warns with a setup hint in a client project with no declared test command" {
+  printf 'ok' > normal.txt
+  git add normal.txt
+  DOD_SKIP="docs-lag,progress,docs-matrix,self-check" PRE_COMMIT=1 run bash "$HARNESS_ROOT/scripts/dod.sh"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"No test command declared"* ]]
+}
+
 # ── Step 5: Docs matrix — skill-only fallback ──────────────────────────────
 
 @test "dod.sh docs-matrix fails on skill-only change without same-day CHANGELOG entry" {

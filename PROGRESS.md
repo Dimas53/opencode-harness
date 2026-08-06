@@ -97,6 +97,18 @@ versioned — see .gitignore). Summary of commits this session:
   interleaves harness text and interview-filled project content with no
   clear boundary today; needs its own design pass, not an autonomous
   guess. See 11-open-questions-and-blocked.md.
+- T-H4: new `scripts/check-propagation.sh` (`make check-propagation`, in
+  CI) — mechanical backstop scanning delivered files for unreachable
+  `make X` commands, unprefixed harness-repo-only paths, and dishonest
+  `check_pass` in `dod.sh`'s client-profile branches. Running it against
+  the real tree found and fixed 2 previously-unknown instances
+  (`global/skills/dod/SKILL.md:90` missing prefix; `templates/AGENTS.md:7`
+  naming Makefile targets that don't exist). **Correction to T-H1:** Rule
+  3 caught that step 6 (tests) was over-blocked on H-DEC-2 — the ticket's
+  own safe default (honest `⚠` naming the HARNESS.md test command, no
+  auto-run) doesn't need that decision. Implemented, 2 new bats cases
+  added; T-H7 case 3 now covered too. Only T-H1 step 1 (docs-matrix
+  severity, genuinely gated by H-DEC-1) remains blocked.
 
 ## Session 2026-08-05 (later — post-commit gap found live, fixed + propagated)
 
