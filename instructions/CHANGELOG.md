@@ -4,6 +4,15 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-06
 
+### T-C3 (complete) — honest session-guard text in start.sh
+
+Per C-DEC-startguard = "honest text, not a real gate": the three
+session-not-closed warnings in `scripts/start.sh` are reworded from `⚠`
+to `ℹ` and now say plainly that they're informational and don't block
+startup — dropped "Run: make session-end first", which implied a
+required order that never actually existed. Portable-date fix (Step 1)
+was already done in the prior session.
+
 ### T-C4 (complete) — skill-mirror deletion warning
 
 Per C-DEC-mirror = "warn, don't delete": `hooks/post-commit`,

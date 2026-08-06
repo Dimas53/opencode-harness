@@ -37,18 +37,19 @@ if [ -f "$SESSION_FILE" ]; then
   fi
 
   if [ "$SAVED_DATE" != "$TODAY" ] && [ "$SAVED_DATE" != "$YESTERDAY" ]; then
-    echo "⚠ Previous session not closed properly ($SAVED_DATE)."
-    echo "  Run: make session-end"
+    echo "ℹ Previous session ($SAVED_DATE) wasn't closed with 'make session-end'."
+    echo "  This is informational only — startup is not blocked. If you want a"
+    echo "  full session-end summary for that session, run: make session-end"
     echo ""
   elif [ "$SAVED_DATE" != "$TODAY" ]; then
-    echo "⚠ Previous session closed yesterday ($SAVED_DATE). Still recommended:"
-    echo "  Run: make session-end — check for warnings"
+    echo "ℹ Previous session closed yesterday ($SAVED_DATE). Nothing required —"
+    echo "  run 'make session-end' if you still want to review its warnings."
     echo ""
   fi
   rm -f "$SESSION_FILE"
 else
-  echo "⚠ Previous session was not closed properly (no .session-ended)."
-  echo "  Run: make session-end first"
+  echo "ℹ No '.session-ended' marker found — the previous session may not have"
+  echo "  run 'make session-end'. This is informational only, startup continues."
   echo ""
 fi
 
