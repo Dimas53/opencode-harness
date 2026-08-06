@@ -369,6 +369,19 @@ echo ""
 # ── Summary ──────────────────────────────────────────────────────────────────
 echo "Results: $PASS passed, $FAIL failed, $WARN warnings"
 
+# ── Audit trail (T-F4) — append one line per run, local-only, gitignored.
+#    session-end.sh reads today's entries into memory/YYYY-MM-DD.md so
+#    there's a record of what DoD actually did this session, not just the
+#    commits it let through. MODE distinguishes the automatic pre-commit
+#    hook run from a manual `make dod`/direct invocation.
+LOG_MODE="manual"
+[ "${PRE_COMMIT:-0}" = "1" ] && LOG_MODE="pre-commit"
+LOG_RESULT="pass"
+[ "$FAIL" -gt 0 ] && LOG_RESULT="fail"
+printf '%s|%s|pass=%s|fail=%s|warn=%s|skip=%s|%s\n' \
+  "$(date '+%Y-%m-%dT%H:%M:%S')" "$LOG_MODE" "$PASS" "$FAIL" "$WARN" "${DOD_SKIP:-none}" "$LOG_RESULT" \
+  >> .dod-run.log 2>/dev/null || true
+
 if [ $FAIL -gt 0 ]; then
   echo ""
   echo "✗ DoD failed — fix the issues above before committing."

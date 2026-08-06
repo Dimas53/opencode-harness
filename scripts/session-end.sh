@@ -109,6 +109,35 @@ else
   else
     check_pass "$MEMORY_FILE exists ($LINES lines)"
   fi
+
+  # ── Audit trail (T-F4) — auto-append today's DoD run log. Mechanizes
+  #    the format session-end/SKILL.md already documented (T-H5): proof of
+  #    what actually ran this session, not just what the diff shows.
+  #    Idempotent (skips if already present) so reruns don't duplicate it.
+  if [ -f ".dod-run.log" ] && ! grep -q "^## Session audit trail" "$MEMORY_FILE" 2>/dev/null; then
+    TODAY_RUNS=$(grep "^$TODAY" ".dod-run.log" 2>/dev/null || true)
+    if [ -n "$TODAY_RUNS" ]; then
+      {
+        echo ""
+        echo "## Session audit trail"
+        echo ""
+        echo "DoD runs today (timestamp|mode|pass|fail|warn|skip|result):"
+        echo '```'
+        echo "$TODAY_RUNS"
+        echo '```'
+      } >> "$MEMORY_FILE"
+      RUN_COUNT=$(echo "$TODAY_RUNS" | grep -c .)
+      echo "  ✓ Audit trail appended to $MEMORY_FILE ($RUN_COUNT DoD run(s) today)"
+    fi
+  fi
+
+  # ── Retro nudge (T-F4) — DoD step 7 (Skill feedback) generalized to the
+  #    whole session, per session-end/SKILL.md. Warn only, never blocks;
+  #    content itself needs the agent's own reflection, not something to
+  #    auto-generate.
+  if ! grep -q "^## Retro" "$MEMORY_FILE" 2>/dev/null; then
+    check_warn "$MEMORY_FILE has no ## Retro section — add one line each: what went wrong / workaround found / skill behaved unexpectedly (or 'none')"
+  fi
 fi
 
 echo ""

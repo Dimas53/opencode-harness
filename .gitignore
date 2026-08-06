@@ -50,3 +50,6 @@ postgres_data/
 
 # Session guard
 .session-ended
+
+# T-F4 audit trail — local DoD run log, not versioned
+.dod-run.log

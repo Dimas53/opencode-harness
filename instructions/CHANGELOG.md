@@ -4,6 +4,24 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-06
 
+### T-F4 (complete) — mechanized session audit trail + retro nudge
+
+`scripts/dod.sh` now appends one line per run to a local, gitignored
+`.dod-run.log` (timestamp, pre-commit vs manual, pass/fail/warn counts,
+DOD_SKIP, result). `scripts/session-end.sh` reads today's entries and
+appends them to `memory/YYYY-MM-DD.md` under `## Session audit trail`
+(idempotent — won't duplicate on rerun) — mechanizes the format
+`session-end/SKILL.md` already documented (T-H5) as a lightweight,
+non-mechanized convention. Also added a `check_warn` (non-blocking) when
+today's memory file has no `## Retro` section, per the same doc's retro
+prompt — content itself isn't auto-generated, that needs the agent's own
+reflection. New `tests/behavior/scenarios/retry-limit-escalation.md`
+(infrastructure/description only, same precedent as T4.3's
+red-team-pressure) for the "3 attempts -> stop" rule, feeding the future
+T-F2 eval gate. Verified end-to-end on a client fixture: two dod.sh runs
+(one with DOD_SKIP) logged correctly, session-end.sh pulled both into
+the memory file without duplicating on a second run.
+
 ### T-F3 (degraded per A2 finding, honest result) — skill-router
 
 A2 investigation (see 06-open-decisions.md F-DEC-3) found OpenCode's
