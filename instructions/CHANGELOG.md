@@ -4,6 +4,15 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-06
 
+### T-D1 — `install.bat` removed
+
+Confirmed the documented Windows install path is exclusively WSL2 +
+`install.sh` (`README.md:44-77`, `INSTALL.md:144-286`) — `install.bat` had
+zero references in `README.md`/`INSTALL.md`/`Makefile`, was seriously
+out of sync with `install.sh` (no `~/.opencode-harness` symlink, no
+`AGENTS.md` backup, no `opencode.jsonc` auto-merge), and reintroduced the
+removed `superpowers` plugin dependency. Removed per D-DEC-1.
+
 ### T-H6 (partial) — backfill delta list; `.agentignore` gap closed
 
 New `instructions/PROPAGATION-BACKFILL.md` — table of what a
