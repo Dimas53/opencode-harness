@@ -311,6 +311,24 @@ when written, not live reference docs.
 
 See notes/Harness/implementation-plan-2/08-waveG-doc-stack-and-update-mechanism.md.
 
+### T-G-U5 (already done via Wave C T-C4) and T-G-U6 (partial) — verification only, no code changes
+
+T-G-U5 (skill mirror `.bak` cleanup) was already fully covered by T-C4 in
+Wave C; nothing left to do beyond the C-DEC-mirror-blocked deletion
+propagation, same as T-C4's own remainder.
+
+T-G-U6 (two-level AGENTS.md): verified `update.sh` only ever writes
+`~/.config/opencode/AGENTS.md`, never a project's, and that
+`update-project` already excludes an existing project `AGENTS.md` from its
+copy loop (both true since T-G-U1/T-G-U3). The unbuilt part — marker-based
+propagation of harness-authored structural sections into an *existing*
+project `AGENTS.md` — was deliberately not attempted: `templates/AGENTS.md`
+interleaves harness-authored text with interview-filled project content
+(`{{STACK_SKILLS}}`, file map, stack rules) inside the same sections with
+no clear boundary today. Retrofitting HARNESS-MANAGED markers without an
+explicit design for that boundary risks locking it in wrong — see
+11-open-questions-and-blocked.md.
+
 ## 2026-08-05 (later)
 
 ### post-commit rollback guard was never installed in client projects — fixed

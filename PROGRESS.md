@@ -89,6 +89,14 @@ versioned — see .gitignore). Summary of commits this session:
   in `README.md`/`GUIDE.md`/`INSTALL.md`; added the "two commands, two
   scopes, this order" bridge explanation to `INSTALL.md` that previously
   existed nowhere.
+- T-G-U5: already fully covered by Wave C T-C4 — verified, no new code.
+- T-G-U6 (partial): verified `update.sh` never touches a project's
+  `AGENTS.md` and `update-project` never touches an existing one (both
+  true via T-G-U1/T-G-U3). Did NOT retrofit HARNESS-MANAGED markers into
+  `templates/AGENTS.md` for structural-section propagation — that template
+  interleaves harness text and interview-filled project content with no
+  clear boundary today; needs its own design pass, not an autonomous
+  guess. See 11-open-questions-and-blocked.md.
 
 ## Session 2026-08-05 (later — post-commit gap found live, fixed + propagated)
 
