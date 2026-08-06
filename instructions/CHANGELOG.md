@@ -168,6 +168,32 @@ and 11-open-questions-and-blocked.md.
 
 See notes/Harness/implementation-plan-2/01-waveA-doc-truth-resync.md.
 
+### Wave D — real behavioral BATS tests (T-D2); T-D1 skipped
+
+- **T-D2:** new `tests/dod.bats` (9 cases) replaces the "all tests exist and
+  pass bash -n" illusion with real behavior checks on scratch git repos:
+  cyrillic scan fail/pass, `.agentignore` fail/pass/warn-when-missing (the
+  last one exercises the T-H1 fix), docs-matrix skill-only fallback
+  fail/pass, pre-commit hook actually blocking a bad commit, and
+  `init-adopt.sh` idempotency (also exercises the T-C1 `.gitignore` fix).
+  Verified each catches a deliberately injected regression (broke the
+  cyrillic regex, confirmed the relevant tests fail, reverted).
+  While writing the idempotency test, found and fixed a real bug:
+  `init-adopt.sh`'s `cp -rn templates/docs/.` crashes under `set -e` on a
+  second/idempotent run on macOS — BSD `cp -n` exits 1 when it skips an
+  existing file, GNU `cp -n` exits 0. Added `|| true`.
+  Also added `tests/dod.bats` to `dod.sh`'s own cyrillic-scan exclusion
+  list — the test file legitimately embeds a Cyrillic literal to test the
+  scanner itself, same reasoning as the existing `scripts/dod.sh`/
+  `scripts/session-end.sh` exceptions.
+- **T-D1: skipped entirely** — the ticket itself forbids committing either
+  option (delete vs. resync `install.bat`) without the user's explicit
+  choice; blocked on D-DEC-1.
+- Also covers T-H7's one decision-independent case (missing `.agentignore`
+  → warn, not pass) — the other 3 depend on T-H1 steps 1-2, still blocked.
+
+See notes/Harness/implementation-plan-2/04-waveD-install-bat-and-tests.md.
+
 ## 2026-08-05 (later)
 
 ### post-commit rollback guard was never installed in client projects — fixed

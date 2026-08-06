@@ -48,8 +48,12 @@ safe_copy_file() {
 echo ""
 echo "  Copying harness templates to adopt project..."
 mkdir -p "$PROJECT/docs" "$PROJECT/memory"
-cp -rn "$HARNESS_PATH/templates/docs/." "$PROJECT/docs/"
-cp -rn "$HARNESS_PATH/templates/memory/." "$PROJECT/memory/"
+# BSD cp (macOS) exits 1 when -n skips an existing file; GNU cp exits 0.
+# -n's whole point is "skip, don't overwrite" — that's success, not a
+# failure to propagate under set -e. The `|| true` makes both cp
+# implementations behave the same: never fail a second/idempotent adopt run.
+cp -rn "$HARNESS_PATH/templates/docs/." "$PROJECT/docs/" || true
+cp -rn "$HARNESS_PATH/templates/memory/." "$PROJECT/memory/" || true
 safe_copy_file "$HARNESS_PATH/templates/AGENTS.md"    "$PROJECT/AGENTS.md"
 safe_copy_file "$HARNESS_PATH/templates/MEMORY.md"    "$PROJECT/MEMORY.md"
 safe_copy_file "$HARNESS_PATH/templates/PLAN.md"      "$PROJECT/PLAN.md"

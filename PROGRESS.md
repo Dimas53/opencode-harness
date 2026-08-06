@@ -54,6 +54,11 @@ versioned — see .gitignore). Summary of commits this session:
   of re-hardcoding), German overview `session-start` → `startup`. New
   `scripts/check-docs-refs.sh` (`make check-docs-refs`) is a mechanical
   backstop against this class of drift recurring.
+- Wave D: T-D2 done — new `tests/dod.bats` (9 real behavioral cases,
+  verified they catch injected regressions), found+fixed a real
+  `init-adopt.sh` bug along the way (BSD `cp -n` exit-1-on-skip crashes a
+  second adopt run under `set -e`). T-D1 skipped entirely — blocked on
+  D-DEC-1, the ticket itself forbids committing without the user's choice.
 
 ## Session 2026-08-05 (later — post-commit gap found live, fixed + propagated)
 

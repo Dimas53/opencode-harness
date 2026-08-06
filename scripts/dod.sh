@@ -86,6 +86,7 @@ if git rev-parse --is-inside-work-tree &>/dev/null; then
     [[ "$file" == notes/* ]] && continue
     [[ "$file" == scripts/dod.sh ]] && continue
     [[ "$file" == scripts/session-end.sh ]] && continue
+    [[ "$file" == tests/dod.bats ]] && continue
 
     # Skip binary extensions
     case "$file" in
