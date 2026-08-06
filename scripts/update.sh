@@ -11,16 +11,22 @@ echo "=== OpenCode Harness — Update ==="
 # Pull latest — abort on failure
 git pull origin main || { echo "✗ git pull failed — aborting"; exit 1; }
 
-# Update AGENTS.md with diff preview
+# Update AGENTS.md — surgical merge, never a blind overwrite (T-G-U1).
+# global/AGENTS.md is wrapped in HARNESS-MANAGED START/END markers. Only the
+# region between them is ever touched; anything a user added above START or
+# below END (their own rules, appended by hand or by an older install.sh)
+# survives every update untouched.
 GLOBAL_AGENTS="$HOME/.config/opencode/AGENTS.md"
 REPO_AGENTS="global/AGENTS.md"
+MARK_START="# === HARNESS-MANAGED START"
+MARK_END="# === HARNESS-MANAGED END ==="
 
 if [ ! -f "$GLOBAL_AGENTS" ]; then
   cp "$REPO_AGENTS" "$GLOBAL_AGENTS"
   echo "✓ AGENTS.md installed (fresh install)"
 elif diff -q "$GLOBAL_AGENTS" "$REPO_AGENTS" > /dev/null 2>&1; then
   echo "✓ AGENTS.md is up to date — no changes"
-else
+elif grep -qF "$MARK_START" "$GLOBAL_AGENTS" && grep -qF "$MARK_END" "$GLOBAL_AGENTS"; then
   echo ""
   echo -e "${BLUE}┌─────────────────────────────────────┐${NC}"
   echo -e "${BLUE}│        AGENTS.md has updates        │${NC}"
@@ -32,7 +38,8 @@ else
       echo -e "  ${GREEN}+${NC} $line"
     done | head -20
   echo ""
-  echo "  (showing first 20 changed lines)"
+  echo "  (showing first 20 changed lines — only the HARNESS-MANAGED region"
+  echo "   is replaced; anything you added outside it is untouched)"
   echo ""
 
   if [ -t 1 ] && [ -t 0 ]; then
@@ -45,8 +52,39 @@ else
   else
     echo "No TTY detected — auto-applying changes"
   fi
-  cp "$REPO_AGENTS" "$GLOBAL_AGENTS"
-  echo -e "${GREEN}✓ AGENTS.md updated successfully${NC}"
+
+  TMP_AGENTS=$(mktemp)
+  awk -v m="$MARK_START" 'index($0, m) { exit } { print }' "$GLOBAL_AGENTS" > "$TMP_AGENTS"
+  cat "$REPO_AGENTS" >> "$TMP_AGENTS"
+  awk -v m="$MARK_END" 'found { print } index($0, m) { found = 1 }' "$GLOBAL_AGENTS" >> "$TMP_AGENTS"
+  mv "$TMP_AGENTS" "$GLOBAL_AGENTS"
+  echo -e "${GREEN}✓ AGENTS.md updated successfully (HARNESS-MANAGED region only)${NC}"
+else
+  # No markers found: an old-style install (plain copy, or install.sh's old
+  # unmarked append). Surgical merge is impossible without knowing where the
+  # harness-managed content starts and ends — never silently overwrite, and
+  # never auto-apply on a no-TTY run, unlike the old behavior.
+  echo ""
+  echo -e "${YELLOW}⚠ $GLOBAL_AGENTS has no HARNESS-MANAGED markers.${NC}"
+  echo "  This is an old-style install — automatic surgical merge isn't safe."
+  cp "$GLOBAL_AGENTS" "$GLOBAL_AGENTS.bak"
+  echo "  Backed up to: $GLOBAL_AGENTS.bak"
+  echo ""
+  echo "  Diff (repo version vs. yours):"
+  diff "$GLOBAL_AGENTS" "$REPO_AGENTS" | head -30
+  echo ""
+  if [ -t 1 ] && [ -t 0 ]; then
+    printf "\033[1;33mReplace $GLOBAL_AGENTS entirely with the repo version? (y/n):\033[0m "
+    read -r answer
+    if [ "$answer" = "y" ]; then
+      cp "$REPO_AGENTS" "$GLOBAL_AGENTS"
+      echo -e "${GREEN}✓ AGENTS.md replaced (backup kept at $GLOBAL_AGENTS.bak)${NC}"
+    else
+      echo -e "${YELLOW}Skipped — AGENTS.md unchanged. Merge manually, or delete it and rerun to get a fresh marked install.${NC}"
+    fi
+  else
+    echo -e "${YELLOW}No TTY detected — skipping (never auto-apply without markers). Run interactively to resolve.${NC}"
+  fi
 fi
 
 # Update skills — copy all from repo, overwriting existing

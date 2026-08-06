@@ -244,6 +244,34 @@ manually-built incomplete project (missing top-level files, nested
 `docs/audits/README.md`, no hooks) is detected, applying `y` copies
 everything and installs both hooks, rerun reports "up to date" again.
 
+### T-G-U1 — `update-harness` no longer overwrites a customized global AGENTS.md
+
+`scripts/update.sh` did `cp "$REPO_AGENTS" "$GLOBAL_AGENTS"` — a full
+overwrite of `~/.config/opencode/AGENTS.md` — auto-applied with no
+confirmation whenever there was no TTY. Anything a colleague appended by
+hand was silently gone. Meanwhile `install.sh`'s "existing file" path did
+the opposite: append-only with a plain comment marker, never touched again.
+Two different mental models of the same file, from the two scripts that
+both write to it.
+
+`global/AGENTS.md` now opens and closes with
+`# === HARNESS-MANAGED START ===` / `# === HARNESS-MANAGED END ===`
+markers wrapping its entire current content. `update.sh` now does a
+surgical replace: only the region between the markers is swapped for the
+new repo version; anything the user added above START or below END
+survives untouched. If an existing `~/.config/opencode/AGENTS.md` has no
+markers (an old-style install), `update.sh` no longer overwrites blindly
+either — it backs up to `.bak`, shows a diff, and requires an explicit `y`;
+a no-TTY run now skips instead of silently auto-applying.
+`install.sh`'s append path needed no code change — it already just
+`cat`s the whole `global/AGENTS.md`, which now carries its own markers,
+so anything it appends is immediately recognized by a later `update.sh`.
+
+Verified the merge logic on a fixture with custom content both before and
+after the harness block: both survive, the managed region updates cleanly.
+
+See notes/Harness/implementation-plan-2/08-waveG-doc-stack-and-update-mechanism.md.
+
 ## 2026-08-05 (later)
 
 ### post-commit rollback guard was never installed in client projects — fixed

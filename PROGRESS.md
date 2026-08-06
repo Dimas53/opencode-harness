@@ -72,6 +72,12 @@ versioned — see .gitignore). Summary of commits this session:
   git hooks. Never overwrites existing files. Tested on scratch projects
   (fresh adopt = up to date; incomplete manual project = detects and fixes
   everything, then idempotent on rerun).
+- T-G-U1: `global/AGENTS.md` wrapped in `HARNESS-MANAGED START/END`
+  markers; `update.sh` now surgically replaces only that region instead of
+  overwriting `~/.config/opencode/AGENTS.md` wholesale (was auto-applying
+  on no-TTY with zero confirmation). No markers found (old install) → backs
+  up + shows diff + requires explicit `y`, never auto-applies. Verified on
+  a fixture with custom content before/after the block — both survive.
 
 ## Session 2026-08-05 (later — post-commit gap found live, fixed + propagated)
 

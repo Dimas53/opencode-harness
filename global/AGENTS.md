@@ -1,3 +1,5 @@
+# === HARNESS-MANAGED START — do not edit between these markers, `update-harness` overwrites this region on every run. Add your own rules above START or below END; they survive updates. ===
+
 # Global Rules
 
 ---
@@ -480,3 +482,5 @@ Always load SKILL.md via filesystem path: `Read ~/.config/opencode/skills/<domai
 | TS Deep Modules | barrel files, dependency-cruiser, deep modules, entry points, package boundaries | setup-ts-deep-modules/SKILL.md, codebase-design/SKILL.md |
 
 → Full reference for when to use which skill: `read ~/.opencode-harness/instructions/reference/03-skills-cheatsheet.md` (harness-wide reference); in a project, `docs/skills-cheatsheet.md` is the project-local list
+
+# === HARNESS-MANAGED END ===
