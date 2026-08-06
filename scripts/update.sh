@@ -91,6 +91,21 @@ fi
 rsync -a --exclude='*.bak' global/skills/ "$HOME/.config/opencode/skills/"
 echo "✓ Skills updated from repo"
 
+# Propagate opencode.jsonc (MCP servers + permission block) — T-G-U2.
+# install.sh does this on a fresh/existing install; update-harness never
+# did, so new MCP servers (or Wave E's permission config, once it lands)
+# only reached the machine via a fresh `make setup`, never via update.
+GLOBAL_OPENCODE_CFG="$HOME/.config/opencode/opencode.jsonc"
+if [ -f "$GLOBAL_OPENCODE_CFG" ]; then
+  TEMPLATE_TMP=$(mktemp)
+  sed "s|/YOUR/HOME/PATH|$HOME|g" global/opencode-config.example.jsonc > "$TEMPLATE_TMP"
+  echo "→ Merging MCP servers + permission config into opencode.jsonc..."
+  bash "$(dirname "$0")/merge-opencode-config.sh" "$TEMPLATE_TMP" "$GLOBAL_OPENCODE_CFG"
+  rm -f "$TEMPLATE_TMP"
+else
+  echo "⚠ $GLOBAL_OPENCODE_CFG not found — run 'make setup' first for a fresh install"
+fi
+
 # Install post-commit hook (for auto-mirror on future commits)
 cp hooks/post-commit .git/hooks/post-commit
 chmod +x .git/hooks/post-commit

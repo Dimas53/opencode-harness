@@ -272,6 +272,30 @@ after the harness block: both survive, the managed region updates cleanly.
 
 See notes/Harness/implementation-plan-2/08-waveG-doc-stack-and-update-mechanism.md.
 
+### T-G-U2 — `update-harness` now propagates `opencode.jsonc` (MCP + permission)
+
+`update.sh` updated `AGENTS.md`, skills, and the `post-commit` hook, but
+never touched `opencode.jsonc` — the MCP-server/`permission` merge logic
+only existed in `install.sh`. A new MCP server added to the harness (or,
+once Wave E lands, the `permission` deny-by-default block) would never
+reach a machine that only ever runs `update-harness`.
+
+Extracted the merge logic out of `install.sh` into a new shared
+`scripts/merge-opencode-config.sh TEMPLATE TARGET`, called by both
+`install.sh` and (new) `update.sh`. Additive only — never overwrites an
+existing key. Also now merges `permission` sub-keys the same way `mcp`
+entries were already merged, ready for Wave E.
+
+While extracting it, found a real pre-existing bug: the JSONC comment
+stripper (`raw.replace(/\/\/.*$/gm, "")`) also strips everything after
+the first `//` inside a string value — `"$schema": "https://opencode.ai/config.json"`
+corrupted to `"$schema": "https:` and crashed `JSON.parse`. Any machine
+whose `opencode.jsonc` template contains that `$schema` line (all of them)
+would have crashed on `install.sh`'s merge branch. Fixed: a `//` is only
+treated as a comment when not immediately preceded by `:`.
+
+See notes/Harness/implementation-plan-2/08-waveG-doc-stack-and-update-mechanism.md.
+
 ## 2026-08-05 (later)
 
 ### post-commit rollback guard was never installed in client projects — fixed

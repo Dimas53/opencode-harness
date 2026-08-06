@@ -99,41 +99,10 @@ if [ ! -f ~/.config/opencode/opencode.jsonc ]; then
     echo "  → Created ~/.config/opencode/opencode.jsonc"
 else
     echo ""
-    echo "  → Merging MCP servers into ~/.config/opencode/opencode.jsonc..."
+    echo "  → Merging MCP servers + permission config into ~/.config/opencode/opencode.jsonc..."
     TEMPLATE_TMP=$(mktemp)
     sed "s|/YOUR/HOME/PATH|$HOME|g" global/opencode-config.example.jsonc > "$TEMPLATE_TMP"
-    node -e '
-      const fs = require("fs");
-      const tplPath = process.argv[1];
-      const cfgPath = process.argv[2];
-
-      function parseJSONC(filePath) {
-        const raw = fs.readFileSync(filePath, "utf8");
-        const clean = raw.replace(/\/\/.*$/gm, "").replace(/,\s*([}\]])/g, "$1");
-        return JSON.parse(clean);
-      }
-
-      const existing = parseJSONC(cfgPath);
-      const template = parseJSONC(tplPath);
-
-      existing.mcp = existing.mcp || {};
-      const tplMcp = template.mcp || {};
-      const added = [];
-
-      for (const [key, value] of Object.entries(tplMcp)) {
-        if (!existing.mcp[key]) {
-          existing.mcp[key] = value;
-          added.push(key);
-        }
-      }
-
-      if (added.length > 0) {
-        fs.writeFileSync(cfgPath, JSON.stringify(existing, null, 2) + "\n");
-        console.log("  ✓ Added MCP servers: " + added.join(", "));
-      } else {
-        console.log("  ✓ All harness MCP servers already present");
-      }
-    ' "$TEMPLATE_TMP" ~/.config/opencode/opencode.jsonc
+    bash "$(dirname "$0")/merge-opencode-config.sh" "$TEMPLATE_TMP" ~/.config/opencode/opencode.jsonc
     rm -f "$TEMPLATE_TMP"
 fi
 rsync -a --exclude='*.bak' global/skills/ ~/.config/opencode/skills/

@@ -78,6 +78,13 @@ versioned — see .gitignore). Summary of commits this session:
   on no-TTY with zero confirmation). No markers found (old install) → backs
   up + shows diff + requires explicit `y`, never auto-applies. Verified on
   a fixture with custom content before/after the block — both survive.
+- T-G-U2: `update.sh` now also merges `opencode.jsonc` (new MCP servers +
+  future `permission` block), via a new shared
+  `scripts/merge-opencode-config.sh` also used by `install.sh` (dedup, was
+  two copies of the same node script). Found+fixed a real pre-existing bug
+  while at it: the JSONC comment-stripper corrupted any config containing
+  `"$schema": "https://..."` (which all of them do) by treating the `//`
+  inside the URL as a comment start.
 
 ## Session 2026-08-05 (later — post-commit gap found live, fixed + propagated)
 
