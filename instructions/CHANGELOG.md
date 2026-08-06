@@ -4,6 +4,32 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-06
 
+### T-E1/T-E2 (complete) — capability deny-by-default, Wave E
+
+Per E-DEC-1 (hybrid): added a `permission.bash` block to
+`global/opencode-config.example.jsonc` — `git commit --no-verify*` is
+`deny` (bypasses every DoD check, so it's blocked outright, not just
+discouraged), `push --force`/`push`/`reset --hard`/`rm -rf` are `ask`,
+everything else stays `allow`. Documented in a new INSTALL.md section.
+This turns the text-only Hard Limits in AGENTS.md into a config-level
+guarantee OpenCode enforces itself.
+
+Per E-DEC-2, checked (not assumed) whether this propagates to
+per-project configs: `scripts/gen-opencode.sh` merges the global config
+into each project's generated `opencode.jsonc`, but was calling Python's
+strict `json.load()` on it — which would have thrown on the very first
+`//` comment, i.e. the permission block just added. Real, previously-latent
+bug, only surfaced by actually testing the propagation path instead of
+trusting the doc comment that said "it already reads the whole file."
+Fixed with the same JSONC-safe comment stripper `merge-opencode-config.sh`
+already uses (T-G-U2) — verified end-to-end in a scratch project that
+`permission` now lands correctly next to the generated `directus` MCP
+entry.
+
+Actual `deny` enforcement can only be exercised inside a live OpenCode
+session (this environment is Claude Code) — that verification step is
+left to the user, per the ticket's own scope.
+
 ### New finding (resolved) — brainstorming/server.cjs telemetry + remote brand fetch removed
 
 `global/skills/brainstorming/scripts/server.cjs` (vendored companion

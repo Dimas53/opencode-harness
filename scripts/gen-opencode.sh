@@ -55,13 +55,21 @@ if git -C "$PROJECT_DIR" rev-parse --is-inside-work-tree &>/dev/null; then
 fi
 
 python3 - "$GLOBAL_CONFIG" "$OUT_FILE" "$url" "$MCP_DIRECTUS_TOKEN" <<'PY'
-import json, sys, os
+import json, re, sys, os
 
 global_path, out_path, url, token = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
 config = {}
 if os.path.exists(global_path):
     with open(global_path) as f:
-        config = json.load(f)
+        raw = f.read()
+    # The global config is JSONC (permission block added by Wave E ships
+    # inline `//` comments) but this is a strict json.load() — strip
+    # comments first. A `//` immediately preceded by `:` is left alone
+    # (part of a URL like "https://...", not a comment start — same fix
+    # as scripts/merge-opencode-config.sh, T-G-U2).
+    clean = re.sub(r'(^|[^:])//.*$', r'\1', raw, flags=re.MULTILINE)
+    clean = re.sub(r',\s*([}\]])', r'\1', clean)
+    config = json.loads(clean)
 
 mcp = config.setdefault("mcp", {})
 mcp["directus"] = {

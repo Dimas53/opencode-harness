@@ -56,6 +56,26 @@ Then complete manual steps:
    If you don't use Directus — delete the `YOUR_DIRECTUS_TOKEN` line entirely.
 3. Run `opencode` — select your model on first launch
 
+### Capability deny-by-default (`permission` block)
+
+`~/.config/opencode/opencode.jsonc` also ships a `permission.bash` block
+that turns some of the harness's Hard Limits from a text rule into a
+config-level guarantee OpenCode enforces itself, not something the agent
+can talk itself out of:
+
+- `git commit --no-verify*` → **deny** — this bypasses every DoD check at
+  once, so it's blocked outright, not just discouraged.
+- `git push --force*`, `git push`, `git reset --hard*`, `rm -rf*` →
+  **ask** — OpenCode pauses for your confirmation before running these,
+  the same "STOP and ask" the Safety Gates already describe in prose, now
+  enforced by the CLI.
+- Everything else stays `"*": "allow"` — this only touches the specific
+  patterns above, not bash in general.
+
+If a pattern false-positives on a legitimate command, edit the
+`permission.bash` block in your `opencode.jsonc` directly (e.g. widen an
+`ask` back to `allow` for a command you trust, or narrow a pattern).
+
 **Windows:** see [Installing on Windows](#installing-on-windows) below
 
 ---

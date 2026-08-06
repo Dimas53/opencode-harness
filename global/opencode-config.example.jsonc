@@ -35,5 +35,18 @@
   },
   "plugin": [
     "@slkiser/opencode-quota"
-  ]
+  ],
+  // Capability deny-by-default — turns the text Hard Limits in AGENTS.md into
+  // config-level guarantees. See notes/Harness/implementation-plan-2/
+  // capability-deny-by-default-spike.md and 05-waveE-capability-deny.md.
+  "permission": {
+    "bash": {
+      "*": "allow",                       // default: don't disrupt normal work
+      "git commit --no-verify*": "deny",  // bypasses ALL DoD checks — never allowed
+      "git push --force*": "ask",         // implicit prod deploy — confirm
+      "git push": "ask",
+      "git reset --hard*": "ask",
+      "rm -rf*": "ask"                     // destructive — confirm (not full deny: legit uses exist)
+    }
+  }
 }
