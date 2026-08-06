@@ -60,13 +60,11 @@ When initializing a new project:
 | Skill | When to tell the agent |
 |---|---|
 | `code-reviewer` | Check your work against checklist before "done" (TS, Vue, Directus, design) |
-| `requesting-code-review` | Request code review before merge |
 | `verification-before-completion` | Verify everything works before saying "done" |
 | `tdd` | Write failing test first, then fix |
 | `test-driven-development` | Addy Osmani variant of TDD |
 | `code-review-and-quality` | Review this code across all quality axes |
-| `systematic-debugging` | Fix bugs with 8-step cycle: reproduce → minimize → hypothesize → fix |
-| `debugging-and-error-recovery` | Debug systematically: reproduce → minimise → fix |
+| `debugging-and-error-recovery` | Debug systematically: reproduce → minimise → fix (supersedes `systematic-debugging`, M3) |
 | `doubt-driven-development` | Adversarial review before critical changes (prod, security, irreversible) |
 | `browser-testing-with-devtools` | Debug/test in browser — console, network, DOM, screenshots via Chrome DevTools |
 

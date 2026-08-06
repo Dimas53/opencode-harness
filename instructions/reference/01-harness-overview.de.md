@@ -117,7 +117,6 @@ Insgesamt installiert: **52 Fähigkeiten** in `~/.config/opencode/skills/`. Alle
 | `write-a-skill/` | Skill-Erstellung | SKILL.md-Struktur mit gebündelten Ressourcen |
 | `writing-skills/` | Skill-Erstellung | Erstellen, Bearbeiten, Verifizieren |
 | `receiving-code-review/` | Review erhalten | Technische Verifikation von Feedback |
-| `requesting-code-review/` | Review anfordern | Prüfung vor Merge |
 | `using-agent-skills/` | Meta-Skill | (bereits zu Sessionsbeginn geladen) |
 | `using-git-worktrees/` | Isolation | Arbeit via git worktree |
 | `subagent-driven-development/` | Unteraufgaben | Ausführung durch Kind-Agenten |

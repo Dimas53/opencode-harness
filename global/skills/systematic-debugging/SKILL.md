@@ -3,6 +3,13 @@ name: systematic-debugging
 description: Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes
 ---
 
+> ⚠️ **SUPERSEDED** — use `debugging-and-error-recovery` instead (M3,
+> `notes/Harness/implementation-plan-2/06-open-decisions.md`). Its
+> 3-attempt rule and the companion technique files in this directory
+> (`root-cause-tracing.md`, `defense-in-depth.md`,
+> `condition-based-waiting.md`) are still current and referenced from
+> there — only this SKILL.md's own process/body is superseded.
+
 # Systematic Debugging
 
 ## Overview

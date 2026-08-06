@@ -169,6 +169,37 @@ npm run build
 npm run dev  # Verify in browser
 ```
 
+## When a Fix Doesn't Work — the 3-Attempt Rule
+
+Merged in from `systematic-debugging` (M3, implementation-plan-2 06-open-decisions.md).
+
+```
+Fix attempt failed?
+├── < 3 attempts so far → Return to Step 1 (Reproduce), re-diagnose with
+│   what you just learned. Do NOT layer another guess on top.
+└── 3+ attempts failed → STOP. This is very likely not a failed
+    hypothesis, it's a wrong architecture. Question the pattern itself
+    instead of trying Fix #4. Discuss with the user before attempting
+    more fixes.
+```
+
+Signs the pattern applies: each attempt reveals a new problem in a
+different place, or "fixing" this keeps requiring bigger and bigger
+changes. That's the architecture fighting you, not bad luck.
+
+## Supporting Techniques
+
+Deeper, situational techniques (kept as standalone files, not duplicated
+here — read the one that matches your situation):
+
+- **`~/.config/opencode/skills/systematic-debugging/root-cause-tracing.md`**
+  — trace a bug backward through the call stack to its original trigger,
+  for errors deep in a stack.
+- **`~/.config/opencode/skills/systematic-debugging/defense-in-depth.md`**
+  — add validation at multiple layers once you've found the root cause.
+- **`~/.config/opencode/skills/systematic-debugging/condition-based-waiting.md`**
+  — replace arbitrary timeouts with condition polling for timing bugs.
+
 ## Error-Specific Patterns
 
 ### Test Failure Triage

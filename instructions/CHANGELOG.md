@@ -4,6 +4,27 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-06
 
+### T-F7 (complete) — M2/M3 skill dedup resolved
+
+Per M2: removed `global/skills/requesting-code-review/` entirely — no
+`agent-*.md` protocol required it as a sub-skill, only 4 reference docs
+mentioned it (rows removed from `03-skills-cheatsheet.md`,
+`templates/docs/skills-cheatsheet.md`, `01-harness-overview.de.md`;
+`05-skills-inventory.md` left alone, already marked non-current by Wave A
+and not scanned by `check-docs-refs.sh`).
+
+Per M3: `tdd/` doesn't exist in the tree (never did, per git history) —
+nothing to merge there, T2.7's original finding assumed it without
+checking. For `systematic-debugging` vs `debugging-and-error-recovery`:
+ported the "3+ fix attempts -> stop, question the architecture" rule into
+`debugging-and-error-recovery/SKILL.md` (it had no equivalent), added a
+Supporting Techniques section pointing to `systematic-debugging`'s 3
+companion technique files (root-cause-tracing, defense-in-depth,
+condition-based-waiting — kept, not duplicated, now reachable from the
+living skill), and marked `systematic-debugging/SKILL.md` SUPERSEDED.
+Both live cheatsheets updated to drop the systematic-debugging row and
+note the supersession on debugging-and-error-recovery's row.
+
 ### T-F4 (complete) — mechanized session audit trail + retro nudge
 
 `scripts/dod.sh` now appends one line per run to a local, gitignored
