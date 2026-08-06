@@ -441,6 +441,19 @@ If the DoD docs-matrix step reports code changed without a docs update — updat
 
 ## Skills — Auto-Loading (trigger → skill map)
 
+**MANDATORY, every incoming user message, before doing anything else:**
+scan the message text against every row's Triggers column below. Any
+match — even one word, even if the message is "just a quick fix" — means
+`Read` that skill's SKILL.md path before responding or touching code.
+This is a deterministic lookup, not something to rely on remembering:
+there is no automatic mechanism that loads a skill for you (checked —
+OpenCode's plugin API has no hook that sees the message text before the
+system prompt for that turn is built), so skipping this scan is the
+single most common way a cheap model silently drops a required skill.
+Multiple matches → load all of them. When unsure whether a word counts as
+a match, treat it as one — loading an extra skill costs a `Read`, missing
+one costs a real defect.
+
 Always load SKILL.md via filesystem path: `Read ~/.config/opencode/skills/<domain>/SKILL.md`
 
 | Domain | Triggers | Path |

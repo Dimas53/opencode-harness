@@ -54,6 +54,21 @@ assert_file_exists() {
   return 1
 }
 
+assert_skill_loaded() {
+  # Usage: assert_skill_loaded <transcript> <skill-domain-e.g.-security>
+  # Works against both a plain-text transcript (grep for the Read path)
+  # and an `opencode run --format json` event stream (tool_use events
+  # with tool:"read" carry the path in their JSON, which still matches
+  # a plain string grep — no JSON parsing needed for this check).
+  local transcript="$1" domain="$2"
+  if grep -qF "skills/$domain/SKILL.md" "$transcript"; then
+    echo "PASS: $domain/SKILL.md was loaded"
+    return 0
+  fi
+  echo "FAIL: no evidence $domain/SKILL.md was loaded"
+  return 1
+}
+
 assert_backup_preserves() {
   # Usage: assert_backup_preserves <backup-file> <expected-substring>
   local backup="$1" needle="$2"

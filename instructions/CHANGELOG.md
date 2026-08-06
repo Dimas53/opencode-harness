@@ -4,6 +4,33 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-06
 
+### T-F3 (degraded per A2 finding, honest result) — skill-router
+
+A2 investigation (see 06-open-decisions.md F-DEC-3) found OpenCode's
+plugin API has no hook that sees a user message's text before that
+turn's system prompt is built — `experimental.chat.system.transform`
+only receives `{sessionID, model}`; `chat.message` sees the text but a
+turn too late. A same-turn deterministic code router isn't buildable
+with the current API. Degraded to the ticket's own fallback: the "Skills
+— Auto-Loading" section in `global/AGENTS.md` is now phrased as a
+mandatory per-message scan, not a passive reference table.
+
+New eval scenario `skill-router-auth` (client-profile fixture + new
+`tests/behavior/run-scenario-headless.sh`, using the headless mode
+confirmed working in A2) tests whether this actually works in practice.
+Honest result: FAILED in both real runs — a bug-report prompt containing
+"token" and "API route" (Security/Auth trigger words) did not cause
+`security/SKILL.md` to load either time; one run skipped the skill-open
+ritual entirely. Left as a genuine failing baseline, not adjusted to
+pass — this is exactly the soft gap the ticket predicted degrading to
+text-only would leave, now measured instead of assumed. Feeds the future
+T-F2 eval-gate (deferred) as a real regression case.
+
+Also updated `tests/behavior/README.md`: headless automation is
+confirmed working (`opencode run --auto --format json`), replacing the
+old "not confirmed" caveat — new `run-scenario-headless.sh` runs a
+scenario fully unattended.
+
 ### T-F1 (scoped, complete) — dod.yaml as canonical DoD step list
 
 Per F-DEC-1 (markdown-only, dod.sh untouched): new `global/rules/dod.yaml`
