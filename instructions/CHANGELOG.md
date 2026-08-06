@@ -4,6 +4,23 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-06
 
+### T-F1 (scoped, complete) — dod.yaml as canonical DoD step list
+
+Per F-DEC-1 (markdown-only, dod.sh untouched): new `global/rules/dod.yaml`
+declares the 9 DoD steps (id, order, first_word, type) as the actual
+canon. New `scripts/gen-rules.sh --check` verifies both `global/AGENTS.md`
+and `global/skills/dod/SKILL.md` against dod.yaml, not against each other
+— stronger than the previous check-dod-sync.sh, which only cross-compared
+the two files and could pass even if both silently drifted the same way
+(e.g. a step quietly dropped from both). Full step-content generation
+(the elaborated dod/SKILL.md checklists vs. AGENTS.md's terse list) was
+deliberately NOT done — those are genuinely different content by design,
+not a duplicate worth regenerating from one source. `check-dod-sync.sh`
+is now a thin wrapper around `gen-rules.sh --check` so the Makefile
+target and `.github/workflows/dod.yml` didn't need to change. Verified:
+corrupted a step title in AGENTS.md, confirmed `--check` fails with an
+exact diagnosis, reverted, confirmed pass again.
+
 ### T-G-U6 (complete) — HARNESS-MANAGED markers in templates/AGENTS.md + refresh flag
 
 `templates/AGENTS.md` mixes harness-authored rule text with per-project
