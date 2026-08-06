@@ -18,7 +18,7 @@ echo "=== Session End ==="
 echo ""
 
 # ── Step 1: Docs lag ─────────────────────────────────────────────────────────
-echo "[ 1/3 ] Docs lag check"
+echo "[ 1/4 ] Docs lag check"
 
 if ! git rev-parse --is-inside-work-tree &>/dev/null; then
   check_warn "Not inside a git repo — skipping"
@@ -55,7 +55,7 @@ fi
 echo ""
 
 # ── Step 2: PROGRESS.md ──────────────────────────────────────────────────────
-echo "[ 2/3 ] PROGRESS.md check"
+echo "[ 2/4 ] PROGRESS.md check"
 
 if [ ! -f "PROGRESS.md" ]; then
   check_warn "PROGRESS.md not found — create it to track session continuity"
@@ -79,7 +79,7 @@ fi
 echo ""
 
 # ── Step 3: Memory log ───────────────────────────────────────────────────────
-echo "[ 3/3 ] Memory log check"
+echo "[ 3/4 ] Memory log check"
 
 MEMORY_FILE="memory/$TODAY.md"
 
@@ -109,6 +109,64 @@ else
   else
     check_pass "$MEMORY_FILE exists ($LINES lines)"
   fi
+fi
+
+echo ""
+
+# ── Step 4: Docs completeness (T-G2) ─────────────────────────────────────────
+# Only fires once a project has some history — flagging an empty HARNESS.md
+# on session 1 would just be noise (G-DEC-2: warn after ~4 sessions, never
+# fail). Session count = number of "### YYYY-MM-DD" entries under PROGRESS.md
+# Session Log — the templates/PROGRESS.md convention.
+echo "[ 4/4 ] Docs completeness check"
+
+SESSION_COUNT=0
+if [ -f "PROGRESS.md" ]; then
+  # grep -c prints "0" AND exits 1 on no match — `|| echo 0` would append a
+  # second "0" on a new line instead of replacing it. Reset on failure instead.
+  SESSION_COUNT=$(grep -cE "^### [0-9]{4}-[0-9]{2}-[0-9]{2}" PROGRESS.md 2>/dev/null) || SESSION_COUNT=0
+fi
+
+if [ "$SESSION_COUNT" -lt 4 ]; then
+  check_pass "Docs-completeness check skipped — only $SESSION_COUNT session(s) logged (fires at 4+)"
+else
+  PLACEHOLDERS_FOUND=0
+
+  if [ -f "HARNESS.md" ]; then
+    grep -qF -- "- [ ] ..." HARNESS.md 2>/dev/null && {
+      check_warn "HARNESS.md Product Contract not filled in ($SESSION_COUNT sessions in)"
+      PLACEHOLDERS_FOUND=1
+    }
+    grep -qxF -- "- ..." HARNESS.md 2>/dev/null && {
+      check_warn "HARNESS.md Decisions to Inherit not filled in ($SESSION_COUNT sessions in)"
+      PLACEHOLDERS_FOUND=1
+    }
+  fi
+
+  if [ -f "AGENTS.md" ] && grep -qE '\{\{[A-Z_]+\}\}' AGENTS.md 2>/dev/null; then
+    check_warn "AGENTS.md still has unfilled {{...}} placeholders ($SESSION_COUNT sessions in) — agent is missing stack/file-map context"
+    PLACEHOLDERS_FOUND=1
+  fi
+
+  # design.md only applies to UI projects (same heuristic as T-G3's adopt-time skip).
+  if [ -f "package.json" ] || find . -maxdepth 2 -name package.json -not -path '*/node_modules/*' 2>/dev/null | grep -q .; then
+    if [ -f "docs/design.md" ] && grep -qF "TBD" docs/design.md 2>/dev/null; then
+      check_warn "docs/design.md still has TBD placeholders ($SESSION_COUNT sessions in)"
+      PLACEHOLDERS_FOUND=1
+    fi
+  fi
+
+  if [ -f "docs/CONTEXT.md" ] && grep -qF "[Term]" docs/CONTEXT.md 2>/dev/null; then
+    check_warn "docs/CONTEXT.md still has the example placeholder row ($SESSION_COUNT sessions in)"
+    PLACEHOLDERS_FOUND=1
+  fi
+
+  if [ -f "docs/roadmap.md" ] && grep -qF "[Phase name]" docs/roadmap.md 2>/dev/null; then
+    check_warn "docs/roadmap.md still has [Phase name] placeholders ($SESSION_COUNT sessions in)"
+    PLACEHOLDERS_FOUND=1
+  fi
+
+  [ "$PLACEHOLDERS_FOUND" -eq 0 ] && check_pass "No stale placeholders found in key docs ($SESSION_COUNT sessions in)"
 fi
 
 echo ""

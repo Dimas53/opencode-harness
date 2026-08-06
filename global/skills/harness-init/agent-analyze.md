@@ -58,11 +58,27 @@ If TARGET is set:
 - Sections not applicable to a single file (Architecture, Risks) → replace with one line:
   "Full project analysis required for this section — run `analyze` without arguments."
 
+### Stack detection (minimal, safe defaults for non-Nuxt projects)
+Before Step 0, detect the stack so the mechanical steps below don't assume
+Nuxt on every project:
+- `package.json` present at root or in `frontend/` → Nuxt/Vue-tuned path
+  (the steps below as originally written).
+- Otherwise (`composer.json`, `requirements.txt`/`pyproject.toml`, or
+  neither) → generic path: skip Nuxt-specific commands/counts (see 0 and
+  Health/System Map below), and add this line right after the report
+  title: "⚠️ analyze quality is currently tuned for Nuxt/Vue; running a
+  generic pass for this stack." This is a minimal-safe first version, not
+  full per-stack analysis (that's a v0.5 stack-pack).
+
 0. Check changes since last analysis report:
    ```bash
    last_date=$(ls docs/audits/*-analysis.md 2>/dev/null | tail -1 | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}')
    if [ -n "$last_date" ]; then
-     git log --oneline --after="$last_date" -- frontend/
+     if [ -d frontend ]; then
+       git log --oneline --after="$last_date" -- frontend/
+     else
+       git log --oneline --after="$last_date"
+     fi
    fi
    ```
    Include output in Health section as "Changed since last analysis: N commits".
@@ -163,7 +179,10 @@ Browser (PWA)
 ## Health           ← source: codebase-health-check
 
 ### System Map
-[one line: N pages, N components, N composables, N server routes. Total: ~N lines]
+[Nuxt/Vue stack: one line — N pages, N components, N composables, N server
+routes. Total: ~N lines.
+Generic (non-Nuxt) stack: one line — N source files, N modules/classes.
+Total: ~N lines.]
 
 ### File Size Problems (files > 400 lines)
 | File | Lines | Problem |
@@ -184,7 +203,16 @@ how a senior would split it, specific composable/component names]
 ### Priorities
 [numbered list of HIGH/MEDIUM/LOW]
 
-### npm Audit [run: cd frontend && npm audit 2>/dev/null || true]
+### Dependency Audit
+[Run whichever applies and is installed, skip silently if the tool isn't
+available — don't fail the whole analysis over a missing audit tool:
+- Node/Nuxt (`frontend/package.json` or root `package.json`): `cd frontend
+  && npm audit 2>/dev/null || npm audit 2>/dev/null || true`
+- PHP/Symfony (`composer.json`): `composer audit 2>/dev/null || true`
+- Python (`requirements.txt`/`pyproject.toml`): `pip-audit 2>/dev/null ||
+  true`
+- None of the above found: write "No recognized dependency manifest —
+  audit skipped" instead of the table below.]
 | Severity | Count | Notable |
 |----------|-------|---------|
 [one line: which are exploitable in production]

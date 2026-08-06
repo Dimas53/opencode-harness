@@ -222,8 +222,8 @@ an excuse — scan the entire conversation.
    | What changed | Must update |
    |-------------|-------------|
    | new page/feature | `docs/architecture/feature-name.md` + `PROGRESS.md` |
-   | new collection/field | `docs/schema.md` or schema section + `PROGRESS.md` |
-   | new Flow/operation | `docs/flows.md` or flows section + `PROGRESS.md` |
+   | new DB collection/field (DB-backed projects only) | `docs/schema.md` or a schema section in an existing doc + `PROGRESS.md` — N/A if the project has no database |
+   | new Directus Flow/operation (Directus projects only) | `docs/flows.md` or a flows section in an existing doc + `PROGRESS.md` — N/A if the project isn't Directus |
    | new composable/utility | JSDoc on the function + `PROGRESS.md` |
    | config/deploy change | `docs/deployment.md` + `PROGRESS.md` |
    | bugfix/refactor | `PROGRESS.md` only |

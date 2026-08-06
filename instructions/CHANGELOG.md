@@ -4,6 +4,37 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-06
 
+### T-G1/T-G2/T-G3/T-G4 (complete) — Wave G Block 1, doc-stack decisions resolved
+
+- **T-G1** (G-DEC-1 = stack-conditional lines): the two DoD table rows for
+  `docs/schema.md`/`docs/flows.md` in `global/AGENTS.md` now say "DB-backed
+  projects only" / "Directus projects only" with an explicit N/A instead
+  of an unconditional requirement — no new templates added.
+- **T-G2** (G-DEC-2 = warn after 3-5 sessions, implemented at 4): new Step
+  4 in `scripts/session-end.sh` ("Docs completeness") counts sessions from
+  `### YYYY-MM-DD` entries in `PROGRESS.md`; at 4+, warns (never fails) on
+  5 specific stale placeholders — `HARNESS.md` Product Contract/Decisions,
+  project `AGENTS.md` unfilled `{{...}}`, `docs/design.md` TBD (UI
+  projects only), `docs/CONTEXT.md`, `docs/roadmap.md`. Found and fixed a
+  real bug while testing: `grep -c` prints "0" AND exits 1 on no match, so
+  `|| echo 0` was appending a second "0" on a new line and breaking the
+  numeric comparison. Verified end-to-end on a client-project fixture:
+  under-threshold skip, over-threshold with empty docs (6 warnings), and
+  over-threshold with filled docs (clean pass).
+- **T-G3 (partial)** (M1/B-DEC-2 both resolved): `init-adopt.sh` no longer
+  ships `docs/design.md` to projects without a `package.json` (root or one
+  level deep) — only removes the fresh template copy it just made (byte-
+  identical check), never a pre-existing project file. Verified on two
+  fixtures (backend: skipped; frontend: kept) plus idempotency on rerun.
+  `ARCHITECTURE.md` generic-skeleton rewrite stays deferred per M1 (heavy
+  authored content, explicitly "later").
+- **T-G4** (G-DEC-3 = minimal-safe): `agent-analyze.md` gets a Stack
+  detection step before Step 0 (package.json → Nuxt/Vue path; otherwise
+  generic path with an honest "tuned for Nuxt/Vue; running a generic
+  pass" note). Step 0's git-log scope and the Health section's System Map
+  / dependency audit now branch on stack instead of hardcoding
+  `frontend/`/npm. Full stack-pack analysis stays v0.5.
+
 ### T-E1/T-E2 (complete) — capability deny-by-default, Wave E
 
 Per E-DEC-1 (hybrid): added a `permission.bash` block to

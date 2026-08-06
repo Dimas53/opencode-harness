@@ -54,6 +54,19 @@ mkdir -p "$PROJECT/docs" "$PROJECT/memory"
 # implementations behave the same: never fail a second/idempotent adopt run.
 cp -rn "$HARNESS_PATH/templates/docs/." "$PROJECT/docs/" || true
 cp -rn "$HARNESS_PATH/templates/memory/." "$PROJECT/memory/" || true
+
+# design.md is a UI design-system reference — pure noise in a backend-only
+# project (API, CLI, background jobs). Minimal-safe heuristic (T-G3): only
+# keep it if this looks like a frontend project (root or nested package.json
+# — cheap to check, doesn't need real dependency parsing for a first pass).
+# Only remove the copy cp -rn just made (byte-identical to the template) —
+# never touch a pre-existing project design.md that cp -rn's -n left alone.
+if [ ! -f "$PROJECT/package.json" ] && ! find "$PROJECT" -maxdepth 2 -name package.json -not -path '*/node_modules/*' 2>/dev/null | grep -q .; then
+  if [ -f "$PROJECT/docs/design.md" ] && diff -q "$HARNESS_PATH/templates/docs/design.md" "$PROJECT/docs/design.md" >/dev/null 2>&1; then
+    rm -f "$PROJECT/docs/design.md"
+    echo "  ⚠ No package.json found — skipped docs/design.md (backend/non-UI project)"
+  fi
+fi
 safe_copy_file "$HARNESS_PATH/templates/AGENTS.md"    "$PROJECT/AGENTS.md"
 safe_copy_file "$HARNESS_PATH/templates/MEMORY.md"    "$PROJECT/MEMORY.md"
 safe_copy_file "$HARNESS_PATH/templates/PLAN.md"      "$PROJECT/PLAN.md"
