@@ -2,12 +2,17 @@
 
 ## Current Status
 
-Phase: autonomous overnight session executing implementation-plan-2 Wave H
-(propagation) and beyond, per notes/Harness/implementation-plan-2/00-README.md
-and 10-waveH-propagation.md. Working ticket-by-ticket, one commit each. Most
-open decisions in 06-open-decisions.md are still empty — many tickets are
-blocked; see notes/Harness/implementation-plan-2/11-open-questions-and-blocked.md
-section B for the running list.
+Phase: autonomous overnight session completed — ran the full
+implementation-plan-2 order (H0→H1→H2→H3→C→B→A→D→E→G→H4→F→H5→H6/H7).
+Waves A, B, C, D, G (mostly), H0/H2/H4/H5(mostly)/H6(mostly) done; H1/H3
+partial (one step each blocked); Wave E and most of Wave F blocked
+entirely (E needs a rollout-scope decision before any config exists to
+write; F needs two technical investigations + explicit go-ahead for
+autonomous work on its Block 1). 22 open decisions in 06-open-decisions.md
+are still empty and are the single biggest unblock — see
+notes/Harness/implementation-plan-2/11-open-questions-and-blocked.md
+section B (blocked list) and the "what to decide first" section at the
+end of it (prioritized summary) for the full picture.
 Last commit: (this session, see below)
 Chat language: ru
 
