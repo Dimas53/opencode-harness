@@ -3,6 +3,11 @@ name: executing-plans
 description: Use when you have a written implementation plan to execute in a separate session with review checkpoints
 ---
 
+> ⚠️ **SUPERSEDED** — use `planning-and-task-breakdown` + `incremental-implementation`
+> instead. This skill still references phantom `superpowers:*` sub-skills that
+> don't exist in this harness and isn't maintained further. Kept for
+> historical reference only.
+
 # Executing Plans
 
 ## Overview
@@ -30,7 +35,6 @@ For each task:
 ### Step 3: Complete Development
 
 After all tasks complete and verified:
-<!-- TODO(B-DEC-1): phantom skill, pending decision — see notes/Harness/implementation-plan-2/06-open-decisions.md -->
 - Announce: "I'm using the finishing-a-development-branch skill to complete this work."
 - **REQUIRED SUB-SKILL:** Use superpowers:finishing-a-development-branch
 - Follow that skill to verify tests, present options, execute choice
@@ -64,8 +68,6 @@ After all tasks complete and verified:
 ## Integration
 
 **Required workflow skills:**
-<!-- TODO(B-DEC-1): phantom skill, pending decision — see notes/Harness/implementation-plan-2/06-open-decisions.md -->
 - **superpowers:using-git-worktrees** - Ensures isolated workspace (creates one or verifies existing)
 - **writing-plans** - Creates the plan this skill executes
-<!-- TODO(B-DEC-1): phantom skill, pending decision — see notes/Harness/implementation-plan-2/06-open-decisions.md -->
 - **superpowers:finishing-a-development-branch** - Complete development after all tasks

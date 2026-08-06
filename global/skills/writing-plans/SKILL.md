@@ -3,6 +3,11 @@ name: writing-plans
 description: Use when you have a spec or requirements for a multi-step task, before touching code
 ---
 
+> ⚠️ **SUPERSEDED** — use `planning-and-task-breakdown` + `incremental-implementation`
+> instead. This skill still references phantom `superpowers:*` sub-skills that
+> don't exist in this harness and isn't maintained further. Kept for
+> historical reference only.
+
 # Writing Plans
 
 ## Overview
@@ -13,7 +18,6 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 **Announce at start:** "I'm using the writing-plans skill to create the implementation plan."
 
-<!-- TODO(B-DEC-1): phantom skill, pending decision — see notes/Harness/implementation-plan-2/06-open-decisions.md -->
 **Context:** If working in an isolated worktree, it should have been created via the `superpowers:using-git-worktrees` skill at execution time.
 
 **Save plans to:** `docs/plans/YYYY-MM-DD-<feature-name>.md`
@@ -59,7 +63,6 @@ independently testable deliverable.
 ```markdown
 # [Feature Name] Implementation Plan
 
-<!-- TODO(B-DEC-1): phantom skill (subagent-driven-development), pending decision — see notes/Harness/implementation-plan-2/06-open-decisions.md -->
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** [One sentence describing what this builds]
@@ -167,7 +170,6 @@ After saving the plan, offer execution choice:
 
 **Which approach?"**
 
-<!-- TODO(B-DEC-1): phantom skill, pending decision — see notes/Harness/implementation-plan-2/06-open-decisions.md -->
 **If Subagent-Driven chosen:**
 - **REQUIRED SUB-SKILL:** Use superpowers:subagent-driven-development
 - Fresh subagent per task + two-stage review

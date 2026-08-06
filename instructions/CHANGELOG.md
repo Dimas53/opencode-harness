@@ -4,6 +4,23 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-06
 
+### T-B2/T-B3/T-B4 (complete) — B-DEC-1 resolved: supersede, don't rewrite
+
+Per B-DEC-1 = option "supersede": `executing-plans/SKILL.md` and `writing-plans/SKILL.md`
+now carry a `⚠️ SUPERSEDED — use planning-and-task-breakdown +
+incremental-implementation instead` banner. Body left untouched
+(including remaining `superpowers:*` phantom sub-skill refs) — the files
+are historical, not maintained further. `brainstorming/SKILL.md`'s
+terminal handoff (the only exit point after a design is approved)
+redirected from `writing-plans` to `planning-and-task-breakdown` in all
+5 places (checklist, both dot-graph nodes, terminal-state prose,
+Implementation section) — otherwise the supersede would be incomplete,
+since brainstorming was the one path that always funneled into the
+deprecated skill. Also fixed the same branded-path bug T-B3 already
+fixed elsewhere (`docs/superpowers/plans/` → `docs/plans/`) in two files
+the original grep didn't cover: `brainstorming/SKILL.md` (`docs/superpowers/specs/`
+→ `docs/specs/`, 2 places) and `brainstorming/spec-document-reviewer-prompt.md`.
+
 ### T-C3 (complete) — honest session-guard text in start.sh
 
 Per C-DEC-startguard = "honest text, not a real gate": the three
