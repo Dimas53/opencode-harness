@@ -90,6 +90,13 @@ fi
 # Update skills — copy all from repo, overwriting existing
 rsync -a --exclude='*.bak' global/skills/ "$HOME/.config/opencode/skills/"
 echo "✓ Skills updated from repo"
+STALE_SKILLS=$(comm -23 \
+    <(find "$HOME/.config/opencode/skills" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort) \
+    <(find global/skills -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort))
+if [ -n "$STALE_SKILLS" ]; then
+    echo -e "${YELLOW}⚠ Skills in ~/.config/opencode/skills/ not in this repo's global/skills/ (kept, not auto-removed):${NC}"
+    echo "$STALE_SKILLS" | sed 's/^/    /'
+fi
 
 # Propagate opencode.jsonc (MCP servers + permission block) — T-G-U2.
 # install.sh does this on a fresh/existing install; update-harness never

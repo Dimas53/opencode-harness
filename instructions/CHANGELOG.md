@@ -4,6 +4,18 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-06
 
+### T-C4 (complete) — skill-mirror deletion warning
+
+Per C-DEC-mirror = "warn, don't delete": `hooks/post-commit`,
+`scripts/install.sh`, `scripts/update.sh` now print any skill directory
+present in `~/.config/opencode/skills/` but absent from this repo's
+`global/skills/` after every mirror `rsync` — a manual-cleanup candidate
+list, never auto-removed (protects any skills a user installed by hand
+outside the repo). Stray `.bak` files from an earlier session were
+already gone from disk; nothing to remove. Local `.git/hooks/post-commit`
+reinstalled via `scripts/install-hooks.sh .` so the live hook picks up
+this session's rsync/warning changes.
+
 ### T-D1 — `install.bat` removed
 
 Confirmed the documented Windows install path is exclusively WSL2 +
