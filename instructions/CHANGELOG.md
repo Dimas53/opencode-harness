@@ -4,6 +4,31 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-06
 
+### T-G-U6 (complete) — HARNESS-MANAGED markers in templates/AGENTS.md + refresh flag
+
+`templates/AGENTS.md` mixes harness-authored rule text with per-project
+interview-filled content ({{STACK_SKILLS}}, file map, stack rules) inside
+the same sections — previously no boundary existed, so a harness rule
+improvement could never reach an already-adopted project's AGENTS.md.
+Wrapped the 4 sections that are 100% harness text with no `{{...}}`
+placeholders — Git Workflow, Database Migrations, Docs Update Matrix,
+and the DoD Hard-Rules/CONTEXT.md-checklist block (split out from the
+adjacent `{{ARCHITECTURE_MAPPING}}`, which stays project content) — in
+`HARNESS-MANAGED START/END` markers, same format as global/AGENTS.md
+(T-G-U1).
+
+New `scripts/update-project.sh --refresh-agents`: positionally merges
+every marked region from the current template into a project's AGENTS.md,
+diff + y/n confirmation, aborts safely (no write) if the region count
+doesn't match between target and template. Found and fixed a real bug
+while testing: `set -e`+`pipefail` was killing a `diff | head` pipeline
+whenever the diff found actual differences (diff's exit 1 for "files
+differ" isn't an error). Verified end-to-end on a client-project fixture:
+fresh adopt has markers and reports up to date; a simulated template rule
+addition gets pulled in while a customized `{{STACK_SKILLS}}` value stays
+untouched; an artificially broken marker aborts safely with a diagnostic,
+file unchanged.
+
 ### T-G1/T-G2/T-G3/T-G4 (complete) — Wave G Block 1, doc-stack decisions resolved
 
 - **T-G1** (G-DEC-1 = stack-conditional lines): the two DoD table rows for

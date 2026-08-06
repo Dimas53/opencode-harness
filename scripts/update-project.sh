@@ -14,6 +14,116 @@ HARNESS_PATH="$HOME/.opencode-harness"
 TEMPLATES="$HARNESS_PATH/templates"
 PROJECT="$(pwd)"
 
+# ── --refresh-agents — on-request pull of harness-authored rule updates
+#    into an ALREADY-FILLED project AGENTS.md (G-DEC-4 addition, T-G-U6).
+#    The normal sync above never touches an existing AGENTS.md — templates
+#    are meant to be filled per-project, so blind overwrite would destroy
+#    that. But some sections of templates/AGENTS.md are pure harness text
+#    with no {{...}} placeholders (Git Workflow, Database Migrations,
+#    Docs Update Matrix, the DoD Hard Rules block) — those ARE safe to
+#    refresh, and are wrapped in HARNESS-MANAGED START/END markers (same
+#    convention as global/AGENTS.md, T-G-U1). This flag replaces ONLY
+#    those marked regions in the project's AGENTS.md with the current
+#    template's version, matched positionally in file order — everything
+#    outside a marked region (your filled-in Stack Skills, File Map,
+#    Gotchas, etc.) is untouched. Run manually when you know a harness
+#    rule improved and want it in this project, not automatically.
+if [ "${1:-}" = "--refresh-agents" ]; then
+  TARGET="$PROJECT/AGENTS.md"
+  TEMPLATE="$TEMPLATES/AGENTS.md"
+  MARK_START="# === HARNESS-MANAGED START"
+  MARK_END="# === HARNESS-MANAGED END ==="
+
+  [ -f "$TARGET" ] || { echo "✗ $TARGET not found — nothing to refresh"; exit 1; }
+  [ -f "$TEMPLATE" ] || { echo "✗ $TEMPLATE not found"; exit 1; }
+
+  if ! grep -qF "$MARK_START" "$TARGET"; then
+    echo "⚠ $TARGET has no HARNESS-MANAGED markers — it predates T-G-U6."
+    echo "  Automatic region refresh isn't safe without them. Diff manually:"
+    diff "$TARGET" "$TEMPLATE" || true
+    exit 1
+  fi
+
+  MERGED=$(python3 - "$TARGET" "$TEMPLATE" <<'PY'
+import sys
+
+target_path, template_path = sys.argv[1], sys.argv[2]
+START = "# === HARNESS-MANAGED START"
+END = "# === HARNESS-MANAGED END ==="
+
+def split_regions(text):
+    segments = []  # (is_managed, lines)
+    cur = []
+    in_region = False
+    for line in text.split("\n"):
+        if not in_region and line.startswith(START):
+            segments.append((False, cur))
+            cur = [line]
+            in_region = True
+        elif in_region and line.strip() == END:
+            cur.append(line)
+            segments.append((True, cur))
+            cur = []
+            in_region = False
+        else:
+            cur.append(line)
+    segments.append((False, cur))
+    return segments
+
+target_segs = split_regions(open(target_path).read())
+template_segs = split_regions(open(template_path).read())
+template_managed = [s for m, s in template_segs if m]
+
+if len([s for m, s in target_segs if m]) != len(template_managed):
+    sys.stderr.write("REGION_COUNT_MISMATCH\n")
+    sys.exit(2)
+
+out = []
+ti = 0
+for is_managed, seg in target_segs:
+    if is_managed:
+        out.append(template_managed[ti])
+        ti += 1
+    else:
+        out.append(seg)
+
+for seg in out:
+    for line in seg:
+        print(line)
+PY
+) || {
+    if [ "$?" = "2" ]; then
+      echo "✗ $TARGET has a different number of HARNESS-MANAGED regions than the"
+      echo "  current template — structure has drifted too far for a positional"
+      echo "  merge. Diff manually:"
+      diff "$TARGET" "$TEMPLATE" || true
+    fi
+    exit 1
+  }
+
+  TMP=$(mktemp)
+  printf '%s\n' "$MERGED" > "$TMP"
+  if diff -q "$TARGET" "$TMP" >/dev/null 2>&1; then
+    echo "✓ AGENTS.md HARNESS-MANAGED regions already up to date"
+    rm -f "$TMP"
+    exit 0
+  fi
+
+  echo "HARNESS-MANAGED regions in $TARGET differ from the current template:"
+  diff "$TARGET" "$TMP" | head -40 || true
+  echo ""
+  printf "Apply this refresh? Only marked regions change, your own content is untouched. (y/n): "
+  read -r answer
+  if [ "$answer" != "y" ]; then
+    echo "Skipped — no changes made."
+    rm -f "$TMP"
+    exit 0
+  fi
+  mv "$TMP" "$TARGET"
+  echo "✓ AGENTS.md HARNESS-MANAGED regions refreshed"
+  exit 0
+fi
+
 missing=0
 to_copy=()
 

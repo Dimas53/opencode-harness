@@ -69,6 +69,8 @@ Use SESSION SCAN output from global Step 0 as input here.**
 New feature with NO matching file above  →  CREATE docs/architecture/feature-name.md
 ```
 
+# === HARNESS-MANAGED START — do not edit between these markers, `update-project --refresh-agents` overwrites this region. Add your own rules above START or below END; they survive updates. ===
+
 ### CONTEXT.md — update if SESSION SCAN includes any of:
 ```
 [ ] New module, service, or composable name introduced
@@ -89,7 +91,11 @@ RULE 3: "It's a small change" — only CSS tweaks and typo fixes are exempt.
         Any logic, flow, collection, or route change requires doc update.
 ```
 
+# === HARNESS-MANAGED END ===
+
 ---
+
+# === HARNESS-MANAGED START — do not edit between these markers, `update-project --refresh-agents` overwrites this region. Add your own rules above START or below END; they survive updates. ===
 
 ## Git Workflow
 
@@ -117,7 +123,11 @@ Follow this exact order:
 2. Run the full Definition of Done (see global AGENTS.md — do not restate the step count here)
 3. Only after DoD is verified — run `git push`
 
+# === HARNESS-MANAGED END ===
+
 ---
+
+# === HARNESS-MANAGED START — do not edit between these markers, `update-project --refresh-agents` overwrites this region. Add your own rules above START or below END; they survive updates. ===
 
 ## Database Migrations (if this project has a database)
 
@@ -149,6 +159,8 @@ UPDATE recipes SET author = (SELECT name FROM authors WHERE id = recipes.author_
 ALTER TABLE recipes DROP COLUMN author_id;
 DROP TABLE authors;
 ```
+
+# === HARNESS-MANAGED END ===
 
 ---
 
@@ -188,6 +200,8 @@ DROP TABLE authors;
 
 ---
 
+# === HARNESS-MANAGED START — do not edit between these markers, `update-project --refresh-agents` overwrites this region. Add your own rules above START or below END; they survive updates. ===
+
 ## Docs Update Matrix
 
 | File | Updated by | Trigger |
@@ -200,3 +214,5 @@ DROP TABLE authors;
 | `docs/design.md` | Developer manually | Design decision changed |
 | `docs/audits/*.md` | Agent — on request | Audit session |
 | `docs/skills-cheatsheet.md` | Agent — automatic | New skill installed |
+
+# === HARNESS-MANAGED END ===
