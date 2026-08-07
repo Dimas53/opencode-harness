@@ -2,24 +2,84 @@
 
 ## Current Status
 
-Phase: implementation-plan-2 is essentially complete. This session went
-through all 20 open decisions in 06-open-decisions.md with the user
-(one was left explicitly deferred: F-DEC-2, eval-gate CI vs local — user
-wants to think about it more), ran the two A2 technical investigations
-for real, then executed every ticket those decisions unblocked: Wave C
-tail, Wave B tail, Wave E (capability deny), Wave G Block 1 (T-G1-G4,
-T-G-U6), Wave F Block 1 (T-F1, T-F3, T-F4 — T-F2 stays deferred with
-F-DEC-2), Wave F Block 2 (T-F7), and M1's cheap subset. 14 commits.
-Only remaining known gaps: F-DEC-2 (user deferred), T-F5's actual
-stack-conventions.md feature (M1 unblocked it but the feature itself is
-new, substantial work not built this session), M1's heavy content
-(ARCHITECTURE.md generic skeleton, Symfony/Python skills-cheatsheet
-rows), T-G-U3's real run against karriere-page-ito/itocook (user
-explicitly said not yet, try later), and T-H6 step 3 (same reason).
-See the 2026-08-06 (second session) entry below for full detail per
-ticket, and 06-open-decisions.md for the actual decisions recorded.
+Phase: implementation-plan-2 is essentially complete. The 2026-08-06
+second session went through all 20 open decisions in
+06-open-decisions.md with the user (one left explicitly deferred:
+F-DEC-2, eval-gate CI vs local), ran both A2 technical investigations
+for real, then executed every ticket those decisions unblocked (Wave C
+tail, Wave B tail, Wave E, Wave G Block 1, Wave F Block 1/2, M1's cheap
+subset — 15 commits). A follow-up audit against GENERAL-REPORT.md
+(2026-08-07) found 3 tickets whose DECISION had been recorded but whose
+CODE was never written (T-H1 step 1, T-H3 Problem B, T-H5 step 5) — all
+three closed same-day, 4 more commits, each verified end-to-end
+(behavioral bats tests / real client-fixture runs), not just read.
+Only remaining known gaps: **F-DEC-2** (user deferred), **T-F5's actual
+stack-conventions.md feature** (M1 unblocked it but the feature itself is
+new, substantial work not built), **M1's heavy content** (ARCHITECTURE.md
+generic skeleton, Symfony/Python skills-cheatsheet rows), **T-F4 part 3
+(retry-limit-escalation)** (scenario written, not calibrated/run),
+**`verify.sh` not checking MCP servers respond** (never had a ticket),
+**Safety Gates** (12 of 13 rows still text-only, permission.bash covered
+1), and **real `update-project` run against karriere-page-ito/itocook**
+(user said not yet). Full breakdown with ✅/⚠️/🟡/🔵 per finding:
+`notes/Harness/implementation-plan-2/GENERAL-REPORT.md` (top block +
+inline annotations). Per-ticket detail: 2026-08-06/07 session entries
+below and `06-open-decisions.md`.
 Last commit: (this session, see below)
 Chat language: ru
+
+## Session 2026-08-07 (report audit + 3 closed gaps)
+
+Chat language: ru
+
+User asked for a report: go through GENERAL-REPORT.md, mark every
+finding done/not-done with the ticket that closed it, and put
+not-yet-done items in one block at the top. While annotating, cross-
+checked each "decision resolved" claim from the prior session against
+actual code (not memory) — found 3 tickets where the DECISION had been
+recorded in `06-open-decisions.md` but the corresponding CODE was never
+written: **T-H1 step 1**, **T-H3 Problem B**, **T-H5 step 5**. Reported
+this honestly instead of glossing over it. User asked to close all
+three now, then fix the report afterward.
+
+### Done
+- **T-H1 step 1**: `scripts/dod.sh` Step 5 (docs-matrix) now branches by
+  `IS_HARNESS_REPO` — harness repo keeps its `CODE_DIRS` list, client
+  projects get a new `is_doc_file()` inversion (H-DEC-1). `fail` if code
+  changed and no doc at all was touched; `warn` if only `PROGRESS.md`
+  was touched. Surfaced and fixed a real bug in `check-propagation.sh`
+  Rule 3 (its awk heuristic matched `if [ "$IS_HARNESS_REPO" = "1" ]`
+  regardless of indentation, mispairing the new nested `if` with an
+  unrelated `fi` — narrowed to `elif`, which is what the pre-existing
+  Steps 6/7 actually use). Verified with 3 real `PRE_COMMIT=1` runs on a
+  client fixture (fail/warn/pass) + 2 new bats cases; fixed an existing
+  bats fixture (skill-only-fallback tests) that wasn't marked as the
+  harness profile and started exercising the wrong branch once profile
+  branching existed. 35/35 bats green.
+- **T-H3 Problem B**: `global/AGENTS.md`'s "Working in External / Client
+  Projects" renamed to "Working in Non-Harness Projects (guest mode)"
+  with an explicit boundary line (H-DEC-3 = a: applies only without
+  `HARNESS.md`/`memory/`). Removed the two bullets that contradicted DoD
+  in adopted projects; kept the rest (never in conflict). German
+  overview doc's summary line updated to match.
+- **T-H5 step 5**: new `templates/ci/github-actions-dod.yml` +
+  `gitlab-ci-dod.yml` (H-DEC-4 = a) — both clone `opencode-harness`
+  fresh into the CI runner and invoke `dod.sh` against the client
+  project's checkout (safe: `dod.sh` never references its own script
+  location, only CWD-relative paths). Installation is opt-in — new Q-CI
+  interview question in `agent-adopt.md`/`agent-new-project.md`, asked
+  once, right after the language question, never installed silently.
+  Extended `check-propagation.sh` Rule 2 with the same `propagation-ok:`
+  marker Rule 3 already used, for the `.github/workflows` path being
+  *created* inside the client project (not a stale reference).
+- **`GENERAL-REPORT.md`** fully annotated: new top block listing what's
+  genuinely not done (now updated post-fix — only the items in Current
+  Status above remain), plus inline ✅/⚠️/🟡/🔵 verdicts with ticket IDs
+  under every finding in the original report.
+
+3 commits (`feat(H1)`, `feat(H3)`, `feat(H5)`), each with DoD passing,
+each independently verified (not just "ticket says decision resolved,
+assume done").
 
 ## Session 2026-08-06 (second session — all 22 decisions resolved, waves executed)
 
