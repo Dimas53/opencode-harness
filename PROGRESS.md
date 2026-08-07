@@ -27,14 +27,29 @@
 >   confirmation")** in the same file. The live agent followed Behavior,
 >   i.e. it chose better than the written protocol.
 >
+> - **E. Stale skills are live on this machine and no update command
+>   removes them.** A live agent report listed `session-start` under
+>   "Skills loaded" — that skill was deleted from the repo on 2026-08-03
+>   (`d6e4a16`). Confirmed by `ls`: `~/.config/opencode/skills/` still
+>   holds `session-start` and `requesting-code-review`, neither of which
+>   exists in `global/skills/`. Counterintuitive part, verified in code:
+>   `update-project` never touches skills at all (grep: 0 hits), and
+>   `update-harness` only *prints* the stale list (C-DEC-mirror =
+>   warn-only, never delete). So "the update command will clean it up" is
+>   wrong — it needs a manual `rm`, or a deliberate revisit of
+>   C-DEC-mirror. Also re-check hooks/.agentignore/templates in each known
+>   project via `update-project` (the still-deferred T-H6 step 3).
+> - **F. Nothing verifies the shortcut list stays complete.** Both
+>   `update-harness` and `update-project` are present today (21 shortcuts,
+>   checked) — but no mechanical check ties a shortcut to an existing
+>   target, or a new script to the list. Same class as A: the mechanism
+>   exists and nothing points at it. Worth a check in
+>   check-propagation.sh.
+>
 > Full write-up with fix directions:
 > `notes/Harness/implementation-plan-2/GENERAL-REPORT.md`, top block,
 > the red "must verify next session" section (it's in Russian there,
 > like the rest of that file).
->
-> Also still pending from before: run `update-project` in
-> `karriere-page-ito`/`itocook` (that project has no `.agentignore` yet,
-> so the file-level backstop is inactive there).
 
 Phase: implementation-plan-2 is essentially complete. The 2026-08-06
 second session went through all 20 open decisions in
