@@ -2,6 +2,40 @@
 
 ## Current Status
 
+> ### START HERE NEXT SESSION — 4 confirmed gaps found on a live project (2026-08-07)
+>
+> A real session in the user's Nuxt project exposed 4 design gaps in what
+> this harness ships. All verified against code, not memory — and NOT a
+> stale-project problem (`~/.config/opencode/AGENTS.md` is byte-identical
+> to `global/AGENTS.md`, so the agent read exactly the current text):
+>
+> - **A. `session-end.sh` is unreachable from the "end" trigger.**
+>   `global/AGENTS.md` `## Session End` describes 6 manual steps and never
+>   mentions the script or the `docs` shortcut. So everything added to it
+>   on 2026-08-06 (T-G2 docs-completeness Step 4, T-F4 audit-trail
+>   auto-append, Retro nudge) never fires in a real session. Root cause,
+>   honestly: the mechanism was verified on a fixture, but nothing ever
+>   checked whether anything *invokes* it in the live flow.
+> - **B. `.dod-run.log` is documented nowhere agent-facing** — an agent saw
+>   the unfamiliar file and deleted it as junk, silently killing the audit
+>   trail. Only mentioned in CHANGELOG and inside the scripts.
+> - **C. DoD product steps 6/7/8 (Safety check, Skill feedback, Cleanup)
+>   get lost behind `dod.sh`'s 8-step output** — the gate's output becomes
+>   the de-facto checklist and those three aren't in it.
+> - **D. `## Session End` step 2 ("git add and git commit if uncommitted")
+>   contradicts `## Behavior` ("NEVER commit without explicit user
+>   confirmation")** in the same file. The live agent followed Behavior,
+>   i.e. it chose better than the written protocol.
+>
+> Full write-up with fix directions:
+> `notes/Harness/implementation-plan-2/GENERAL-REPORT.md`, top block,
+> the red "must verify next session" section (it's in Russian there,
+> like the rest of that file).
+>
+> Also still pending from before: run `update-project` in
+> `karriere-page-ito`/`itocook` (that project has no `.agentignore` yet,
+> so the file-level backstop is inactive there).
+
 Phase: implementation-plan-2 is essentially complete. The 2026-08-06
 second session went through all 20 open decisions in
 06-open-decisions.md with the user (one left explicitly deferred:
