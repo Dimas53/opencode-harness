@@ -83,6 +83,14 @@ check_unreachable_paths() {
     if echo "$window" | grep -qiE "harness repo|harness-repo|meta-repo"; then
       continue
     fi
+    # propagation-ok: same escape hatch as Rule 3, extended here — for a
+    # path that's genuinely reachable but for a reason this heuristic
+    # can't see on its own (e.g. a target path being CREATED inside the
+    # client project, like templates/ci/*.yml's `cp ... .github/workflows/`,
+    # not a reference assuming something already exists there).
+    if echo "$window" | grep -q "propagation-ok:"; then
+      continue
+    fi
 
     fail "$file:$lineno — path unreachable from a client project (no \`~/.opencode-harness/\` prefix, no harness-repo caveat nearby): $(echo "$line" | sed 's/^ *//' | cut -c1-100)"
   done < "$file"
@@ -103,8 +111,14 @@ done
 # ── Rule 3: dod.sh must not silently `check_pass` in a client-profile
 #    (IS_HARNESS_REPO=0) branch without a `# propagation-ok:` marker
 #    justifying it. Heuristic pairing of the specific
-#    `if [ "$IS_HARNESS_REPO" = "1" ]` / else / fi construct this file
-#    uses — not a general bash parser (T-H4 spec allows conservatism).
+#    `elif [ "$IS_HARNESS_REPO" = "1" ]` / else / fi construct Steps 6/7
+#    use — not a general bash parser (T-H4 spec allows conservatism).
+#    Deliberately matches `elif` only, not bare `if`: a standalone
+#    `if [ "$IS_HARNESS_REPO" = "1" ] ... else ... fi` (like Step 5's,
+#    T-H1) is a different, self-contained construct nested inside its own
+#    already-branched context — pairing it with this same else/fi hunt
+#    produced a false positive (matched some later, unrelated fi) the
+#    first time this rule ran against it.
 if [ -f "scripts/dod.sh" ]; then
   while IFS= read -r ln; do
     lo=$((ln > 3 ? ln - 3 : 1))
@@ -113,7 +127,7 @@ if [ -f "scripts/dod.sh" ]; then
       fail "scripts/dod.sh:$ln — check_pass in a client-profile (IS_HARNESS_REPO=0) branch with no \`# propagation-ok: <reason>\` marker above it. Either add the marker (if this pass is a real check) or make it check_warn."
     fi
   done < <(awk '
-    /if \[ "\$IS_HARNESS_REPO" = "1" \]/ { armed = 1; next }
+    /elif \[ "\$IS_HARNESS_REPO" = "1" \]/ { armed = 1; next }
     armed && /^else$/ && !in_else { in_else = 1; next }
     armed && in_else && /^fi$/ { armed = 0; in_else = 0; next }
     armed && in_else && /check_pass/ { print NR }

@@ -2,6 +2,29 @@
 
 All notable changes to opencode-harness are documented here.
 
+## 2026-08-07
+
+### T-H1 (complete) — docs-matrix client-profile severity
+
+Step 5 (docs-matrix) in scripts/dod.sh now distinguishes profiles per
+H-DEC-1: the harness repo keeps its existing CODE_DIRS list; a client
+project inverts the test via a new is_doc_file() (docs/, instructions/,
+notes/, memory/, or any *.md counts as documentation, everything else is
+code). fail if code changed and no doc at all was touched; warn if only
+PROGRESS.md was touched (it's the canonical minimum per the Docs Update
+Matrix's "anything else" row).
+
+Fixed a real bug this surfaced in check-propagation.sh: Rule 3's awk
+heuristic matched any occurrence of `if [ "$IS_HARNESS_REPO" = "1" ]`
+regardless of indentation, so the new nested if in Step 5 got mismatched
+with an unrelated later fi. Narrowed the pattern to `elif`, which is what
+Steps 6/7 actually use.
+
+Verified end-to-end on a client fixture (fail/warn/pass, 3 real dod.sh
+runs) plus 2 new bats cases. Fixed an existing bats fixture
+(skill-only-fallback tests) that wasn't marked as the harness profile and
+started exercising the wrong branch once profile branching existed.
+
 ## 2026-08-06
 
 ### M1 (partial, cheap subset only) — stack-agnostic quick fixes

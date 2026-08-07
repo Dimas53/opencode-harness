@@ -105,9 +105,14 @@ QUIET_SKIP="docs-lag,progress,docs-matrix,tests,self-check"
 # ── Step 5: Docs matrix — skill-only fallback ──────────────────────────────
 
 @test "dod.sh docs-matrix fails on skill-only change without same-day CHANGELOG entry" {
-  mkdir -p global/skills/some-skill instructions
+  # Skill-only fallback is a harness-repo CODE_DIRS mechanic (T-H1's
+  # client-profile branch treats any *.md, including SKILL.md, as
+  # documentation by design — see is_doc_file() in dod.sh) — mark this
+  # fixture as the harness repo so it exercises that path, not T-H1's.
+  mkdir -p scripts global/skills/some-skill instructions
+  touch scripts/init-project.sh
   printf '# CHANGELOG\n' > instructions/CHANGELOG.md
-  git add global instructions
+  git add scripts global instructions
   git commit -q -m "init"
   printf 'updated body\n' >> global/skills/some-skill/SKILL.md 2>/dev/null || printf 'body\n' > global/skills/some-skill/SKILL.md
   git add global/skills/some-skill/SKILL.md
@@ -117,9 +122,10 @@ QUIET_SKIP="docs-lag,progress,docs-matrix,tests,self-check"
 }
 
 @test "dod.sh docs-matrix passes on skill-only change with same-day CHANGELOG entry" {
-  mkdir -p global/skills/some-skill instructions
+  mkdir -p scripts global/skills/some-skill instructions
+  touch scripts/init-project.sh
   printf '# CHANGELOG\n' > instructions/CHANGELOG.md
-  git add global instructions
+  git add scripts global instructions
   git commit -q -m "init"
   printf 'body\n' > global/skills/some-skill/SKILL.md
   today="$(date +%Y-%m-%d)"
@@ -127,6 +133,47 @@ QUIET_SKIP="docs-lag,progress,docs-matrix,tests,self-check"
   git add global/skills/some-skill/SKILL.md instructions/CHANGELOG.md
   DOD_SKIP="docs-lag,progress,tests,self-check" PRE_COMMIT=1 run bash "$HARNESS_ROOT/scripts/dod.sh"
   [ "$status" -eq 0 ]
+}
+
+# ── Step 5: Docs matrix — client profile (T-H1/H-DEC-1) ────────────────────
+
+@test "dod.sh docs-matrix fails in a client project when no doc at all was touched" {
+  mkdir -p app
+  printf '<template>x</template>\n' > app/placeholder.vue
+  git add app
+  git commit -q -m "init"
+  printf '<template>changed</template>\n' > app/placeholder.vue
+  git add app/placeholder.vue
+  DOD_SKIP="docs-lag,progress,tests,self-check" PRE_COMMIT=1 run bash "$HARNESS_ROOT/scripts/dod.sh"
+  [ "$status" -eq 1 ]
+  [[ "$output" == *"Code changed but no docs update found"* ]]
+}
+
+@test "dod.sh docs-matrix warns (not fails) in a client project when only PROGRESS.md was touched" {
+  mkdir -p app
+  printf '<template>x</template>\n' > app/placeholder.vue
+  printf '# Progress\n' > PROGRESS.md
+  git add app PROGRESS.md
+  git commit -q -m "init"
+  printf '<template>changed</template>\n' > app/placeholder.vue
+  printf '# Progress\n- did a thing\n' > PROGRESS.md
+  git add app/placeholder.vue PROGRESS.md
+  DOD_SKIP="docs-lag,progress,tests,self-check" PRE_COMMIT=1 run bash "$HARNESS_ROOT/scripts/dod.sh"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"only PROGRESS.md updated"* ]]
+}
+
+@test "dod.sh docs-matrix passes in a client project when a real doc was touched" {
+  mkdir -p app docs
+  printf '<template>x</template>\n' > app/placeholder.vue
+  git add app
+  git commit -q -m "init"
+  printf '<template>changed</template>\n' > app/placeholder.vue
+  printf '# Feature\n' > docs/feature.md
+  git add app/placeholder.vue docs/feature.md
+  DOD_SKIP="docs-lag,progress,tests,self-check" PRE_COMMIT=1 run bash "$HARNESS_ROOT/scripts/dod.sh"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"Code changes accompanied by docs update"* ]]
 }
 
 # ── pre-commit hook actually blocks a bad commit ───────────────────────────

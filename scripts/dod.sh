@@ -201,6 +201,21 @@ CODE_DIRS="scripts/ hooks/ tests/ global/ templates/ Makefile"
 DOCS_DIRS="docs/ instructions/"
 DOCS_FILES="INSTALL.md README.md"
 
+# T-H1 step 1: in the harness repo "code" is the explicit CODE_DIRS list
+# above (layout is known and stable). In a client project we cannot know
+# the layout, so we invert the test instead: a file counts as
+# documentation if it lives in a docs dir, is a top-level .md, or is agent
+# bookkeeping — everything else is code. Without this, CODE_DIRS never
+# matched anything in a client project (app code lives in app/, server/,
+# src/, ...) and this whole step was a permanent no-op there.
+is_doc_file() {
+  case "$1" in
+    docs/*|instructions/*|notes/*|memory/*) return 0 ;;
+    *.md) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
 if ! git rev-parse --is-inside-work-tree &>/dev/null; then
   check_warn "Not inside a git repo — skipping"
 else
@@ -213,19 +228,30 @@ else
   if [ -z "$CHANGED" ]; then
     check_pass "No changed files to check"
   else
+    # Only meaningful when DOCS_CHANGED ends up 0 below — tracked from the
+    # unfiltered list since PROGRESS.md itself is stripped out of FILTERED.
+    PROGRESS_TOUCHED=0
+    echo "$CHANGED" | grep -qx "PROGRESS.md" && PROGRESS_TOUCHED=1
+
     # Filter out files that ARE documentation (PROGRESS.md, notes/)
     CODE_CHANGED=0
     DOCS_CHANGED=0
     FILTERED=$(echo "$CHANGED" | grep -v "^PROGRESS.md$" | grep -v "^notes/" || true)
-    for d in $CODE_DIRS; do
-      if echo "$FILTERED" | grep -q "^$d"; then CODE_CHANGED=1; fi
-    done
-    for d in $DOCS_DIRS; do
-      if echo "$FILTERED" | grep -q "^$d"; then DOCS_CHANGED=1; fi
-    done
-    for f in $DOCS_FILES; do
-      if echo "$FILTERED" | grep -qx "$f"; then DOCS_CHANGED=1; fi
-    done
+    if [ "$IS_HARNESS_REPO" = "1" ]; then
+      for d in $CODE_DIRS; do
+        if echo "$FILTERED" | grep -q "^$d"; then CODE_CHANGED=1; fi
+      done
+      for d in $DOCS_DIRS; do
+        if echo "$FILTERED" | grep -q "^$d"; then DOCS_CHANGED=1; fi
+      done
+      for f in $DOCS_FILES; do
+        if echo "$FILTERED" | grep -qx "$f"; then DOCS_CHANGED=1; fi
+      done
+    else
+      for f in $FILTERED; do
+        if is_doc_file "$f"; then DOCS_CHANGED=1; else CODE_CHANGED=1; fi
+      done
+    fi
     if [ "$CODE_CHANGED" = "1" ] && [ "$DOCS_CHANGED" = "0" ]; then
       # Skill-only fallback: if EVERY non-doc changed file lives under
       # global/skills/, accept a same-day dated section in
@@ -243,6 +269,12 @@ else
       if [ "$SKILL_ONLY" = "1" ] && [ -f "instructions/CHANGELOG.md" ] \
          && grep -q "^## $TODAY" instructions/CHANGELOG.md; then
         check_pass "Skill-only change — same-day CHANGELOG.md entry found ($TODAY)"
+      elif [ "$IS_HARNESS_REPO" != "1" ] && [ "$PROGRESS_TOUCHED" = "1" ]; then
+        # H-DEC-1 (client profile only): PROGRESS.md is the canonical
+        # minimum per the Docs Update Matrix's "anything else" row — warn,
+        # don't fail, but still say what a real feature/config change owes.
+        check_warn "Code changed, only PROGRESS.md updated — check the Docs Update Matrix (new feature -> docs/architecture/*.md, config change -> docs/deployment.md, etc.)"
+        echo "   Changed: $(echo "$CHANGED" | tr '\n' ' ')"
       else
         check_fail "Code changed but no docs update found"
         echo "   Changed: $(echo "$CHANGED" | tr '\n' ' ')"
