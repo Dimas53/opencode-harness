@@ -54,6 +54,19 @@ Q0. **Language — before any analysis:** SEQUENCE RULE
     Only after receiving the answer — proceed to Step 1.
     Never combine Q0 with any other output.
 
+Q-CI. **CI gate — after language, before analysis** (T-H5 step 5, optional
+    — never install silently):
+    Ask the user once: "Install a CI gate that runs the DoD check on every
+    push/PR? [none / GitHub Actions / GitLab CI]"
+    propagation-ok: the `.github/`/`.gitlab-ci.yml` paths below are CREATED
+    inside the client project by these commands, not references assuming
+    they already exist there.
+    - GitHub Actions: `mkdir -p .github/workflows && cp ~/.opencode-harness/templates/ci/github-actions-dod.yml .github/workflows/dod.yml`
+    - GitLab CI: `cp ~/.opencode-harness/templates/ci/gitlab-ci-dod.yml .gitlab-ci.yml`
+      (if the project already has a `.gitlab-ci.yml`, tell the user to
+      merge the `dod` job in manually instead of overwriting)
+    - none / no answer: skip, create neither file.
+
 1. **Run agent-analyze in full protocol — do not improvise:**
    - Load all 6 sub-skills from agent-analyze.md:
      zoom-out, codebase-health-check, junior-to-senior,

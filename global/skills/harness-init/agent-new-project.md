@@ -60,6 +60,17 @@ then fill the scaffolded template files with the project's context.
     After the user answers, print one line acknowledging the language:
     "Understood, working in [language]. Setting up the project structure — this will take a few seconds."
     (print this in the session language from Q0, replacing [language] with the language name)
+ 2b. Ask Q-CI (T-H5 step 5, optional — never install silently): "Install a
+    CI gate that runs the DoD check on every push/PR? [none / GitHub
+    Actions / GitLab CI]"
+    propagation-ok: the `.github/`/`.gitlab-ci.yml` paths below are CREATED
+    inside the client project by these commands, not references assuming
+    they already exist there.
+    - GitHub Actions: `mkdir -p .github/workflows && cp ~/.opencode-harness/templates/ci/github-actions-dod.yml .github/workflows/dod.yml`
+    - GitLab CI: `cp ~/.opencode-harness/templates/ci/gitlab-ci-dod.yml .gitlab-ci.yml`
+      (if the project already has a `.gitlab-ci.yml`, tell the user to
+      merge the `dod` job in manually instead of overwriting)
+    - none / no answer: skip, create neither file.
  3. Ask Q-1: "Do you have a requirements document, design brief, or any existing
     spec? If yes — share it now, I will read it and pre-fill the interview.
     If no — just say 'no' and we will go through the full interview."

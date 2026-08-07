@@ -1,0 +1,39 @@
+# templates/ci/github-actions-dod.yml — T-H5 step 5 (implementation-plan-2 Wave H)
+#
+# Installed as .github/workflows/dod.yml, ONLY if you opted in during
+# `adopt` (H-DEC-4: optional, asked once, never installed silently).
+#
+# Runs the same scripts/dod.sh gate your local pre-commit hook already
+# runs — but here it's outside the agent's (or a bypassed local hook's)
+# reach, same principle as this harness repo's own .github/workflows/dod.yml.
+#
+# dod.sh itself isn't vendored into your project (it lives in
+# ~/.opencode-harness on your machine) — this workflow checks out the
+# harness repo fresh into the runner and invokes it from there, with your
+# project as the working directory. dod.sh only ever reads paths relative
+# to the working directory, never relative to its own location, so this
+# is safe.
+name: DoD Gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  dod:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # dod.sh compares against HEAD~1 and needs history
+
+      - name: Checkout opencode-harness
+        uses: actions/checkout@v4
+        with:
+          repository: Dimas53/opencode-harness
+          path: .opencode-harness-ci
+
+      - name: Run DoD
+        run: bash .opencode-harness-ci/scripts/dod.sh

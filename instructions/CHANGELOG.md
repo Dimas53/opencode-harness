@@ -4,6 +4,25 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-07
 
+### T-H5 step 5 (complete) — optional CI gate templates for client projects
+
+Per H-DEC-4 (a): new templates/ci/github-actions-dod.yml and
+templates/ci/gitlab-ci-dod.yml — both clone opencode-harness fresh into
+the CI runner and invoke scripts/dod.sh from there (dod.sh only reads
+paths relative to the working directory, never relative to its own
+location, so this is safe; same principle as this repo's own
+.github/workflows/dod.yml). Installation is opt-in, never automatic: new
+Q-CI interview question added to both agent-adopt.md and
+agent-new-project.md, asked once, right after the language question —
+"none / GitHub Actions / GitLab CI" — copies the matching template into
+place only on an explicit answer.
+
+Extended check-propagation.sh Rule 2 with the same `propagation-ok:`
+marker convention Rule 3 already used, for a path reference that's
+legitimately reachable but for a reason the heuristic can't see on its
+own (here: a target path being CREATED inside the client project by an
+mkdir/cp command, not a reference assuming it already exists).
+
 ### T-H3 Problem B (complete) — guest mode boundary matches H-DEC-3
 
 global/AGENTS.md's "Working in External / Client Projects" section

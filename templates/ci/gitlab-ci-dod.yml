@@ -1,0 +1,23 @@
+# templates/ci/gitlab-ci-dod.yml — T-H5 step 5 (implementation-plan-2 Wave H)
+#
+# Installed as .gitlab-ci.yml, ONLY if you opted in during `adopt`
+# (H-DEC-4: optional, asked once, never installed silently). GitLab
+# equivalent of templates/ci/github-actions-dod.yml — see that file's
+# header for why this clones opencode-harness fresh into the runner
+# instead of assuming it's already there.
+#
+# If your project already has its own .gitlab-ci.yml, merge this job in
+# manually instead of overwriting the file.
+dod:
+  stage: test
+  image: debian:stable-slim
+  variables:
+    GIT_DEPTH: "0" # dod.sh compares against HEAD~1 and needs history
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq git bash >/dev/null
+    - git clone --quiet https://github.com/Dimas53/opencode-harness.git .opencode-harness-ci
+  script:
+    - bash .opencode-harness-ci/scripts/dod.sh
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
