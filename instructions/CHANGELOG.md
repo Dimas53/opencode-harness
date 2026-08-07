@@ -4,6 +4,21 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-07
 
+### T-H3 Problem B (complete) — guest mode boundary matches H-DEC-3
+
+global/AGENTS.md's "Working in External / Client Projects" section
+renamed to "Working in Non-Harness Projects (guest mode)" with an
+explicit boundary line per H-DEC-3 (a): applies only to non-adopted
+projects (no HARNESS.md, no memory/) — in an adopted project the
+Definition of Done wins, documentation is mandatory. Removed the two
+bullets that directly contradicted DoD in adopted projects ("do not add
+comments/docblocks", "do not create or modify ... any documentation
+files") — the rest (refactor scope, dependencies, architectural
+suggestions, package.json/composer.json, migrations, .env) stays, it was
+never in conflict. Verified: check-dod-sync.sh still passes, no more
+"any documentation files" string in the file. Also updated the German
+overview doc's one-line summary of this section to match.
+
 ### T-H1 (complete) — docs-matrix client-profile severity
 
 Step 5 (docs-matrix) in scripts/dod.sh now distinguishes profiles per

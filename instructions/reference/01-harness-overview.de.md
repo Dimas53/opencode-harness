@@ -41,7 +41,7 @@ Definiert:
 - **English-Only Policy:** Russisch verboten in Code, Kommentaren, Dokumentation (außer `notes/`)
 - **CSS/Layout:** Tailwind, flexbox/grid, keine inline-Styles, px für Mobilgeräte
 - **Skills Auto-Loading Regeln:** 52 Fähigkeiten, geladen per Trigger (security → auth/nginx, debugging → Bugs, UI → frontend usw.)
-- **Working in External / Client Projects:** reduzierter Aktivitätsmodus — keine Kommentare, Doku, Refactoring, neue Abhängigkeiten
+- **Working in Non-Harness Projects (guest mode):** gilt nur für nicht-adoptierte Projekte (kein `HARNESS.md`/`memory/`) — reduzierter Aktivitätsmodus, kein Refactoring außerhalb des Scopes, keine neuen Abhängigkeiten ohne Bestätigung
 - **Design System (Global Default):** `docs/design.md` vor UI-Code lesen, Farb-Tokens, Phosphor Icons, `<script setup lang="ts">`
 
 ### 2.2 Projekt-AGENTS.md (`/Users/DSAITO/Documents/BackEnd/itocook/AGENTS.md`)

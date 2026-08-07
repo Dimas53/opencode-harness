@@ -339,10 +339,13 @@ Look for these files in the project root (ANY match = harness-adopted):
 
 ---
 
-## Working in External / Client Projects
+## Working in Non-Harness Projects (guest mode)
 
-- Do not add comments, docblocks, or inline documentation unless explicitly asked
-- Do not create or modify README, CHANGELOG, ADR, or any documentation files
+> Applies ONLY to projects that are NOT harness-adopted (no `HARNESS.md`,
+> no `memory/`). In a harness-adopted project the Definition of Done
+> wins: documentation is mandatory, not optional — this section does not
+> apply there.
+
 - Do not refactor or clean up code outside the scope of the requested change
 - Do not install new dependencies without explicit confirmation
 - Do not suggest architectural improvements unless asked
