@@ -42,7 +42,7 @@ After loading `using-agent-skills`, immediately load these stack skills:
 
 ---
 
-## Task Context (used in Session Start Step 7)
+## Task Context (loaded during the Session Start step that loads skills and task context)
 
 When starting a task, load the relevant doc based on what you are working on:
 
@@ -59,7 +59,7 @@ When starting a task, load the relevant doc based on what you are working on:
 ## Definition of Done — {{PROJECT_NAME}} Specific
 
 **Runs IN ADDITION to global Definition of Done (global AGENTS.md).
-Use SESSION SCAN output from global Step 0 as input here.**
+Use the SESSION SCAN output from the global Session scan step as input here.**
 
 ### Architecture file mapping — for each item in SESSION SCAN, find its doc:
 

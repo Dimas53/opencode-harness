@@ -1,0 +1,118 @@
+# global/rules/protocols.yaml
+# Canonical step lists for the harness protocols — single source of truth for
+# step COUNT, ORDER, and IDENTITY (title first word). Enforced by
+# `scripts/gen-rules.sh --check` (make check-docs-sync).
+#
+# Was `dod.yaml`, covering the Definition of Done only. Session Start had no
+# canon and no checker, and drifted exactly as predicted: AGENTS.md carried 8
+# steps while `startup/SKILL.md` announced a "full ritual" of its own — more
+# steps, and a different protocol underneath, not a more detailed version
+# (T-I7). One file rather than two per protocol, so that adding the next
+# protocol is a section, not another file to wire up.
+#
+# What this DOES guarantee: the listed markdown files must contain exactly
+# these steps, in this order, each with a title starting with the listed first
+# word. It deliberately does NOT generate prose — AGENTS.md carries the terse
+# operational list, the SKILL.md files carry rationale and edge cases; those
+# are different content by design, not duplication (F-DEC-1).
+#
+# Parser note: scripts/gen-rules.sh parses this with awk against the exact
+# 5-line-per-step shape below (no real YAML lib — pyyaml isn't installed in
+# this environment). Keep every step block in this shape if you edit by hand:
+#   - id: <kebab-id>
+#     protocol: <dod|session-start>
+#     order: <int>
+#     first_word: "<Word>"
+#     type: <product-judgment|mechanical-gate|orientation>
+#
+# Checked files per protocol:
+#   dod           -> global/AGENTS.md "## Definition of Done" + global/skills/dod/SKILL.md
+#   session-start -> global/AGENTS.md "## Session Start"      + global/skills/startup/SKILL.md
+
+steps:
+  - id: dod-session-scan
+    protocol: dod
+    order: 1
+    first_word: "Session"
+    type: product-judgment
+  - id: dod-update-docs
+    protocol: dod
+    order: 2
+    first_word: "Update"
+    type: product-judgment
+  - id: dod-jsdoc
+    protocol: dod
+    order: 3
+    first_word: "JSDoc"
+    type: product-judgment
+  - id: dod-tests
+    protocol: dod
+    order: 4
+    first_word: "Tests"
+    type: product-judgment
+  - id: dod-commit-gate
+    protocol: dod
+    order: 5
+    first_word: "Commit"
+    type: mechanical-gate
+  - id: dod-safety-check
+    protocol: dod
+    order: 6
+    first_word: "Safety"
+    type: product-judgment
+  - id: dod-skill-feedback
+    protocol: dod
+    order: 7
+    first_word: "Skill"
+    type: product-judgment
+  - id: dod-cleanup
+    protocol: dod
+    order: 8
+    first_word: "Cleanup"
+    type: product-judgment
+  - id: dod-respond
+    protocol: dod
+    order: 9
+    first_word: "Respond"
+    type: product-judgment
+
+  - id: start-orient
+    protocol: session-start
+    order: 1
+    first_word: "Orient"
+    type: orientation
+  - id: start-load-skills
+    protocol: session-start
+    order: 2
+    first_word: "Load"
+    type: orientation
+  - id: start-progress
+    protocol: session-start
+    order: 3
+    first_word: "Progress"
+    type: orientation
+  - id: start-roadmap
+    protocol: session-start
+    order: 4
+    first_word: "Roadmap"
+    type: orientation
+  - id: start-memory
+    protocol: session-start
+    order: 5
+    first_word: "Memory"
+    type: orientation
+  - id: start-harness
+    protocol: session-start
+    order: 6
+    first_word: "Harness"
+    type: orientation
+  - id: start-directus
+    protocol: session-start
+    order: 7
+    first_word: "Directus"
+    type: orientation
+  - id: start-report
+    protocol: session-start
+    order: 8
+    first_word: "Report"
+    type: orientation

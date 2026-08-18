@@ -59,6 +59,105 @@ ticket touches `Makefile`, `.github/` and `instructions/`, none of which is
 delivered to client projects. The harness repo is the only place these tests
 can run, and that is by design (`IS_HARNESS_REPO` in `dod.sh`).
 
+### T-I7 + T-I8 + T-I17 + T-I18 + T-I21 (complete) — step counts stop drifting
+
+The "hardcoded number drifts" batch. T-F1 closed this class for the DoD by
+making `dod.yaml` the canon and checking both markdown files against it. The
+fix was never generalized, so every other protocol and every reference number
+kept drifting — which is the whole reason phase 3 is organised as "extend the
+perimeter", not "fix the file".
+
+**T-I7 — Session Start had a canon and no checker.** `global/AGENTS.md`
+listed 8 steps and declared itself the source of truth;
+`global/skills/startup/SKILL.md` — the file AGENTS.md tells the agent to load
+for depth — announced a 12-step ritual whose steps were a *different*
+protocol: it had "Check environment", "Load stack skills" and "Load
+task-specific context" that the canon did not, and lacked the chat-language
+step and the Directus MCP step that the canon did. An agent loading "the full
+version" got a different startup, not a more detailed one. And `AGENTS.md:120`
+forbids hardcoding a step count — while the skill hardcoded one in an H2.
+
+Done:
+
+- `global/rules/dod.yaml` → **`global/rules/protocols.yaml`**, one flat list
+  with a `protocol:` field per step (`dod`, `session-start`). One file rather
+  than one per protocol, so the next protocol is a section, not another file
+  to wire up — and so a future generator has a single input.
+- `gen-rules.sh --check` now verifies **both** protocols, each against two
+  markdown files: count, order and title first word.
+- The 8 Session Start steps in AGENTS.md got short bold titles
+  (`**Orient:**`, `**Load skills:**`, …). Without them the steps had nothing
+  checkable — they began with a bare command. Content unchanged.
+- `startup/SKILL.md` rewritten against the canon: same 8 steps, same order,
+  same titles; the depth (why the step exists, what breaks without it) kept
+  and extended. The three steps that existed only in the skill are folded in
+  as sub-points where they belong — environment check under Orient, stack
+  skills and task context under Load skills — rather than promoted to canon
+  steps. Deliberate: the protocol is read every session, and it should not
+  grow to accommodate a document's formatting.
+- `check-dod-sync.sh` (a thin wrapper, called by the Makefile and CI) keeps
+  its name and now describes both protocols.
+
+**T-I8 / T-I17 / T-I18 / T-I21** — the small ones in the same class:
+`session-end/SKILL.md` hardcoded "6-step protocol"; `templates/AGENTS.md`
+cited "Session Start Step 7" (that step is the Directus check) and "global
+Step 0" (no such step — the session scan is step 1); `02-opencode-commands.md`
+advertised a "6‑check" DoD (the gate has 8 mechanical steps) and "20 bats
+tests"; `global/AGENTS.md:458` had a doubled closing backtick in a line the
+model reads every session. All replaced with names or references to the
+source, not numbers.
+
+Proof:
+
+```
+$ bash scripts/gen-rules.sh --check
+✓ DoD sync OK — 9 steps match protocols.yaml, AGENTS.md, and dod/SKILL.md
+✓ Session Start sync OK — 8 steps match protocols.yaml, AGENTS.md, and startup/SKILL.md
+
+$ grep -rniE "\b[0-9]+[- ]step\b" global/ templates/     # T-I8
+(0 matches)
+$ grep -nE "Step [0-9]" templates/AGENTS.md              # T-I17
+(0 matches)
+$ grep -nE "[0-9]+[-‑ ]check|[0-9]+ bats" instructions/reference/02-opencode-commands.md   # T-I18
+(0 matches)
+$ grep -nE '[^`]``$' global/AGENTS.md                    # T-I21
+(0 matches)
+```
+
+Note on those greps: the ticket's own versions were unreliable and would have
+passed on a broken file. T-I8's was case-sensitive and so could not see
+`## Full 12-Step Ritual`, the main instance of the class. T-I18's used a plain
+hyphen while the file contains a non-breaking one (U+2011). T-I21's was
+`grep -n '``$'`, which matches every closing code fence — 7 hits, 6 of them
+noise. The versions above are the corrected ones.
+
+Three negative tests for the new checker, each restored afterwards:
+
+```
+$ (add a 9th step to AGENTS.md ## Session Start)
+✗ global/AGENTS.md has 9 Session Start steps, protocols.yaml declares 8
+
+$ (rename "Step 5 — Memory" to "Step 5 — Recall" in startup/SKILL.md)
+✗ startup/SKILL.md Session Start step 5 first word "Recall" != protocols.yaml "Memory"
+
+$ (demote "Step 4 — Roadmap" to a non-step heading)
+✗ startup/SKILL.md has 7 Session Start steps, protocols.yaml declares 8
+```
+
+`check-propagation.sh` again caught this ticket's own edit — a bare
+`scripts/gen-rules.sh` path inside a delivered skill. Second time in this
+wave that the backstop fired on the author; rephrased to name the Makefile
+target instead.
+
+Propagation question (`09-propagation-audit.md`): yes for the content —
+`global/AGENTS.md` and both skills are mirrored to `~/.config/opencode/`, and
+`templates/AGENTS.md`'s two fixes sit inside HARNESS-MANAGED regions, so
+`update-project --refresh-agents` carries them into existing projects. The
+canon file and the checker stay in the harness repo by design: they verify what
+is delivered, they are not themselves delivered. Reachable from a trigger:
+Session Start runs at every session open, and `startup/SKILL.md` is loaded by
+the `load skills/startup/SKILL.md` line the section ends with.
+
 ### T-I6 + T-I13 (complete) — the inventory is complete by machine, the mirror carries no debris
 
 Both widen `check-docs-refs.sh`, so one pass. Same phase-3 rule: every new

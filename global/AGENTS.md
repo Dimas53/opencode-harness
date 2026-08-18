@@ -142,18 +142,21 @@ Project-level — configs and infrastructure that could break the project.
 
 Execute these steps in order BEFORE any response to the user:
 
-1. `pwd && git log --oneline -10`
-2. Load `using-agent-skills` — try filesystem path first: `Read ~/.config/opencode/skills/using-agent-skills/SKILL.md`. If not found (built-in skill), load via `skill("using-agent-skills")` instead. Also check project `docs/skills-cheatsheet.md` for relevant skills matching current task triggers.
-3. Read `PROGRESS.md` in project root — compare git log with progress status. If out of sync, update PROGRESS.md FIRST. If file doesn't exist — skip.
+1. **Orient:** `pwd && git log --oneline -10`
+   Also check that whatever the project needs to run is actually running
+   (`docker ps`, dev server, `curl localhost:PORT`) — before you touch code,
+   not after a failure makes you look.
+2. **Load skills:** load `using-agent-skills` — try filesystem path first: `Read ~/.config/opencode/skills/using-agent-skills/SKILL.md`. If not found (built-in skill), load via `skill("using-agent-skills")` instead. Also load the project's own stack skills (project `AGENTS.md` -> "Stack Skills") and check `docs/skills-cheatsheet.md` plus the project `AGENTS.md` "Task Context" table for anything matching the current task.
+3. **Progress:** read `PROGRESS.md` in project root — compare git log with progress status. If out of sync, update PROGRESS.md FIRST. If file doesn't exist — skip.
    After reading PROGRESS.md, look for a line starting with `Chat language:`.
    - If present — use that language for all chat messages and questions. Generated files are always in English (see hard rules in project or global AGENTS.md).
    - If absent — ask the user for their language explicitly before proceeding,
      then WRITE `Chat language: <chosen>` into `PROGRESS.md` (create the file
      if it does not exist) so the choice persists and is never asked again.
-4. Read `docs/roadmap.md`
-5. Read `MEMORY.md` and `memory/YYYY-MM-DD.md` if they exist (for today or yesterday)
-6. Read `HARNESS.md` if it exists — apply project constraints and risk levels to session behavior
-7. If the project uses the Directus MCP server (`.env` has DIRECTUS_URL, or
+4. **Roadmap:** read `docs/roadmap.md`
+5. **Memory:** read `MEMORY.md` and `memory/YYYY-MM-DD.md` if they exist (for today or yesterday)
+6. **Harness constraints:** read `HARNESS.md` if it exists — apply project constraints and risk levels to session behavior
+7. **Directus MCP:** if the project uses the Directus MCP server (`.env` has DIRECTUS_URL, or
    HARNESS.md declares a Directus instance):
    - If a project-level `opencode.jsonc` exists in the project root — it is
      used automatically when OpenCode starts (it fully overrides the global
@@ -166,7 +169,7 @@ Execute these steps in order BEFORE any response to the user:
      (see ~/.opencode-harness/instructions/directus-mcp-setup.md)."
    - Do NOT modify any config. There is no global directus config to compare
      against and no switching.
-8. Report:
+8. **Report:**
    ```
    Session initialized. Phase: [from roadmap]. Last commit: [hash — msg].
    Progress: [from progress.md]. Skills loaded: [list].
@@ -452,7 +455,7 @@ Use `docs` shortcut (see Harness Shortcuts above) when user asks to update docs.
 
 If the DoD docs-matrix step reports code changed without a docs update — update relevant files before closing.
 
-→ Full session reference: `load skills/documentation/SKILL.md``
+→ Full session reference: `load skills/documentation/SKILL.md`
 
 ---
 

@@ -50,7 +50,7 @@
 
 ### Automatic (triggered by git hook)
 
-- **`make dod`** — 6‑check Definition of Done: uncommitted, Cyrillic scan, docs lag, PROGRESS.md, docs matrix, quick tests. Runs automatically via pre‑commit hook on every `git commit`. Docs‑lag: in pre‑commit mode a staged change under `docs/` satisfies the check (the commit resets the lag); otherwise lag is counted from git history (threshold 3).
+- **`make dod`** — the mechanical Definition of Done gate: uncommitted, Cyrillic scan, docs lag, PROGRESS.md, docs matrix, quick tests, self-check, `.agentignore`. It prints its own step count as it runs; the judgment steps around it are listed in `global/AGENTS.md ## Definition of Done`, which is the source of truth for how many there are. Runs automatically via pre‑commit hook on every `git commit`. Docs‑lag: in pre‑commit mode a staged change under `docs/` satisfies the check (the commit resets the lag); otherwise lag is counted from git history (threshold 3).
 
 ### Trigger words inside OpenCode
 

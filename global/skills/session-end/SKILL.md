@@ -14,7 +14,7 @@ Loaded when AGENTS.md Session End section says to load this skill.
 
 ## Quick reminder
 
-The compact 6-step protocol in AGENTS.md is mandatory and fail-proof.
+The protocol in AGENTS.md `## Session End` is mandatory — read it there, it is the single source of truth for which steps exist. Never restate the count here: it drifts the moment a step is added, and AGENTS.md explicitly forbids hardcoding it.
 This skill adds: edge cases, troubleshooting, examples.
 
 ## Step details
