@@ -37,7 +37,8 @@ When user types:
   automatically — this is for a manual pre-check.
 - `docs` — run `bash ~/.opencode-harness/scripts/session-end.sh` (in the
   harness repo `make session-end` does the same) and remind to update docs
-  if code changed
+  if code changed. This is the same script as step 1 of `## Session End`,
+  not a second path — the shortcut just lets you run it mid-session.
 
 - `unadopt` — remove all harness files from the CURRENT project (AGENTS.md,
   MEMORY.md, PLAN.md, PROGRESS.md, HARNESS.md, memory/, both git hooks).
@@ -181,14 +182,21 @@ Execute these steps in order BEFORE any response to the user:
 
 **Triggers:** after `git commit` → run Definition of Done first. After `git push` or user says "end / done / finish / finished / close / session end / bye / Ende / Schluss / fertig / tschüss / bis dann" → run below.
 
-1. Check docs lag:
+1. Run the mechanical session-end gate:
    ```bash
-   git log --oneline -- docs/ | head -1
-   git log --oneline | head -1
+   bash ~/.opencode-harness/scripts/session-end.sh
    ```
-   If docs commit is more than 3 commits behind HEAD → warn user.
+   It checks docs lag, PROGRESS.md freshness, the memory log, doc
+   placeholders, and uncommitted changes; it appends today's DoD audit trail
+   to `memory/YYYY-MM-DD.md` and warns if `## Retro` is missing. Address
+   everything it prints before continuing. It never blocks — a warning you
+   ignore is a warning you own. Do not re-do its checks by hand; the steps
+   below are what it cannot do for you.
 
-2. `git add` and `git commit` if there are uncommitted changes.
+2. If there are uncommitted changes — show `git status` and **ask** for
+   confirmation. Commit only after an explicit "yes", staging named paths
+   (or `git add -p`), never `git add -A`. Without confirmation: list what is
+   uncommitted in the Session closed report and leave the index untouched.
 3. Write to `PROGRESS.md` — append session summary: what was done overall, what's next (session-level summary, not per-task detail — DoD already handled that).
 4. If you found a workaround or important error this session — write to `memory/YYYY-MM-DD.md` NOW. Do not wait.
 5. Report:
@@ -247,6 +255,12 @@ an excuse — scan the entire conversation.
    there, it will just error on a missing Makefile. This is a DIFFERENT
    check from steps 1-4 — those are judgment calls about product
    completeness, this is an automated mechanical gate. Both are required.
+   Every run appends one line to `.dod-run.log` (local, gitignored). That
+   file is a journal, not clutter: `session-end.sh` builds the
+   `## Session audit trail` memory section from it, and the post-commit
+   guard reads it to tell a real bypass from a gate disagreement. Never
+   delete it. Same for `.session-ended` — it is the marker `start.sh` reads
+   to know the previous session was closed properly.
 6. **Safety check:** No Russian text in project files. No `.env`,
    docker-compose, or lock files modified without confirmation.
 7. **Skill feedback:** If any skill behaved unexpectedly or missed an

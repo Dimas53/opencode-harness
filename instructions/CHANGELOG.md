@@ -59,6 +59,103 @@ ticket touches `Makefile`, `.github/` and `instructions/`, none of which is
 delivered to client projects. The harness repo is the only place these tests
 can run, and that is by design (`IS_HARNESS_REPO` in `dod.sh`).
 
+### T-I1 + T-I2 + T-I12 (complete) — the session-end gate is reachable from the protocol
+
+One pass over `global/AGENTS.md` plus three skills, because the edits
+overlap in the same paragraphs.
+
+**T-I1 — nothing called the script.** `## Session End` listed six manual
+steps and never mentioned `session-end.sh`; `session-end/SKILL.md`, the file
+AGENTS.md points to for detail, described the same six manual steps and also
+never mentioned it — while its own frontmatter advertised the *script's*
+behavior ("runs docs lag check, updates PROGRESS.md, creates .session-ended
+guard"). Four mechanisms built and verified on fixtures — the T-F4 audit
+trail, the Retro nudge, T-G2 doc completeness, the `.session-ended` guard —
+therefore never fired in a real session unless the user happened to type
+`docs`. Step 1 is now the run itself, phrased like DoD step 5 (bind to the
+command, don't paraphrase it); the manual docs-lag step is gone, because the
+script does it with the right threshold. The skill gained a "read this
+first" note saying its steps explain what the script checks, and are not a
+manual substitute for running it. The `docs` shortcut now says it is the
+same script as step 1, not a second path.
+
+**T-I2 — three files ordered a commit the Behavior rules forbid.** Against
+`AGENTS.md` "NEVER commit to git without explicit user confirmation":
+`AGENTS.md:191` said "git add and git commit if there are uncommitted
+changes"; `session-end/SKILL.md` step 2 said `git add -A && git commit -m
+"type: description"` — worse, `-A` stages whatever else is lying around in
+the one step nobody reviews; `documentation/SKILL.md` step 6 gave the commit
+as a command. All three now say the same thing: show `git status`, ask, and
+commit only after an explicit yes, staging named paths or `git add -p`.
+Without confirmation, list the uncommitted paths in the report and leave the
+index alone.
+
+**T-I12 — the state files looked like clutter.** `.dod-run.log` appeared in
+no agent-facing channel at all (only CHANGELOG, PROGRESS.md, .gitignore and
+the scripts), `.session-ended` in none the agent reads by protocol. An agent
+had already deleted `.dod-run.log` as "leftover from a manual run" — and
+without it `session-end.sh` skips the audit trail silently, a failure with
+no message. Now stated in all three channels the agent can arrive through:
+`global/AGENTS.md` DoD step 5, `dod/SKILL.md` STEP 5, and
+`session-end/SKILL.md` next to the audit trail section, each saying what
+reads the file and why deleting it breaks something.
+
+Proof:
+
+```
+$ grep -n "session-end.sh" global/AGENTS.md global/skills/session-end/SKILL.md
+global/AGENTS.md:38          (docs shortcut)
+global/AGENTS.md:187         (Session End step 1)   <- was absent
+global/AGENTS.md:259         (DoD step 5, audit trail note)
+global/skills/session-end/SKILL.md:5,26,106          <- was absent
+
+$ grep -l "dod-run.log" global/AGENTS.md global/skills/dod/SKILL.md global/skills/session-end/SKILL.md
+global/AGENTS.md
+global/skills/dod/SKILL.md
+global/skills/session-end/SKILL.md          # all three; was zero
+
+$ grep -rn "git add -A|git commit" global/AGENTS.md global/skills/session-end/SKILL.md global/skills/documentation/SKILL.md
+# no line prescribing a commit without confirm/ask remains; the only
+# `git add -A` left is the sentence forbidding it
+
+$ bash scripts/check-dod-sync.sh && bash scripts/check-docs-refs.sh && bash scripts/check-propagation.sh
+✓ DoD sync OK — 9 steps match dod.yaml, AGENTS.md, and dod/SKILL.md
+✓ check-docs-refs: no phantom skill references found
+✓ check-propagation: no unreachable commands/paths found
+```
+
+Live run on a client fixture — the audit trail is really written, not just
+described:
+
+```
+$ cat .dod-run.log
+2026-08-18T23:27:27|pre-commit|pass=6|fail=0|warn=2|skip=none|pass
+2026-08-18T23:27:28|manual|pass=6|fail=0|warn=2|skip=none|pass
+
+$ bash ~/.opencode-harness/scripts/session-end.sh
+$ grep -c "## Session audit trail" memory/2026-08-18.md
+1
+```
+
+Worth recording: on the first attempt that count was 0, because
+`session-end.sh` only writes the trail when `memory/YYYY-MM-DD.md` already
+exists — the session with no memory file gets neither the trail nor the
+Retro warning, which is precisely the session that needs them. That is
+T-I20, still open, phase 3. Also of note: `check-propagation.sh` failed this
+ticket's own first edit (a `scripts/session-end.sh` path without the
+`~/.opencode-harness/` prefix in the skill frontmatter) — the backstop
+working as intended, on the author.
+
+Propagation question (`09-propagation-audit.md`): yes. `global/AGENTS.md`
+is mirrored to `~/.config/opencode/AGENTS.md` and `global/skills/` to
+`~/.config/opencode/skills/` by the post-commit hook, so all four edited
+files are exactly the ones a client-project session reads. Reachable from a
+trigger: `## Session End` fires on the listed end-of-session words and after
+`git push`; the `docs` shortcut reaches the same script mid-session; the
+skills are loaded by the `load skills/...` lines already in AGENTS.md. The
+command in step 1 is the `~/.opencode-harness/` form, which resolves from
+any project.
+
 ### T-I3 + T-I27 (complete) — the hooks stop destroying normal work
 
 Two separate ways the guard chain damaged real projects, done together

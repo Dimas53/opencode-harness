@@ -104,6 +104,22 @@ Must exit 0. If it fails:
   If you believe the failure is a false positive, STOP and ask the user
   before bypassing anything — see Hard Limits in AGENTS.md.
 
+**`.dod-run.log` — the gate's journal, not clutter.** Every run appends one
+line to it in the project root: timestamp, mode (`pre-commit` or `manual`),
+pass/fail/warn counts, and any `DOD_SKIP` used. It is local and gitignored.
+Two things read it:
+
+- `session-end.sh` builds the `## Session audit trail` section of
+  `memory/YYYY-MM-DD.md` from it. Delete the log and that section is
+  silently skipped — a failure with no error message.
+- The post-commit guard checks it for a recent passing `pre-commit` entry,
+  which is how it distinguishes an actual bypass from the gate disagreeing
+  with itself (T-I27).
+
+So: never delete it, and never "clean it up" as leftover output from a
+manual run. Same goes for `.session-ended`, the marker `start.sh` reads to
+tell whether the previous session was closed properly.
+
 ---
 
 ### STEP 6 — Safety check

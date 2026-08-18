@@ -2,7 +2,10 @@
 name: session-end
 description: >
   Session end protocol with edge cases, troubleshooting, and examples.
-  Runs docs lag check, updates PROGRESS.md, creates .session-ended guard.
+  Explains what ~/.opencode-harness/scripts/session-end.sh checks and why;
+  the script itself does the docs lag check, PROGRESS.md freshness, memory
+  log, audit trail and the .session-ended guard — reading this file does
+  not replace running it.
 ---
 
 # Session End Protocol — Full Reference
@@ -16,24 +19,42 @@ This skill adds: edge cases, troubleshooting, examples.
 
 ## Step details
 
-### Step 1 — Docs lag check
-```bash
-git log --oneline -- docs/ | head -1
-git log --oneline | head -1
-```
-**Why:** Documentation falls behind quickly. 3+ commits gap means someone won't understand the code.
+> **Read this first.** The steps below describe **what the script checks and
+> why** — they are not a manual alternative to running it. The run itself is
+> one command:
+>
+> ```bash
+> bash ~/.opencode-harness/scripts/session-end.sh
+> ```
+>
+> Doing these checks by hand instead is how the mechanical gate ended up
+> never running in a real session: the audit trail, the Retro nudge and the
+> `.session-ended` guard only exist if the script executes.
+
+### Step 1 — Docs lag check *(the script does this)*
+**Why:** Documentation falls behind quickly. Past the threshold in
+`AGENTS.md ## Session End`, a gap means someone won't understand the code.
 
 **Edge cases:**
-- If there are NO docs commits yet → skip check
+- If there are NO docs commits yet → the script skips the check
 - If only auto-generated docs changed → warn but less urgently
 - If user says "skip docs" → respect, but note it in PROGRESS.md
 
-### Step 2 — Commit uncommitted changes
+### Step 2 — Uncommitted changes: show and ask
 ```bash
-git add -A && git commit -m "type: description"
+git status
 ```
+Committing is a decision for the user, not a step to execute — `AGENTS.md`
+Behavior says never commit without explicit confirmation. Show what is
+uncommitted, ask, and only then commit, staging named paths or `git add -p`.
+
+**Never `git add -A` here.** It stages whatever else happens to be in the
+tree — scratch files, half-finished work, a stray `.env` — in the one step
+where nobody is reviewing the diff.
+
 **Edge cases:**
 - Nothing to commit → skip step silently
+- User declines → list the uncommitted paths in the Session closed report
 - Hooks fail → report error, ask user
 - Large diff → ask user what to commit
 
@@ -82,6 +103,19 @@ This is intentionally lightweight — a record for the next session (and for
 the human) of what was actually enforced, not a new mechanism. A fuller
 active gate (eval-loop measuring this automatically) is Wave F T-F2/T-F4,
 not this skill.
+
+**Where the data comes from.** `session-end.sh` builds that section from
+`.dod-run.log` — one line per DoD run (timestamp, mode `pre-commit`/`manual`,
+pass/fail/warn counts, `DOD_SKIP`). It is local and gitignored. Two
+consequences worth knowing:
+
+- **Never delete `.dod-run.log`.** It looks like scratch output and is not.
+  Without it the audit trail section is silently skipped — a failure with no
+  error message. The post-commit guard also reads it, to tell a real
+  `--no-verify` bypass from a gate disagreement (T-I27).
+- **`.session-ended`** is the other state file: a single date written at the
+  end of a session, read by `start.sh` to notice a session that was never
+  closed. Also not clutter, also not to be deleted.
 
 **Retro (mandatory, not optional)** — one line each, even if the answer is
 "nothing":

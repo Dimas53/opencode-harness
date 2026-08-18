@@ -33,7 +33,11 @@ Run in order. No logic changes — only comments and .md files.
 3. **docs/specs/** — if new feature built without spec → create `docs/specs/feature-name.md`.
 4. **JSDoc** — only files created or significantly changed since last docs session.
 5. **PROGRESS.md** — add line: `Docs updated: [files]`.
-6. **Commit:** `docs: update CONTEXT, architecture, JSDoc after [feature/phase name]`
+6. **Propose a commit** — show `git status`, suggest the message
+   `docs: update CONTEXT, architecture, JSDoc after [feature/phase name]`,
+   and wait for explicit confirmation. Do not commit on your own here:
+   `AGENTS.md` Behavior forbids committing without it, and a docs session is
+   no exception.
 
 ## Rules
 
