@@ -59,7 +59,7 @@
 ### Manual (from terminal)
 
 - **`make start`** — show git log + PROGRESS.md + .session-ended check, then open OpenCode
-- **`make test-quick`** — run 20 bats tests (all scripts + templates)
+- **`make test-quick`** — syntax-check every `scripts/*.sh`, then run every suite in `tests/*.bats` (the runner globs the directory; it prints its own test count, which is why none is quoted here)
 - **`make verify`** — check harness installation (scripts exist, config in place)
 - **`make update`** — pull latest harness + copy global files to `~/.config/opencode/`
 - **`make init PROJECT=/path`** — new project: copy templates + interview via OpenCode

@@ -130,10 +130,11 @@ test-quick:
 	@echo "[bash -n] Checking script syntax..."
 	@for s in scripts/*.sh; do bash -n "$$s" || exit 1; done
 	@echo "  ✓ All scripts pass syntax check"
-	@echo "[bats] Running template tests..."
-	@bats tests/templates.bats
-	@echo "[bats] Running agent tests..."
-	@bats tests/agents.bats
+	@echo "[bats] Running all suites in tests/..."
+	@# Glob, not a hand-written list: tests/dod.bats and tests/unadopt.bats
+	@# existed for weeks without ever being run because nobody added them
+	@# here (T-I5). A new tests/*.bats file is now picked up automatically.
+	@bats tests/*.bats
 
 test: test-quick
 

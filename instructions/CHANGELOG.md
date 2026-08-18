@@ -2,6 +2,63 @@
 
 All notable changes to opencode-harness are documented here.
 
+## 2026-08-18
+
+Wave I (`notes/Harness/implementation-plan-2/12-waveI-final-remediation.md`),
+phase 1. Revision of the whole wave before execution:
+`notes/Harness/implementation-plan-2/14-revision-2026-08-18.md`.
+
+Phase 0 (manual, by the user): removed both stale hook backups in
+`.git/hooks/` (`pre-commit.bak` was byte-identical to the installed hook;
+`post-commit.bak` was an older *harness* hook from before T-C4, not a
+pre-harness user hook — the evidence that T-I3's backup-clobbering already
+happened on this machine) and the two stale mirrored skills
+`~/.config/opencode/skills/session-start` and `.../requesting-code-review`.
+
+### T-I5 (complete) — tests/dod.bats and tests/unadopt.bats are now actually run
+
+`make test-quick` hand-listed `tests/templates.bats` and
+`tests/agents.bats`, so the 14 behavioral tests T-D2 wrote to cover the DoD
+gate itself, plus `unadopt.bats`, had never been executed by any runner —
+locally or in CI. `dod.sh:89` even knew `tests/dod.bats` existed (it
+excludes it from the Cyrillic scan), which is how the file got noticed but
+not wired up.
+
+Replaced the hand-written list with `bats tests/*.bats`, so a new suite is
+picked up automatically instead of silently sitting unrun. Added an explicit
+`make test` step to `.github/workflows/dod.yml`: CI previously reached the
+tests only *through* `dod.sh` step 6, and that indirection is exactly how
+the gap survived. Total runtime is ~8s, well under the ~20s threshold the
+ticket set for splitting `test-quick` from `test`, so no split was needed.
+Dropped the stale "run 20 bats tests" count from
+`instructions/reference/02-opencode-commands.md` (T-I5 item 4) — the runner
+prints its own count.
+
+Proof:
+
+```
+$ make test-quick 2>&1 | grep -c "^ok "
+35                          # was 20 (6 templates + 14 agents)
+
+$ time make test-quick
+make test-quick > /dev/null 2>&1  1.95s user 2.27s system 50% cpu 8.424 total
+
+$ make test-quick 2>&1 | tail -1
+ok 35 unadopt removes both git hooks and a later commit is not rolled back
+
+$ make dod
+...
+[ 6/8 ] Quick tests
+✓ All tests pass
+...
+Results: 5 passed, 0 failed, 3 warnings
+```
+
+Propagation question (`09-propagation-audit.md`): not applicable — this
+ticket touches `Makefile`, `.github/` and `instructions/`, none of which is
+delivered to client projects. The harness repo is the only place these tests
+can run, and that is by design (`IS_HARNESS_REPO` in `dod.sh`).
+
 ## 2026-08-07
 
 ### T-H5 step 5 (complete) — optional CI gate templates for client projects

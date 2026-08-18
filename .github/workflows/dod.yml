@@ -20,6 +20,12 @@ jobs:
       - name: Run DoD
         run: bash scripts/dod.sh
 
+      # Explicit, even though dod.sh step 6 already calls `make test-quick`:
+      # CI must not depend on one gate's internal step to run the test corpus
+      # (T-I5 — that indirection is how dod.bats/unadopt.bats stayed unrun).
+      - name: Full test suite
+        run: make test
+
       - name: Verify DoD/Session-Start sync
         run: bash scripts/check-dod-sync.sh
 
