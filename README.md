@@ -97,9 +97,10 @@ cd .. && rm -rf opencode-harness
 
 **From a project** (remove all files that adopt/new installed):
 ```bash
-cd /path/to/project && make unadopt
+cd /path/to/project && bash ~/.opencode-harness/scripts/unadopt.sh
 ```
-This removes: AGENTS.md, MEMORY.md, PLAN.md, PROGRESS.md, HARNESS.md, memory/, pre-commit hook.
+This removes: AGENTS.md, MEMORY.md, PLAN.md, PROGRESS.md, HARNESS.md, memory/, and both git hooks (pre-commit and the post-commit rollback guard).
+Everything removed is backed up to `.harness-unadopt-backup/` first.
 Asks before deleting docs/. Run from project root.
 
 ## After Setup — Start Any Project

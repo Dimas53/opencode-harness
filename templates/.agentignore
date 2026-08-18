@@ -1,8 +1,8 @@
 # .agentignore — file-level access restrictions for this project.
 # The agent treats every pattern here exactly like the hardcoded patterns in
 # global/AGENTS.md "Access Restrictions": never read/access without explicit
-# user confirmation. Enforced mechanically by scripts/dod.sh (staged files
-# are checked against this list before every commit — see Step 8).
+# user confirmation. Enforced mechanically by ~/.opencode-harness/scripts/dod.sh
+# (staged files are checked against this list before every commit — see Step 8).
 #
 # NOTE: this is FILE-LEVEL only. It does NOT block field-level API reads
 # (e.g. a Directus MCP call reading a PII field from an allowed collection).

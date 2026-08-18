@@ -1,5 +1,11 @@
 # templates/ci/github-actions-dod.yml — T-H5 step 5 (implementation-plan-2 Wave H)
 #
+# propagation-ok: the .github/ and scripts/dod.sh paths below are not
+# references to files expected to exist in your project — .github/workflows/
+# is the destination this template is COPIED INTO, and dod.sh is invoked
+# inside the CI runner from a fresh checkout of the harness repo (see the
+# checkout step). Both are reachable; the path lint cannot see that on its own.
+#
 # Installed as .github/workflows/dod.yml, ONLY if you opted in during
 # `adopt` (H-DEC-4: optional, asked once, never installed silently).
 #

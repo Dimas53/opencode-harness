@@ -59,6 +59,95 @@ ticket touches `Makefile`, `.github/` and `instructions/`, none of which is
 delivered to client projects. The harness repo is the only place these tests
 can run, and that is by design (`IS_HARNESS_REPO` in `dod.sh`).
 
+### T-I10 + T-I15 + T-I23 (complete) — check-propagation covers what actually ships
+
+Three tickets in one pass: all three widen the same traversal, and doing
+them one at a time would mean rewriting it three times. Phase 3's rule is
+"extend the perimeter, don't patch the instance", so each got a negative
+test: break it on purpose, watch the checker fail, put it back.
+
+**T-I10 — the non-markdown layer was invisible.** The traversal was
+`find -type f \( -name "*.md" -o -name "*.sh" \)`, so `templates/.agentignore`,
+`templates/.gitignore`, `templates/.env.example` and `templates/ci/*.yml` —
+the entire non-markdown half of what ships to a client project — were never
+linted. It showed immediately: `templates/.agentignore:4` claimed
+enforcement by `scripts/dod.sh`, a path that does not exist in a client
+project, i.e. exactly the bug this checker was written to catch, sitting in
+a file it could not see. Traversal is now unfiltered, with a binary
+extension blacklist plus `*.bak`/`node_modules`/`.git` (never delivered —
+rsync excludes them). Fixed the `.agentignore` line; gave
+`templates/ci/github-actions-dod.yml` a `propagation-ok:` header, since its
+`.github/workflows/` path is the destination the file is copied INTO, not a
+reference assuming something exists.
+
+**T-I15 — channel K4 was outside the lint.** `README.md:100` taught
+`cd /path/to/project && make unadopt` — a Makefile is deliberately not
+installed in client projects, so that command cannot work — and described
+removing "pre-commit hook", the pre-T-H0 behavior, promising the user an
+incomplete cleanup. Both fixed (`bash ~/.opencode-harness/scripts/unadopt.sh`,
+both hooks, backup mentioned). `INSTALL.md` checked for the same pattern:
+clean.
+
+Adding these two files to `PATH_TARGETS` naively produced **12 false
+positives** — README and INSTALL legitimately live in the harness repo and
+describe it, so `make help`, `make mcp` and links to `instructions/` are all
+correct there. Rather than paper over that with a dozen caveats, K4 got its
+own inverted rule: it fires only when the surrounding lines are explicitly
+about a CLIENT project (`from a project`, `/path/to/project`, …). That
+matches how the file is actually misread — the user copies the command
+under the heading that says "from a project".
+
+**T-I23 — neither direction of the shortcut lists was checked.** Hand audit
+found 21 shortcuts and 30 auto-loading rows all valid, so there was no hole
+— but nothing kept it that way. New Rule 4, three parts: forward (every
+`~/.opencode-harness/scripts/*.sh` and every skill path named in AGENTS.md
+exists), forward for the Auto-Loading table (every `<domain>/SKILL.md`
+row resolves), and backward (every `scripts/*-shortcut.sh` and every
+`harness-init/agent-*.md` appears in `## Harness Shortcuts`). The backward
+rule skips protocols declaring `trigger: "none"` by frontmatter, not by
+filename, so `agent-e2e.md` — a legitimate sub-protocol — cannot become a
+permanent false positive, and the exception cannot silently widen.
+
+**Performance, found while proving the above.** The widened traversal made
+a full run take 68s. Measuring the pre-change script showed it already took
+52s — nobody had timed it. The per-line loops spawn several subprocesses per
+line, so both now pre-filter with one `grep -q` per file and skip whole
+files that cannot match: **25.6s**, half the original despite a wider net.
+
+Proof — six negative tests, each restored afterwards:
+
+```
+$ echo "# see scripts/nonexistent.sh" >> templates/.agentignore
+✗ templates/.agentignore:24 — path unreachable from a client project
+
+$ printf '**From a project**:\ncd /path/to/project && make dod\n' >> README.md
+✗ README.md:192 — `make dod` shown for a CLIENT project, which has no Makefile by design
+
+$ mv global/skills/handoff /tmp/
+✗ global/AGENTS.md Auto-Loading table points at `handoff/SKILL.md`, which does not exist
+
+$ touch scripts/newthing-shortcut.sh
+✗ scripts/newthing-shortcut.sh exists but is not mentioned in `## Harness Shortcuts`
+
+$ mv scripts/session-end.sh /tmp/
+✗ global/AGENTS.md names `~/.opencode-harness/scripts/session-end.sh`, which does not exist
+
+$ sed -i 's/trigger: "adopt"/trigger: "zzprobe"/' .../agent-adopt.md
+✗ agent-adopt.md declares trigger `zzprobe` but no such shortcut is listed
+
+$ bash scripts/check-propagation.sh          # everything restored
+✓ check-propagation: no unreachable commands/paths found
+```
+
+Propagation question (`09-propagation-audit.md`): the fixed content
+(`templates/.agentignore`, `templates/ci/*.yml`) ships with `adopt`,
+`new` and `update-project`, so it reaches client projects — though existing
+projects keep the old `.agentignore` until `update-project` runs, since that
+command adds missing files rather than rewriting present ones. The checker
+itself is harness-repo infrastructure by design (it lints what we deliver;
+it is not delivered), and runs in CI on every push. README's fix is
+user-facing, immediate, no propagation needed.
+
 ### T-I1 + T-I2 + T-I12 (complete) — the session-end gate is reachable from the protocol
 
 One pass over `global/AGENTS.md` plus three skills, because the edits

@@ -27,6 +27,10 @@ MAKE_ALLOWLIST="init|init-adopt|analyze|setup|update|link|start"
 check_make_commands() {
   local file="$1"
   [ -f "$file" ] || return 0
+  # Cheap pre-filter: the per-line loop below costs several subprocesses per
+  # line, and most files contain no `make` command at all. Without this, the
+  # widened traversal (T-I10) pushed a full run past a minute.
+  grep -q '`make ' "$file" || return 0
   local lineno=0
   while IFS= read -r line; do
     lineno=$((lineno + 1))
@@ -64,6 +68,8 @@ PATH_TARGETS="global/AGENTS.md global/skills/harness-init global/skills/dod glob
 check_unreachable_paths() {
   local file="$1"
   [ -f "$file" ] || return 0
+  # Same pre-filter as above — skip whole files that cannot match.
+  grep -qE '(instructions/|notes/Harness|tests/behavior/|\.github/|scripts/[a-zA-Z])' "$file" || return 0
   local lineno=0
   while IFS= read -r line; do
     lineno=$((lineno + 1))
@@ -101,12 +107,120 @@ for f in $PATH_TARGETS; do
     check_make_commands "$f"
     check_unreachable_paths "$f"
   elif [ -d "$f" ]; then
+    # Every file, not just *.md/*.sh: the non-markdown layer is exactly what
+    # ships to a client project (templates/.agentignore, .gitignore,
+    # .env.example, ci/*.yml) and it was entirely outside the lint — which is
+    # how templates/.agentignore came to cite a bare `scripts/dod.sh` path,
+    # the very bug this script exists to catch, in a file it could not see
+    # (T-I10). Binary extensions are excluded so the lint never reads images.
     while IFS= read -r -d '' sub; do
+      case "$sub" in
+        *.png|*.jpg|*.jpeg|*.gif|*.svg|*.ico|*.webp|*.woff|*.woff2|*.ttf|*.eot|*.pdf|*.zip|*.tar|*.gz|*.mp4|*.mov) continue ;;
+        # Never delivered: rsync excludes *.bak, and node_modules/notes are
+        # working-tree debris (T-I13 removes the mirroring half of this).
+        *.bak|*.sedbak|*/node_modules/*|*/.git/*) continue ;;
+      esac
       check_make_commands "$sub"
       check_unreachable_paths "$sub"
-    done < <(find "$f" -type f \( -name "*.md" -o -name "*.sh" \) -print0)
+    done < <(find "$f" -type f -print0)
   fi
 done
+
+# ── Rule 2b: channel K4 (README.md, INSTALL.md) ────────────────────────────
+# User-facing docs were outside the lint entirely, which is where the user
+# actually copies commands from — that is how README kept teaching
+# `make unadopt` in a client project long after the Makefile stopped being
+# installed there (T-I15).
+#
+# These two files legitimately live in the harness repo and describe it:
+# `make help`, `make mcp`, links to instructions/ are all correct in that
+# context, and flagging them produced 12 false positives on the first run.
+# So the rule is inverted here — instead of demanding a harness-repo caveat,
+# it fires only when the surrounding lines are explicitly talking about a
+# CLIENT project, where no Makefile exists.
+K4_TARGETS="README.md INSTALL.md"
+CLIENT_CONTEXT="from a project|client project|in your project|your own project|/path/to/project|cd /path/to|adopted project"
+
+check_k4_client_commands() {
+  local file="$1"
+  [ -f "$file" ] || return 0
+  grep -q 'make ' "$file" || return 0
+  local lineno=0
+  while IFS= read -r line; do
+    lineno=$((lineno + 1))
+    local target
+    target=$(echo "$line" | grep -oE '`?make [a-zA-Z-]+' | head -1 | sed -E 's/`?make //') || true
+    [ -z "$target" ] && continue
+    echo "$target" | grep -qE "^($MAKE_ALLOWLIST)$" && continue
+
+    local lo=$((lineno > 3 ? lineno - 3 : 1))
+    local hi=$((lineno + 3))
+    local window
+    window=$(sed -n "${lo},${hi}p" "$file")
+    echo "$window" | grep -qiE "$CLIENT_CONTEXT" || continue
+    echo "$window" | grep -q "propagation-ok:" && continue
+
+    fail "$file:$lineno — \`make $target\` shown for a CLIENT project, which has no Makefile by design. Use \`bash ~/.opencode-harness/scripts/<script>.sh\`."
+  done < "$file"
+}
+
+for f in $K4_TARGETS; do
+  check_k4_client_commands "$f"
+done
+
+# ── Rule 4: the shortcut / auto-loading lists must match the disk ──────────
+# Nothing checked either direction: not that a listed shortcut points at
+# something that exists, nor that a new script/protocol made it into the
+# list. Both lists were correct when audited by hand (21 shortcuts, 30
+# auto-loading rows, zero misses) — this keeps them that way without a human
+# re-walking them (T-I23, closing report finding F).
+AGENTS_MD="global/AGENTS.md"
+
+if [ -f "$AGENTS_MD" ]; then
+  # 4a. Forward — every script path named in AGENTS.md exists.
+  while IFS= read -r p; do
+    [ -f "${p#\~/.opencode-harness/}" ] || \
+      fail "$AGENTS_MD names \`$p\`, which does not exist in the harness repo."
+  done < <(grep -oE '~/\.opencode-harness/scripts/[a-zA-Z0-9._-]+\.sh' "$AGENTS_MD" | sort -u)
+
+  # 4b. Forward — every skill path named in AGENTS.md exists, whether written
+  #     as ~/.config/opencode/skills/<x> or as a bare <domain>/SKILL.md row in
+  #     the Auto-Loading table.
+  while IFS= read -r p; do
+    [ -e "global/skills/${p#\~/.config/opencode/skills/}" ] || \
+      fail "$AGENTS_MD names skill \`$p\`, which does not exist in global/skills/."
+  done < <(grep -oE '~/\.config/opencode/skills/[a-zA-Z0-9._/-]+' "$AGENTS_MD" | sort -u)
+
+  while IFS= read -r p; do
+    [ -f "global/skills/$p" ] || \
+      fail "$AGENTS_MD Auto-Loading table points at \`$p\`, which does not exist in global/skills/."
+  done < <(sed -n '/^| Domain *| Triggers *| Path *|/,/^$/p' "$AGENTS_MD" \
+             | grep -oE '[a-zA-Z0-9._/-]+/SKILL\.md' | sort -u)
+
+  # 4c. Backward — a new shortcut script or agent protocol must appear in the
+  #     `## Harness Shortcuts` list. Without this, the list rots the moment
+  #     someone adds a script: the forward rules above would stay green.
+  SHORTCUT_SECTION=$(sed -n '/^## Harness Shortcuts/,/^## /p' "$AGENTS_MD")
+
+  for s in scripts/*-shortcut.sh; do
+    [ -f "$s" ] || continue
+    base=$(basename "$s")
+    echo "$SHORTCUT_SECTION" | grep -q "$base" || \
+      fail "scripts/$base exists but is not mentioned in \`## Harness Shortcuts\` — a shortcut nobody can discover."
+  done
+
+  for a in global/skills/harness-init/agent-*.md; do
+    [ -f "$a" ] || continue
+    # A protocol declaring `trigger: "none"` is a sub-protocol loaded by
+    # another one (agent-e2e.md), not a user-facing shortcut — excluding it
+    # by frontmatter, not by name, so the exception cannot silently widen.
+    grep -qE '^trigger:[[:space:]]*"none' "$a" && continue
+    trig=$(grep -m1 -E '^trigger:' "$a" | sed -E 's/^trigger:[[:space:]]*"?//; s/[",].*$//' | tr -d ' ')
+    [ -z "$trig" ] && continue
+    echo "$SHORTCUT_SECTION" | grep -qE "\`$trig[\` ]" || \
+      fail "$a declares trigger \`$trig\` but no such shortcut is listed in \`## Harness Shortcuts\`."
+  done
+fi
 
 # ── Rule 3: dod.sh must not silently `check_pass` in a client-profile
 #    (IS_HARNESS_REPO=0) branch without a `# propagation-ok:` marker
