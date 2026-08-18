@@ -10,6 +10,13 @@
 # See global/AGENTS.md "Harness Shortcuts".
 set -euo pipefail
 
+# See T-I25: report the missing interpreter by name rather than letting the
+# shell surface it from inside a heredoc.
+command -v python3 >/dev/null 2>&1 || {
+  echo "✗ python3 is required to refresh HARNESS-MANAGED regions in AGENTS.md." >&2
+  exit 1
+}
+
 HARNESS_PATH="$HOME/.opencode-harness"
 TEMPLATES="$HARNESS_PATH/templates"
 PROJECT="$(pwd)"
@@ -176,11 +183,12 @@ else
     grep -qxF "$line" "$PROJECT/.gitignore" || gt_missing=1
   done < "$gt"
   if [ "$gt_missing" = "1" ]; then
-    echo "  ~ .gitignore — missing entries (merge manually):"
+    echo "  ~ .gitignore — missing entries (will be appended):"
     while IFS= read -r line; do
       [ -z "$line" ] && continue
       grep -qxF "$line" "$PROJECT/.gitignore" || echo "    + $line"
     done < "$gt"
+    missing=1
   fi
 fi
 
@@ -225,6 +233,21 @@ done
 [ ! -d "$PROJECT/memory" ] && mkdir -p "$PROJECT/memory" && echo "✓ Created memory/"
 if [ ! -f "$PROJECT/.gitignore" ]; then
   cp "$TEMPLATES/.gitignore" "$PROJECT/.gitignore" && echo "✓ Copied .gitignore"
+elif [ "${gt_missing:-0}" = "1" ]; then
+  # Printing "merge manually" and stopping there meant a template fix never
+  # actually reached an existing project — the entries stayed missing until
+  # someone did it by hand, which nobody did (T-I11). Appended, not merged in
+  # place: a line the user deliberately deleted will come back, which is
+  # acceptable and stated — this command's model is additions only.
+  {
+    echo ""
+    echo "# --- added by update-project ---"
+    while IFS= read -r line; do
+      [ -z "$line" ] && continue
+      grep -qxF "$line" "$PROJECT/.gitignore" || echo "$line"
+    done < "$TEMPLATES/.gitignore"
+  } >> "$PROJECT/.gitignore"
+  echo "✓ .gitignore — appended missing entries"
 fi
 if [ "$hooks_stale" = "1" ]; then
   bash "$HARNESS_PATH/scripts/install-hooks.sh" "$PROJECT"

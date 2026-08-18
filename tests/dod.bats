@@ -291,3 +291,27 @@ lag_setup() {
   [ -f "$SCRATCH/AGENTS.md.bak" ]
   grep -q "CUSTOM LOCAL EDIT" "$SCRATCH/AGENTS.md.bak"
 }
+
+# ── Step 7: syntax check on paths with spaces (T-I19) ─────────────────────
+# `bash -n $SH_STAGED` word-split on spaces, so a client project with an
+# ordinary path like "src/My Component/build.sh" got a missing-file error
+# instead of the real verdict.
+@test "dod.sh step 7 syntax-checks a staged shell file whose path contains a space" {
+  mkdir -p "src/My Component"
+  printf '#!/bin/bash\nif [ 1 -eq 1 ]\n' > "src/My Component/build.sh"   # missing fi
+  git add "src/My Component/build.sh"
+
+  DOD_SKIP="docs-lag,progress,docs-matrix,tests" PRE_COMMIT=1 run bash "$HARNESS_ROOT/scripts/dod.sh"
+  [ "$status" -eq 1 ]
+  [[ "$output" == *"Self-check (syntax)"* ]]
+  [[ "$output" != *"No such file or directory"* ]]
+}
+
+@test "dod.sh step 7 passes a valid staged shell file whose path contains a space" {
+  mkdir -p "src/My Component"
+  printf '#!/bin/bash\nif [ 1 -eq 1 ]; then echo ok; fi\n' > "src/My Component/build.sh"
+  git add "src/My Component/build.sh"
+
+  DOD_SKIP="docs-lag,progress,docs-matrix,tests" PRE_COMMIT=1 run bash "$HARNESS_ROOT/scripts/dod.sh"
+  [[ "$output" == *"Self-check (syntax on changed shell files)"* ]]
+}

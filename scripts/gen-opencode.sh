@@ -12,6 +12,13 @@
 # Usage: bash scripts/gen-opencode.sh [PROJECT_DIR]
 set -euo pipefail
 
+# See T-I25: report the missing interpreter by name rather than letting the
+# shell surface it from inside a heredoc.
+command -v python3 >/dev/null 2>&1 || {
+  echo "✗ python3 is required to generate opencode.jsonc from .env." >&2
+  exit 1
+}
+
 PROJECT_DIR="${1:-$(pwd)}"
 ENV_FILE="$PROJECT_DIR/.env"
 OUT_FILE="$PROJECT_DIR/opencode.jsonc"

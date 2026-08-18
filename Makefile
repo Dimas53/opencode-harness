@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: help link setup init init-adopt analyze verify update dod mcp self-check uninstall uninstall-lite unadopt check-docs-sync check-docs-refs check-propagation
+.PHONY: help link setup init init-adopt analyze verify update dod mcp self-check uninstall uninstall-lite unadopt check-docs-sync check-docs-refs check-propagation test test-quick session-end start
 
 .DEFAULT_GOAL := help
 
@@ -18,7 +18,11 @@ help:
 	@echo "  make update         -- update harness from repository"
 	@echo "  make dod            -- run Definition of Done checks"
 	@echo "                        (uncommitted check + cyrillic scan + docs lag)"
-	@echo "  make check-docs-sync -- verify DoD stays in sync across AGENTS.md/SKILL.md"
+	@echo "  make check-docs-sync -- verify DoD + Session Start match global/rules/protocols.yaml"
+	@echo "  make check-docs-refs -- verify skill references and inventory match the disk"
+	@echo "  make check-propagation -- verify delivered files reference nothing harness-only"
+	@echo "  make test-quick     -- syntax-check scripts + run every tests/*.bats suite"
+	@echo "  make test           -- same as test-quick (full suite)"
 	@echo "  make self-check     -- verify syntax, permissions and diff before committing"
 	@echo "  make uninstall      -- remove everything (harness + OpenCode + RTK + uv)"
 	@echo "  make uninstall-lite -- remove harness only, keep OpenCode and RTK"

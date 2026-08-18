@@ -8,6 +8,38 @@
 # from) the same merge logic.
 set -euo pipefail
 
+# Fail with a harness message, not `node: command not found` from somewhere
+# deep in a pipeline. Neither this script nor gen-opencode.sh checked, so a
+# machine without the interpreter got a raw shell error and no hint about
+# which tool was missing or why (T-I25).
+command -v node >/dev/null 2>&1 || {
+  echo "✗ node is required to merge opencode.jsonc (JSONC parsing)." >&2
+  echo "  Install Node.js — the harness already needs it for OpenCode itself." >&2
+  exit 1
+}
+
+# --list-mcp CONFIG: print one line per MCP server as
+# "name|type|command-or-url". verify.sh uses this to check the servers are
+# reachable (T-I24) — the point of putting it here rather than in verify.sh is
+# that the JSONC stripper below is subtle enough to have been fixed twice
+# already (T-G-U2); a third copy would drift the same way.
+if [ "${1:-}" = "--list-mcp" ]; then
+  CONFIG="${2:-$HOME/.config/opencode/opencode.jsonc}"
+  [ -f "$CONFIG" ] || { echo "✗ config not found: $CONFIG" >&2; exit 1; }
+  node -e '
+    const fs = require("fs");
+    const raw = fs.readFileSync(process.argv[1], "utf8");
+    const clean = raw.replace(/(^|[^:])\/\/.*$/gm, "$1").replace(/,\s*([}\]])/g, "$1");
+    const cfg = JSON.parse(clean);
+    for (const [name, def] of Object.entries(cfg.mcp || {})) {
+      const type = def.type || "local";
+      const what = type === "remote" ? (def.url || "") : ((def.command || [])[0] || "");
+      console.log(`${name}|${type}|${what}`);
+    }
+  ' "$CONFIG"
+  exit 0
+fi
+
 TEMPLATE="$1"
 TARGET="$2"
 

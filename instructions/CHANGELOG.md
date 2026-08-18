@@ -59,6 +59,136 @@ ticket touches `Makefile`, `.github/` and `instructions/`, none of which is
 delivered to client projects. The harness repo is the only place these tests
 can run, and that is by design (`IS_HARNESS_REPO` in `dod.sh`).
 
+### T-I9, T-I11, T-I16, T-I19, T-I20, T-I22, T-I24, T-I25 (complete) — the phase-3 singles
+
+Eight tickets with no shared code between them, closed in one pass.
+
+**T-I20 — `session-end.sh` hid the reminder where it was needed most.** It
+printed `[ 1/4 ]`…`[ 4/4 ]` and then an unnumbered `[ + ] Uncommitted
+changes` — five checks presented as four. Worse, the audit trail and the
+Retro nudge both lived inside the `else` branch of "does
+`memory/YYYY-MM-DD.md` exist": the session that wrote nothing down got no
+reminder to reflect, which is exactly the session that needed one. Numbering
+fixed to `[ n/5 ]`; the Retro reminder now appears in every branch, including
+the two that report a missing memory file.
+
+**T-I11 — `.session-ended` was untracked debris in every client project.**
+`session-end.sh` writes it to any project root, but `templates/.gitignore`
+never listed it, so it sat in `git status` forever and could be committed.
+(`.dod-run.log` escaped only by accident, under `*.log`.) Both are now listed
+with a comment saying they are state, not clutter — the second agent-facing
+place that says so, after T-I12.
+
+The other half was worse: `update-project.sh` printed missing `.gitignore`
+entries with "merge manually" and never applied them, so a template fix could
+not reach an existing project without someone doing it by hand — which nobody
+does. It now appends them under a `# --- added by update-project ---` header.
+A line the user deliberately deleted will come back; that is acceptable and
+stated, since this command's model is additions only.
+
+**T-I16 — `unadopt` could refuse to run, and left files behind.** Its entry
+check was `[ ! -f MEMORY.md ]`, while the canonical adoption test in
+`global/AGENTS.md` is `HARNESS.md` OR (`AGENTS.md` + `PROGRESS.md`) OR
+`memory/` — so a project adopted without `MEMORY.md` could not be un-adopted
+at all: the script insisted the harness was not there. Now uses the canonical
+detector. It also left `.agentignore` (installed by `init-adopt`,
+`init-project` and `update-project`) plus `.session-ended` and `.dod-run.log`
+in a project that no longer has anything to explain them. `.agentignore` is
+now backed up and removed; the two state files are removed. The list in
+`global/AGENTS.md` matches the script again.
+
+**T-I19 — a swallowed hint and a shredded path.** `check_fail` takes one
+argument, but two call sites passed a second ("fix syntax errors above") that
+was silently discarded — the hint never printed. And the client-profile
+branch built its file list with `echo "$FILES" | tr ' ' '\n'`, which splits
+any path containing a space: `src/My Component/build.sh` became two
+non-existent files, so the gate reported a missing file instead of the real
+syntax verdict. `FILES` is already newline-separated, so the `tr` was both
+wrong and unnecessary; each file is now syntax-checked individually, quoted.
+Two new bats cases cover the space-in-path case both ways.
+
+**T-I22 — `.PHONY` and `help` were both incomplete.** `test`, `test-quick`,
+`session-end` and `start` were missing from `.PHONY` (a file named `test` in
+the repo root would have silently disabled the target), and `make help` never
+mentioned the three checkers or the test targets. Both fixed.
+
+Note: the ticket's own proof command had `comm -13` where it needed `-23`,
+so it compared the lists the wrong way round and printed nothing — a clean
+bill of health for a broken file. The corrected direction is what found the
+four missing targets.
+
+**T-I24 — `verify.sh` never checked that any MCP server comes up.** It
+verified `opencode.jsonc` exists and stopped there. This was the single
+finding of two audit passes that never got a ticket at all — not deferred,
+lost. `verify.sh` now lists the servers and checks each one: for `local`,
+that the launcher (`npx`, `uvx`) resolves; for `remote`, nothing unless
+`--network` is passed, so `make verify` stays offline by default. All results
+are warnings — an MCP server being down does not make the installation wrong.
+
+The config is parsed by calling `merge-opencode-config.sh --list-mcp` rather
+than re-implementing the JSONC stripper: that stripper has already been fixed
+twice (T-G-U2), and a third copy would drift the same way.
+
+**T-I25 — two runtimes, neither checked.** `merge-opencode-config.sh` needs
+`node`; `gen-opencode.sh` and `update-project.sh` need `python3`. None
+checked, so a machine missing one got a raw `command not found` from inside a
+heredoc rather than a harness message naming the tool. All three now check up
+front, and `verify.sh` reports both runtimes as first-class checks.
+
+**T-I9 — the skill the agent reads carried the wrong threshold.** 
+`documentation/SKILL.md` said docs lag fires at ">5 behind HEAD" while
+`AGENTS.md`, `dod.sh`, `session-end.sh` and `GUIDE.md` all said 3 — the
+earlier fix (§2.2) had corrected GUIDE.md only. It also declared an
+"Automatic check (run silently after EVERY response)", contradicting
+`AGENTS.md`'s explicit "No auto-trigger" and costing a git call per turn for
+a number that changes only when a commit lands. The number is gone (it now
+points at the canon) and the check is described as part of Session End.
+
+Proof:
+
+```
+$ bash ~/.opencode-harness/scripts/session-end.sh      # client fixture, empty memory/
+[ 1/5 ] Docs lag check … [ 5/5 ] Uncommitted changes
+⚠ No memory log for today: memory/2026-08-19.md — and therefore no ## Retro either
+   → Then add a ## Retro section: what went wrong / workaround found /
+
+$ git status --porcelain | grep session-ended        # after session-end.sh
+(no output — ignored)
+
+$ printf 'y\n' | update-project.sh                    # fixture with a trimmed .gitignore
+✓ .gitignore — appended missing entries
+
+$ bash -c 'PATH=/usr/bin:/bin scripts/merge-opencode-config.sh a b'
+✗ node is required to merge opencode.jsonc (JSONC parsing).
+
+$ bash scripts/verify.sh
+✓ MCP filesystem (local, via npx)  … ✓ MCP context7 (remote, not contacted — use --network to test)
+Results: 18 passed, 0 failed, 0 warning(s)
+
+$ PATH=<without uvx> bash scripts/verify.sh
+⚠ MCP fetch — launcher uvx not found in PATH
+⚠ MCP git — launcher uvx not found in PATH     # warnings, run continues
+
+$ comm -23 <(targets) <(phony)                        # T-I22, corrected direction
+(empty — every target is phony)
+
+$ make test-quick | grep -c "^ok "
+45
+```
+
+`check-propagation.sh` fired on this batch too: the T-I19 refactor moved a
+`propagation-ok:` marker away from the `check_pass` it justified, and Rule 3
+caught it. Third time this wave the backstop has flagged the author's own
+edit — which is the argument for the backstop.
+
+Propagation question (`09-propagation-audit.md`): `templates/.gitignore` and
+the `update-project.sh` change are what carry T-I11 into client projects
+(existing ones on the next `update-project` run); `unadopt.sh`, `dod.sh` and
+`session-end.sh` are invoked from client projects via `~/.opencode-harness/`;
+`documentation/SKILL.md` is mirrored into the live config. `verify.sh`,
+`Makefile` and `merge-opencode-config.sh` are install-side tooling and stay in
+the harness repo by design.
+
 ### T-I7 + T-I8 + T-I17 + T-I18 + T-I21 (complete) — step counts stop drifting
 
 The "hardcoded number drifts" batch. T-F1 closed this class for the DoD by

@@ -11,13 +11,20 @@ Loaded when: docs lag check triggers warning, phase/major feature completes, or 
 
 ## When to trigger
 
-### Automatic check (run silently after EVERY response)
-```bash
-git log --oneline -- docs/ | head -1
-git log --oneline | head -1
-```
-If docs commit >5 behind HEAD OR >1 week old:
-→ After completing current task, ask:
+### Docs lag check — part of Session End, not a background loop
+
+`AGENTS.md` says plainly: **no auto-trigger.** The lag check belongs to the
+`## Session End` protocol and the `docs` shortcut, both of which run
+`session-end.sh`; running it silently after every response contradicts the
+canon and burns a git call per turn for a number that changes only when a
+commit lands.
+
+The threshold lives in `AGENTS.md ## Session End` — read it there rather
+than repeating it. This file used to say ">5 behind HEAD" while every other
+channel said 3, so the skill the agent actually reads was the one carrying
+the wrong number.
+
+When the check does report a lag, after finishing the current task ask:
 > "Documentation is behind code changes. Want me to run a docs update session?"
 
 ### Phase/feature complete

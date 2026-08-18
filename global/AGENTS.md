@@ -41,7 +41,8 @@ When user types:
   not a second path — the shortcut just lets you run it mid-session.
 
 - `unadopt` — remove all harness files from the CURRENT project (AGENTS.md,
-  MEMORY.md, PLAN.md, PROGRESS.md, HARNESS.md, memory/, both git hooks).
+  MEMORY.md, PLAN.md, PROGRESS.md, HARNESS.md, `.agentignore`, memory/,
+  both git hooks, and the `.session-ended` / `.dod-run.log` state files).
   Run: `bash ~/.opencode-harness/scripts/unadopt.sh`
   Everything removed is backed up to `.harness-unadopt-backup/` first. Keeps
   `docs/` unless confirmed.

@@ -76,3 +76,21 @@ teardown() {
   [ ! -f "$SCRATCH/.git/hooks/post-commit" ]
   [ ! -f "$SCRATCH/.git/hooks/post-commit.bak" ]
 }
+
+
+# T-I16: unadopt keyed on MEMORY.md alone, so a project adopted without it
+# could not be un-adopted at all; and it left .agentignore plus the two state
+# files behind in a project that no longer has anything to explain them.
+@test "unadopt works without MEMORY.md and removes .agentignore and state files" {
+  bash "$HARNESS_ROOT/scripts/init-adopt.sh" "$SCRATCH" --no-open
+  rm -f MEMORY.md
+  touch .session-ended .dod-run.log
+  [ -f "$SCRATCH/.agentignore" ]
+
+  printf 'n\n' | bash "$HARNESS_ROOT/scripts/unadopt.sh"
+
+  [ ! -f "$SCRATCH/.agentignore" ]
+  [ ! -f "$SCRATCH/.session-ended" ]
+  [ ! -f "$SCRATCH/.dod-run.log" ]
+  [ -f "$SCRATCH/.harness-unadopt-backup/.agentignore" ]
+}

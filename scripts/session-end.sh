@@ -18,7 +18,7 @@ echo "=== Session End ==="
 echo ""
 
 # ── Step 1: Docs lag ─────────────────────────────────────────────────────────
-echo "[ 1/4 ] Docs lag check"
+echo "[ 1/5 ] Docs lag check"
 
 if ! git rev-parse --is-inside-work-tree &>/dev/null; then
   check_warn "Not inside a git repo — skipping"
@@ -55,7 +55,7 @@ fi
 echo ""
 
 # ── Step 2: PROGRESS.md ──────────────────────────────────────────────────────
-echo "[ 2/4 ] PROGRESS.md check"
+echo "[ 2/5 ] PROGRESS.md check"
 
 if [ ! -f "PROGRESS.md" ]; then
   check_warn "PROGRESS.md not found — create it to track session continuity"
@@ -79,7 +79,7 @@ fi
 echo ""
 
 # ── Step 3: Memory log ───────────────────────────────────────────────────────
-echo "[ 3/4 ] Memory log check"
+echo "[ 3/5 ] Memory log check"
 
 MEMORY_FILE="memory/$TODAY.md"
 
@@ -87,19 +87,25 @@ MEMORY_FILE="memory/$TODAY.md"
 
   if [ ! -d "memory" ]; then
     if [ -n "$SESSION_CHANGES" ]; then
-      check_fail "memory/ not found and session has changes — workarounds may be lost"
+      check_fail "memory/ not found and session has changes — workarounds may be lost, and there is no ## Retro"
       echo "   → Run: mkdir memory && touch $MEMORY_FILE"
+      echo "   → Include a ## Retro section: what went wrong / workaround found /"
+      echo "     skill behaved unexpectedly (or 'none' for each)"
     else
       check_warn "memory/ directory not found"
       echo "   → Run: mkdir memory"
     fi
   elif [ ! -f "$MEMORY_FILE" ]; then
     if [ -n "$SESSION_CHANGES" ]; then
-      check_fail "No memory log for today and session has changes — workarounds may be lost"
+      check_fail "No memory log for today and session has changes — workarounds may be lost, and there is no ## Retro"
       echo "   → Run: touch $MEMORY_FILE && write session notes"
+      echo "   → Include a ## Retro section: what went wrong / workaround found /"
+      echo "     skill behaved unexpectedly (or 'none' for each)"
     else
-      check_warn "No memory log for today: $MEMORY_FILE"
+      check_warn "No memory log for today: $MEMORY_FILE — and therefore no ## Retro either"
       echo "   → If you found workarounds or errors this session — write them now"
+      echo "   → Then add a ## Retro section: what went wrong / workaround found /"
+      echo "     skill behaved unexpectedly (or 'none' for each)"
     fi
 else
   LINES=$(wc -l < "$MEMORY_FILE" | tr -d ' ')
@@ -135,6 +141,12 @@ else
   #    whole session, per session-end/SKILL.md. Warn only, never blocks;
   #    content itself needs the agent's own reflection, not something to
   #    auto-generate.
+  #
+  #    The branches above carry the same reminder, deliberately: this one only
+  #    fires when memory/YYYY-MM-DD.md exists, and the session with no memory
+  #    file at all is precisely the one where nothing was reflected on. Having
+  #    the nudge only here meant it was absent exactly where it was needed
+  #    most (T-I20).
   if ! grep -q "^## Retro" "$MEMORY_FILE" 2>/dev/null; then
     check_warn "$MEMORY_FILE has no ## Retro section — add one line each: what went wrong / workaround found / skill behaved unexpectedly (or 'none')"
   fi
@@ -147,7 +159,7 @@ echo ""
 # on session 1 would just be noise (G-DEC-2: warn after ~4 sessions, never
 # fail). Session count = number of "### YYYY-MM-DD" entries under PROGRESS.md
 # Session Log — the templates/PROGRESS.md convention.
-echo "[ 4/4 ] Docs completeness check"
+echo "[ 4/5 ] Docs completeness check"
 
 SESSION_COUNT=0
 if [ -f "PROGRESS.md" ]; then
@@ -201,7 +213,7 @@ fi
 echo ""
 
 # ── Uncommitted check ────────────────────────────────────────────────────────
-echo "[ + ] Uncommitted changes"
+echo "[ 5/5 ] Uncommitted changes"
 
 if git rev-parse --is-inside-work-tree &>/dev/null; then
   UNCOMMITTED=$(git status --porcelain 2>/dev/null | grep -v "^??" || true)

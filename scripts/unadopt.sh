@@ -14,13 +14,17 @@
 # script and removes the hook by hand. See notes/Harness/implementation-plan-2/09-propagation-audit.md.
 set -euo pipefail
 
-if [ ! -f MEMORY.md ]; then
+# Canonical adoption detector, matching global/AGENTS.md: HARNESS.md, or
+# AGENTS.md + PROGRESS.md, or memory/. Keying on MEMORY.md alone (the old
+# check) meant a project adopted without it could not be un-adopted at all —
+# the script insisted the harness "was not found here" (T-I16).
+if [ ! -f HARNESS.md ] && ! { [ -f AGENTS.md ] && [ -f PROGRESS.md ]; } && [ ! -d memory ]; then
   echo "✗ Harness files not found here. Run from project root." >&2
   exit 1
 fi
 
 mkdir -p .harness-unadopt-backup
-for f in AGENTS.md MEMORY.md PLAN.md PROGRESS.md HARNESS.md; do
+for f in AGENTS.md MEMORY.md PLAN.md PROGRESS.md HARNESS.md .agentignore; do
   if [ -f "$f" ]; then
     cp "$f" ".harness-unadopt-backup/$f"
     echo "  Backed up: $f"
@@ -31,8 +35,11 @@ if [ -d memory ]; then
   echo "  Backed up: memory/"
 fi
 
-rm -f AGENTS.md MEMORY.md PLAN.md PROGRESS.md HARNESS.md
+rm -f AGENTS.md MEMORY.md PLAN.md PROGRESS.md HARNESS.md .agentignore
 rm -rf memory/
+# State, not user content: no point backing these up, but leaving them behind
+# means a de-adopted project keeps files nobody can explain (T-I16).
+rm -f .session-ended .dod-run.log
 echo "  → Full backup at .harness-unadopt-backup/ (delete manually when confirmed safe)"
 
 # A .bak that is itself a harness hook is not a pre-harness hook to restore —

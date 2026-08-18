@@ -12,3 +12,10 @@ node_modules/
 dist/
 opencode.jsonc
 .harness-unadopt-backup/
+
+# harness session artifacts — do not delete these files, they are state:
+#   .session-ended  — marker that the last session was closed properly
+#   .dod-run.log    — DoD gate run log; session-end.sh builds the
+#                     "## Session audit trail" memory section from it
+.session-ended
+.dod-run.log

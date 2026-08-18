@@ -361,7 +361,7 @@ echo "  → Did you verify each change actually works, not just syntactically?"
 echo "  → Run: bash -n on changed scripts"
 echo "  → Run: make verify"
 if ls scripts/*.sh &>/dev/null 2>&1; then
-  bash -n scripts/*.sh 2>&1 && check_pass "Self-check (syntax)" || check_fail "Self-check" "fix syntax errors above"
+  bash -n scripts/*.sh 2>&1 && check_pass "Self-check (syntax)" || check_fail "Self-check (syntax) — fix the syntax errors above"
 elif [ "$IS_HARNESS_REPO" = "1" ]; then
   check_warn "No scripts/*.sh found — skipping syntax check"
 else
@@ -369,10 +369,23 @@ else
   # nothing to check — this commit may still touch shell files elsewhere
   # in the project. Syntax-check those instead of claiming a pass for a
   # check that never ran. propagation-ok: real check, not a stub.
-  SH_STAGED=$(echo "${FILES:-}" | tr ' ' '\n' | grep -E '\.sh$' || true)
+  # No `tr ' ' '\n'` here: FILES is already newline-separated (git
+  # --name-only), and translating spaces shredded any path containing one —
+  # the very case this branch exists to handle (T-I19).
+  SH_STAGED=$(echo "${FILES:-}" | grep -E '\.sh$' || true)
   if [ -n "$SH_STAGED" ]; then
-    bash -n $SH_STAGED 2>&1 && check_pass "Self-check (syntax on changed shell files)" \
-                            || check_fail "Self-check" "fix syntax errors above"
+    # One file per iteration, quoted: `bash -n $SH_STAGED` word-splits on
+    # spaces, and "src/My Component/build.sh" is an ordinary path in a client
+    # project — the check would report a missing file instead of a real
+    # syntax error (T-I19).
+    SH_SYNTAX_OK=1
+    while IFS= read -r shf; do
+      [ -z "$shf" ] && continue
+      bash -n "$shf" 2>&1 || SH_SYNTAX_OK=0
+    done <<< "$SH_STAGED"
+    # propagation-ok: real check on real files, not a stub pass.
+    [ "$SH_SYNTAX_OK" = "1" ] && check_pass "Self-check (syntax on changed shell files)" \
+                              || check_fail "Self-check (syntax) — fix the syntax errors above"
   else
     check_warn "Self-check is advisory in this project — verify each change actually works"
   fi
