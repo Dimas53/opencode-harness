@@ -87,6 +87,10 @@ if git rev-parse --is-inside-work-tree &>/dev/null; then
     [[ "$file" == scripts/dod.sh ]] && continue
     [[ "$file" == scripts/session-end.sh ]] && continue
     [[ "$file" == tests/dod.bats ]] && continue
+    # Same reason as dod.sh itself: this script has to spell out a Cyrillic
+    # character class in order to scan for one (T-I13). grep -P, which would
+    # let us write \p{Cyrillic} instead, does not exist in BSD grep.
+    [[ "$file" == scripts/check-docs-refs.sh ]] && continue
 
     # Skip binary extensions
     case "$file" in

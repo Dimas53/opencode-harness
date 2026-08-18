@@ -316,7 +316,7 @@ Stack-specific:
 
 ```bash
 cd ~/projects
-mkdir itocook && cd itocook
+mkdir myapp && cd myapp
 opencode
 ```
 
@@ -331,7 +331,7 @@ The agent creates the project and `AGENTS.md` with the project map.
 ### Existing project (legacy)
 
 ```bash
-cd ~/projects/itocook
+cd ~/projects/myapp
 opencode
 ```
 
@@ -349,7 +349,7 @@ directory structure, key commands and agent restrictions
 # AGENTS.md
 
 ## Project
-ItoCook — internal office lunch coordination app.
+MyApp — internal team coordination app (example project used throughout this guide).
 Stack: Nuxt 4, Directus, PostgreSQL, FastAPI, Docker Compose.
 
 ## Architecture
@@ -391,7 +391,7 @@ Stack: Nuxt 4, Directus, PostgreSQL, FastAPI, Docker Compose.
 ## 5. Daily Workflow
 
 ```
-1. cd ~/projects/itocook
+1. cd ~/projects/myapp
 2. opencode                              ← launch the agent
 3. [agent reads AGENTS.md + global rules + loads relevant skills]
 4. "add meal sign-up page with cost split"   ← task
@@ -504,7 +504,7 @@ Before any UI task the agent must read `DESIGN.md` in the project.
     ├── debugging-and-error-recovery/SKILL.md
     └── ... (23+ skills)
 
-~/projects/itocook/
+~/projects/myapp/
 ├── AGENTS.md               ← project rules (loaded on top of global)
 ├── .opencode/skills/       ← project-specific skills (optional)
 └── ...

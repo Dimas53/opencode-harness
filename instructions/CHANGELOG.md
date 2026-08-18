@@ -59,6 +59,108 @@ ticket touches `Makefile`, `.github/` and `instructions/`, none of which is
 delivered to client projects. The harness repo is the only place these tests
 can run, and that is by design (`IS_HARNESS_REPO` in `dod.sh`).
 
+### T-I6 + T-I13 (complete) — the inventory is complete by machine, the mirror carries no debris
+
+Both widen `check-docs-refs.sh`, so one pass. Same phase-3 rule: every new
+check got a negative test.
+
+**T-I6 — the inventory drifted again, and nothing watched it.** T-A3 fixed
+this file by hand in Wave A and the report marked it ✅. By this audit it was
+missing **15 of the skills on disk**, still advertised `requesting-code-review`
+(deleted 2026-08-07) as vendored, still labelled `code-reviewer` and
+`security` as `custom (ItoCook)` — after T-B5 had de-identified `security/` —
+and still described `code-reviewer` as having "ItoCook-specific review rules,
+Russian text" (it has neither). A cheatsheet may be selective; an inventory
+that does not inventory a fifth of the tree is just wrong.
+
+Section 1 is now generated from disk and split: **1a** — the 69 skills in
+`global/skills/`, marked `vendored` or `custom (harness)`; **1b** — the six
+find-skills entries that legitimately live only in `.agents/skills/`. The
+hardcoded total is gone; the count belongs to `ls`, not to prose.
+
+Three new rules in `check-docs-refs.sh`:
+
+- the inventory joins the phantom check (was: two cheatsheet files only);
+- **backward completeness** — every directory in `global/skills/` must appear
+  in section 1a. This is what no checker could do before: a phantom check
+  cannot see a missing row;
+- **no client literals** (`itocook|itouser|duckdns`) in
+  `instructions/reference/` or `templates/`.
+
+That last rule immediately found nine more, outside the inventory:
+`01-harness-overview.de.md` (a dated snapshot written against one project)
+and `08-ai-agent-dev-workflow.md` (which used the client name as its running
+example, including `~/projects/itocook` paths). Both neutralised — the German
+overview now says "ein adoptiertes Client-Projekt", the workflow guide uses
+`myapp`. A specific engagement's name in a doc delivered to every other
+project is a leak between clients, not a cosmetic issue.
+
+Scoping note: `check_cheatsheet` is applied to the inventory **section by
+section**, not whole-file. Section 4 is a table of MCP servers (`context7`,
+`fetch`, `sequential-thinking`) in the identical backtick-first-column
+format, and reading those as missing skills is exactly the false positive
+that made the ticket's own suggested `comm` report ten phantoms where there
+was one.
+
+**T-I13 — the mirror copies the working tree, not git.** `rsync` knows
+nothing about `.gitignore`, so `global/skills/archify/notes/` — git-ignored
+by the root `notes/` rule, therefore invisible to every previous scan — rode
+into `~/.config/opencode/skills/`, where the model reads it: 46 lines of
+Russian text plus another project's branding. Along with 2.7 MB of
+`node_modules`. T-C4 fixed one instance of mirror debris (`*.bak`) and never
+generalized, and the exclusion list existed in three separate copies.
+
+Now one file, `scripts/mirror-excludes.txt`, used via `--exclude-from` by all
+three mirroring sites (`hooks/post-commit`, `install.sh`, `update.sh`):
+`*.bak`, `*.sedbak`, `*.log`, `.DS_Store`, `node_modules/`, `notes/`,
+`.git/`. Removed `archify/notes/` from the tree, and — separately, because
+`--exclude` does not retroactively delete — cleared what had **already**
+reached the live config: `~/.config/opencode/skills/archify` went from
+**3.0M to 316K**.
+
+Rule 4 in the checker now bans Cyrillic and client literals anywhere under
+`global/skills/`, across **all extensions**. Written with `grep -rlE`, never
+`grep -rlP`: BSD grep on macOS has no `-P` and exits with a usage error that
+reads as "no matches" — the ticket's own proof command would have passed
+silently on the machine this runs on.
+
+Proof — four negative tests, each restored afterwards:
+
+```
+$ mkdir global/skills/zzz-probe
+✗ global/skills/zzz-probe/ exists but is not listed. The inventory must list every skill on disk.
+
+$ (add a `ghost-skill` row to section 1a)
+✗ section 1a lists skill 'ghost-skill', not found in global/skills/
+
+$ printf '<p>[a line of Cyrillic text]</p>' > global/skills/archify/probe.html
+✗ global/skills/archify/probe.html — Cyrillic text inside global/skills/
+
+$ echo "Example: deploy to itocook.example" >> instructions/reference/02-opencode-commands.md
+✗ instructions/reference/02-opencode-commands.md:81 — client-specific literal
+```
+
+Exclusions verified by an actual rsync into a scratch directory: `notes/`,
+`node_modules/` and `*.log` all absent on the far side. Final state:
+
+```
+$ grep -rniE "itocook|itouser|duckdns" instructions/reference/ templates/
+(0 matches)
+$ bash scripts/check-dod-sync.sh && bash scripts/check-docs-refs.sh && bash scripts/check-propagation.sh
+✓ ✓ ✓
+$ make test-quick | grep -c "^ok "
+43
+```
+
+Propagation question (`09-propagation-audit.md`): yes, and this ticket is
+mostly *about* propagation. `mirror-excludes.txt` governs what physically
+lands in `~/.config/opencode/skills/`, which is what the model reads in every
+project; the de-identified reference docs ship through `update-harness`. The
+checker itself stays in the harness repo by design. Caveat: other machines
+still hold whatever debris their mirror already received — `update-harness`
+re-runs rsync but, like `--exclude` generally, does not delete what is
+already there. Only this machine was cleaned.
+
 ### T-I10 + T-I15 + T-I23 (complete) — check-propagation covers what actually ships
 
 Three tickets in one pass: all three widen the same traversal, and doing

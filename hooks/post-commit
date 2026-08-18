@@ -86,7 +86,10 @@ fi
 CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || true)
 if echo "$CHANGED" | grep -qE "^global/(skills/|AGENTS\.md$)"; then
   mkdir -p ~/.config/opencode/skills
-  rsync -a --exclude='*.bak' "$HARNESS_ROOT/global/skills/." ~/.config/opencode/skills/
+  # Exclusions live in one file for all three mirroring sites — see
+  # scripts/mirror-excludes.txt for why (T-I13).
+  rsync -a --exclude-from="$HARNESS_ROOT/scripts/mirror-excludes.txt" \
+        "$HARNESS_ROOT/global/skills/." ~/.config/opencode/skills/
   STALE_SKILLS=$(comm -23 \
     <(find ~/.config/opencode/skills -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort) \
     <(find "$HARNESS_ROOT/global/skills" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort))

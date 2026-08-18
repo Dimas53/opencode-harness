@@ -88,7 +88,7 @@ else
 fi
 
 # Update skills — copy all from repo, overwriting existing
-rsync -a --exclude='*.bak' global/skills/ "$HOME/.config/opencode/skills/"
+rsync -a --exclude-from=scripts/mirror-excludes.txt global/skills/ "$HOME/.config/opencode/skills/"
 echo "✓ Skills updated from repo"
 STALE_SKILLS=$(comm -23 \
     <(find "$HOME/.config/opencode/skills" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort) \

@@ -105,7 +105,7 @@ else
     bash "$(dirname "$0")/merge-opencode-config.sh" "$TEMPLATE_TMP" ~/.config/opencode/opencode.jsonc
     rm -f "$TEMPLATE_TMP"
 fi
-rsync -a --exclude='*.bak' global/skills/ ~/.config/opencode/skills/
+rsync -a --exclude-from=scripts/mirror-excludes.txt global/skills/ ~/.config/opencode/skills/
 STALE_SKILLS=$(comm -23 \
     <(find ~/.config/opencode/skills -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort) \
     <(find global/skills -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort))

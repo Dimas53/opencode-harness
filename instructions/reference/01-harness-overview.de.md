@@ -2,7 +2,7 @@
 
 > **Datum:** 2026-07-01
 > **Agent:** OpenCode (deepseek-v4-flash-free)
-> **Projekt:** ItoCook
+> **Projekt:** ein adoptiertes Client-Projekt (Nuxt 4 + Directus)
 > **Ziel:** Vollständiges Bild des Harness um das LLM — welche Werkzeuge und Fähigkeiten verfügbar sind, wie Entscheidungen getroffen werden und was vor Fehlern schützt.
 
 ---
@@ -11,7 +11,7 @@
 
 **Harness** — mehrschichtige Infrastruktur zwischen Entwickler und rohem LLM. Sie verwandelt ein Modell, das nur Text generieren kann, in einen Engineering-Agenten, der Dateien liest, Code schreibt, in die Datenbank geht, im Browser debuggt und Ergebnisse dokumentiert.
 
-Im Projekt ItoCook ist ein **9-schichtige Struktur** implementiert:
+Im untersuchten Client-Projekt ist eine **9-schichtige Struktur** implementiert:
 
 ```
 1. INSTRUCTION  — AGENTS.md, Regeln, Verbote
@@ -44,7 +44,7 @@ Definiert:
 - **Working in Non-Harness Projects (guest mode):** gilt nur für nicht-adoptierte Projekte (kein `HARNESS.md`/`memory/`) — reduzierter Aktivitätsmodus, kein Refactoring außerhalb des Scopes, keine neuen Abhängigkeiten ohne Bestätigung
 - **Design System (Global Default):** `docs/design.md` vor UI-Code lesen, Farb-Tokens, Phosphor Icons, `<script setup lang="ts">`
 
-### 2.2 Projekt-AGENTS.md (`/Users/DSAITO/Documents/BackEnd/itocook/AGENTS.md`)
+### 2.2 Projekt-AGENTS.md (`<projekt-wurzel>/AGENTS.md`)
 
 Definiert:
 - **9-Schritt Session-Start:** (1) `using-agent-skills` laden, (2) 4 Stack-Skills laden, (3) git log, (4) progress.md, (5) Sync-Check, (6) roadmap.md, (7) task-spezifischer Kontext, (8) task-spezifische Skills, (9) Session-Bericht ausgeben
@@ -73,7 +73,7 @@ Definiert:
 
 Insgesamt installiert: **52 Fähigkeiten** in `~/.config/opencode/skills/`. Alle Verzeichnisse enthalten aktuelle `SKILL.md`. Leere Ordner wurden entfernt. Der Agent lädt sie vor jeder Aufgabe.
 
-### 3.1 Benutzerdefinierte Skills (spezifisch für ItoCook erstellt)
+### 3.1 Benutzerdefinierte Skills (für den Harness geschrieben)
 
 | Skill | Zweck |
 |-------|-------|

@@ -1,0 +1,30 @@
+# scripts/mirror-excludes.txt — rsync --exclude-from list for mirroring
+# global/skills/ into ~/.config/opencode/skills/.
+#
+# Single source for all three mirroring sites (hooks/post-commit,
+# scripts/install.sh, scripts/update.sh). They used to carry three separate
+# copies of `--exclude='*.bak'`, which is exactly the kind of triplication
+# that drifts: T-C4 fixed one instance of mirror debris and never generalized,
+# so a git-ignored notes/ directory inside a vendored skill (46 lines of
+# Russian text plus client branding) and 2.7 MB of node_modules rode into the
+# live config, where the model reads them (T-I13).
+#
+# rsync copies the WORKING TREE — it knows nothing about .gitignore. Anything
+# that must not reach the live config has to be listed here, even if git
+# already ignores it.
+
+# editor/tooling debris
+*.bak
+*.sedbak
+*.log
+.DS_Store
+
+# dependency trees — vendored skills may carry their own
+node_modules/
+
+# per-skill scratch space: not part of any skill's contract, frequently
+# git-ignored, and therefore invisible to every scan that walks git
+notes/
+
+# nested VCS metadata
+.git/
