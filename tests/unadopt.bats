@@ -37,3 +37,42 @@ teardown() {
   [ "$status" -eq 0 ]
   [ "$(git log --oneline | wc -l | tr -d ' ')" -ge 1 ]
 }
+
+# T-I3: install-hooks.sh used to `mv $dest $dest.bak` unconditionally, so the
+# second run (update-project re-runs it on hook drift) overwrote the project's
+# real hook backup with a copy of the harness hook — and unadopt then
+# "restored" the rollback guard into a de-adopted project.
+@test "install-hooks is idempotent: a real pre-harness hook survives two runs" {
+  printf '#!/bin/bash\necho MY-OWN-HOOK\n' > .git/hooks/post-commit
+  chmod +x .git/hooks/post-commit
+
+  bash "$HARNESS_ROOT/scripts/install-hooks.sh" "$SCRATCH"
+  bash "$HARNESS_ROOT/scripts/install-hooks.sh" "$SCRATCH"
+
+  grep -q "MY-OWN-HOOK" "$SCRATCH/.git/hooks/post-commit.bak"
+  grep -q "harness-managed-hook" "$SCRATCH/.git/hooks/post-commit"
+}
+
+@test "unadopt restores the project's own hook, not a harness copy" {
+  printf '#!/bin/bash\necho MY-OWN-HOOK\n' > .git/hooks/post-commit
+  chmod +x .git/hooks/post-commit
+
+  bash "$HARNESS_ROOT/scripts/init-adopt.sh" "$SCRATCH" --no-open
+  bash "$HARNESS_ROOT/scripts/install-hooks.sh" "$SCRATCH"
+
+  printf 'n\n' | bash "$HARNESS_ROOT/scripts/unadopt.sh"
+  [ -f "$SCRATCH/.git/hooks/post-commit" ]
+  grep -q "MY-OWN-HOOK" "$SCRATCH/.git/hooks/post-commit"
+  ! grep -q "harness-managed-hook" "$SCRATCH/.git/hooks/post-commit"
+}
+
+# T-I3, other half: when the .bak IS a harness hook (debris from the old bug),
+# unadopt must discard it rather than reinstall the rollback guard.
+@test "unadopt discards a stale harness backup instead of restoring it" {
+  bash "$HARNESS_ROOT/scripts/init-adopt.sh" "$SCRATCH" --no-open
+  cp "$SCRATCH/.git/hooks/post-commit" "$SCRATCH/.git/hooks/post-commit.bak"
+
+  printf 'n\n' | bash "$HARNESS_ROOT/scripts/unadopt.sh"
+  [ ! -f "$SCRATCH/.git/hooks/post-commit" ]
+  [ ! -f "$SCRATCH/.git/hooks/post-commit.bak" ]
+}

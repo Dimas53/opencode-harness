@@ -145,11 +145,25 @@ else
     elif [ "$DOCS_COMMIT" = "$HEAD_COMMIT" ]; then
       check_pass "Docs are current (last commit = HEAD)"
     else
-      # Count commits since docs were last touched
+      # Count commits since docs were last touched.
       LAG=$(git log --oneline "$DOCS_COMMIT"..HEAD 2>/dev/null | wc -l | tr -d ' ')
+      # In pre-commit mode the commit being created is not in HEAD yet, so the
+      # same commit is counted as LAG for pre-commit and LAG+1 for the
+      # post-commit guard — the gate would pass a commit and the guard would
+      # then roll it back, blaming --no-verify (T-I27). One commit must get
+      # one verdict: count the commit being created, so the 4th non-docs
+      # commit in a row is blocked BEFORE it lands, not rolled back after.
+      if [ "${PRE_COMMIT:-0}" = "1" ]; then
+        LAG=$((LAG + 1))
+      fi
       if [ "$LAG" -gt 3 ]; then
-        check_fail "Docs are ${LAG} commits behind HEAD (last docs commit: $DOCS_COMMIT)"
-        echo "   → Run a documentation session before closing"
+        if [ "${PRE_COMMIT:-0}" = "1" ]; then
+          check_fail "Docs would be ${LAG} commits behind HEAD after this commit (last docs commit: $DOCS_COMMIT)"
+          echo "   → Stage a change under $DOCS_DIR/ in this commit, or run a documentation session first"
+        else
+          check_fail "Docs are ${LAG} commits behind HEAD (last docs commit: $DOCS_COMMIT)"
+          echo "   → Run a documentation session before closing"
+        fi
       else
         check_pass "Docs lag: ${LAG} commit(s) — acceptable"
       fi

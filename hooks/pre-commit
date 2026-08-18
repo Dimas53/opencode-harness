@@ -1,7 +1,13 @@
 #!/bin/bash
 # .git/hooks/pre-commit
+# harness-managed-hook: v1
 # Installed by: scripts/install-hooks.sh
 # Blocks commit if DoD checks fail.
+#
+# The `harness-managed-hook` line above is a signature, not a comment:
+# install-hooks.sh and unadopt.sh grep for it to tell "this is our own hook,
+# replace it in place" from "this is the project's real pre-harness hook,
+# back it up and never clobber the backup" (T-I3).
 
 HARNESS_PATH="${OPENCODE_HARNESS_PATH:-$HOME/.opencode-harness}"
 DOD_SCRIPT="$HARNESS_PATH/scripts/dod.sh"

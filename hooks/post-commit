@@ -1,6 +1,10 @@
 #!/bin/bash
 # .git/hooks/post-commit
-# Installed by: scripts/install.sh, scripts/update.sh
+# harness-managed-hook: v1
+# Installed by: scripts/install-hooks.sh (also scripts/install.sh, update.sh)
+#
+# The `harness-managed-hook` line above is a signature, not a comment — see
+# hooks/pre-commit for what reads it and why (T-I3).
 #
 # Two responsibilities:
 # 1. DoD guard — verify the commit that just landed actually passes DoD.
@@ -16,12 +20,56 @@
 HARNESS_ROOT="$(git rev-parse --show-toplevel)"
 DOD_SCRIPT="${OPENCODE_HARNESS_PATH:-$HOME/.opencode-harness}/scripts/dod.sh"
 
+# Did the pre-commit gate actually run — and pass — for the commit that just
+# landed? Without this the guard infers "the gate was bypassed" from the proxy
+# "DoD fails now", and that proxy lies whenever the two modes can disagree
+# about the same commit (T-I27). Roll back only when there is NO trace of a
+# recent passing pre-commit run; otherwise the disagreement is our bug, and
+# rolling back a commit the gate explicitly approved is the worse failure.
+gate_ran_and_passed() {
+  local log="$HARNESS_ROOT/.dod-run.log"
+  [ -f "$log" ] || return 1
+
+  local last_pre
+  last_pre=$(grep '|pre-commit|' "$log" 2>/dev/null | tail -1)
+  [ -n "$last_pre" ] || return 1
+  [ "${last_pre##*|}" = "pass" ] || return 1
+
+  local stamp epoch now
+  stamp="${last_pre%%|*}"
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    epoch=$(date -j -f "%Y-%m-%dT%H:%M:%S" "$stamp" +%s 2>/dev/null) || return 1
+  else
+    epoch=$(date -d "${stamp/T/ }" +%s 2>/dev/null) || return 1
+  fi
+  now=$(date +%s)
+  [ $((now - epoch)) -le 120 ]
+}
+
 if [ -f "$DOD_SCRIPT" ]; then
   LOG="/tmp/harness-post-commit-dod-$$.log"
-  if ! bash "$DOD_SCRIPT" >"$LOG" 2>&1; then
-    echo "✗ POST-COMMIT GUARD: the commit that just landed fails DoD." >&2
-    echo "  This usually means --no-verify was used, or pre-commit was" >&2
-    echo "  otherwise bypassed. DoD output saved to: $LOG" >&2
+  # PRE_COMMIT=0 explicitly: this hook runs after the commit exists, so the
+  # gate must judge it in manual mode. git never exports PRE_COMMIT here, but
+  # a nested run (dod.sh -> make test-quick -> bats -> this hook) would
+  # inherit it and silently flip the mode — the very ambiguity T-I27 is about.
+  if ! PRE_COMMIT=0 bash "$DOD_SCRIPT" >"$LOG" 2>&1; then
+    if gate_ran_and_passed; then
+      echo "⚠ POST-COMMIT: DoD passes in pre-commit mode but fails now." >&2
+      echo "  The pre-commit gate ran for this commit and approved it, so the" >&2
+      echo "  commit is NOT being rolled back — the two verdicts disagreeing" >&2
+      echo "  is a harness bug, not a bypass. Please report it." >&2
+      echo "  Failing step(s):" >&2
+      grep -E '^✗' "$LOG" | sed 's/^/    /' >&2
+      echo "  Full DoD output: $LOG" >&2
+      exit 0
+    fi
+    echo "✗ POST-COMMIT GUARD: the commit that just landed fails DoD," >&2
+    echo "  and there is no record of the pre-commit gate passing for it." >&2
+    echo "  Either --no-verify was used, or the hook is not installed" >&2
+    echo "  (check .git/hooks/pre-commit), or the gate itself errored out." >&2
+    echo "  Failing step(s):" >&2
+    grep -E '^✗' "$LOG" | sed 's/^/    /' >&2
+    echo "  Full DoD output: $LOG" >&2
     if git rev-parse HEAD~1 >/dev/null 2>&1; then
       git reset --soft HEAD~1
       echo "  Rolled back: git reset --soft HEAD~1 — your changes are still" >&2

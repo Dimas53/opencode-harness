@@ -187,6 +187,93 @@ QUIET_SKIP="docs-lag,progress,docs-matrix,tests,self-check"
   [ "$(git log --oneline | wc -l | tr -d ' ')" -eq 0 ]
 }
 
+# ── docs-lag: one commit must get one verdict (T-I27) ─────────────────────
+#
+# The gate ran in two modes that disagreed about the same commit: pre-commit
+# counted the lag before the commit existed (3 -> pass), the post-commit
+# guard counted it after (4 -> fail) and rolled back a commit pre-commit had
+# just approved, blaming --no-verify. No fixture ever stacked 4 non-docs
+# commits in a row, which is why two code audits missed it.
+
+lag_setup() {
+  mkdir -p docs
+  echo "initial docs" > docs/README.md
+  git add docs/README.md
+  git commit -q -m "docs: initial"
+  for i in 1 2 3; do
+    echo "$i" > "file$i.txt"
+    git add "file$i.txt"
+    git commit -q -m "chore: commit $i"
+  done
+}
+
+@test "docs-lag: pre-commit blocks the 4th non-docs commit instead of letting the guard roll it back" {
+  lag_setup
+  echo "4" > file4.txt
+  git add file4.txt
+
+  # Pre-commit sees 3 landed commits + the one being created = 4 > 3 -> block.
+  DOD_SKIP="progress,docs-matrix,tests,self-check" PRE_COMMIT=1 run bash "$HARNESS_ROOT/scripts/dod.sh"
+  [ "$status" -eq 1 ]
+  [[ "$output" == *"would be 4 commits behind"* ]]
+}
+
+@test "docs-lag: pre-commit and post-commit agree on the same commit" {
+  lag_setup
+  echo "4" > file4.txt
+  git add file4.txt
+  git commit -q -m "chore: commit 4" --no-verify
+
+  # Same commit, both modes: post-commit (manual) sees 4 landed commits.
+  DOD_SKIP="progress,docs-matrix,tests,self-check" run bash "$HARNESS_ROOT/scripts/dod.sh"
+  local manual_status="$status"
+
+  git reset -q --soft HEAD~1
+  DOD_SKIP="progress,docs-matrix,tests,self-check" PRE_COMMIT=1 run bash "$HARNESS_ROOT/scripts/dod.sh"
+  [ "$status" -eq "$manual_status" ]
+}
+
+@test "docs-lag: a docs commit still passes pre-commit at the boundary" {
+  lag_setup
+  echo "more docs" >> docs/README.md
+  git add docs/README.md
+  DOD_SKIP="progress,docs-matrix,tests,self-check" PRE_COMMIT=1 run bash "$HARNESS_ROOT/scripts/dod.sh"
+  [ "$status" -eq 0 ]
+}
+
+@test "post-commit guard does not roll back a commit the pre-commit gate passed" {
+  lag_setup
+  bash "$HARNESS_ROOT/scripts/install-hooks.sh" "$SCRATCH" >/dev/null
+
+  # A passing pre-commit run, recorded in .dod-run.log, then a DoD state the
+  # manual mode fails: the guard must warn, not reset.
+  printf '%s|pre-commit|pass=8|fail=0|warn=0|skip=none|pass\n' "$(date '+%Y-%m-%dT%H:%M:%S')" >> .dod-run.log
+  echo "4" > file4.txt
+  git add file4.txt
+  git commit -q -m "chore: commit 4" --no-verify
+  local head_before
+  head_before="$(git rev-parse HEAD)"
+
+  run bash .git/hooks/post-commit
+  [ "$(git rev-parse HEAD)" = "$head_before" ]
+  [ "$(git reflog | grep -c 'reset: moving to HEAD~1')" -eq 0 ]
+}
+
+@test "post-commit guard still rolls back when no pre-commit run is recorded" {
+  lag_setup
+  bash "$HARNESS_ROOT/scripts/install-hooks.sh" "$SCRATCH" >/dev/null
+  rm -f .dod-run.log
+
+  echo "4" > file4.txt
+  git add file4.txt
+  git commit -q -m "chore: commit 4" --no-verify
+  local head_before
+  head_before="$(git rev-parse HEAD)"
+
+  run bash .git/hooks/post-commit
+  [ "$(git rev-parse HEAD)" != "$head_before" ]
+}
+
 # ── init-adopt idempotency + .gitignore merge (also exercises T-C1) ───────
 
 @test "init-adopt.sh is idempotent and merges .gitignore with opencode.jsonc" {

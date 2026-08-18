@@ -35,6 +35,17 @@ rm -f AGENTS.md MEMORY.md PLAN.md PROGRESS.md HARNESS.md
 rm -rf memory/
 echo "  → Full backup at .harness-unadopt-backup/ (delete manually when confirmed safe)"
 
+# A .bak that is itself a harness hook is not a pre-harness hook to restore —
+# it is debris from the clobbering bug T-I3 fixed. Restoring it would put the
+# rollback guard back into a de-adopted project, which is the exact brick this
+# script exists to prevent. Discard those before the restore logic runs.
+for h in pre-commit post-commit; do
+  if [ -f ".git/hooks/$h.bak" ] && grep -q "harness-managed-hook" ".git/hooks/$h.bak"; then
+    rm -f ".git/hooks/$h.bak"
+    echo "  Hook: stale harness backup $h.bak discarded (was not a pre-harness hook)"
+  fi
+done
+
 # pre-commit: restore backup if the project had its own hook, else remove.
 if [ -f .git/hooks/pre-commit.bak ]; then
   mv .git/hooks/pre-commit.bak .git/hooks/pre-commit

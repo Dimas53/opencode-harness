@@ -59,6 +59,100 @@ ticket touches `Makefile`, `.github/` and `instructions/`, none of which is
 delivered to client projects. The harness repo is the only place these tests
 can run, and that is by design (`IS_HARNESS_REPO` in `dod.sh`).
 
+### T-I3 + T-I27 (complete) — the hooks stop destroying normal work
+
+Two separate ways the guard chain damaged real projects, done together
+because both are "post-commit guard breaks legitimate work".
+
+**T-I3 — backup clobbering.** `install_hook()` moved whatever hook was in
+place to `.bak` unconditionally, every run. So: `adopt` backs up the
+project's real hook (correct), then the first `update-project` that sees
+hook drift re-runs the script and overwrites that real backup with a copy
+of the harness hook. `unadopt` then "restores" the harness rollback guard
+into a de-adopted project — the silent brick T-H0 exists to prevent,
+reached by a different road. The damage accumulated: one more real backup
+lost per `update-project` run.
+
+Fix: both `hooks/pre-commit` and `hooks/post-commit` now carry a
+`# harness-managed-hook: v1` signature line, so recognition does not depend
+on incidental strings. `install_hook()` branches three ways — replace in
+place if the target is already ours, refuse to overwrite an existing `.bak`
+(saving to `.harness-old` instead), back up only a genuine pre-harness
+hook. `unadopt.sh` discards a `.bak` that is itself a harness hook instead
+of reinstalling the guard.
+
+**T-I27 — the guard rolled back legitimate commits.** `dod.sh` counted docs
+lag against `HEAD`, which is a different state in the two modes the gate
+runs in for the same commit: pre-commit sees 3 (commit not created yet) and
+passes, the post-commit guard sees 4 and fails, then resets — printing
+"This usually means --no-verify was used", a cause that never happened.
+Every 4th consecutive non-docs commit hit this. Found from a live session,
+not from reading code: both branches are correct in isolation, only their
+difference is wrong.
+
+Fix, three parts: (1) pre-commit counts the commit being created, so the
+verdict lands *before* the commit, where a gate belongs; (2) the guard
+reads `.dod-run.log` for a passing pre-commit entry newer than 120s — if
+the gate ran and approved this commit, a disagreement is our bug, so warn
+and keep the commit instead of rolling it back; (3) the message names both
+possibilities and prints the actual failing steps instead of asserting a
+cause.
+
+Proof — live client fixture, 4 consecutive non-docs commits:
+
+```
+$ git commit -m "chore: commit 4"
+[ 3/8 ] Docs lag check
+✗ Docs would be 4 commits behind HEAD after this commit (last docs commit: d6395b1)
+✗ DoD failed — fix the issues above before committing.
+
+$ git rev-parse HEAD == HEAD_BEFORE      -> PASS: 4th commit never created
+$ git reflog | grep -c "reset: moving to HEAD~1"
+0
+
+$ git commit -m "docs: update context"   # same boundary, docs staged
+[ 3/8 ] Docs lag check
+✓ Docs updated in this commit — lag resets after commit
+✓ DoD passed (with 2 warning(s)).
+```
+
+Proof — full chain adopt -> install-hooks x2 -> update-project -> unadopt
+on a client fixture whose own `post-commit` printed `MY-OWN-HOOK`:
+
+```
+1st: ⚠ Existing post-commit hook found — backing up to post-commit.bak
+2nd:   post-commit hook is already a harness hook — replacing in place (backup untouched)
+PASS: original backup survived
+PASS: original backup still intact      (after update-project)
+  Hook: post-commit restored from backup
+PASS: original restored
+PASS: no harness guard left
+```
+
+One more defect surfaced while proving this: the guard inherited
+`PRE_COMMIT` from its environment, so a nested run (`dod.sh` -> `make
+test-quick` -> bats -> the hook) flipped it into pre-commit mode — the same
+mode ambiguity this ticket is about. It now calls the gate with
+`PRE_COMMIT=0` explicitly.
+
+Tests: `tests/unadopt.bats` 1 -> 4 cases, `tests/dod.bats` 14 -> 19.
+`make test-quick`: 35 -> 43 ok. Negative test run for both tickets — the
+old behavior was restored on purpose and the new cases failed
+(`not ok 2/3` for T-I3, `not ok 14/15/17` for T-I27), then the fix was put
+back and all went green.
+
+Propagation question (`09-propagation-audit.md`): yes on both counts.
+`install-hooks.sh`, `unadopt.sh` and `dod.sh` are invoked from client
+projects via `~/.opencode-harness/scripts/...`, and the hook files
+themselves are copied into each project's `.git/hooks/`, so both fixes
+reach client projects the moment the harness is updated. Reachable from a
+trigger: `adopt`, `update-project` and `unadopt` are all listed shortcuts
+in `global/AGENTS.md`. One caveat worth stating: projects adopted before
+today already have unsigned hooks in `.git/hooks/`, so the first
+`update-project` after this change re-installs them with the signature —
+until then `unadopt` in those projects still can't tell a harness backup
+from a real one.
+
 ## 2026-08-07
 
 ### T-H5 step 5 (complete) — optional CI gate templates for client projects

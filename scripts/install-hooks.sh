@@ -35,9 +35,24 @@ install_hook() {
   local source="$HARNESS_PATH/hooks/$name"
   local dest="$GIT_HOOKS_DIR/$name"
 
+  # Back up ONLY a hook that is not ours, and only when there is no backup
+  # yet. The old code moved whatever was there to .bak unconditionally, every
+  # run — so the second `update-project` (which re-runs this script on hook
+  # drift) overwrote the project's real pre-harness hook with a copy of the
+  # harness hook. `unadopt` then "restored" that copy, leaving the rollback
+  # guard behind in a de-adopted project: exactly the silent brick T-H0 was
+  # written to prevent, reached by another road (T-I3).
   if [ -f "$dest" ]; then
-    echo "⚠ Existing $name hook found — backing up to $name.bak"
-    mv "$dest" "$dest.bak"
+    if grep -q "harness-managed-hook" "$dest"; then
+      echo "  $name hook is already a harness hook — replacing in place (backup untouched)"
+    elif [ -f "$dest.bak" ]; then
+      echo "⚠ $name.bak already exists (a real pre-harness hook) — NOT overwriting it"
+      echo "  Current $name saved to $name.harness-old instead"
+      mv "$dest" "$dest.harness-old"
+    else
+      echo "⚠ Existing $name hook found — backing up to $name.bak"
+      mv "$dest" "$dest.bak"
+    fi
   fi
 
   cp "$source" "$dest"
