@@ -283,6 +283,22 @@ fi
 
 echo ""
 
+# ── memory/ index (T-J4) ─────────────────────────────────────────────────────
+# Same placement rationale as rotation above: after the checks, so it cannot
+# answer them with its own side effect. Regenerating the index here is what
+# makes "write a note and forget to index it" impossible — the alternative was
+# a rule telling the agent to remember, which is the class of mechanism this
+# harness keeps finding broken.
+echo "memory/ index"
+INDEXER="$(dirname "$0")/index-memory.sh"
+if [ -f "$INDEXER" ]; then
+  bash "$INDEXER" || check_warn "index-memory.sh failed — MEMORY.md index not updated"
+else
+  check_warn "index-memory.sh not found next to session-end.sh — skipping memory index"
+fi
+
+echo ""
+
 # ── Mark session as closed ────────────────────────────────────────────────────
 date +%Y-%m-%d > .session-ended
 echo "✓ Session closed: $(cat .session-ended)"

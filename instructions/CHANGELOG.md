@@ -84,6 +84,77 @@ and `update-harness` has not been run since. One `make update` applies it,
 but that is the user's call on their own machine, not an edit to make from a
 session.
 
+### T-J4 (complete) — memory/ stops being write-only
+
+Session Start read `MEMORY.md` and `memory/YYYY-MM-DD.md` "for today or
+yesterday". A live client project has 14 notes; the agent could reach two.
+Everything older was not rarely read — it was unreachable, unless a human
+named the file by hand. Meanwhile DoD step 7 and Session End step 4 keep
+writing into that directory every session: the cost of recording is paid
+always, the value collected almost never.
+
+`scripts/index-memory.sh` writes one line per note into a generated block in
+`MEMORY.md` — the file Session Start already reads. Bodies stay on disk and
+are read on demand: the same "pointer in context, body on request" shape the
+harness already uses for skills. `session-end.sh` regenerates the index after
+its checks, so "wrote a note, forgot to index it" cannot happen; `--check`
+runs in CI for this repo.
+
+The summary for each line comes from the best source available, because
+existing notes were not written with an index in mind: frontmatter
+`description:` if present, else the heading with its date and filler stripped
+("Memory — 2026-07-21", "2026-07-17 Session" and "2026-08-11" are all real
+headings in the wild), else the first real line of the body. Notes whose
+heading says nothing are listed by count so they can be improved, never
+skipped.
+
+On the live `itocook` memory directory:
+
+```
+$ bash scripts/index-memory.sh
+  ✓ MEMORY.md: memory index updated (13 file(s))
+
+- [2026-08-11](memory/2026-08-11.md) — Hardened permissions end to end. Removed 56 Directus permission rows…
+- [2026-08-03](memory/2026-08-03.md) — Common feed round-trip: (1) fixed post photos disappearing after reload…
+- [2026-07-20](memory/2026-07-20.md) — Ran agent-analyze.md with zoom-out, security-and-hardening, premortem skills
+…13 lines, one per note
+```
+
+Twelve of those thirteen were previously unreachable by any means. Applied to
+this repo as well: 9 notes indexed, `MEMORY.md` created (it did not exist
+here, so the step read nothing at all). Cost: ~410 tokens of startup budget.
+
+`global/AGENTS.md` step 5 now says to read the index and open a body only when
+the task touches it, states plainly why the date rule was removed, and adds
+the rule that makes old notes safe to use: a note describes the past, so
+anything it names must be checked to still exist before you rely on it.
+
+Proof:
+
+```
+$ bash scripts/index-memory.sh --check      # after adding an unindexed note
+✗ MEMORY.md index is out of date. Missing:
+    - [2026-08-02](memory/2026-08-02.md) — second
+  Run: bash scripts/index-memory.sh
+exit=1
+
+$ bats tests/index-memory.bats               # 11 tests
+$ bats tests/*.bats | grep -c "^ok "
+86
+```
+
+Not done, deliberately: the ticket also proposes renaming
+`memory/YYYY-MM-DD.md` to topic slugs. Mass-renaming a project's accumulated
+notes risks losing them and buys nothing for reading — the index is what makes
+them findable, not the filename. New notes may use slugs; the index covers
+both.
+
+Propagation question (`09-propagation-audit.md`): full. `memory/` is created
+by `init-adopt.sh` in every client project, `session-end.sh` runs there, and
+the protocol change ships in `global/AGENTS.md`. `templates/MEMORY.md`
+explains where the index comes from and asks for headings that say what a note
+is about, since that heading becomes the index line.
+
 ### T-J2 follow-up — rotating this repo's own PROGRESS.md, and the three checks it broke
 
 Applying rotation here (1,832 → 380 lines, budget 36.4k → **16.4k tokens**,

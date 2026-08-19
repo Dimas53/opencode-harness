@@ -34,3 +34,8 @@ jobs:
 
       - name: Verify propagation (no harness-repo-only paths in delivered files)
         run: bash scripts/check-propagation.sh
+
+      # The index is what makes memory/ reachable at all (T-J4); a note that
+      # never reaches it is written, paid for, and never read again.
+      - name: Verify memory index covers memory/
+        run: bash scripts/index-memory.sh --check

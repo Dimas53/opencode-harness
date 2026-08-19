@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: help link setup init init-adopt analyze verify update dod mcp self-check uninstall uninstall-lite unadopt check-docs-sync check-docs-refs check-propagation context-budget test test-quick session-end start
+.PHONY: help link setup init init-adopt analyze verify update dod mcp self-check uninstall uninstall-lite unadopt check-docs-sync check-docs-refs check-propagation context-budget memory-index test test-quick session-end start
 
 .DEFAULT_GOAL := help
 
@@ -22,6 +22,7 @@ help:
 	@echo "  make check-docs-refs -- verify skill references and inventory match the disk"
 	@echo "  make check-propagation -- verify delivered files reference nothing harness-only"
 	@echo "  make context-budget -- measure what Session Start costs before the first word"
+	@echo "  make memory-index   -- refresh the memory/ index inside MEMORY.md"
 	@echo "                        PROJECT=/path/to/project (default: this repo)"
 	@echo "  make test-quick     -- syntax-check scripts + run every tests/*.bats suite"
 	@echo "  make test           -- same as test-quick (full suite)"
@@ -96,6 +97,10 @@ check-propagation:
 # same way as scaffolding one.
 context-budget:
 	@./scripts/context-budget.sh $(if $(PROJECT),--project $(PROJECT),)
+
+# T-J4: one line per note in MEMORY.md, so memory/ stops being write-only.
+memory-index:
+	@./scripts/index-memory.sh
 
 self-check:
 	@echo "=== Self-Check ==="

@@ -158,7 +158,9 @@ Execute these steps in order BEFORE any response to the user:
      then WRITE `Chat language: <chosen>` into `PROGRESS.md` (create the file
      if it does not exist) so the choice persists and is never asked again.
 4. **Roadmap:** read `docs/roadmap.md`
-5. **Memory:** read `MEMORY.md` and `memory/YYYY-MM-DD.md` if they exist (for today or yesterday)
+5. **Memory:** read `MEMORY.md` if it exists. Its `## Index — memory/` section lists every note in `memory/` with a one-line summary, newest first — read a note's body only when the current task touches it.
+   Do not read `memory/` by date: "today or yesterday" made everything older unreachable (14 notes in a live project, 2 readable), while the write side kept adding to it every session.
+   Notes describe the past. If one names a file, function, flag or table, check it still exists before relying on it.
 6. **Harness constraints:** read `HARNESS.md` if it exists — apply project constraints and risk levels to session behavior
 7. **Directus MCP:** if the project uses the Directus MCP server (`.env` has DIRECTUS_URL, or
    HARNESS.md declares a Directus instance):
