@@ -40,6 +40,10 @@ rm -rf memory/
 # State, not user content: no point backing these up, but leaving them behind
 # means a de-adopted project keeps files nobody can explain (T-I16).
 rm -f .session-ended .dod-run.log
+# Agent scratch space (T-J12) — git-ignored working files, never user content.
+# Left behind, it is a directory nobody can account for in a project that is no
+# longer adopted.
+rm -rf .harness/
 echo "  → Full backup at .harness-unadopt-backup/ (delete manually when confirmed safe)"
 
 # A .bak that is itself a harness hook is not a pre-harness hook to restore —

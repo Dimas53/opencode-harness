@@ -133,6 +133,26 @@ Return: Summary of what you found and what you fixed.
 **Exploratory debugging:** You don't know what's broken yet
 **Shared state:** Agents would interfere (editing same files, using same resources)
 
+### The default is one agent (T-J13)
+
+A sub-agent starts cold. It re-reads the context you are already holding, and
+in this harness that is not free: Session Start alone costs tens of thousands
+of tokens (`make context-budget` prints the current number for any project),
+and a spawned agent pays it again from zero. Parallelism buys wall-clock time
+and costs context — which is the scarcer resource here.
+
+Do NOT spawn when:
+
+- the user did not ask for it. "Thorough", "multi-faceted" or "several parts"
+  describe a task, not a request for parallelism;
+- the context needed is already in this session;
+- there are fewer than three sub-tasks, or they depend on each other;
+- the sub-task is a quick read you could do yourself in one or two tool calls.
+
+DO spawn when: the user asked · or a wide read-only sweep is needed across many
+files and only the conclusion matters · or the sub-tasks are genuinely
+independent and there are three or more of them.
+
 ## Real Example from Session
 
 **Scenario:** 6 test failures across 3 files after major refactoring

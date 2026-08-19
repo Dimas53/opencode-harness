@@ -94,3 +94,16 @@ teardown() {
   [ ! -f "$SCRATCH/.dod-run.log" ]
   [ -f "$SCRATCH/.harness-unadopt-backup/.agentignore" ]
 }
+
+# T-J12: .harness/ is the agent's scratch space. It is git-ignored working
+# state, so leaving it in a de-adopted project means a directory nobody can
+# account for — the same reason .session-ended and .dod-run.log are removed.
+@test "unadopt removes the .harness scratch directory" {
+  bash "$HARNESS_ROOT/scripts/init-adopt.sh" "$SCRATCH" --no-open
+  mkdir -p "$SCRATCH/.harness/scratch"
+  echo "temp" > "$SCRATCH/.harness/scratch/notes.txt"
+
+  printf 'n\n' | bash "$HARNESS_ROOT/scripts/unadopt.sh"
+
+  [ ! -d "$SCRATCH/.harness" ]
+}

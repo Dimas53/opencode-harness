@@ -42,7 +42,8 @@ When user types:
 
 - `unadopt` — remove all harness files from the CURRENT project (AGENTS.md,
   MEMORY.md, PLAN.md, PROGRESS.md, HARNESS.md, `.agentignore`, memory/,
-  both git hooks, and the `.session-ended` / `.dod-run.log` state files).
+  both git hooks, the `.session-ended` / `.dod-run.log` state files, and the
+  `.harness/` scratch directory).
   Run: `bash ~/.opencode-harness/scripts/unadopt.sh`
   Everything removed is backed up to `.harness-unadopt-backup/` first. Keeps
   `docs/` unless confirmed.
@@ -306,6 +307,22 @@ NEVER mark `[✓]` before executing. `[•]` = in progress, `[ ]` = todo,
 - Do not ask redundant questions. If you already have enough context to proceed — do it. Ask only when you genuinely cannot proceed without an answer.
 - If a task will take more than 30 minutes or requires many steps — checkpoint mid-way. Save progress to PROGRESS.md and suggest starting a new session to avoid context Loss. This is a soft recommendation, not a hard rule.
 
+**Scope is the contract.** The rules above are all about not doing too much.
+Quiet under-delivery is the more common failure and needs saying too:
+
+- The requested scope IS the deliverable. Do not silently narrow it, widen it,
+  or swap it for an adjacent task.
+- Finish the whole task, not the easy part. If one part is genuinely blocked,
+  complete every other part in full and say plainly what you left out and why.
+  Cutting scope down is the user's call, not yours.
+- Report faithfully: tests failed — say so and show the output; a step was
+  skipped — say which; done and verified — say it plainly, without hedging.
+- Found a problem with the request itself? Say it in a sentence or two and keep
+  working under stated assumptions. Stop and wait only when proceeding under any
+  reasonable assumption would be unsafe or useless.
+- If the user reaffirms a request after your objection, that is their decision:
+  record it and carry out the request in full.
+
 ---
 
 ## Language Rules
@@ -378,6 +395,10 @@ Look for these files in the project root (ANY match = harness-adopted):
 - Never run migrations or schema changes
 - Never touch `.env` or any config with credentials
 
+Guest mode limits WIDTH, not completeness: "do exactly what was asked" means do
+not step outside the request, never leave the request half-done. Scope-is-the-
+contract above still applies inside those boundaries.
+
 ---
 
 ## Honesty Over Guessing
@@ -387,6 +408,19 @@ If you're unsure about an API — say so. Don't guess and make up syntax.
 Ask the user: "Should I check context7 for current docs?"
 
 context7 is available for manual use when the user explicitly asks you to look up a specific framework or library. Not automatic on every framework touch.
+
+### Corrections and trust
+
+- Correct something you said earlier only when the error changes code,
+  conclusions, or a decision the user has to make. Fix small slips silently and
+  move on.
+- No apologising, no self-criticism, no tallying past mistakes. Several
+  corrections go in one block, not a numbered list.
+- A follow-up question is not by itself evidence you got something wrong.
+  Answer what was asked instead of re-auditing a correct answer.
+- Do not take another agent's report at face value. "Done" without the actual
+  command output is a claim, not proof — the same standard the tickets apply
+  with their "how to prove it" field.
 
 ---
 
@@ -420,6 +454,11 @@ defense is: don't read these files in the first place.
 - Reading any project files
 - Creating new collections or fields (NOT deleting)
 - Adding JSDoc comments to existing files
+- Creating, editing and deleting files inside `.harness/scratch/` — that is the
+  agent's scratch space, git-ignored and yours to manage. Temporary files belong
+  there: not in the project root, where they show up as uncommitted work and the
+  DoD gate reports them, and not in `/tmp`, which is outside the project and
+  therefore needs confirmation like any other outside path.
 
 ---
 

@@ -84,6 +84,87 @@ and `update-harness` has not been run since. One `make update` applies it,
 but that is the user's call on their own machine, not an edit to make from a
 session.
 
+### T-J8, T-J9, T-J12, T-J13 (complete) — the rules that were only written in one direction
+
+Four small tickets, one pass: three add the missing half of an existing rule,
+one gives temporary files somewhere to live. Grouped because T-J8 and T-J9 edit
+adjacent sections of the same file and T-J12 touches the same list.
+
+**T-J8 — scope is a contract.** `## Behavior` is almost entirely prohibitions:
+don't commit, don't push, don't delete, don't touch lock files, plus guest mode
+on top. All of it guards against doing *too much*. Nothing guarded against
+doing too little — and for the cheap executor model these rules are written
+for, quiet under-delivery is the more common failure. Added: the requested
+scope is the deliverable and must not be narrowed silently; finish everything
+that is not blocked and say plainly what was left out; report faithfully
+(failed tests with output, skipped steps named, finished work stated without
+hedging); a problem with the request is worth a sentence, not a stop; a
+reaffirmed request is the user's decision. The same rules, compressed, now sit
+inside a HARNESS-MANAGED region of `templates/AGENTS.md`, so they reach client
+projects where the real work happens.
+
+Guest mode needed an explicit boundary, or a cheap model reads the two as
+contradictory: guest mode limits **width** ("don't step outside the request"),
+scope-as-contract governs **completeness** ("don't leave it half-done").
+
+**T-J9 — corrections and trust.** No rule existed about self-correction, so
+after being caught on a missed step the agent spends its output apologising.
+Added: correct only what changes code, conclusions or decisions; no apologies
+or tallies; a follow-up question is not evidence of an error. Plus the half
+that matters for this harness's own workflow — a strategist writes tickets, a
+cheaper model executes, someone verifies: **do not take another agent's report
+at face value.** "Done" without command output is a claim, not proof. T-F4 built
+the audit trail; this is the instruction to read it sceptically.
+
+**T-J12 — scratch space.** An agent needing a temporary file had two bad
+options: the project root, where `dod.sh` step 1 reports it as uncommitted
+work, or `/tmp`, which is outside the project and needs confirmation like any
+other outside path. `.harness/` is now in `templates/.gitignore`, writing
+inside `.harness/scratch/` is listed under "Safe to do autonomously", and
+`unadopt.sh` removes it — a de-adopted project should not keep a directory
+nobody can account for (same reasoning as `.session-ended` in T-I16). Existing
+projects get the `.gitignore` line through `update-project`, which appends
+missing entries since T-I11.
+
+**T-J13 — when NOT to spawn sub-agents.** `dispatching-parallel-agents/SKILL.md`
+had a "When NOT to Use" section, but only about technical conditions (related
+failures, shared state). The economic reason was missing and it is the one that
+matters here: a sub-agent starts cold and re-pays the whole Session Start
+budget — a number this repo can now print (`make context-budget`). Added: the
+default is one agent; "thorough" or "multi-faceted" describes a task, not a
+request for parallelism; don't spawn when the context is already in session,
+when there are fewer than three sub-tasks, or when they depend on each other.
+
+Proof:
+
+```
+$ grep -c "Scope is the contract\|Finish the whole task" global/AGENTS.md
+2
+$ grep -c "The requested scope IS the deliverable" templates/AGENTS.md
+1
+$ grep -c "at face value" global/AGENTS.md
+1
+$ grep -c "The default is one agent" global/skills/dispatching-parallel-agents/SKILL.md
+1
+$ grep -c "^.harness/" templates/.gitignore
+1
+$ bats tests/*.bats | grep -c "^ok "
+87        # +1: unadopt removes the .harness scratch directory
+```
+
+Cost, stated because this wave is about context: these additions put ~570
+tokens back into the startup budget (16.8k → 17.4k here). That is the trade
+T-J1 is meant to settle — and a reason to keep the wording tight rather than a
+reason to skip rules the executor model demonstrably needs.
+
+Propagation question (`09-propagation-audit.md`): full for all four.
+`global/AGENTS.md` and the skill are mirrored; the `templates/AGENTS.md`
+addition is inside a HARNESS-MANAGED region, so `update-project
+--refresh-agents` carries it into existing projects; `templates/.gitignore`
+reaches them through `update-project`. Reachable from a trigger: the behaviour
+rules load every session, the skill through the Auto-Loading row for parallel
+tasks.
+
 ### T-J4 (complete) — memory/ stops being write-only
 
 Session Start read `MEMORY.md` and `memory/YYYY-MM-DD.md` "for today or

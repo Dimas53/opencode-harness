@@ -13,6 +13,11 @@ dist/
 opencode.jsonc
 .harness-unadopt-backup/
 
+# agent scratch space (T-J12). Temporary files go in .harness/scratch/, never
+# in the project root (where dod.sh step 1 would report them as uncommitted
+# work) and never outside the project (where Access Restrictions apply).
+.harness/
+
 # harness session artifacts — do not delete these files, they are state:
 #   .session-ended  — marker that the last session was closed properly
 #   .dod-run.log    — DoD gate run log; session-end.sh builds the

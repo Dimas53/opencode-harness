@@ -91,6 +91,19 @@ RULE 3: "It's a small change" — only CSS tweaks and typo fixes are exempt.
         Any logic, flow, collection, or route change requires doc update.
 ```
 
+### Scope and reporting (T-J8)
+
+The global rules say what not to do beyond the request. This says what "done"
+means inside it, because quiet under-delivery is the more common failure:
+
+```
+The requested scope IS the deliverable — do not narrow it silently.
+Blocked on part of it? Finish everything else in full, then say exactly
+  what is missing and why. Cutting scope is the user's decision.
+Tests failed — say so, with the output. Step skipped — say which.
+  Done and verified — say it plainly, no hedging.
+```
+
 # === HARNESS-MANAGED END ===
 
 ---
