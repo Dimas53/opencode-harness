@@ -88,10 +88,61 @@ node -e '
     }
   }
 
+  // Superseded permission patterns (T-I4 step 4). Filling gaps is safe for
+  // MCP servers, but it silently loses a *widened* rule: a machine that
+  // already has the old narrow "git push" keeps it, gets the new "git push*"
+  // added beside it, and now carries two rules for the same command with an
+  // untested precedence between them. Overwriting is not the answer either —
+  // we cannot tell a superseded harness pattern from a deliberate user rule.
+  // So: say it out loud and name the line to delete.
+  //
+  // "wider" here means every literal segment of the new pattern still occurs,
+  // in order, inside the old one with its wildcards stripped:
+  //   "git push*"               ⊃ "git push"
+  //   "git commit*--no-verify*" ⊃ "git commit --no-verify*"
+  // The bare "*" is excluded — with no literal segments it would claim to
+  // supersede every rule in the file.
+  function supersedes(newPat, oldPat) {
+    if (newPat === oldPat) return false;
+    const segments = newPat.split("*").filter(s => s.length > 0);
+    if (segments.length === 0) return false;
+    const oldLiteral = oldPat.split("*").join("");
+    let cursor = 0;
+    for (const segment of segments) {
+      const at = oldLiteral.indexOf(segment, cursor);
+      if (at === -1) return false;
+      cursor = at + segment.length;
+    }
+    return true;
+  }
+
+  const superseded = [];
+  if (template.permission) {
+    for (const [scope, rules] of Object.entries(existing.permission || {})) {
+      const templateRules = (template.permission || {})[scope] || {};
+      for (const oldPattern of Object.keys(rules)) {
+        if (templateRules[oldPattern] !== undefined) continue; // still current
+        for (const newPattern of Object.keys(templateRules)) {
+          if (supersedes(newPattern, oldPattern)) {
+            superseded.push({ scope, oldPattern, newPattern });
+            break;
+          }
+        }
+      }
+    }
+  }
+
   if (added.length > 0) {
     fs.writeFileSync(cfgPath, JSON.stringify(existing, null, 2) + "\n");
     console.log("  ✓ Added: " + added.join(", "));
   } else {
     console.log("  ✓ All harness config keys already present");
+  }
+
+  for (const { scope, oldPattern, newPattern } of superseded) {
+    console.log("  ⚠ permission." + scope + ": \"" + oldPattern + "\" is narrower than");
+    console.log("    the harness pattern \"" + newPattern + "\", which was just added beside it.");
+    console.log("    Merging only fills gaps, so the old rule stays until you remove it.");
+    console.log("    Delete the old line from " + cfgPath + " unless you set it on purpose.");
   }
 ' "$TEMPLATE" "$TARGET"

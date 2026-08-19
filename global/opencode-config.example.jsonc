@@ -39,14 +39,29 @@
   // Capability deny-by-default — turns the text Hard Limits in AGENTS.md into
   // config-level guarantees. See notes/Harness/implementation-plan-2/
   // capability-deny-by-default-spike.md and 05-waveE-capability-deny.md.
+  // Pattern shape matters more than it looks (T-I4). A pattern without a
+  // trailing `*` only matches that exact command line, so `"git push"` never
+  // saw `git push origin main` — the form actually typed — and the Hard Limit
+  // fell through to `"*": "allow"`. Likewise a flag can be written anywhere
+  // after the subcommand, so a deny must not assume it comes first.
+  // Rules of thumb when adding entries here:
+  //   - end every pattern with `*` unless you truly mean the bare command
+  //   - for a flag, use `<cmd>*<flag>*` so argument order can't slip past it
+  //   - list every spelling of the same flag (`--no-verify` and `-n`)
+  // `"*"` stays first: that is the shape OpenCode's own docs use, so the
+  // engine is expected to prefer the more specific match over key order.
+  // Confirming that against a live OpenCode is T-I4 step 2 (matrix in
+  // notes/Harness/implementation-plan-2/capability-deny-by-default-spike.md);
+  // until that run exists, treat this block as best-effort, not as proof.
   "permission": {
     "bash": {
-      "*": "allow",                       // default: don't disrupt normal work
-      "git commit --no-verify*": "deny",  // bypasses ALL DoD checks — never allowed
-      "git push --force*": "ask",         // implicit prod deploy — confirm
-      "git push": "ask",
+      "*": "allow",                          // default: don't disrupt normal work
+      "git commit*--no-verify*": "deny",     // bypasses ALL DoD checks — never allowed
+      "git commit*-n *": "deny",             // same flag, short spelling
+      "git push*": "ask",                    // any push (origin main, -u, HEAD, …)
+      "git push --force*": "ask",            // kept explicit: force-push is its own risk
       "git reset --hard*": "ask",
-      "rm -rf*": "ask"                     // destructive — confirm (not full deny: legit uses exist)
+      "rm -rf*": "ask"                       // destructive — confirm (not full deny: legit uses exist)
     }
   }
 }

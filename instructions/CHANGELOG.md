@@ -2,6 +2,88 @@
 
 All notable changes to opencode-harness are documented here.
 
+## 2026-08-19
+
+Wave I leftovers — the parts of T-I4 and T-I14 that do not need a live
+OpenCode session or a scratch repo on GitHub. The remaining halves (the
+permission matrix, the CI green/red run) still belong to phase 4 and are
+still open.
+
+### T-I4 (steps 1 and 4 complete; steps 2-3 still open) — permission patterns match the commands people actually type
+
+Every pattern in `global/opencode-config.example.jsonc` was written as if the
+command came with no arguments. `"git push": "ask"` therefore never matched
+`git push origin main`, `git push -u origin main` or `git push origin HEAD` —
+the forms actually typed — so those fell through to `"*": "allow"` and the
+"git push" Hard Limit was not closed at all; only `--force` was. The single
+`deny` in the file, `"git commit --no-verify*"`, assumed the flag comes first
+and was bypassed by `git commit -m "x" --no-verify` or `git commit -n -m "x"`.
+
+Widened to `"git push*"`, `"git commit*--no-verify*"` and `"git commit*-n *"`
+(both spellings of the same flag); `"git push --force*"` kept as its own line
+because force-push is a distinct risk worth reading in the config. The header
+comment now states the shape rule — trailing `*` unless you mean the bare
+command, `<cmd>*<flag>*` for flags — so the next entry does not repeat the
+mistake. `"*": "allow"` deliberately stays first: that is the ordering
+OpenCode's own documentation uses, so the engine is expected to prefer the
+more specific match over key order. That expectation is untested, which is
+what step 2 of the ticket is for, and the comment says so rather than
+implying the block is proven.
+
+```
+$ node -e 'const c=require("fs").readFileSync("global/opencode-config.example.jsonc","utf8");
+  ["git push*","git commit*--no-verify*"].forEach(p=>{if(!c.includes(p))throw new Error("missing "+p)});
+  console.log("PASS: broad patterns present")'
+PASS: broad patterns present
+
+$ bash scripts/merge-opencode-config.sh --list-mcp global/opencode-config.example.jsonc | wc -l
+       7                          # JSONC still parses after the comment block
+```
+
+Step 4 — merging only ever filled gaps, so a machine that already had the old
+narrow `"git push"` would keep it, receive `"git push*"` next to it, and end
+up with two rules for one command and an untested precedence between them.
+The widened pattern would never actually take effect there. Overwriting is
+not the fix either: nothing distinguishes a superseded harness pattern from a
+rule the user tightened on purpose. `merge-opencode-config.sh` now names the
+line to delete instead. "Wider" is computed, not hardcoded: a template
+pattern supersedes an existing one when every literal segment of the template
+pattern still occurs, in order, inside the existing pattern with its
+wildcards stripped. The bare `"*"` is excluded — with no literal segments it
+would claim to supersede every rule in the file.
+
+Proof — one positive and two negative fixtures:
+
+```
+$ bash scripts/merge-opencode-config.sh <template> old.jsonc      # pre-T-I4 block
+  ✓ Added: …, permission.bash.git commit*--no-verify*, permission.bash.git commit*-n *, permission.bash.git push*
+  ⚠ permission.bash: "git commit --no-verify*" is narrower than
+    the harness pattern "git commit*--no-verify*", which was just added beside it.
+    Merging only fills gaps, so the old rule stays until you remove it.
+  ⚠ permission.bash: "git push" is narrower than
+    the harness pattern "git push*", which was just added beside it.
+
+$ bash scripts/merge-opencode-config.sh <template> current.jsonc  # already widened
+  ✓ Added: mcp.filesystem, …                                      # no ⚠ at all
+
+$ bash scripts/merge-opencode-config.sh <template> custom.jsonc   # "npm publish*", "terraform apply*"
+  ✓ Added: mcp.filesystem, …, permission.bash.rm -rf*             # no ⚠ — user rules are not touched
+```
+
+Propagation question (`09-propagation-audit.md`): this config is not copied
+into client projects — it merges into `~/.config/opencode/opencode.jsonc`,
+which is per-machine. Reachable from a trigger: yes, `update-harness` →
+`update.sh:110` → `merge-opencode-config.sh`, and `install.sh:105` on a fresh
+install. Both paths now print the warning.
+
+Finding outside this ticket, recorded not fixed: this machine's
+`~/.config/opencode/opencode.jsonc` has **no `permission` block at all** —
+neither the narrow patterns nor the new ones. Wave E's capability
+deny-by-default has therefore never been in effect here; the file predates it
+and `update-harness` has not been run since. One `make update` applies it,
+but that is the user's call on their own machine, not an edit to make from a
+session.
+
 ## 2026-08-18
 
 Wave I (`notes/Harness/implementation-plan-2/12-waveI-final-remediation.md`),
