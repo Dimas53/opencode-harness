@@ -41,7 +41,7 @@ This enables the `update-harness` and `update-project` shortcuts.
 | Playwright browsers (npx) | Chromium ~300MB for browser testing |
 | `~/.config/opencode/AGENTS.md` | Global agent rules (safety, process, language) |
 | `~/.config/opencode/opencode.jsonc` | MCP server config — edit paths + Directus token |
-| `~/.config/opencode/skills/` (70 skills) | Reusable agent skills for debugging, security, UI, etc. |
+| `~/.config/opencode/skills/` | Reusable agent skills for debugging, security, UI, etc. — one directory per skill |
 | `~/.opencode-harness` symlink | Enables `update-harness` and `update-project` shortcuts |
 
 ### What `make setup` does NOT do (manual)
@@ -400,7 +400,7 @@ cd ~/.opencode-harness && git pull && make update
 opencode --version      # OpenCode installed
 rtk --version           # RTK installed
 opencode mcp list       # MCP servers connected
-ls ~/.config/opencode/skills/ | wc -l   # should show 70 skills
+ls ~/.config/opencode/skills/           # one directory per skill; compare with global/skills/ in the harness repo
 ```
 
 ---

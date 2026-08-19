@@ -143,11 +143,28 @@ while IFS= read -r hit; do
   FAIL=1
 done < <(grep -rniE "$CLIENT_LITERALS" global/skills/ 2>/dev/null || true)
 
+# ── Rule 5: no editor/backup debris under global/ ─────────────────────────
+# `.bak` files are git-ignored (.gitignore:34) and excluded from the mirror
+# (scripts/mirror-excludes.txt), so nothing ever complained about them — and
+# two accumulated in the working tree unnoticed: global/AGENTS.md.bak from
+# July and global/skills/dod/SKILL.md.bak. Invisible to git is not the same
+# as harmless: they are stale copies of the two files that define how every
+# session behaves, sitting next to the originals, and the next person to
+# grep global/ reads both. The mirror excludes are the reason this can only
+# be caught here.
+while IFS= read -r f; do
+  echo "✗ $f — backup/editor debris under global/. It is git-ignored and never" >&2
+  echo "  mirrored, so nothing else will ever report it. Delete it or move it" >&2
+  echo "  out of the tree." >&2
+  FAIL=1
+done < <(find global -type f \( -name '*.bak' -o -name '*.sedbak' -o -name '*.orig' -o -name '*.rej' -o -name '*~' \) 2>/dev/null || true)
+
 if [ "$FAIL" = "1" ]; then
   echo "" >&2
-  echo "Phantom skill reference(s) found above. Either the skill folder is" >&2
-  echo "missing (add it or fix the name), or it's a legitimate external" >&2
-  echo "skill that needs adding to EXTERNAL_ALLOWLIST in this script." >&2
+  echo "Problems found above. For a phantom skill reference: either the skill" >&2
+  echo "folder is missing (add it or fix the name), or it is a legitimate" >&2
+  echo "external skill that needs adding to EXTERNAL_ALLOWLIST in this script." >&2
+  echo "For the other rules, the message above says what to do." >&2
   exit 1
 fi
 

@@ -13,7 +13,7 @@ Use when you need the reasoning behind a step, or hit an edge case.
 
 ## Why this exists
 
-`global/AGENTS.md ## Session Start` is the single source of truth for which
+`~/.config/opencode/AGENTS.md ## Session Start` is the single source of truth for which
 steps exist and in what order. This skill adds depth: why each step exists,
 what can go wrong, what to do when it does.
 

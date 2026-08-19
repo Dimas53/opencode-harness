@@ -37,10 +37,12 @@ then fill the scaffolded template files with the project's context.
    ```
    - `--no-open` prevents launching a second OpenCode instance (we are
      already inside one). The scaffold copies everything from
-     `templates/` and runs `git init` + hooks.
+     `~/.opencode-harness/templates/` and runs `git init` + hooks.
    - If the user invoked `new` from a folder that is NOT yet the target
-     project, ask which directory to scaffold into, then run `make init`
-     there.
+     project, ask which directory to scaffold into, then run the same
+     script with that directory as the argument:
+     `~/.opencode-harness/scripts/init-project.sh /path/to/dir --no-open`.
+     Not `make init` — there is no Makefile outside the harness repo.
     - Do NOT edit the global AGENTS.md (`~/.config/opencode/AGENTS.md`) —
       it lives outside the project and is managed by `make setup` only.
   2. After scaffold, verify `.env.example` exists in the project root:
@@ -310,7 +312,8 @@ then fill the scaffolded template files with the project's context.
   in the next session, not here
 - restate (step 4.5) is MANDATORY — no file is written before explicit "yes"
 - `.env.example` is MANDATORY — verify it exists after scaffold. If missing,
-  copy it from templates/ before the interview. This gives the developer a
+  copy it from ~/.opencode-harness/templates/ before the interview. This gives
+  the developer a
   reference for required environment variables.
 - NEVER create `.env` directly — only `.env.example` with placeholder values.
   Real `.env` is created by the developer manually and must be in .gitignore.

@@ -1,7 +1,12 @@
 # templates/ci/gitlab-ci-dod.yml — T-H5 step 5 (implementation-plan-2 Wave H)
 #
+# propagation-ok: the templates/ci/ paths in this header name THIS file's
+# source in the harness repo — they are provenance, not a path the project is
+# expected to open. The file itself is copied out as .gitlab-ci.yml.
+#
 # Installed as .gitlab-ci.yml, ONLY if you opted in during `adopt`
 # (H-DEC-4: optional, asked once, never installed silently). GitLab
+# propagation-ok: same as above — provenance, not a path to open.
 # equivalent of templates/ci/github-actions-dod.yml — see that file's
 # header for why this clones opencode-harness fresh into the runner
 # instead of assuming it's already there.

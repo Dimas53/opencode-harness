@@ -69,7 +69,7 @@ check_unreachable_paths() {
   local file="$1"
   [ -f "$file" ] || return 0
   # Same pre-filter as above — skip whole files that cannot match.
-  grep -qE '(instructions/|notes/Harness|tests/behavior/|\.github/|scripts/[a-zA-Z])' "$file" || return 0
+  grep -qE '(instructions/|notes/Harness|tests/behavior/|\.github/|scripts/[a-zA-Z]|global/|templates/)' "$file" || return 0
   local lineno=0
   while IFS= read -r line; do
     lineno=$((lineno + 1))
@@ -80,7 +80,13 @@ check_unreachable_paths() {
     # its own. `make <target>` is covered by Rule 1 instead.
     local stripped
     stripped=$(echo "$line" | sed -E 's#~/\.opencode-harness/[a-zA-Z0-9_./-]*##g; s#~/\.config/opencode/[a-zA-Z0-9_./-]*##g')
-    echo "$stripped" | grep -qE '(^|[^a-zA-Z0-9_./~-])(instructions/|notes/Harness|tests/behavior/|\.github/|scripts/[a-zA-Z])' || continue
+    # `global/` is on this list because the harness's own layout leaks into
+    # the delivered text more than anything else: a mirrored skill that says
+    # "see global/AGENTS.md" names a directory that exists only in the
+    # harness repo, while the file the reader actually has is
+    # ~/.config/opencode/AGENTS.md. Six such references were live when this
+    # was added, in the files an agent reads every session.
+    echo "$stripped" | grep -qE '(^|[^a-zA-Z0-9_./~-])(instructions/|notes/Harness|tests/behavior/|\.github/|scripts/[a-zA-Z]|global/|templates/)' || continue
 
     local lo=$((lineno > 4 ? lineno - 4 : 1))
     local hi=$((lineno + 4))

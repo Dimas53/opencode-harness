@@ -61,7 +61,15 @@
       "git push*": "ask",                    // any push (origin main, -u, HEAD, …)
       "git push --force*": "ask",            // kept explicit: force-push is its own risk
       "git reset --hard*": "ask",
-      "rm -rf*": "ask"                       // destructive — confirm (not full deny: legit uses exist)
+      // Destructive — confirm (not a full deny: legitimate uses exist).
+      // Same shape rule as above, applied to a flag pair that can be typed
+      // four ways; `rm -fr /x` and `rm -r -f /x` delete exactly as much as
+      // `rm -rf /x` and used to fall straight through to "allow".
+      "rm*-rf*": "ask",
+      "rm*-fr*": "ask",
+      "rm*-r *": "ask",
+      "rm*--recursive*": "ask",
+      "rm*--force*": "ask"
     }
   }
 }

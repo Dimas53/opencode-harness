@@ -3,7 +3,7 @@
 > Global rules live in `~/.config/opencode/AGENTS.md` and apply to all projects.
 > This file contains {{PROJECT_NAME}}-specific rules only. In case of conflict — this file wins.
 > 
-> ⚠️ DO NOT replace this file with global/AGENTS.md. This is a PROJECT-SPECIFIC TEMPLATE.
+> ⚠️ DO NOT replace this file with the global AGENTS.md above. This is a PROJECT-SPECIFIC TEMPLATE.
 >    It is used by the `new` / `adopt` OpenCode shortcuts to bootstrap new project AGENTS.md files.
 >    Edit placeholders ({{...}}), not the structure.
 

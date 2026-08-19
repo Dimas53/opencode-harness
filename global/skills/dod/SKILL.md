@@ -2,7 +2,7 @@
 name: dod
 description: >
   Full Definition of Done reference with per-step checklists, examples, and
-  edge cases. Mirrors global/AGENTS.md ## Definition of Done exactly — same
+  edge cases. Mirrors ~/.config/opencode/AGENTS.md ## Definition of Done exactly — same
   steps, same numbers, same order. This file never defines its own step.
 ---
 
@@ -12,7 +12,7 @@ Loaded when AGENTS.md Definition of Done section says to load this skill.
 
 ## Why this exists
 
-`global/AGENTS.md` ## Definition of Done is the single source of truth for
+`~/.config/opencode/AGENTS.md` ## Definition of Done is the single source of truth for
 WHICH steps exist and in what order. This skill adds: per-step checklists,
 examples, edge cases. If this file and AGENTS.md ever disagree on step
 content or count — AGENTS.md wins; this file is stale and must be fixed to

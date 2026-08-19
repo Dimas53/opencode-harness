@@ -84,6 +84,104 @@ and `update-harness` has not been run since. One `make update` applies it,
 but that is the user's call on their own machine, not an edit to make from a
 session.
 
+### Backlog cleanup — the "recorded, not fixed" list, closed by widening the lint
+
+Every item on the out-of-scope list from wave I, plus what widening the lint
+found next to them. The pattern repeats: each one was a single line in the
+notes, and each turned out to be an instance of a class the checkers could
+not see.
+
+**`global/` was not a lint target, so the harness's own layout leaked into
+delivered text.** A mirrored skill that says "see `global/AGENTS.md`" names a
+directory that exists only in the harness repo; the file the reader actually
+has is `~/.config/opencode/AGENTS.md`. The notes recorded one such line
+(`templates/.agentignore:3`). Adding `global/` to Rule 2 of
+`check-propagation.sh` found **six**, all in files an agent reads every
+session:
+
+```
+✗ global/AGENTS.md:222 — **Single source of truth for this checklist.** `global/skills/dod/SKILL.md`
+✗ global/skills/dod/SKILL.md:5 — Mirrors global/AGENTS.md ## Definition of Done exactly
+✗ global/skills/dod/SKILL.md:15 — `global/AGENTS.md` ## Definition of Done is the single source of truth
+✗ global/skills/startup/SKILL.md:16 — `global/AGENTS.md ## Session Start` is the single source of truth
+✗ templates/.agentignore:3 — # global/AGENTS.md "Access Restrictions"
+✗ templates/AGENTS.md:6 — > ⚠️ DO NOT replace this file with global/AGENTS.md
+```
+
+The last one is the clearest evidence it was a blind spot and not a typo:
+`templates/AGENTS.md:3` already said `~/.config/opencode/AGENTS.md` three
+lines above. All six now name the mirrored path.
+
+**`templates/` was not a target either.** Same rule, same run, four more:
+`global/AGENTS.md:491` told the agent to check `templates/AGENTS.md` Stack
+Skills for what the project uses — in a client project that is the project's
+own `AGENTS.md`, in the repo root; `agent-new-project.md` twice instructed
+copying "from `templates/`" with no prefix, once as an actual step ("copy
+`.env.example` from templates/ before the interview") that would simply fail;
+and the GitLab CI template's header names its own source path, which is
+provenance rather than a reference — marked `propagation-ok:` like its GitHub
+sibling already was.
+
+Found while reading those lines rather than by a rule: `agent-new-project.md`
+told the agent to `make init` in a directory that is not the harness repo.
+`init` sits in `MAKE_ALLOWLIST` because `make init PROJECT=…` is the
+documented fallback *from* the harness repo, so the check could not catch it.
+Replaced with the script call and an explicit "not `make init` — there is no
+Makefile outside the harness repo".
+
+**Hardcoded counts in user-facing docs.** `README.md` advertised "6 checks"
+twice and a "7-step init sequence"; the gate has 8 mechanical steps and
+Session Start has 8. `INSTALL.md` claimed 70 skills, and told the reader to
+verify with `ls … | wc -l  # should show 70` — there are 69. Same class T-I7
+closed for protocol steps: the numbers are now gone, replaced by the source
+that owns them.
+
+**Backup debris under `global/`, and a new rule so it cannot recur.**
+`global/AGENTS.md.bak` (14 July) and `global/skills/dod/SKILL.md.bak` sat in
+the working tree. They are git-ignored (`.gitignore:34`) and excluded from
+the mirror (`scripts/mirror-excludes.txt`) — which is precisely why nothing
+ever reported them, and why they could only be caught by a rule written for
+this. They are stale copies of the two files that define how every session
+behaves, sitting next to the originals. Rule 5 in `check-docs-refs.sh` now
+fails on `*.bak`, `*.sedbak`, `*.orig`, `*.rej` and `*~` under `global/`. The
+stale `~/.config/opencode/AGENTS.md.bak` (1 July) was removed from the live
+mirror too — `mirror-excludes.txt` already forbids it being there.
+
+**`rm -rf*` had the same shape hole T-I4 fixed for git.** It does not match
+`rm -fr /x`, `rm -r -f /x` or `rm --recursive --force /x`, all of which
+delete exactly as much. Widened to `rm*-rf*`, `rm*-fr*`, `rm*-r *`,
+`rm*--recursive*`, `rm*--force*`. Still `ask`, not `deny` — legitimate uses
+exist, and the point is a confirmation, not a block.
+
+Proof:
+
+```
+$ bash scripts/check-propagation.sh          # before the fixes, with global/ added
+✗ … 6 unreachable references                 # after: ✓ no unreachable commands/paths found
+$ bash scripts/check-propagation.sh          # before the fixes, with templates/ added
+✗ … 5 unreachable references                 # after: ✓
+$ bash scripts/check-docs-refs.sh            # with the debris still in the tree
+✗ global/AGENTS.md.bak — backup/editor debris under global/ …
+                                             # after moving it out: ✓
+$ bats tests/*.bats | grep -c "^ok "
+53
+```
+
+Negative test for the new lint rule: reverting
+`~/.config/opencode/AGENTS.md` back to `global/AGENTS.md` in
+`templates/.agentignore` makes the run fail with exactly one finding;
+restoring it turns the run green again.
+
+Propagation question (`09-propagation-audit.md`): the edited files are
+`global/AGENTS.md`, three skills under `global/skills/`, and two files under
+`templates/` — all delivered. The mirrored copies update on commit
+(post-commit hook) and via `update-harness`; `templates/AGENTS.md` reaches
+existing projects through `update-project --refresh-agents`, and
+`templates/.agentignore` through `update-project`. Reachable from a trigger:
+these are the files loaded on session start and by the `new`/`adopt`
+shortcuts. `README.md`/`INSTALL.md` are harness-repo docs and stay there by
+design.
+
 ### T-I14 (steps 1 and 3 complete; step 2 still open) — the CI templates say what they need, and reach already-adopted projects
 
 Step 1 — both templates pull the harness into the runner, and neither said a

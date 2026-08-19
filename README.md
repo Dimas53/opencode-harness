@@ -156,14 +156,15 @@ Generate the config (run from the project root):
 ## Daily Workflow
 
 ### Automatically (no command needed)
-- **`git commit`** — pre-commit hook runs `make dod` (6 checks) automatically.
+- **`git commit`** — pre-commit hook runs `make dod` automatically. The gate
+  prints its own step count; don't rely on a number written down elsewhere.
 
 ### Trigger words inside OpenCode
 | Say this | What happens |
 |----------|-------------|
-| `Start` | Session Start — 7-step init sequence |
+| `Start` | Session Start — init sequence (steps listed in `global/rules/protocols.yaml`) |
 | `end` / `done` / `Ende` | Session End — docs lag check, PROGRESS.md update |
-| `dod` | Definition of Done — 6 checks manually |
+| `dod` | Definition of Done — same gate, run manually |
 | `analyze` | Full project audit — architecture, security, risks |
 | `analyze <path>` | Focused audit of a specific file or folder |
 | `fix` | Fix CRITICAL/HIGH/MEDIUM findings |
