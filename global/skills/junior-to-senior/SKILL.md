@@ -1,6 +1,6 @@
 ---
 name: junior-to-senior
-description: Adversarial senior-engineer review for agent-generated plans, designs, and architectures. Treats the current output as junior work, constructs a senior reviewer whose domain expertise comes from live codebase research plus web research of current best practices, diagnoses altitude failures (too vague or too granular), then rewrites the plan into a scoped, state-of-the-art version. Use when the user says "junior to senior", "senior review", "review this like a staff engineer", when a plan feels hand-wavy or lost in details, or before committing to any agent-written plan.
+description: Adversarial senior-engineer review for agent-generated plans, designs, and architectures. Treats the current output as junior work, constructs a senior reviewer whose domain expertise comes from live codebase research plus web research of current best practices, diagnoses altitude failures (too vague or too granular), then rewrites the plan into a scoped, state-of-the-art version. Use when the user says "junior to senior", "senior review", "review this like a staff engineer", when a plan feels hand-wavy or lost in details, or before committing to any agent-written plan. SKIP when the subject is finished code rather than a plan or design (use code-review-and-quality) — this overrides every trigger above.
 ---
 
 # Junior to Senior

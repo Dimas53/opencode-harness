@@ -1,6 +1,6 @@
 ---
 name: domain-modeling
-description: Build and sharpen a project's domain model. Use when the user wants to pin down domain terminology or a ubiquitous language, record an architectural decision, or when another skill needs to maintain the domain model.
+description: Build and sharpen a project's domain model. Use when the user wants to pin down domain terminology or a ubiquitous language, record an architectural decision, or when another skill needs to maintain the domain model. SKIP when you only need to READ existing vocabulary from CONTEXT.md — that is a one-line habit, not this skill — and when the decision is already made and only needs recording (use documentation-and-adrs) — this overrides every trigger above.
 ---
 
 # Domain Modeling

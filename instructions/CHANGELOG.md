@@ -84,6 +84,93 @@ and `update-harness` has not been run since. One `make update` applies it,
 but that is the user's call on their own machine, not an edit to make from a
 session.
 
+### T-J5 + T-J6 (complete) — the skill router stops giving three answers to one word
+
+**T-J5.** The Auto-Loading table is the harness's skill router, and AGENTS.md
+is honest that nothing automates it: the model scans every incoming message
+against 29 rows by hand. The defect measured here is worse than discipline.
+Twelve trigger words routed to more than one domain — `refactor` to three — and
+the standing instruction is "multiple matches → load all of them". A model
+following the rule *correctly* therefore burned three skill reads on one word,
+and the more carefully it followed the rule the more context it spent. That
+cannot be fixed by asking for more discipline; the data had to stop being
+ambiguous.
+
+Measured before the fix (the plan's count of 12 confirmed exactly):
+
+```
+$ bash scripts/check-skill-triggers.sh
+✗ global/AGENTS.md: 12 trigger(s) route to more than one domain.
+    3x  'refactor' → Codebase Health, Code Review, Architecture/Code Design
+    2x  'adr' → Documentation, Domain Modeling
+    2x  'clean up' → Codebase Health, Code Review
+    2x  'code health' → Codebase Health, Architecture/Code Design
+    2x  'collection' → Security/Auth, API/Backend
+    2x  'context.md' → Documentation, Domain Modeling
+    2x  'deploy' → Security/Auth, CI/CD
+    2x  'docker' → Security/Auth, CI/CD
+    2x  'interface design' → Interface Design, Architecture/Code Design
+    2x  'release' → Security/Auth, Git
+    2x  'review' → Junior-to-Senior, Code Review
+    2x  'terminology' → Documentation, Domain Modeling
+```
+
+Resolved along the lines the ticket proposed (J-DEC-2's recommendation —
+separate, with a tie-break as backstop, rather than merging domains). The
+pattern for the Security/Auth collisions is worth stating because it repeats:
+that row claimed the *general* word for a concept it only cares about in one
+aspect. `deploy`, `docker`, `release`, `collection` and `field` now belong to
+CI/CD, Git and API/Backend, while Security/Auth takes `deploy secrets`,
+`docker secrets`, `release credentials`, `collection permissions`, `field
+permissions` — the specific forms that actually mean security.
+
+After:
+
+```
+$ bash scripts/check-skill-triggers.sh
+✓ check-skill-triggers: 152 triggers across 29 rows, no collisions
+```
+
+`scripts/check-skill-triggers.sh` is now in `make check-skill-triggers`, CI,
+and `tests/skill-triggers.bats` (5 tests: it catches a duplicate across
+domains, is not fooled by case or backticks, passes distinct triggers, and
+fails rather than silently passing if the table is renamed or moved). The
+table also carries a tie-break rule for meaning-level overlap the checker
+cannot see: if two rows still match, the lower one wins, and rows run general
+to specific.
+
+**T-J6.** Descriptions answered "when to use" and never "when not to", so the
+priority lived nowhere — a router, textual or coded, inherits the ambiguity.
+The nine skills involved in those collisions now end their `description` with
+an explicit `SKIP when … — this overrides every trigger above`, naming the
+skill to use instead. The pairs point at each other on purpose:
+`security` ↔ `ci-cd-and-automation` split on whether the question is about
+credentials or mechanics; `documentation-and-adrs` ↔ `domain-modeling` on
+whether terms are being *decided* or *recorded*; `code-review-and-quality` ↔
+`junior-to-senior` on whether the subject is code or a plan.
+
+```
+$ for s in codebase-health-check code-review-and-quality junior-to-senior \
+           codebase-design improve-codebase-architecture security \
+           ci-cd-and-automation documentation-and-adrs domain-modeling; do
+    grep -q "SKIP" global/skills/$s/SKILL.md || echo "MISSING SKIP: $s"; done
+                              # no output
+$ bats tests/*.bats | grep -c "^ok "
+92
+```
+
+Side note, fourth time this wave: `check-propagation.sh` caught the author.
+The new sentence in AGENTS.md pointed at `make check-skill-triggers`, a command
+that does not exist in a client project. Reworded to name the guarantee rather
+than the command.
+
+Propagation question (`09-propagation-audit.md`): full. The table ships inside
+`global/AGENTS.md` — it reached client projects complete with all twelve
+collisions, which is what made this a delivery defect and not repo hygiene.
+Skill descriptions are mirrored to `~/.config/opencode/skills/`. The checker
+itself stays in the harness repo by design: it verifies what ships without
+shipping.
+
 ### T-J8, T-J9, T-J12, T-J13 (complete) — the rules that were only written in one direction
 
 Four small tickets, one pass: three add the missing half of an existing rule,

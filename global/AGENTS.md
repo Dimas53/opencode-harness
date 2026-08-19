@@ -519,26 +519,33 @@ Multiple matches → load all of them. When unsure whether a word counts as
 a match, treat it as one — loading an extra skill costs a `Read`, missing
 one costs a real defect.
 
+No trigger word appears in two rows — a checker in the harness repo enforces
+that before this table ships, because "load all matches" turned a single
+ambiguous word into three skill reads, and the more carefully a model
+followed the rule the more context it burned. If two matches still happen
+(different words, overlapping meaning), the LOWER row wins — rows run from
+general to specific.
+
 Always load SKILL.md via filesystem path: `Read ~/.config/opencode/skills/<domain>/SKILL.md`
 
 | Domain | Triggers | Path |
 |--------|----------|------|
-| Security/Auth | auth, login, token, cookie, permissions, API route, server route, `.env`, secrets, nginx, Docker, CORS, CSP, deploy, release, collection, field | security/SKILL.md |
-| Codebase Health | refactor, clean up, code health, messy, assess | codebase-health-check/SKILL.md |
-| Junior-to-Senior | review, improve quality, make it better | junior-to-senior/SKILL.md |
+| Security/Auth | auth, login, token, cookie, permissions, API route, server route, `.env`, secrets, nginx, CORS, CSP, deploy secrets, docker secrets, release credentials, collection permissions, field permissions | security/SKILL.md |
+| Codebase Health | clean up, code health, messy, assess, dead code | codebase-health-check/SKILL.md |
+| Junior-to-Senior | improve quality, make it better, level up this code | junior-to-senior/SKILL.md |
 | Planning | plan, break down, where to start, unclear scope, large task | planning-and-task-breakdown/SKILL.md |
 | Specification | spec, requirements, what should this do, new feature no clear scope | spec-driven-development/SKILL.md |
 | Implementation | add, implement, create, build a component/page/endpoint, new feature | incremental-implementation/SKILL.md |
 | Last 20% | last 20%, polish, finish the remaining, experiential layer, final details | last-20-percent/SKILL.md |
 | UI/Frontend | component, page, layout, form, styles, Tailwind, Nuxt UI, Vue | frontend-ui-engineering/SKILL.md + this project's framework skill if one exists (`nuxt/SKILL.md`, `vue/SKILL.md`, `nuxt-ui/SKILL.md` — check this project's own `AGENTS.md` Stack Skills for what it actually uses; not every framework has a dedicated skill yet, frontend-ui-engineering alone still applies) |
 | Interface Design | UI design, interface design, accessible UI, animation principles | interface-kit/SKILL.md |
-| API/Backend | endpoint, API, route, schema, collection | api-and-interface-design/SKILL.md |
+| API/Backend | endpoint, API, route, schema, collection, field | api-and-interface-design/SKILL.md |
 | Debugging | not working, error, bug, why, broken, error in logs | debugging-and-error-recovery/SKILL.md |
-| Code Review | review, improve, refactor, clean up, optimize | code-review-and-quality/SKILL.md |
+| Code Review | review, optimize, code review, critique this code | code-review-and-quality/SKILL.md |
 | De-Slop | de-slop, anti-slop, polish text, remove AI artifacts, clean up AI writing | fuck-slop/SKILL.md |
 | TDD/Tests | write test, cover with tests, TDD, failing test, Playwright, Vitest | test-driven-development/SKILL.md |
 | Git | commit, branch, merge, PR, versioning, release | git-workflow-and-versioning/SKILL.md |
-| Documentation | document, write docs, ADR, terminology, onboarding, CONTEXT.md | documentation-and-adrs/SKILL.md |
+| Documentation | document, write docs, onboarding, README, changelog | documentation-and-adrs/SKILL.md |
 | Session | new session, pass context, handoff, context limit | handoff/SKILL.md |
 | Context Canary | context canary, context rot, context degradation, canary check | context-canary/SKILL.md |
 | Token Saving | save tokens, be brief, caveman, token budget | caveman/SKILL.md |
@@ -546,7 +553,7 @@ Always load SKILL.md via filesystem path: `Read ~/.config/opencode/skills/<domai
 | CI/CD | pipeline, GitHub Actions, deploy, Docker, production | ci-cd-and-automation/SKILL.md |
 | Parallel Tasks | multiple independent subtasks, do in parallel | dispatching-parallel-agents/SKILL.md |
 | Skill Discovery | new skill installed, discovered | — auto-detect and add to docs/skills-cheatsheet.md |
-| Architecture/Code Design | module, seam, depth, interface design, refactor, code health, improve architecture | codebase-design/SKILL.md, improve-codebase-architecture/SKILL.md |
+| Architecture/Code Design | module, seam, depth, module boundary, refactor, improve architecture | codebase-design/SKILL.md, improve-codebase-architecture/SKILL.md |
 | Domain Modeling | domain term, glossary, CONTEXT.md, ADR, ubiquitous language, terminology | domain-modeling/SKILL.md, documentation-and-adrs/SKILL.md |
 | Research | investigate, research, find docs, gather facts, learn API | research/SKILL.md |
 | Merge Conflicts | merge conflict, rebase conflict, git merge, resolve conflict | resolving-merge-conflicts/SKILL.md |

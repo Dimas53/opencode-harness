@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: help link setup init init-adopt analyze verify update dod mcp self-check uninstall uninstall-lite unadopt check-docs-sync check-docs-refs check-propagation context-budget memory-index test test-quick session-end start
+.PHONY: help link setup init init-adopt analyze verify update dod mcp self-check uninstall uninstall-lite unadopt check-docs-sync check-docs-refs check-propagation check-skill-triggers context-budget memory-index test test-quick session-end start
 
 .DEFAULT_GOAL := help
 
@@ -23,6 +23,7 @@ help:
 	@echo "  make check-propagation -- verify delivered files reference nothing harness-only"
 	@echo "  make context-budget -- measure what Session Start costs before the first word"
 	@echo "  make memory-index   -- refresh the memory/ index inside MEMORY.md"
+	@echo "  make check-skill-triggers -- verify no trigger word routes to two skills"
 	@echo "                        PROJECT=/path/to/project (default: this repo)"
 	@echo "  make test-quick     -- syntax-check scripts + run every tests/*.bats suite"
 	@echo "  make test           -- same as test-quick (full suite)"
@@ -101,6 +102,11 @@ context-budget:
 # T-J4: one line per note in MEMORY.md, so memory/ stops being write-only.
 memory-index:
 	@./scripts/index-memory.sh
+
+# T-J5: no trigger word may route to two domains — "load all matches" made
+# ambiguity expensive in exactly the model that follows rules literally.
+check-skill-triggers:
+	@./scripts/check-skill-triggers.sh
 
 self-check:
 	@echo "=== Self-Check ==="

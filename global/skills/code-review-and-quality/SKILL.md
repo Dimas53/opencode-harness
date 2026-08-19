@@ -1,6 +1,6 @@
 ---
 name: code-review-and-quality
-description: Conducts multi-axis code review. Use before merging any change. Use when reviewing code written by yourself, another agent, or a human. Use when you need to assess code quality across multiple dimensions before it enters the main branch.
+description: Conducts multi-axis code review. Use before merging any change. Use when reviewing code written by yourself, another agent, or a human. Use when you need to assess code quality across multiple dimensions before it enters the main branch. SKIP when the code does not exist yet (use planning-and-task-breakdown or spec-driven-development), when the subject is the health of the codebase as a whole rather than a change (use codebase-health-check), or when reviewing a PLAN rather than code (use junior-to-senior) — this overrides every trigger above.
 ---
 
 # Code Review and Quality

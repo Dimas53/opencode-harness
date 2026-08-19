@@ -39,3 +39,6 @@ jobs:
       # never reaches it is written, paid for, and never read again.
       - name: Verify memory index covers memory/
         run: bash scripts/index-memory.sh --check
+
+      - name: Verify skill triggers are unambiguous
+        run: bash scripts/check-skill-triggers.sh

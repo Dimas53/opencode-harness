@@ -3,6 +3,7 @@ name: codebase-health-check
 description: >
   Analyses a codebase holistically — identifies duplication, technical debt,
   refactoring priorities with risk assessment and phased plan.
+  SKIP when the task is reviewing one concrete change or diff (use code-review-and-quality) or designing a single module's interface (use codebase-design) — this overrides every trigger above.
 ---
 
 # Codebase Health Check

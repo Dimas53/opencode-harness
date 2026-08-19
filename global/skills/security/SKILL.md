@@ -3,6 +3,7 @@ name: security
 description: >
   Security baseline for AI-assisted development. Covers auth, secrets,
   API hardening, CSP, CORS, Docker, and per-stack security patterns.
+  SKIP when the task is pipeline mechanics with no credential, permission, or exposure question in it (use ci-cd-and-automation) — this overrides every trigger above.
 ---
 
 # Security Skill — Entry Point
