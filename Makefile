@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: help link setup init init-adopt analyze verify update dod mcp self-check uninstall uninstall-lite unadopt check-docs-sync check-docs-refs check-propagation test test-quick session-end start
+.PHONY: help link setup init init-adopt analyze verify update dod mcp self-check uninstall uninstall-lite unadopt check-docs-sync check-docs-refs check-propagation context-budget test test-quick session-end start
 
 .DEFAULT_GOAL := help
 
@@ -21,6 +21,8 @@ help:
 	@echo "  make check-docs-sync -- verify DoD + Session Start match global/rules/protocols.yaml"
 	@echo "  make check-docs-refs -- verify skill references and inventory match the disk"
 	@echo "  make check-propagation -- verify delivered files reference nothing harness-only"
+	@echo "  make context-budget -- measure what Session Start costs before the first word"
+	@echo "                        PROJECT=/path/to/project (default: this repo)"
 	@echo "  make test-quick     -- syntax-check scripts + run every tests/*.bats suite"
 	@echo "  make test           -- same as test-quick (full suite)"
 	@echo "  make self-check     -- verify syntax, permissions and diff before committing"
@@ -88,6 +90,12 @@ check-docs-refs:
 
 check-propagation:
 	@./scripts/check-propagation.sh
+
+# T-J0: the numbers that make every compaction ticket checkable. Takes the same
+# PROJECT=... convention as `make init`, so measuring a client project reads the
+# same way as scaffolding one.
+context-budget:
+	@./scripts/context-budget.sh $(if $(PROJECT),--project $(PROJECT),)
 
 self-check:
 	@echo "=== Self-Check ==="

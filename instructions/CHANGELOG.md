@@ -84,6 +84,98 @@ and `update-harness` has not been run since. One `make update` applies it,
 but that is the user's call on their own machine, not an edit to make from a
 session.
 
+### T-J0 (complete) — the cold-start context budget is measured, and it is twice what the plan assumed
+
+Start of wave J (`notes/Harness/implementation-plan-2/13-*.md`). Nothing in
+the harness ever stated how much context Session Start spends before the user
+says anything, so every compaction decision was taken by eye — which is how
+`global/AGENTS.md` went 436 → 467 → 497 → **517** lines against a roadmap
+target of ~220. Each step looked small from inside its own diff.
+
+`scripts/context-budget.sh [--project PATH] [--check MAX] [--quiet]` prints
+one row per file the protocol reads, with lines, characters, estimated tokens
+and share of total; `make context-budget [PROJECT=…]` wraps it.
+
+Two design points worth stating, because both were wrong on the first try:
+
+*Token estimate.* Latin ≈4 chars/token, Cyrillic ≈2.5. Counted **separately**,
+not by switching the whole file to the worse rate on first sight of Cyrillic:
+the harness's own `PROGRESS.md` is 103k characters of English with 406 stray
+Cyrillic ones left in old entries, and the flag-style rule inflated it by
+~15k tokens — a 40% error on the single largest line of the budget.
+
+*Drift.* The file list is spelled out in the script rather than parsed from
+the protocol, because Session Start names files in prose with conditions ("if
+they exist", "for today or yesterday") that a regex gets wrong in both
+directions. What keeps the two honest is a check in the other direction: the
+script re-reads `## Session Start`, collects every `*.md` it names, and warns
+about any it does not measure. Without it the total would go quietly stale the
+first time a step starts reading something new — the exact failure mode of the
+counts T-I7 and the backlog cleanup had to fix by hand.
+
+Measured baselines:
+
+```
+$ make context-budget                     # this repo
+global AGENTS.md              always    517    29246     7311   20.1%
+project AGENTS.md             always    132     4630     1157    3.2%
+using-agent-skills/SKILL.md   step 2    180     8554     2138    5.9%
+PROGRESS.md                   step 3   1831   103130    25843   70.9%
+TOTAL ~36449 tokens before the first word of the task.
+
+$ make context-budget PROJECT=~/Documents/BackEnd/itocook
+global AGENTS.md              always    517    29246     7311    9.7%
+project AGENTS.md             always    323    12901     3225    4.3%
+using-agent-skills/SKILL.md   step 2    180     8554     2138    2.8%
+docs/skills-cheatsheet.md     step 2     97     5568     1758    2.3%
+PROGRESS.md                   step 3   1340   212691    53172   70.7%
+docs/roadmap.md               step 4    421    21006     5251    7.0%
+MEMORY.md                     step 5     47     5929     1482    2.0%
+HARNESS.md                    step 6     60     3679      919    1.2%
+TOTAL ~75256 tokens before the first word of the task.
+```
+
+**The plan's estimate was low by more than half.** File 13 put a live client
+project at 30–35k; it is **75k**. The reason is visible in the row: `itocook`'s
+`PROGRESS.md` is 212,691 characters across 1,340 lines — the earlier estimate
+scaled from line count, and those lines are long. `PROGRESS.md` alone is 70% of
+the budget in both projects, which makes T-J2 (rotation) the highest-value
+ticket in the wave, not T-J1.
+
+Also corrected against the plan: file 13 lists `docs/skills-cheatsheet.md`
+nowhere, but Session Start step 2 reads it — 1,758 tokens in `itocook`.
+
+Proof:
+
+```
+$ bash scripts/context-budget.sh --check 10000000 --quiet; echo "exit=$?"
+✓ within the 10000000-token budget.
+exit=0
+$ bash scripts/context-budget.sh --check 1000 --quiet; echo "exit=$?"
+✗ context budget 36449 exceeds the limit of 1000 tokens.
+exit=1
+$ bats tests/context-budget.bats        # 8 tests, all pass
+$ bats tests/*.bats | grep -c "^ok "
+61
+```
+
+Negative test for the drift check: adding `and \`docs/backlog.md\`` to Session
+Start step 4 makes the run print "Session Start names files this script does
+not measure: docs/backlog.md"; restoring the line silences it. Covered by
+`tests/context-budget.bats` so it stays true.
+
+Finding outside this ticket, recorded not fixed: the harness's own tracked
+`PROGRESS.md` contains 406 Cyrillic characters in entries around lines
+1349-1361, against the rule that everything tracked in git is English. The
+`dod.sh` Cyrillic scan only sees *staged* files, so historical text is invisible
+to it. T-J2 will move those lines into an archive anyway.
+
+Propagation question (`09-propagation-audit.md`): the script stays in the
+harness — client projects have no `scripts/` by design — but `--project PATH`
+points it at the project where the cost is actually paid, which is why the
+`itocook` number above exists at all. Reachable from a trigger: `make
+context-budget`; wiring it into `dod.sh` is T-J11 and waits on J-DEC-4.
+
 ### Backlog cleanup — the "recorded, not fixed" list, closed by widening the lint
 
 Every item on the out-of-scope list from wave I, plus what widening the lint
