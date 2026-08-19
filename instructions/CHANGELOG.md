@@ -84,6 +84,96 @@ and `update-harness` has not been run since. One `make update` applies it,
 but that is the user's call on their own machine, not an edit to make from a
 session.
 
+### T-I14 (steps 1 and 3 complete; step 2 still open) — the CI templates say what they need, and reach already-adopted projects
+
+Step 1 — both templates pull the harness into the runner, and neither said a
+word about what happens if that repo is private. Checked instead of assumed:
+
+```
+$ curl -s https://api.github.com/repos/Dimas53/opencode-harness | grep -E '"(private|visibility)"'
+  "private": false,
+  "visibility": "public",
+```
+
+So the templates work as written today, and the header now says that with a
+date rather than leaving the reader to guess. What the headers add is the
+failure mode and its fix, because neither is self-evident: `actions/checkout`
+against a private repository fails with "Repository not found", which reads
+like a typo rather than a permissions problem, and an anonymous HTTPS clone
+in GitLab hangs on a credential prompt. Both headers now spell out the
+`HARNESS_REPO_TOKEN` route, and the GitHub template carries the `token:` line
+commented out at the exact spot it belongs — a fork of a private harness is
+one uncomment away rather than a search. The GitLab header also warns against
+writing the token into the file, since `.gitlab-ci.yml` is committed history
+and the job log prints the clone URL on failure.
+
+Step 3 — the CI gate was offered only by `new`/`adopt` (Q-CI in
+`harness-init/agent-adopt.md`), and `update-project.sh` had never heard of
+`templates/ci/` (`grep -c "ci/"` → 0). Every project adopted before
+2026-08-07 was therefore permanently unable to learn the option existed: the
+one command whose job is to close that kind of gap did not carry it.
+
+It is now listed with the other findings, but deliberately **not** covered by
+the bulk `Apply the updates above? (y/n)` prompt — H-DEC-4 requires the CI
+gate to be "never installed silently", and installing it as a side effect of
+agreeing to "missing template files" is exactly the silent install that rule
+forbids. It gets its own question with the same three choices Q-CI offers,
+defaulting to none. The `origin` remote is used as a hint for which platform
+is likely, not as the answer. An existing `.gitlab-ci.yml` is reported and
+left alone rather than overwritten: it is the project's entire pipeline, and
+adding one job is not worth clobbering it. "Installed" is judged by the `dod`
+job, not by the filename.
+
+Also made `HARNESS_PATH` honour `OPENCODE_HARNESS_PATH` (the override
+`hooks/pre-commit:12` already uses) so the tests below can run against this
+checkout instead of whatever is installed on the machine.
+
+Proof — `tests/update-project.bats`, 7 new tests, picked up automatically by
+the `tests/*.bats` glob from T-I5:
+
+```
+$ grep -c "workflows/dod.yml" scripts/update-project.sh
+5                                    # was 0
+
+$ bats tests/update-project.bats
+1..7
+ok 1 update-project offers the CI gate when it is not installed
+ok 2 answering none installs no CI file
+ok 3 answering github installs the workflow
+ok 4 an installed CI gate is not offered again
+ok 5 the CI gate is asked separately from the bulk update
+ok 6 an existing .gitlab-ci.yml is never overwritten
+ok 7 a .gitlab-ci.yml with a dod job counts as installed
+
+$ bats tests/*.bats | grep -c "^ok "
+53                                   # 46 before this ticket
+```
+
+Negative runs (behaviour reverted, tests must fail, then restored):
+
+```
+# CI offer disabled (pre-ticket behaviour):
+not ok 1 update-project offers the CI gate when it is not installed
+not ok 3 answering github installs the workflow
+
+# gitlab overwrite guard removed:
+not ok 6 an existing .gitlab-ci.yml is never overwritten
+```
+
+Propagation question (`09-propagation-audit.md`): yes, and this ticket is
+about propagation. `templates/ci/*.yml` are copied into the client project
+(`.github/workflows/dod.yml` / `.gitlab-ci.yml`), so the header edits reach
+every project installed from now on; projects that already have the workflow
+keep their copy, as with every other template. Reachable from a trigger: the
+`update-project` shortcut in `global/AGENTS.md` runs the script, and that
+entry now mentions the CI question so the agent can answer "can I still get
+the CI gate?" without reading the script.
+
+Side finding, recorded not fixed: `bats tests/*.bats` reports **46** tests
+before this ticket, not the 45 recorded on 2026-08-18. The earlier count was
+taken from a truncated terminal capture. Counts pasted from a shortened
+output are not evidence — take them from `grep -c` on a file, as above.
+
 ## 2026-08-18
 
 Wave I (`notes/Harness/implementation-plan-2/12-waveI-final-remediation.md`),

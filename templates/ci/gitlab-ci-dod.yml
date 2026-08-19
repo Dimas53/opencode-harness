@@ -8,6 +8,21 @@
 #
 # If your project already has its own .gitlab-ci.yml, merge this job in
 # manually instead of overwriting the file.
+#
+# IF THE HARNESS REPO IS PRIVATE, THE CLONE BELOW FAILS.
+# An anonymous HTTPS clone only works while the repository is public;
+# against a private one git asks for credentials and the job hangs or
+# fails on "could not read Username". Dimas53/opencode-harness was public
+# when this template was last checked (2026-08-19), so the clone works as
+# written. If you fork the harness privately, or it is made private later:
+#   1. create a GitHub PAT with read access to the harness repo,
+#   2. add it as a masked CI/CD variable HARNESS_REPO_TOKEN
+#      (Settings → CI/CD → Variables; masked, and protected only if this
+#      job runs on protected branches),
+#   3. swap the clone line for:
+#      git clone --quiet https://oauth2:$HARNESS_REPO_TOKEN@github.com/Dimas53/opencode-harness.git .opencode-harness-ci
+# Keep it a variable — a token written into .gitlab-ci.yml is committed
+# history, and the job log prints the URL on failure.
 dod:
   stage: test
   image: debian:stable-slim

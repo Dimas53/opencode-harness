@@ -48,7 +48,9 @@ When user types:
   `docs/` unless confirmed.
 - `update-project` — bring THIS project up to date with the harness: new
   template files/doc structure, `.gitignore` entries, and git hooks
-  (existing filled files are never overwritten — additions only).
+  (existing filled files are never overwritten — additions only). Also
+  offers the optional CI gate if the project has none — as a separate
+  question, never as part of the bulk confirmation.
   Run: `bash ~/.opencode-harness/scripts/update-project.sh`
 
 **Fallback** (if shortcuts don't work):

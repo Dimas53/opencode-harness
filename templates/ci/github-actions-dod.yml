@@ -13,12 +13,26 @@
 # runs — but here it's outside the agent's (or a bypassed local hook's)
 # reach, same principle as this harness repo's own .github/workflows/dod.yml.
 #
-# dod.sh itself isn't vendored into your project (it lives in
-# ~/.opencode-harness on your machine) — this workflow checks out the
-# harness repo fresh into the runner and invokes it from there, with your
-# project as the working directory. dod.sh only ever reads paths relative
-# to the working directory, never relative to its own location, so this
-# is safe.
+# dod.sh isn't vendored into your project (it lives in ~/.opencode-harness
+# on your machine) — this workflow checks out the harness repo fresh into
+# the runner and invokes it from there, with your project as the working
+# directory. dod.sh only ever reads paths relative to the working
+# directory, never relative to its own location, so this is safe.
+#
+# IF THE HARNESS REPO IS PRIVATE, THE SECOND CHECKOUT FAILS.
+# `actions/checkout` can read another repository without credentials only
+# while that repository is public; against a private one it fails with
+# "Repository not found", which reads like a typo rather than a permissions
+# problem. Dimas53/opencode-harness was public when this template was last
+# checked (2026-08-19), so the step below works as written. If you fork the
+# harness privately, or it is made private later:
+#   1. create a PAT with `repo` (classic) or Contents:read (fine-grained)
+#      scope on the harness repo,
+#   2. add it to THIS project as the secret HARNESS_REPO_TOKEN
+#      (Settings → Secrets and variables → Actions),
+#   3. uncomment the `token:` line in the "Checkout opencode-harness" step.
+# A fork in the same org still needs the token — same-owner is not the same
+# as same-repo for checkout.
 name: DoD Gate
 
 on:
@@ -40,6 +54,8 @@ jobs:
         with:
           repository: Dimas53/opencode-harness
           path: .opencode-harness-ci
+          # Required only if the harness repo is private — see the header.
+          # token: ${{ secrets.HARNESS_REPO_TOKEN }}
 
       - name: Run DoD
         run: bash .opencode-harness-ci/scripts/dod.sh

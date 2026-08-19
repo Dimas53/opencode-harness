@@ -17,7 +17,10 @@ command -v python3 >/dev/null 2>&1 || {
   exit 1
 }
 
-HARNESS_PATH="$HOME/.opencode-harness"
+# Same override the git hooks already honour (hooks/pre-commit:12) — the
+# default is unchanged, but a test (or a second checkout) can point this at
+# another harness copy instead of the installed one.
+HARNESS_PATH="${OPENCODE_HARNESS_PATH:-$HOME/.opencode-harness}"
 TEMPLATES="$HARNESS_PATH/templates"
 PROJECT="$(pwd)"
 
@@ -214,17 +217,50 @@ for h in pre-commit post-commit; do
   fi
 done
 
-if [ "$missing" = "0" ] && [ "$hooks_stale" = "0" ]; then
+# ── Optional CI gate (T-I14 step 3). The gate was only ever offered by
+#    `new`/`adopt` (Q-CI in harness-init/agent-adopt.md), so every project
+#    adopted before 2026-08-07 has no way to hear about it — the one update
+#    path that exists never mentioned templates/ci/ at all.
+#    Listed here, but NOT covered by the bulk y/n below: H-DEC-4 says the CI
+#    gate is "never installed silently", and folding it into a prompt whose
+#    subject is "missing template files" would install it as a side effect of
+#    agreeing to something else. It gets its own question, with the same
+#    three choices Q-CI offers. ────────────────────────────────────────────
+ci_missing=0
+ci_hint=""
+if [ -d "$PROJECT/.git" ] && [ -d "$TEMPLATES/ci" ]; then
+  gitlab_has_dod=0
+  if [ -f "$PROJECT/.gitlab-ci.yml" ] && grep -qE '^dod:' "$PROJECT/.gitlab-ci.yml"; then
+    gitlab_has_dod=1
+  fi
+  if [ ! -f "$PROJECT/.github/workflows/dod.yml" ] && [ "$gitlab_has_dod" = "0" ]; then
+    ci_missing=1
+    # Only a hint for the default answer — the remote is where CI would run,
+    # but the user may host elsewhere, so the question still offers both.
+    ci_remote="$(git -C "$PROJECT" config --get remote.origin.url 2>/dev/null || true)"
+    case "$ci_remote" in
+      *gitlab*) ci_hint="gitlab" ;;
+      *github*) ci_hint="github" ;;
+    esac
+    echo "  + CI gate — not installed (optional, asked separately below)"
+  fi
+fi
+
+if [ "$missing" = "0" ] && [ "$hooks_stale" = "0" ] && [ "$ci_missing" = "0" ]; then
   echo "✓ Nothing to update — project is up to date"
   exit 0
 fi
 
-printf "Apply the updates above? (y/n): "
-read -r answer
-if [ "$answer" != "y" ]; then
-  echo "Skipped — no changes made."
-  exit 0
+answer="n"
+if [ "$missing" = "1" ] || [ "$hooks_stale" = "1" ]; then
+  printf "Apply the updates above? (y/n): "
+  read -r answer || answer="n"
+  if [ "$answer" != "y" ]; then
+    echo "Skipped — no changes made."
+  fi
 fi
+
+if [ "$answer" = "y" ]; then
 
 for rel in "${to_copy[@]+"${to_copy[@]}"}"; do
   mkdir -p "$PROJECT/$(dirname "$rel")"
@@ -251,4 +287,44 @@ elif [ "${gt_missing:-0}" = "1" ]; then
 fi
 if [ "$hooks_stale" = "1" ]; then
   bash "$HARNESS_PATH/scripts/install-hooks.sh" "$PROJECT"
+fi
+
+fi  # end of the bulk "apply the updates above" block
+
+if [ "$ci_missing" = "1" ]; then
+  echo ""
+  echo "Optional — CI gate. Runs the same DoD checks on push/PR, where a local"
+  echo "  hook bypass cannot reach them. Requires no setup in your project; the"
+  echo "  workflow checks out the harness in the runner (see the template header"
+  echo "  if the harness repo is private)."
+  [ -n "$ci_hint" ] && echo "  Your origin remote looks like $ci_hint."
+  printf "Install a CI gate? [none / github / gitlab] (default: none): "
+  read -r ci_answer || ci_answer="none"
+  case "$ci_answer" in
+    github)
+      mkdir -p "$PROJECT/.github/workflows"
+      if [ -f "$PROJECT/.github/workflows/dod.yml" ]; then
+        echo "⚠ .github/workflows/dod.yml already exists — left as is"
+      else
+        cp "$TEMPLATES/ci/github-actions-dod.yml" "$PROJECT/.github/workflows/dod.yml"
+        echo "✓ Installed .github/workflows/dod.yml"
+      fi
+      ;;
+    gitlab)
+      # Never overwrite an existing pipeline definition: it is the project's
+      # whole CI, and clobbering it to add one job is not a trade this command
+      # gets to make. Same rule Q-CI states for `adopt`.
+      if [ -f "$PROJECT/.gitlab-ci.yml" ]; then
+        echo "⚠ .gitlab-ci.yml already exists — not overwritten."
+        echo "  Merge the dod job in manually from:"
+        echo "  $TEMPLATES/ci/gitlab-ci-dod.yml"
+      else
+        cp "$TEMPLATES/ci/gitlab-ci-dod.yml" "$PROJECT/.gitlab-ci.yml"
+        echo "✓ Installed .gitlab-ci.yml"
+      fi
+      ;;
+    *)
+      echo "Skipped — no CI gate installed."
+      ;;
+  esac
 fi
