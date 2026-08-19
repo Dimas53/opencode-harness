@@ -242,6 +242,27 @@ else
   echo "Session clean. Push to remote? Run: git push"
 fi
 
+# ── PROGRESS.md rotation (T-J2) ──────────────────────────────────────────────
+# Deliberately AFTER every check above, not before. Step 2 asks whether
+# PROGRESS.md was updated today; rotation rewrites the file, so running it
+# first would answer that question with its own side effect. (The script also
+# restores the original mtime for the same reason — belt and braces, because
+# the ordering here is easy to "tidy up" later without noticing why it was
+# chosen.)
+#
+# Rotation is what keeps Session Start affordable: PROGRESS.md is ~70% of the
+# cold-start context budget, and it is read in full every session.
+echo ""
+echo "PROGRESS.md rotation"
+ROTATE="$(dirname "$0")/rotate-progress.sh"
+if [ -f "$ROTATE" ]; then
+  bash "$ROTATE" || check_warn "rotate-progress.sh failed — PROGRESS.md left as is"
+else
+  check_warn "rotate-progress.sh not found next to session-end.sh — skipping rotation"
+fi
+
+echo ""
+
 # ── Mark session as closed ────────────────────────────────────────────────────
 date +%Y-%m-%d > .session-ended
 echo "✓ Session closed: $(cat .session-ended)"

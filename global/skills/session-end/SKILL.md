@@ -61,6 +61,24 @@ where nobody is reviewing the diff.
 ### Step 3 — Update PROGRESS.md
 Write: what was done, what was NOT done, known issues discovered.
 
+**Rotation happens automatically, after the checks.** `PROGRESS.md` is read in
+full at every Session Start and is normally the single largest thing in that
+budget, so the script moves sessions older than the last ~10 into
+`docs/progress-archive/YYYY-MM.md` and leaves a link at the top. Nothing is
+deleted, and the file's mtime is preserved so the "updated today" check still
+means what it says. Two consequences worth knowing:
+
+- Put your entry under a heading with a date in it (`## Session 2026-08-19 …`
+  or `### 2026-08-19`). A heading without a date is not a rotatable section,
+  and the script will refuse to rotate a file it cannot parse rather than
+  guess.
+- Everything above the first dated heading is treated as the permanent header
+  (title, `Chat language:`, Current Status, Known Issues, Next Session). Keep
+  status there, not inside a session entry, or it will move to the archive.
+
+Thresholds: `PROGRESS_MAX_LINES` (default 400) and `PROGRESS_KEEP_SESSIONS`
+(default 10).
+
 **Format:**
 ```
 ## Current status

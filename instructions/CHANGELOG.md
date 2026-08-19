@@ -84,6 +84,77 @@ and `update-harness` has not been run since. One `make update` applies it,
 but that is the user's call on their own machine, not an edit to make from a
 session.
 
+### T-J2 (complete) — PROGRESS.md rotates, cutting a live project's startup cost by 58%
+
+The measurement from T-J0 named this as the wave's highest-value ticket, not
+T-J1: `PROGRESS.md` is ~70% of the cold-start budget in both this repo and a
+live client project, and it is the one defect that gets worse with no change
+to any code — every session appends, nothing ever trims, and Session Start
+reads the whole thing.
+
+`scripts/rotate-progress.sh` moves sessions older than the last ~10 into
+`docs/progress-archive/YYYY-MM.md` and leaves a link at the top of
+`PROGRESS.md`. `session-end.sh` calls it. Thresholds are
+`PROGRESS_MAX_LINES` (400) and `PROGRESS_KEEP_SESSIONS` (10).
+
+Four decisions that the ticket did not anticipate, each forced by looking at
+the real files rather than the template:
+
+**Sections are found by the date in the heading, not by a format.** Three
+spellings are already live and a rule tied to any one of them would silently
+rotate nothing in the other two: `### 2026-08-19` (templates/PROGRESS.md),
+`## Session 2026-08-07 (report audit)` (this repo), `## Current session — WAF
+unblocked (2026-08-14)` (itocook). The template's own convention is the one
+least used in practice.
+
+**Everything above the first dated heading is never archived.** That is where
+`Chat language:` lives, and Session Start step 3 reads it to decide what
+language to speak. Archiving it would have changed how the agent talks, days
+later, with no visible cause.
+
+**mtime is preserved.** `session-end.sh` step 2 and `dod.sh` step 4 both ask
+"was PROGRESS.md updated today". Rotation rewrites the file, so without this
+it would answer its own question — the check would go green on a day nobody
+wrote anything. For the same reason rotation runs *after* every check in
+`session-end.sh`, not before.
+
+**A file it cannot parse is a file it must not rewrite.** No dated headings,
+or sections running oldest-first, means it reports and exits rather than
+guessing — rotating the wrong end of a continuity log is unrecoverable.
+
+Proof — on a copy of the live `itocook/PROGRESS.md`, not a fixture:
+
+```
+$ bash scripts/rotate-progress.sh --file .../ito-fixture/PROGRESS.md
+  ✓ archived 10 section(s) → docs/progress-archive/2026-06.md
+  ✓ archived 59 section(s) → docs/progress-archive/2026-07.md
+  ✓ archived 10 section(s) → docs/progress-archive/2026-08.md
+  ✓ PROGRESS.md: 1341 → 171 lines, 10 recent session(s) kept
+
+# nothing lost: every non-empty original line is in the file or the archive
+original non-empty lines: 1208
+lines missing after rotation: 0
+
+$ bash scripts/context-budget.sh --project <before>   # live itocook
+TOTAL ~75256 tokens
+$ bash scripts/context-budget.sh --project <after>    # same project, rotated
+TOTAL ~31831 tokens                                   # −58%
+```
+
+12 tests in `tests/rotate-progress.bats` (73 ok total), including the refusals:
+a long file with no dated headings and an oldest-first file are both left
+byte-identical, `--dry-run` changes nothing, and a second run archives nothing
+new.
+
+Propagation question (`09-propagation-audit.md`): full, and this is where the
+ticket pays off. `session-end.sh` is invoked from client projects (the `docs`
+shortcut and Session End), so rotation happens where the 75k number was
+measured. `templates/PROGRESS.md` and `session-end/SKILL.md` document the two
+things an author must know — put a date in the heading, keep status above the
+first one — and `global/AGENTS.md` step 3 now says the archive is read on
+demand, never at startup. Reachable from a trigger: yes, the words that end a
+session.
+
 ### T-J0 (complete) — the cold-start context budget is measured, and it is twice what the plan assumed
 
 Start of wave J (`notes/Harness/implementation-plan-2/13-*.md`). Nothing in

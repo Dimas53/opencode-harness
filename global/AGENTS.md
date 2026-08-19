@@ -151,6 +151,7 @@ Execute these steps in order BEFORE any response to the user:
    not after a failure makes you look.
 2. **Load skills:** load `using-agent-skills` — try filesystem path first: `Read ~/.config/opencode/skills/using-agent-skills/SKILL.md`. If not found (built-in skill), load via `skill("using-agent-skills")` instead. Also load the project's own stack skills (project `AGENTS.md` -> "Stack Skills") and check `docs/skills-cheatsheet.md` plus the project `AGENTS.md` "Task Context" table for anything matching the current task.
 3. **Progress:** read `PROGRESS.md` in project root — compare git log with progress status. If out of sync, update PROGRESS.md FIRST. If file doesn't exist — skip.
+   Older sessions live in `docs/progress-archive/` (rotated out by Session End) — read those only when the task actually reaches back that far, never as part of startup.
    After reading PROGRESS.md, look for a line starting with `Chat language:`.
    - If present — use that language for all chat messages and questions. Generated files are always in English (see hard rules in project or global AGENTS.md).
    - If absent — ask the user for their language explicitly before proceeding,
