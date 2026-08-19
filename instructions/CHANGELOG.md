@@ -84,6 +84,77 @@ and `update-harness` has not been run since. One `make update` applies it,
 but that is the user's call on their own machine, not an edit to make from a
 session.
 
+### T-J2 follow-up — rotating this repo's own PROGRESS.md, and the three checks it broke
+
+Applying rotation here (1,832 → 380 lines, budget 36.4k → **16.4k tokens**,
+every non-empty line verified present in the archive) exposed three defects
+that rotation did not cause so much as reveal. All three are the same shape:
+a check keyed on something that happened to be true rather than on what it
+meant to test.
+
+**The line threshold was advisory.** Keeping a fixed 10 sessions left 840
+lines against a 400-line threshold — sessions differ wildly in size, so a
+count cannot honour a line budget. `--keep` is now a ceiling: the script trims
+further until the file fits, never below 3 sessions, because a continuity log
+with two entries has stopped being continuity.
+
+**Cyrillic scan vs. rotated history.** Old `PROGRESS.md` entries pre-date the
+English-only rule; the scan never saw them because it only looks at *changed*
+files and they had not changed in months. Committing the archive would have
+failed the gate on text that was already in the repo — making rotation
+impossible in exactly the projects that need it. `docs/progress-archive/` is
+now skipped; `PROGRESS.md` itself stays fully scanned, since new entries are
+new writing.
+
+**Docs-lag measured the wrong directory.** This repo renamed `docs/` to
+`instructions/` (84641c5), and both `dod.sh` and `session-end.sh` picked the
+docs directory as "`docs/` if it exists, else `instructions/`" — correct only
+while `docs/` stayed absent. The moment rotation created
+`docs/progress-archive/`, the gate reported **235 commits behind** on a
+directory containing no documentation:
+
+```
+✗ Docs are 235 commits behind HEAD (last docs commit: 84641c5)
+```
+
+Both scripts now take the freshest commit across every documentation
+directory that exists, excluding the archive. That survives the rename in
+either direction instead of depending on one of them being missing.
+
+**Session counting used the one heading format nobody writes.**
+`session-end.sh` step 4 fires "after ~4 sessions" and counted
+`^### YYYY-MM-DD` — the `templates/PROGRESS.md` spelling. This repo writes
+`## Session 2026-08-07 (…)` and a client project writes `## Current session —
+… (2026-08-14)`, so the check read 7 here and would read 0 in a live project:
+it has been dormant in the projects it was written for. Now it uses the same
+detector as rotation (level-2/3 heading containing an ISO date) and counts the
+archive too — sessions do not stop having happened when they are filed away.
+Count went 7 → 46.
+
+That fix immediately surfaced a false positive it had been hiding: the
+harness's own `AGENTS.md` was reported as having unfilled `{{...}}`
+placeholders, because it *names* the convention ("templates use
+`{{PLACEHOLDER}}` syntax"). `{{PLACEHOLDER}}` is now excluded — a warning that
+is always on is a warning nobody reads.
+
+```
+$ bash scripts/session-end.sh | sed -n '/Docs completeness/,/^$/p'
+[ 4/5 ] Docs completeness check
+✓ No stale placeholders found in key docs (46 sessions in)
+
+$ bash scripts/dod.sh | sed -n '/Docs lag/,/^$/p'
+[ 3/8 ] Docs lag check
+✓ Docs are current (last commit = HEAD)
+
+$ bats tests/*.bats | grep -c "^ok "
+75
+```
+
+Propagation question: `dod.sh` and `session-end.sh` both run in client
+projects, and all four fixes matter more there than here — a client project
+has a real `docs/`, so the docs-lag directory choice was ambiguous for it from
+the start, and the session count was reading zero.
+
 ### T-J2 (complete) — PROGRESS.md rotates, cutting a live project's startup cost by 58%
 
 The measurement from T-J0 named this as the wave's highest-value ticket, not

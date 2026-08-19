@@ -91,6 +91,14 @@ if git rev-parse --is-inside-work-tree &>/dev/null; then
     # character class in order to scan for one (T-I13). grep -P, which would
     # let us write \p{Cyrillic} instead, does not exist in BSD grep.
     [[ "$file" == scripts/check-docs-refs.sh ]] && continue
+    # Rotated history, not new writing (T-J2). rotate-progress.sh moves old
+    # PROGRESS.md sections here verbatim; some pre-date the English-only rule
+    # and this scan never saw them, because it only ever looks at changed
+    # files and they had not changed in months. Failing the commit that files
+    # them away would make rotation impossible in exactly the projects that
+    # need it most. PROGRESS.md itself stays scanned — new entries are new
+    # writing and the rule applies to them in full.
+    [[ "$file" == docs/progress-archive/* ]] && continue
 
     # Skip binary extensions
     case "$file" in
@@ -122,10 +130,19 @@ else
 if ! git rev-parse --is-inside-work-tree &>/dev/null; then
   check_warn "Not inside a git repo — skipping docs lag check"
 else
-  if [ -d "docs" ]; then
-    DOCS_DIR="docs"
-  elif [ -d "instructions" ]; then
-    DOCS_DIR="instructions"
+  # Both directories are considered, not the first one that happens to exist.
+  # This repo renamed docs/ to instructions/ (84641c5), so "docs/ wins if
+  # present" was correct only for as long as docs/ stayed absent — the moment
+  # T-J2 rotation created docs/progress-archive/, the gate started measuring
+  # lag against a directory holding no documentation and reported 235 commits
+  # behind. Measuring the freshest commit across both survives the rename in
+  # either direction. progress-archive is excluded because it is rotated
+  # history: committing it is not a documentation update.
+  DOCS_PATHS=()
+  [ -d "docs" ] && DOCS_PATHS+=("docs")
+  [ -d "instructions" ] && DOCS_PATHS+=("instructions")
+  if [ "${#DOCS_PATHS[@]}" -gt 0 ]; then
+    DOCS_DIR="${DOCS_PATHS[0]}"
   else
     DOCS_DIR=""
   fi
@@ -134,13 +151,20 @@ else
   # The history check below would still see the OLD lag (HEAD is unchanged
   # until the commit is created), deadlocking the very docs commit that
   # should fix the lag.
-  if [ -n "$DOCS_DIR" ] && [ "${PRE_COMMIT:-0}" = "1" ] && git diff --cached --name-only 2>/dev/null | grep -q "^$DOCS_DIR/"; then
+  DOCS_STAGED=0
+  for d in "${DOCS_PATHS[@]+"${DOCS_PATHS[@]}"}"; do
+    git diff --cached --name-only 2>/dev/null \
+      | grep -v "^docs/progress-archive/" | grep -q "^$d/" && DOCS_STAGED=1
+  done
+  if [ -n "$DOCS_DIR" ] && [ "${PRE_COMMIT:-0}" = "1" ] && [ "$DOCS_STAGED" = "1" ]; then
     check_pass "Docs updated in this commit — lag resets after commit"
   elif [ -z "$DOCS_DIR" ]; then
     check_warn "No docs/ or instructions/ directory — skipping"
   else
-    # Last commit touching docs/
-    DOCS_COMMIT=$(git log --oneline -- "$DOCS_DIR" 2>/dev/null | sed -n '1p' | awk '{print $1}')
+    # Freshest commit touching ANY documentation directory, minus rotated
+    # history — see the DOCS_PATHS comment above.
+    DOCS_COMMIT=$(git log --oneline -- "${DOCS_PATHS[@]}" ":(exclude)docs/progress-archive" 2>/dev/null \
+      | sed -n '1p' | awk '{print $1}')
     # Current HEAD
     HEAD_COMMIT=$(git rev-parse --short HEAD 2>/dev/null || echo "")
 

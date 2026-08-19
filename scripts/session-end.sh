@@ -23,11 +23,15 @@ echo "[ 1/5 ] Docs lag check"
 if ! git rev-parse --is-inside-work-tree &>/dev/null; then
   check_warn "Not inside a git repo — skipping"
 else
-  # Support both docs/ and instructions/ (harness uses instructions/)
-  if [ -d "docs" ]; then
-    DOCS_DIR="docs"
-  elif [ -d "instructions" ]; then
-    DOCS_DIR="instructions"
+  # Both directories, not the first that exists — same fix as dod.sh step 3:
+  # T-J2 rotation creates docs/progress-archive/, and "docs/ wins if present"
+  # then measured lag against a directory with no documentation in it. Rotated
+  # history is excluded: filing it away is not a docs update.
+  DOCS_PATHS=()
+  [ -d "docs" ] && DOCS_PATHS+=("docs")
+  [ -d "instructions" ] && DOCS_PATHS+=("instructions")
+  if [ "${#DOCS_PATHS[@]}" -gt 0 ]; then
+    DOCS_DIR="${DOCS_PATHS[0]}"
   else
     DOCS_DIR=""
   fi
@@ -35,7 +39,7 @@ else
   if [ -z "$DOCS_DIR" ]; then
     check_warn "No docs/ or instructions/ directory — skipping"
   else
-    DOCS_COMMIT=$(git log --oneline -1 -- "$DOCS_DIR" 2>/dev/null | awk '{print $1}' || echo "")
+    DOCS_COMMIT=$(git log --oneline -1 -- "${DOCS_PATHS[@]}" ":(exclude)docs/progress-archive" 2>/dev/null | awk '{print $1}' || echo "")
     HEAD_COMMIT=$(git rev-parse --short HEAD 2>/dev/null || echo "")
 
     if [ -z "$DOCS_COMMIT" ]; then
@@ -157,15 +161,27 @@ echo ""
 # ── Step 4: Docs completeness (T-G2) ─────────────────────────────────────────
 # Only fires once a project has some history — flagging an empty HARNESS.md
 # on session 1 would just be noise (G-DEC-2: warn after ~4 sessions, never
-# fail). Session count = number of "### YYYY-MM-DD" entries under PROGRESS.md
-# Session Log — the templates/PROGRESS.md convention.
+# fail). Session count = dated headings in PROGRESS.md plus the archive.
+#
+# It used to count `^### YYYY-MM-DD` only — the templates/PROGRESS.md spelling,
+# which is the one live projects use least: this repo writes
+# `## Session 2026-08-07 (…)` and a client project writes
+# `## Current session — … (2026-08-14)`. So the check that fires "after ~4
+# sessions" was reading 0 in the very projects it was written for. Rotation
+# (T-J2) made it visible by moving the few matching lines into the archive,
+# but the miscount predates it. Same detector as rotate-progress.sh: a level-2
+# or 3 heading containing an ISO date. The archive is counted too — sessions
+# that happened do not stop having happened when they are filed away.
 echo "[ 4/5 ] Docs completeness check"
 
 SESSION_COUNT=0
 if [ -f "PROGRESS.md" ]; then
-  # grep -c prints "0" AND exits 1 on no match — `|| echo 0` would append a
-  # second "0" on a new line instead of replacing it. Reset on failure instead.
-  SESSION_COUNT=$(grep -cE "^### [0-9]{4}-[0-9]{2}-[0-9]{2}" PROGRESS.md 2>/dev/null) || SESSION_COUNT=0
+  SESSION_COUNT=$(grep -cE "^#{2,3} .*[0-9]{4}-[0-9]{2}-[0-9]{2}" PROGRESS.md 2>/dev/null) || SESSION_COUNT=0
+fi
+if [ -d "docs/progress-archive" ]; then
+  ARCHIVED=$(grep -hcE "^#{2,3} .*[0-9]{4}-[0-9]{2}-[0-9]{2}" docs/progress-archive/*.md 2>/dev/null \
+    | awk '{s+=$1} END {print s+0}') || ARCHIVED=0
+  SESSION_COUNT=$((SESSION_COUNT + ARCHIVED))
 fi
 
 if [ "$SESSION_COUNT" -lt 4 ]; then
@@ -184,7 +200,11 @@ else
     }
   fi
 
-  if [ -f "AGENTS.md" ] && grep -qE '\{\{[A-Z_]+\}\}' AGENTS.md 2>/dev/null; then
+  # `{{PLACEHOLDER}}` is excluded on purpose: it is how both AGENTS.md files
+  # NAME the convention ("templates use {{PLACEHOLDER}} syntax"), not an
+  # unfilled slot. Without this the harness's own AGENTS.md reports itself as
+  # unfilled forever, and a warning that is always on is a warning nobody reads.
+  if [ -f "AGENTS.md" ] && grep -oE '\{\{[A-Z_]+\}\}' AGENTS.md 2>/dev/null | grep -qv '^{{PLACEHOLDER}}$'; then
     check_warn "AGENTS.md still has unfilled {{...}} placeholders ($SESSION_COUNT sessions in) — agent is missing stack/file-map context"
     PLACEHOLDERS_FOUND=1
   fi

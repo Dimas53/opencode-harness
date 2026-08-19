@@ -176,3 +176,46 @@ PY
   [[ "$output" == *"PROGRESS.md rotation"* ]]
   [ "$(grep -c '^## Session' PROGRESS.md)" -eq 10 ]
 }
+
+# --keep is a ceiling, not a target: sessions differ wildly in size, so a fixed
+# count cannot honour a line budget. This repo's own file kept 840 lines under
+# a 400-line threshold when the count alone decided.
+@test "the line threshold wins over the session count, down to a floor of 3" {
+  python3 - <<'PY' > PROGRESS.md
+from datetime import date, timedelta
+print("# Progress Log")
+print()
+day = date(2026, 8, 19)
+for i in range(30):
+    print(f"## Session {day - timedelta(days=i)} (session {30 - i})")
+    for n in range(60):
+        print(f"- long entry line {n}")
+    print()
+PY
+  run bash "$HARNESS_ROOT/scripts/rotate-progress.sh" --max-lines 400
+  [ "$status" -eq 0 ]
+  # Fewer than the default ceiling of 10, and actually under the threshold —
+  # the count bends to the budget rather than the other way round.
+  [ "$(grep -c '^## Session' PROGRESS.md)" -lt 10 ]
+  [ "$(grep -c '^## Session' PROGRESS.md)" -ge 3 ]
+  [ "$(wc -l < PROGRESS.md)" -le 400 ]
+}
+
+@test "a file with three or fewer sections is never trimmed further" {
+  python3 - <<'PY' > PROGRESS.md
+from datetime import date, timedelta
+print("# Progress Log")
+print()
+day = date(2026, 8, 19)
+for i in range(3):
+    print(f"## Session {day - timedelta(days=i)} (session {3 - i})")
+    for n in range(300):
+        print(f"- long entry line {n}")
+    print()
+PY
+  cp PROGRESS.md before.md
+  run bash "$HARNESS_ROOT/scripts/rotate-progress.sh" --max-lines 100
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"keeping all"* ]]
+  diff before.md PROGRESS.md
+}

@@ -78,9 +78,13 @@ if not starts:
     print("    Nothing moved — a file this script cannot parse is one it must not rewrite.")
     sys.exit(0)
 
-if len(starts) <= keep:
+# Below this, there is nothing to gain and continuity to lose: a log holding
+# two entries no longer answers "what happened recently".
+MIN_SESSIONS = 3
+
+if len(starts) <= MIN_SESSIONS:
     print(f"  ⚠ {path}: {len(lines)} lines over threshold, but only {len(starts)} "
-          f"session section(s) — keeping all (--keep {keep}).")
+          f"session section(s) — keeping all.")
     sys.exit(0)
 
 header = lines[: starts[0]]
@@ -98,6 +102,18 @@ if first_date and last_date and first_date.group(0) < last_date.group(0):
     print(f"  ⚠ {path}: sections run oldest-first, which this script does not handle.")
     print("    Nothing moved — rotating the wrong end would delete recent history.")
     sys.exit(0)
+
+# `keep` is a ceiling, not a target. Keeping 10 sessions of this repo's own
+# PROGRESS.md still left 840 lines against a 400-line threshold — sessions are
+# not the same size, so a fixed count cannot honour a line budget. Trim further
+# until the threshold is met, never below MIN_SESSIONS.
+keep = min(keep, len(sections))
+header_len = starts[0]
+while keep > MIN_SESSIONS:
+    projected = header_len + sum(len(s) for s in sections[:keep])
+    if projected <= max_lines:
+        break
+    keep -= 1
 
 kept, archived = sections[:keep], sections[keep:]
 
