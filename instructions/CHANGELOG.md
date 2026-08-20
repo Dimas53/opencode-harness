@@ -46,6 +46,36 @@ This unblocks scenario L9 in
 turn is what closes T-I4 step 2 — the live permission matrix that has been
 waiting since wave E.
 
+### `refresh-agents` becomes a shortcut, and agents are told to stop answering for the user
+
+Two problems from the same live run, both about the interface rather than the
+code.
+
+**The flag had no shortcut.** `update-project --refresh-agents` existed only as
+a comment inside the script, so the only way to reach it was to type a full
+`bash ~/.opencode-harness/scripts/...` line into a terminal. That defeats the
+point of shortcuts: they exist so the harness is driven from inside OpenCode,
+not from a shell. Added `refresh-agents` to `## Harness Shortcuts` and to the
+README utility list.
+
+**The agent answered the confirmation itself.** Asked to run `update-project`,
+it executed `printf 'y\n' | bash …/update-project.sh` — supplying the answer
+rather than letting the question reach the user. Two consequences: the user
+never saw the list of changes the question exists to show, and the second
+prompt (the CI gate, deliberately separated by T-I14) received EOF instead of
+an answer, so it silently defaulted to "none" and the agent asked about it
+afterwards in prose.
+
+`global/AGENTS.md` now states it directly, next to both shortcuts: never pipe
+input into a harness script, never pass a default, never "save the user a
+step" — **a confirmation the user never saw is not a confirmation.** Named for
+`update-project`, `unadopt` and `refresh-agents`, the three scripts that ask.
+
+Worth noting what this was: not a rule violation. Nothing in the harness said
+"do not answer prompts on the user's behalf", because it had not occurred to
+anyone that an agent would. The gap was in the rules, and it took watching a
+real run to see it.
+
 ### Found by the first live run — the hook check matched one header out of two
 
 `update-project` was run in `itocook` for real, and it exposed a hole in

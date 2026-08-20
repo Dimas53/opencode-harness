@@ -53,6 +53,20 @@ When user types:
   offers the optional CI gate if the project has none — as a separate
   question, never as part of the bulk confirmation.
   Run: `bash ~/.opencode-harness/scripts/update-project.sh`
+- `refresh-agents` (also `update-project --refresh-agents`) — pull harness
+  rule updates into THIS project's `AGENTS.md`. Only the regions marked
+  `# === HARNESS-MANAGED START/END ===` are replaced; everything you filled
+  in yourself is untouched. If the file has no markers, the script refuses
+  and prints a diff instead — that is the correct outcome, not an error.
+  Run: `bash ~/.opencode-harness/scripts/update-project.sh --refresh-agents`
+
+**Both of these ask questions. Never answer them yourself.** Do not pipe
+input into the script (`printf 'y\n' | ...`), do not pass a default, do not
+"save the user a step". Run it so its prompt reaches the user, show the
+output verbatim — the list of changes and the diff are the whole point of
+the question — and wait for their answer. A confirmation the user never saw
+is not a confirmation. This applies to every harness script that asks:
+`update-project`, `unadopt`, `refresh-agents`.
 
 **Fallback** (if shortcuts don't work):
 ```bash

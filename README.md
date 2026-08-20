@@ -135,6 +135,8 @@ Open OpenCode in any directory and type one of these:
 ### Utility
 - `update-harness` — pull latest harness updates and apply globally (this machine)
 - `update-project` — bring the current project up to date with the harness (docs, hooks)
+- `refresh-agents` — pull harness rule updates into this project's `AGENTS.md`
+  (only the `HARNESS-MANAGED` regions; your own content is untouched)
 - `dod` — run Definition of Done checks
 - `docs` — session end + prompt to update docs if code changed
 
