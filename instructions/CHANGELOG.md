@@ -46,6 +46,54 @@ This unblocks scenario L9 in
 turn is what closes T-I4 step 2 — the live permission matrix that has been
 waiting since wave E.
 
+### Docs cleanup + HARNESS-MANAGED markers backfilled into both live projects
+
+**Deleted two stale files in `instructions/`.** `progress.md` was a duplicate of
+the root `PROGRESS.md` frozen at 2026-07-16, down to two consecutive "This
+session" sections and issues that no longer exist — two files with the same
+meaning is how nobody knows which is canonical. `roadmap.md` declared itself
+stale in its own header and pointed at a file under `notes/`, which is
+git-ignored: after a clone that link went nowhere. Nothing references either
+outside CHANGELOG history.
+
+`PROPAGATION-BACKFILL.md` stays — it is the checklist for a project adopted
+before a fix, and it names `itocook` and `karriere-page-ito` by name, which is
+exactly the step being taken now. Parts of it are out of date; that is in T-J15.
+
+**Markers backfilled.** Both live client projects had **zero**
+`HARNESS-MANAGED` regions against the template's four, so
+`update-project --refresh-agents` refused to run at all ("predates T-G-U6") and
+no harness rule change could ever reach their `AGENTS.md`. Added the four
+regions in both, plus the `Database Migrations` section neither had.
+
+The interesting part is what had to be rescued first, because a positional
+region merge replaces content wholesale:
+
+- `itocook` kept `### Two remotes — there is no origin` *inside* the Git
+  Workflow block — the project's two-server deploy setup (test vs production),
+  which a refresh would have silently overwritten. Moved outside the markers and
+  promoted to `##` so it no longer dangles under a replaced parent.
+- Its commit-message examples (`feat(cook-queue): add fork-on-cook pattern`) and
+  its Directus-flavoured docs triggers (`New collection name, Flow name`,
+  `MCP trick`) were also inside regions. Moved into a new
+  `## ItoCook-specific conventions` section outside the markers, with a note
+  saying why it lives there.
+
+Verified line-by-line that nothing was lost: 130 non-empty lines in
+`karriere-page-ito`, 245 in `itocook`, zero missing after the edit (the single
+"lost" line in `itocook` is the `### Two remotes` heading, deliberately
+rewritten as `## Git remotes`).
+
+Dry run of the refresh in both (answered `n`) now shows a real diff instead of a
+refusal — and it is the right diff: the T-J8 scope block arrives, `progress.md`
+is corrected to `PROGRESS.md`, and "Run full Definition of Done (Steps 0-5)"
+becomes a reference to the global file instead of a hardcoded step count, which
+is the T-I18 class of defect being fixed in a place no checker could see.
+
+Propagation question (`09-propagation-audit.md`): this *is* the propagation
+step. Both projects can now receive harness rule updates in `AGENTS.md`; before
+today they could not, and nothing said so.
+
 ### Capability deny-by-default is now actually installed on this machine
 
 Wave E wrote the block, T-I4 widened its patterns, and neither had ever taken
