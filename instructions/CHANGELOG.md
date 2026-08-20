@@ -4,6 +4,48 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-20
 
+### Install-state check — the permission block is verified where the engine reads it
+
+The `permission` block that turns the text Hard Limits into config-level
+guarantees has never reached this machine. It exists in
+`global/opencode-config.example.jsonc`, and the only route from there to
+`~/.config/opencode/opencode.jsonc` is `update-harness` / `make update` — which
+has not run here since wave E created the block in the first place. Net effect:
+`git commit --no-verify` and `git push` have been guarded by text alone, on a
+machine whose documentation says otherwise. **A template is not a config**, and
+nothing was checking the difference.
+
+Two mechanical reminders, because a note someone has to remember to read is
+the same failure mode this harness keeps finding:
+
+- `verify.sh` now checks the file the engine actually reads and prints the
+  exact fix when the block is missing:
+  `✗ permission block installed — run: cd ~/.opencode-harness && make update`.
+- `PROGRESS.md` carries an `ACTION REQUIRED` block, which Session Start step 3
+  reads every session, with an instruction to the agent to surface it in one
+  line and to delete the block once `make verify` goes green.
+
+Verified in both directions (the live config, and a copy with the block
+added):
+
+```
+$ bash <check in isolation>                    # today, block absent
+✗ permission block installed — run: cd ~/.opencode-harness && make update …
+$ bash <same check against a config with the block>
+✓ permission block installed
+```
+
+Also confirmed what `make update` will actually do, by merging into a copy of
+the live config rather than predicting: only `permission` is added (11 rules,
+`"*": "allow"` first as the template orders it); `mcp` and `plugin` are
+untouched, including the user's own customisations. No comments are lost
+because that file has none.
+
+This unblocks scenario L9 in
+`notes/Harness/implementation-plan-2/16-live-validation-scenarios.md`, which in
+turn is what closes T-I4 step 2 — the live permission matrix that has been
+waiting since wave E.
+
 ### T-I2 leftover — `adopt` no longer commits in the user's repository unasked
 
 Found while reconciling `notes/…/agent-session-flow.post-plan-2.md` against

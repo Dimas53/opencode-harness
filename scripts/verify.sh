@@ -56,6 +56,16 @@ check "Global AGENTS.md exists" "[ -f ~/.config/opencode/AGENTS.md ]" "run: make
 check "opencode.jsonc exists" "[ -f ~/.config/opencode/opencode.jsonc ]" "copy from global/opencode-config.example.jsonc"
 check "opencode run works" "opencode run 'echo ok' 2>/dev/null" "opencode run not supported"
 
+# Capability deny-by-default actually installed, not just described in the
+# template (T-I4). The block lives in global/opencode-config.example.jsonc and
+# only reaches a machine through `update-harness` / `make update`; between wave
+# E landing it and 2026-08-20 that never ran here, so every Hard Limit was
+# text-only on a machine that believed otherwise. A template is not a config —
+# check the file the engine actually reads.
+check "permission block installed" \
+  "grep -q '\"permission\"' ~/.config/opencode/opencode.jsonc" \
+  "run: cd ~/.opencode-harness && make update — Hard Limits are text-only until then (see notes 16, scenario L9)"
+
 check "node available" "command -v node" "install Node.js — merge-opencode-config.sh needs it"
 check "python3 available" "command -v python3" "install Python 3 — gen-opencode.sh and update-project.sh need it"
 

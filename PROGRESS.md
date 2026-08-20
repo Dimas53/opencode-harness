@@ -4,6 +4,28 @@
 
 ## Current Status
 
+> ### ⚠️ ACTION REQUIRED FROM THE USER — one command, not yet done (2026-08-20)
+>
+> `~/.config/opencode/opencode.jsonc` on this machine has **no `permission`
+> block**. Wave E built capability deny-by-default, wave I widened its
+> patterns (T-I4), but the block only reaches a machine through
+> `update-harness` / `make update`, and that has not run here since the block
+> existed. Consequence: `git commit --no-verify` and `git push` are guarded by
+> **text only** — the config-level guarantee this harness advertises is not in
+> effect.
+>
+> ```bash
+> cd ~/.opencode-harness && make update
+> grep -A 14 '"permission"' ~/.config/opencode/opencode.jsonc   # verify
+> ```
+> Then restart OpenCode. Only `permission` is added; `mcp` and `plugin` stay
+> untouched (verified on a copy 2026-08-20).
+>
+> **Agent: if this block is still here at Session Start, remind the user in
+> the Session Initialized report — one line, not a lecture.** Delete this
+> block once `make verify` shows "✓ permission block installed".
+> Full procedure and the follow-up matrix: `notes/Harness/implementation-plan-2/16-live-validation-scenarios.md`, scenario L9. Blocks T-I4.
+
 > ### START HERE NEXT SESSION — 4 confirmed gaps found on a live project (2026-08-07)
 >
 > A real session in the user's Nuxt project exposed 4 design gaps in what
