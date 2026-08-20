@@ -47,12 +47,19 @@ install_hook() {
   # that looks exactly like a stranger's. Both live client projects are in that
   # state, and without this branch their first `update-project` would "back up"
   # a harness hook as if it were the user's — more debris, from the fix meant to
-  # stop debris. The pre-T-I3 header is a reliable second marker: it names the
-  # installer and the gate it calls.
+  # stop debris.
+  #
+  # The installer line is matched by PREFIX, not exact text, and that detail was
+  # learned the hard way: the first version of this check looked for
+  # "Installed by: scripts/install-hooks.sh" and caught pre-commit but not
+  # post-commit, whose older header says "Installed by: scripts/install.sh,
+  # scripts/update.sh". Result on a live project: pre-commit replaced cleanly,
+  # post-commit filed as a stranger's backup. Two hooks written by the same
+  # repo, two different headers, and a check that assumed one of them.
   is_ours() {
     grep -q "harness-managed-hook" "$1" && return 0
-    grep -q "Installed by: scripts/install-hooks.sh" "$1" \
-      && grep -qE "dod\.sh|OPENCODE_HARNESS_PATH" "$1" && return 0
+    grep -q "Installed by: scripts/" "$1" \
+      && grep -qE "dod\.sh|OPENCODE_HARNESS_PATH|config/opencode/skills" "$1" && return 0
     return 1
   }
 

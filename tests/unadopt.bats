@@ -141,3 +141,26 @@ HOOK
   [[ "$output" == *"debris from the pre-T-I3 bug"* ]]
   [ -f "$SCRATCH/.git/hooks/pre-commit.bak" ]
 }
+
+# The first version of is_ours matched only "Installed by: scripts/install-hooks.sh"
+# and so recognised pre-commit but not post-commit, whose older header reads
+# "Installed by: scripts/install.sh, scripts/update.sh". On a live project that
+# meant one hook replaced cleanly and the other filed away as a stranger's
+# backup — same repo, two headers, one assumption.
+@test "the older post-commit header is recognised too, not just install-hooks.sh" {
+  cat > .git/hooks/post-commit <<'HOOK'
+#!/bin/bash
+# .git/hooks/post-commit
+# Installed by: scripts/install.sh, scripts/update.sh
+#
+# Mirrors global/skills/ to ~/.config/opencode/skills/ after each commit.
+DOD_SCRIPT="${OPENCODE_HARNESS_PATH:-$HOME/.opencode-harness}/scripts/dod.sh"
+HOOK
+  chmod +x .git/hooks/post-commit
+
+  run bash "$HARNESS_ROOT/scripts/install-hooks.sh" "$SCRATCH"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"post-commit hook is already a harness hook"* ]]
+  [ ! -f "$SCRATCH/.git/hooks/post-commit.bak" ]
+  [ ! -f "$SCRATCH/.git/hooks/post-commit.harness-old" ]
+}
