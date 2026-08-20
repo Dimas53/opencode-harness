@@ -76,3 +76,56 @@ teardown() {
   run bash -c "printf 'n\nnone\n' | bash '$HARNESS_ROOT/scripts/update-project.sh'"
   [[ "$output" != *"CI gate — not installed"* ]]
 }
+
+# An agent cannot forward the user's keystrokes into a subprocess, and it is
+# forbidden from answering for them. Without these flags the script ran, hit
+# EOF and silently did nothing — indistinguishable from "already up to date",
+# which is how the first live run in a client project ended.
+@test "--dry-run prints the plan and changes nothing" {
+  rm -f "$SCRATCH/PLAN.md"
+  run bash -c "bash '$HARNESS_ROOT/scripts/update-project.sh' --dry-run"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"dry run — nothing applied"* ]]
+  [ ! -f "$SCRATCH/PLAN.md" ]
+}
+
+@test "--yes applies without a prompt, --ci carries the CI answer" {
+  rm -f "$SCRATCH/PLAN.md"
+  run bash -c "bash '$HARNESS_ROOT/scripts/update-project.sh' --yes --ci=none < /dev/null"
+  [ "$status" -eq 0 ]
+  [ -f "$SCRATCH/PLAN.md" ]
+  [ ! -f "$SCRATCH/.github/workflows/dod.yml" ]
+}
+
+@test "--ci=github installs the workflow without any prompt" {
+  run bash -c "bash '$HARNESS_ROOT/scripts/update-project.sh' --yes --ci=github < /dev/null"
+  [ "$status" -eq 0 ]
+  [ -f "$SCRATCH/.github/workflows/dod.yml" ]
+}
+
+# The important half: no flags and no terminal must NOT look like success.
+@test "no flags and no terminal exits with a message, not a silent no-op" {
+  rm -f "$SCRATCH/PLAN.md"
+  run bash -c "bash '$HARNESS_ROOT/scripts/update-project.sh' < /dev/null"
+  [ "$status" -eq 2 ]
+  [[ "$output" == *"not a terminal"* ]]
+  [[ "$output" == *"Do NOT answer on the user's behalf"* ]]
+  [ ! -f "$SCRATCH/PLAN.md" ]
+}
+
+@test "--refresh-agents honours --yes and refuses silently-nothing without it" {
+  cp "$HARNESS_ROOT/templates/AGENTS.md" "$SCRATCH/AGENTS.md"
+  python3 - "$SCRATCH/AGENTS.md" <<'PY'
+import sys
+p = sys.argv[1]
+s = open(p).read().replace("## Git Workflow", "## Git Workflow\n\n- project-specific line", 1)
+open(p, "w").write(s)
+PY
+  run bash -c "bash '$HARNESS_ROOT/scripts/update-project.sh' --refresh-agents < /dev/null"
+  [ "$status" -eq 2 ]
+  [[ "$output" == *"not a terminal"* ]]
+
+  run bash -c "bash '$HARNESS_ROOT/scripts/update-project.sh' --refresh-agents --yes < /dev/null"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"refreshed"* ]]
+}

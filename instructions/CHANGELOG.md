@@ -46,6 +46,51 @@ This unblocks scenario L9 in
 turn is what closes T-I4 step 2 — the live permission matrix that has been
 waiting since wave E.
 
+### The rule worked, and immediately exposed the next gap: no way to report a decision
+
+The new rule took effect on the first try — asked to run `update-project` in a
+client project, the agent did **not** pipe an answer in. It printed the change
+list and asked the user through the chat UI. Correct behaviour.
+
+And the run did nothing. The script had already reached its prompt, hit EOF,
+read that as "no", and printed `Skipped — no changes made`. From the user's
+side this is indistinguishable from "everything was already up to date" — the
+worst possible failure mode for a command whose job is to report what changed.
+
+The gap: an agent cannot forward the user's keystrokes into a subprocess. It
+was told not to answer for the user, and given no way to pass along an answer
+the user *did* give. Fixed by adding flags that carry a decision rather than
+substitute for one:
+
+- `--dry-run` — print the plan, change nothing;
+- `--yes` — the user said yes to the bulk update;
+- `--ci=none|github|gitlab` — the user's answer to the CI question, which stays
+  separate (H-DEC-4);
+- `--refresh-agents --yes` — same for the AGENTS.md refresh.
+
+`global/AGENTS.md` now spells out the three-step protocol: dry-run → show
+verbatim and ask → re-run carrying the answer.
+
+**And EOF is no longer silence.** Without flags and with no one to answer, the
+script exits 2 with a message naming the flag, instead of quietly doing
+nothing. Detected by the read failing, not by testing whether stdin is a
+terminal — the first attempt used `[ ! -t 0 ]` and broke every existing test
+that legitimately pipes answers in. The question is not "is there a terminal"
+but "did anyone answer".
+
+```
+$ bash scripts/update-project.sh < /dev/null
+  + CI gate — not installed (optional, asked separately below)
+✗ No answer received (stdin closed).
+  Do NOT answer on the user's behalf. Show them the list above, ask,
+  then re-run with their decision:
+    bash …/update-project.sh --yes --ci=none|github|gitlab
+exit=2
+```
+
+5 new tests (12 in `update-project.bats`, 100 overall), including the one that
+matters most: no flags and no answer must not look like success.
+
 ### `refresh-agents` becomes a shortcut, and agents are told to stop answering for the user
 
 Two problems from the same live run, both about the interface rather than the

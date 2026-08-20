@@ -21,6 +21,30 @@ command -v python3 >/dev/null 2>&1 || {
 # default is unchanged, but a test (or a second checkout) can point this at
 # another harness copy instead of the installed one.
 HARNESS_PATH="${OPENCODE_HARNESS_PATH:-$HOME/.opencode-harness}"
+
+# ── Non-interactive answers, for when an agent runs this on the user's behalf.
+#    The script asks questions; an agent cannot forward the user's keystrokes
+#    into a subprocess, and it is forbidden from answering for them
+#    (global/AGENTS.md, Harness Shortcuts). Without a way to pass a decision
+#    the user actually made, the script simply ran, hit EOF and did nothing —
+#    which is what happened on the first live run in a client project.
+#
+#    So: --dry-run prints the plan and exits; --yes and --ci=<...> carry an
+#    answer the user gave in the chat. The rule stays intact — the agent still
+#    must not decide, it now has a way to REPORT a decision.
+DRY_RUN=0
+ASSUME_YES=0
+CI_ANSWER=""
+ARGS=()
+for arg in "$@"; do
+  case "$arg" in
+    --dry-run) DRY_RUN=1 ;;
+    --yes|-y)  ASSUME_YES=1 ;;
+    --ci=*)    CI_ANSWER="${arg#--ci=}" ;;
+    *)         ARGS+=("$arg") ;;
+  esac
+done
+set -- "${ARGS[@]+"${ARGS[@]}"}"
 TEMPLATES="$HARNESS_PATH/templates"
 PROJECT="$(pwd)"
 
@@ -122,8 +146,26 @@ PY
   echo "HARNESS-MANAGED regions in $TARGET differ from the current template:"
   diff "$TARGET" "$TMP" | head -40 || true
   echo ""
-  printf "Apply this refresh? Only marked regions change, your own content is untouched. (y/n): "
-  read -r answer
+  if [ "$DRY_RUN" = "1" ]; then
+    echo "(dry run — nothing applied)"
+    echo "To apply after the user decides: bash \"$0\" --refresh-agents --yes"
+    rm -f "$TMP"
+    exit 0
+  fi
+  if [ "$ASSUME_YES" = "1" ]; then
+    answer="y"
+    echo "Apply this refresh? (y/n): y   [--yes]"
+  else
+    printf "Apply this refresh? Only marked regions change, your own content is untouched. (y/n): "
+    if ! read -r answer; then
+      echo ""
+      echo "✗ No answer received (stdin closed)."
+      echo "  Show the diff above to the user, ask, then re-run:"
+      echo "    bash \"$0\" --refresh-agents --yes"
+      rm -f "$TMP"
+      exit 2
+    fi
+  fi
   if [ "$answer" != "y" ]; then
     echo "Skipped — no changes made."
     rm -f "$TMP"
@@ -251,10 +293,34 @@ if [ "$missing" = "0" ] && [ "$hooks_stale" = "0" ] && [ "$ci_missing" = "0" ]; 
   exit 0
 fi
 
+if [ "$DRY_RUN" = "1" ]; then
+  echo ""
+  echo "(dry run — nothing applied)"
+  echo "To apply after the user decides:"
+  echo "  bash \"$0\" --yes --ci=none|github|gitlab"
+  exit 0
+fi
+
 answer="n"
 if [ "$missing" = "1" ] || [ "$hooks_stale" = "1" ]; then
-  printf "Apply the updates above? (y/n): "
-  read -r answer || answer="n"
+  if [ "$ASSUME_YES" = "1" ]; then
+    answer="y"
+    echo "Apply the updates above? (y/n): y   [--yes]"
+  else
+    printf "Apply the updates above? (y/n): "
+    # Reaching EOF means nobody is there to answer. Treating that as "no" made
+    # the run indistinguishable from "already up to date" — which is exactly
+    # how the first live run in a client project looked to the user. Say so
+    # and name the flag instead.
+    if ! read -r answer; then
+      echo ""
+      echo "✗ No answer received (stdin closed)."
+      echo "  Do NOT answer on the user's behalf. Show them the list above, ask,"
+      echo "  then re-run with their decision:"
+      echo "    bash \"$0\" --yes --ci=none|github|gitlab"
+      exit 2
+    fi
+  fi
   if [ "$answer" != "y" ]; then
     echo "Skipped — no changes made."
   fi
@@ -298,8 +364,18 @@ if [ "$ci_missing" = "1" ]; then
   echo "  workflow checks out the harness in the runner (see the template header"
   echo "  if the harness repo is private)."
   [ -n "$ci_hint" ] && echo "  Your origin remote looks like $ci_hint."
-  printf "Install a CI gate? [none / github / gitlab] (default: none): "
-  read -r ci_answer || ci_answer="none"
+  if [ -n "$CI_ANSWER" ]; then
+    ci_answer="$CI_ANSWER"
+    echo "Install a CI gate? [none / github / gitlab]: $ci_answer   [--ci]"
+  else
+    printf "Install a CI gate? [none / github / gitlab] (default: none): "
+    if ! read -r ci_answer; then
+      echo ""
+      echo "✗ No answer received for the CI question (stdin closed)."
+      echo "  Re-run with the user's choice: --ci=none | --ci=github | --ci=gitlab"
+      exit 2
+    fi
+  fi
   case "$ci_answer" in
     github)
       mkdir -p "$PROJECT/.github/workflows"

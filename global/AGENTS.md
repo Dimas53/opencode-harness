@@ -60,13 +60,26 @@ When user types:
   and prints a diff instead — that is the correct outcome, not an error.
   Run: `bash ~/.opencode-harness/scripts/update-project.sh --refresh-agents`
 
-**Both of these ask questions. Never answer them yourself.** Do not pipe
-input into the script (`printf 'y\n' | ...`), do not pass a default, do not
-"save the user a step". Run it so its prompt reaches the user, show the
-output verbatim — the list of changes and the diff are the whole point of
-the question — and wait for their answer. A confirmation the user never saw
-is not a confirmation. This applies to every harness script that asks:
-`update-project`, `unadopt`, `refresh-agents`.
+**Both of these ask questions. Never answer them yourself.** A confirmation
+the user never saw is not a confirmation. Do not pipe input into a harness
+script (`printf 'y\n' | ...`), do not pass a default, do not "save the user a
+step".
+
+You cannot forward the user's keystrokes into a subprocess, so use the flags
+that exist for exactly this — three steps, no shortcuts:
+
+1. `bash ~/.opencode-harness/scripts/update-project.sh --dry-run` — prints the
+   plan, changes nothing.
+2. Show that output verbatim and **ask the user**, including the CI question
+   separately (H-DEC-4: the CI gate is never installed silently).
+3. Re-run carrying their answer:
+   `… update-project.sh --yes --ci=none` (or `--ci=github` / `--ci=gitlab`),
+   or `… update-project.sh --refresh-agents --yes`.
+
+The flags report a decision the user made; they never stand in for one. Run
+without them and with no terminal, the script exits with a message rather than
+doing nothing — that is deliberate, so a silent no-op cannot be mistaken for
+"already up to date". Same rule for `unadopt`.
 
 **Fallback** (if shortcuts don't work):
 ```bash
