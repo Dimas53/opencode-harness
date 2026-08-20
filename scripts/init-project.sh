@@ -83,6 +83,11 @@ else
   fi
 fi
 
+# The one commit the harness makes without asking, and the reason it is
+# allowed: this branch only runs when there is no repository at all, so the
+# commit creates history rather than adding to the user's. `adopt` used to do
+# the same thing in an EXISTING repo — that was a real breach of "NEVER commit
+# without explicit user confirmation" and now asks (agent-adopt.md step 6).
 if [ ! -d "$PROJECT/.git" ]; then
   cd "$PROJECT" && git init && git add . && \
   git commit -m "chore: initialize project with harness scaffold" >/dev/null 2>&1

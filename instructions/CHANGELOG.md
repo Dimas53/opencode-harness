@@ -2,6 +2,50 @@
 
 All notable changes to opencode-harness are documented here.
 
+## 2026-08-20
+
+### T-I2 leftover — `adopt` no longer commits in the user's repository unasked
+
+Found while reconciling `notes/…/agent-session-flow.post-plan-2.md` against
+the code: `agent-adopt.md` step 6 read **"Commit — auto, no question"** and ran
+`git add … && git commit` in a repository that already holds the user's
+history. `global/AGENTS.md:300` says "NEVER commit to git without explicit user
+confirmation". T-I2 fixed exactly this in three files (`AGENTS.md:191`,
+`session-end/SKILL.md`, `documentation/SKILL.md`); this one was not in that
+pass, so the rule kept a silent exception in the one protocol that runs against
+an existing project.
+
+Now: `git status`, show it, ask "Commit the harness files? (y/n)", and commit
+only on an explicit yes — staging the named paths, never `git add -A`. On
+anything else the index is left untouched and the hand-off reports the files as
+uncommitted (`→ Commit: not committed (declined)`), with no re-asking and no
+staging "just in case". Same shape as the T-I2 fixes, so the four places now
+say one thing.
+
+`scripts/init-project.sh:87` also commits without asking, and that one stays:
+it only runs when there is no repository at all, so it creates history rather
+than adding to the user's. The script now says so in a comment, next to the
+code, because the next audit will otherwise flag it as the same defect.
+
+```
+$ grep -n "auto, no question" global/skills/harness-init/agent-adopt.md
+                                    # no output
+$ grep -c "Commit the harness files" global/skills/harness-init/agent-adopt.md
+1
+$ bats tests/*.bats | grep -c "^ok "
+92
+```
+
+Decision recorded: the user chose "bring it under the general rule" over
+"document the auto-commit as an exception" — the exception would have lived
+only in the protocol file, where an agent finds it after the fact.
+
+Propagation question (`09-propagation-audit.md`): full. `agent-adopt.md` is
+mirrored into `~/.config/opencode/skills/harness-init/` and is the file the
+`adopt` shortcut loads, so the change takes effect on the next adoption.
+`init-project.sh` is invoked from the harness path in both `new` and the
+Makefile fallback.
+
 ## 2026-08-19
 
 Wave I leftovers — the parts of T-I4 and T-I14 that do not need a live

@@ -183,9 +183,22 @@ Q-CI. **CI gate — after language, before analysis** (T-H5 step 5, optional
       If a value is not found — leave as TBD.
       Never leave design.md as an empty template if tailwind.config.ts exists.
 5. Write session log to PROGRESS.md: "chore: initialize harness docs for [project name]"
-6. **Commit** — auto, no question:
-   git add AGENTS.md HARNESS.md PROGRESS.md docs/ memory/ PLAN.md
-   git commit -m "chore: initialize harness docs for [ProjectName]"
+6. **Commit** — show, ask, then commit. NEVER commit unasked:
+   This runs in a repository that already has the user's history, and the
+   global rule is "NEVER commit to git without explicit user confirmation".
+   Saying `adopt` authorised the adoption, not a commit in their name.
+   ```bash
+   git status
+   ```
+   Show the output, then ask: "Commit the harness files? (y/n)".
+   - On explicit "yes" — stage the named paths only, never `git add -A`:
+     ```bash
+     git add AGENTS.md HARNESS.md PROGRESS.md PLAN.md docs/ memory/
+     git commit -m "chore: initialize harness docs for [ProjectName]"
+     ```
+   - On anything else — leave the index untouched and report the files as
+     uncommitted in the hand-off below. Do not re-ask, do not stage "just in
+     case".
 7. **Hand-off** — print EXACTLY this structure. Do NOT rephrase, merge, or skip any section.
    Translate only section labels to session language. Keep all items and formatting.
 
@@ -203,7 +216,7 @@ Q-CI. **CI gate — after language, before analysis** (T-H5 step 5, optional
      → AGENTS:    AGENTS.md
      → HARNESS:   HARNESS.md
      → PROGRESS:  PROGRESS.md
-     → Commit: [hash]
+     → Commit: [hash — or "not committed (declined)" if the user said no]
 
    ⚠️ Critical findings from analysis:
      List findings from docs/audits/YYYY-MM-DD-analysis.md in EXACT priority order:
