@@ -55,21 +55,34 @@
   // until that run exists, treat this block as best-effort, not as proof.
   "permission": {
     "bash": {
+      // EVERY pattern starts with `*`. This is not decoration — it is the
+      // difference between a rule that fires and one that never does.
+      // Measured live on OpenCode 1.18.19 (T-I4 step 2, see
+      // notes/…/capability-deny-by-default-spike.md):
+      //
+      //   - permission is checked AFTER a plugin's `tool.execute.before`
+      //     hook may have rewritten the command. A wrapper plugin (rtk, and
+      //     anything like it) turns `git push` into `rtk git push`, and a
+      //     pattern anchored at the start — `git push*` — stops matching.
+      //     Every anchored rule below used to be dead on such a machine.
+      //   - a leading `*` also survives a hand-written wrapper:
+      //     `bash -c "git push"` is caught too.
+      //   - precedence is by specificity, NOT by key order: `"*": "allow"`
+      //     sitting first does not shadow the rules under it (verified).
       "*": "allow",                          // default: don't disrupt normal work
-      "git commit*--no-verify*": "deny",     // bypasses ALL DoD checks — never allowed
-      "git commit*-n *": "deny",             // same flag, short spelling
-      "git push*": "ask",                    // any push (origin main, -u, HEAD, …)
-      "git push --force*": "ask",            // kept explicit: force-push is its own risk
-      "git reset --hard*": "ask",
+      "*--no-verify*": "deny",               // bypasses ALL DoD checks — never allowed
+      "*git commit*-n *": "deny",            // same flag, short spelling
+      "*git push*": "ask",                   // any push (origin main, -u, HEAD, …)
+      "*git reset --hard*": "ask",
       // Destructive — confirm (not a full deny: legitimate uses exist).
       // Same shape rule as above, applied to a flag pair that can be typed
       // four ways; `rm -fr /x` and `rm -r -f /x` delete exactly as much as
       // `rm -rf /x` and used to fall straight through to "allow".
-      "rm*-rf*": "ask",
-      "rm*-fr*": "ask",
-      "rm*-r *": "ask",
-      "rm*--recursive*": "ask",
-      "rm*--force*": "ask"
+      "*rm *-rf*": "ask",
+      "*rm *-fr*": "ask",
+      "*rm *-r *": "ask",
+      "*rm *--recursive*": "ask",
+      "*rm *--force*": "ask"
     }
   }
 }

@@ -4,6 +4,51 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-20
 
+### Permission patterns were anchored to the start of the command — and never fired
+
+The block landed on this machine yesterday, so `T-I4` step 2 finally ran the
+live matrix against OpenCode 1.18.19. Twelve commands, four configurations.
+The first configuration — the one shipped since wave E — let **every single
+one** through: `git push`, `git commit --no-verify`, `git reset --hard` and
+`rm -rf` all executed without a question, and two of them did real damage
+(a dropped commit, a deleted directory).
+
+The cause is one property of the engine that no test could have caught:
+**permission is checked after a plugin's `tool.execute.before` hook may have
+rewritten the command.** A wrapper plugin — here `rtk`, which rewrites shell
+commands for token savings — turns `git push` into `rtk git push`. A pattern
+anchored at the start (`git push*`) stops matching, the command falls through
+to `"*": "allow"`, and the guarantee evaporates. Every rule in the block was
+written that way, so on any machine with such a plugin the whole block was
+decorative. The text Hard Limits in `AGENTS.md` were doing all the work —
+exactly the state wave E was built to end.
+
+The fix is a single leading `*` per rule: `"*git push*"`. Verified live to
+catch the bare command, the `rtk` wrapper, and a hand-written
+`bash -c "git push"`. `git push --force*` is dropped as redundant — the
+widened push rule already covers it. Existing installs keep their old narrow
+rules (merge fills gaps, never overwrites), but `merge-opencode-config.sh`
+already names superseded patterns for manual deletion — `*git push*` ⊃
+`git push*` and `*--no-verify*` ⊃ `git commit*--no-verify*` are both
+recognised.
+
+Two things the matrix settled that had only ever been assumed:
+
+- **Precedence is by specificity, not key order.** `"*": "allow"` sits first
+  and shadows nothing; all ten specific rules fired underneath it.
+- **`deny` works and needs no dialog** — it blocks before execution with
+  `The user has specified a rule which prevents you from using this specific
+  tool call.` The default for unmatched commands is already `allow`, so the
+  `"*"` line is a declaration of intent rather than a functional default.
+
+What this does not change: rules match the command **string**, not the
+action. `rtk proxy git push`, an alias, or a script containing a push still
+walk past. `permission` is protection against accident, not a security
+boundary, and the wave E docs should say so.
+
+Full run, including the two hypotheses that looked right and were wrong:
+`notes/Harness/implementation-plan-2/capability-deny-by-default-spike.md`.
+
 ### Install-state check — the permission block is verified where the engine reads it
 
 The `permission` block that turns the text Hard Limits into config-level
