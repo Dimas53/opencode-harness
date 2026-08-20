@@ -42,8 +42,31 @@ install_hook() {
   # harness hook. `unadopt` then "restored" that copy, leaving the rollback
   # guard behind in a de-adopted project: exactly the silent brick T-H0 was
   # written to prevent, reached by another road (T-I3).
+  # Recognising our own hook cannot rely on the signature alone: it was added
+  # by T-I3, so every project adopted before that has an unsigned harness hook
+  # that looks exactly like a stranger's. Both live client projects are in that
+  # state, and without this branch their first `update-project` would "back up"
+  # a harness hook as if it were the user's — more debris, from the fix meant to
+  # stop debris. The pre-T-I3 header is a reliable second marker: it names the
+  # installer and the gate it calls.
+  is_ours() {
+    grep -q "harness-managed-hook" "$1" && return 0
+    grep -q "Installed by: scripts/install-hooks.sh" "$1" \
+      && grep -qE "dod\.sh|OPENCODE_HARNESS_PATH" "$1" && return 0
+    return 1
+  }
+
+  # A .bak that is itself a harness hook is debris from the clobbering bug,
+  # not a backup worth protecting. Say so — silently working around it would
+  # leave the user with a file they cannot explain, and deleting it here would
+  # be a destructive act this script has no mandate for. `unadopt` discards it.
+  if [ -f "$dest.bak" ] && is_ours "$dest.bak"; then
+    echo "  note: $name.bak is itself a harness hook (debris from the pre-T-I3 bug),"
+    echo "        not a pre-harness backup. Safe to delete; unadopt discards it."
+  fi
+
   if [ -f "$dest" ]; then
-    if grep -q "harness-managed-hook" "$dest"; then
+    if is_ours "$dest"; then
       echo "  $name hook is already a harness hook — replacing in place (backup untouched)"
     elif [ -f "$dest.bak" ]; then
       echo "⚠ $name.bak already exists (a real pre-harness hook) — NOT overwriting it"

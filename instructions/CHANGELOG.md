@@ -46,6 +46,37 @@ This unblocks scenario L9 in
 turn is what closes T-I4 step 2 — the live permission matrix that has been
 waiting since wave E.
 
+### T-I3 follow-up — an unsigned harness hook is no longer mistaken for the user's
+
+Checked the two live client projects before recommending `update-project` in
+them, and found the fix from T-I3 would have produced the debris it exists to
+prevent. The signature `# harness-managed-hook: v1` was **added by T-I3**, so
+every project adopted before it carries an unsigned harness hook that looks
+exactly like a stranger's. Both live projects are in that state, and both
+already have a `pre-commit.bak` that is itself a byte-identical harness hook —
+the fossil of the original clobbering bug.
+
+Running `update-project` there would have hit the "stranger's hook, backup
+already exists" branch and moved a harness hook to `.harness-old`: one more
+unexplainable file, created by the repair.
+
+`install-hooks.sh` now recognises its own older format by the header it always
+wrote (`# Installed by: scripts/install-hooks.sh` plus a reference to `dod.sh`
+or `OPENCODE_HARNESS_PATH`), so those hooks are replaced in place. A `.bak`
+that is itself a harness hook is now reported as debris rather than silently
+respected — and only reported: deleting a file in someone's `.git/hooks/` is
+not this script's call, and `unadopt` already discards it.
+
+```
+$ bats tests/unadopt.bats
+ok 7 an unsigned pre-T-I3 harness hook is recognised as ours, not backed up
+ok 8 a harness hook sitting in .bak is reported as debris, not treated as a backup
+```
+
+Propagation question (`09-propagation-audit.md`): full and immediate — this is
+the script `update-project` calls on hook drift, and the next run in
+`itocook` / `karriere-page-ito` is exactly the case it fixes.
+
 ### T-I2 leftover — `adopt` no longer commits in the user's repository unasked
 
 Found while reconciling `notes/…/agent-session-flow.post-plan-2.md` against

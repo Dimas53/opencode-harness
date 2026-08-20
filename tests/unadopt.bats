@@ -107,3 +107,37 @@ teardown() {
 
   [ ! -d "$SCRATCH/.harness" ]
 }
+
+# T-I3 follow-up: the signature was added by T-I3 itself, so every project
+# adopted before it has an UNSIGNED harness hook that looks like a stranger's.
+# Both live client projects are in that state; without recognising the older
+# header, their first update-project would "back up" a harness hook as if it
+# were the user's — debris produced by the fix meant to stop debris.
+@test "an unsigned pre-T-I3 harness hook is recognised as ours, not backed up" {
+  cat > .git/hooks/pre-commit <<'HOOK'
+#!/bin/bash
+# .git/hooks/pre-commit
+# Installed by: scripts/install-hooks.sh
+# Blocks commit if DoD checks fail.
+HARNESS_PATH="${OPENCODE_HARNESS_PATH:-/some/path}"
+DOD_SCRIPT="$HARNESS_PATH/scripts/dod.sh"
+PRE_COMMIT=1 bash "$DOD_SCRIPT"
+HOOK
+  chmod +x .git/hooks/pre-commit
+
+  run bash "$HARNESS_ROOT/scripts/install-hooks.sh" "$SCRATCH"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"already a harness hook"* ]]
+  [ ! -f "$SCRATCH/.git/hooks/pre-commit.bak" ]
+  [ ! -f "$SCRATCH/.git/hooks/pre-commit.harness-old" ]
+  grep -q "harness-managed-hook" "$SCRATCH/.git/hooks/pre-commit"
+}
+
+@test "a harness hook sitting in .bak is reported as debris, not treated as a backup" {
+  bash "$HARNESS_ROOT/scripts/install-hooks.sh" "$SCRATCH" >/dev/null
+  cp "$SCRATCH/.git/hooks/pre-commit" "$SCRATCH/.git/hooks/pre-commit.bak"
+
+  run bash "$HARNESS_ROOT/scripts/install-hooks.sh" "$SCRATCH"
+  [[ "$output" == *"debris from the pre-T-I3 bug"* ]]
+  [ -f "$SCRATCH/.git/hooks/pre-commit.bak" ]
+}
