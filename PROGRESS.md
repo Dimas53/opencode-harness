@@ -4,14 +4,6 @@
 
 ## Current Status
 
-> ### ⚠️ ACTION REQUIRED — `cd ~/.opencode-harness && make update`, then restart OpenCode
->
-> Until this runs, `~/.config/opencode/opencode.jsonc` has no `permission`
-> block, so `--no-verify` and `git push` are guarded by text only. Procedure and
-> the matrix that follows it: notes file 16, scenario L9. Blocks T-I4.
-> **Agent: mention this once in the Session Initialized report while this block
-> exists.** Delete it when `make verify` prints "✓ permission block installed".
-
 > ### START HERE NEXT SESSION — 4 confirmed gaps found on a live project (2026-08-07)
 >
 > A real session in the user's Nuxt project exposed 4 design gaps in what

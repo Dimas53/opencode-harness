@@ -46,6 +46,38 @@ This unblocks scenario L9 in
 turn is what closes T-I4 step 2 — the live permission matrix that has been
 waiting since wave E.
 
+### Capability deny-by-default is now actually installed on this machine
+
+Wave E wrote the block, T-I4 widened its patterns, and neither had ever taken
+effect here: `~/.config/opencode/opencode.jsonc` had no `permission` key at
+all. Merged it in (config only — no `git pull`, since `origin/main` is 102
+commits behind local and pulling would have added nothing but noise):
+
+```
+$ bash scripts/merge-opencode-config.sh <template> ~/.config/opencode/opencode.jsonc
+  ✓ Added: permission.bash.*, permission.bash.git commit*--no-verify*,
+    permission.bash.git commit*-n *, permission.bash.git push*, … (11 rules)
+```
+
+Verified nothing else moved: 7 MCP servers byte-identical, both plugins
+(`@slkiser/opencode-quota`, `superpowers`) untouched, `$schema` intact, and
+`permission` the only added top-level key. A copy of the previous file was
+taken first.
+
+`make verify` now prints `✓ permission block installed`, so the two reminders
+added for this have done their job and are gone: the `ACTION REQUIRED` block
+in `PROGRESS.md` is deleted per its own instructions. The `verify.sh` check
+stays — it costs nothing and catches the same gap on the next machine, which
+is where this class of problem actually lives.
+
+**What this changes in practice:** `git commit --no-verify` is now denied at
+the CLI level rather than argued with in prose, and `git push`, `git reset
+--hard`, `rm -rf` (plus the three other spellings T-I4 added) ask first. The
+one thing still unknown is how the engine resolves overlapping patterns —
+first match by key order, or most specific. `"*": "allow"` sits first because
+OpenCode's own docs order it that way; confirming it is scenario L9, and it is
+now runnable for the first time.
+
 ### T-I3 follow-up — an unsigned harness hook is no longer mistaken for the user's
 
 Checked the two live client projects before recommending `update-project` in
