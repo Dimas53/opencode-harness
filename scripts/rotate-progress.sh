@@ -93,29 +93,60 @@ for idx, start in enumerate(starts):
     end = starts[idx + 1] if idx + 1 < len(starts) else len(lines)
     sections.append(lines[start:end])
 
-# Newest first is the convention in every PROGRESS.md seen so far, so the ones
-# to keep are at the top. If a file were ever written oldest-first this would
-# archive the wrong end — hence the check below rather than a silent guess.
-first_date = DATE.search(sections[0][0])
-last_date = DATE.search(sections[-1][0])
-if first_date and last_date and first_date.group(0) < last_date.group(0):
+# Newest first is the convention, so the ones to keep are at the top. Rotating
+# an oldest-first file would archive the wrong end, hence a check rather than a
+# silent guess — but the check has to judge the file, not two lines of it.
+#
+# The first version compared section[0] against section[-1] and called any
+# inversion "oldest-first". Measured 2026-08-21 on a real project: a single
+# entry appended to the bottom instead of the top (the convention was never
+# written down anywhere) flipped that comparison and disabled rotation
+# permanently. PROGRESS.md had reached 219 KB — 69% of the session's context
+# budget — while the script reported, every time, that it would not touch it.
+#
+# So: decide by majority over all dated pairs, and when the file is mostly
+# newest-first but has stragglers, name them. A misplaced entry is a thing the
+# user can fix in a minute; "this script does not handle your file" is not.
+dated = [(i, DATE.search(s[0])) for i, s in enumerate(sections)]
+dated = [(i, m.group(0)) for i, m in dated if m]
+descending = sum(1 for a, b in zip(dated, dated[1:]) if a[1] >= b[1])
+ascending = sum(1 for a, b in zip(dated, dated[1:]) if a[1] < b[1])
+
+if len(dated) >= 2 and ascending > descending:
     print(f"  ⚠ {path}: sections run oldest-first, which this script does not handle.")
     print("    Nothing moved — rotating the wrong end would delete recent history.")
     sys.exit(0)
+
+# What gets kept is decided by DATE, not by position. Position-based selection
+# assumed a perfectly ordered file, and a real one had 19 entries sitting in
+# the wrong place — enough that "fix the order by hand, then re-run" is not an
+# instruction anyone would follow. Ordering by date makes a shuffled file
+# rotate correctly, and writing the kept sections back in date order repairs
+# the shuffle as a side effect.
+#
+# Undated sections are never archived: there is no way to tell whether one is
+# last week's note or the file's own preamble, and archiving the wrong one
+# loses history silently. They keep their relative order at the top.
+order = {i: d for i, d in dated}
+undated = [i for i in range(len(sections)) if i not in order]
+by_date = sorted(order, key=lambda i: order[i], reverse=True)
 
 # `keep` is a ceiling, not a target. Keeping 10 sessions of this repo's own
 # PROGRESS.md still left 840 lines against a 400-line threshold — sessions are
 # not the same size, so a fixed count cannot honour a line budget. Trim further
 # until the threshold is met, never below MIN_SESSIONS.
-keep = min(keep, len(sections))
+keep = min(keep, len(by_date))
 header_len = starts[0]
+undated_len = sum(len(sections[i]) for i in undated)
 while keep > MIN_SESSIONS:
-    projected = header_len + sum(len(s) for s in sections[:keep])
+    projected = header_len + undated_len + sum(len(sections[i]) for i in by_date[:keep])
     if projected <= max_lines:
         break
     keep -= 1
 
-kept, archived = sections[:keep], sections[keep:]
+kept_idx, archived_idx = by_date[:keep], by_date[keep:]
+kept = [sections[i] for i in undated] + [sections[i] for i in kept_idx]
+archived = [sections[i] for i in archived_idx]
 
 by_month = {}
 for section in archived:

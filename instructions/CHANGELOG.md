@@ -4,6 +4,38 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-21
 
+### PROGRESS.md rotation never ran, because one entry was in the wrong place
+
+Rotation picked what to keep by position — the top N sections — and guarded
+that assumption by comparing the first section's date against the last one's.
+A real project tripped both halves at once. A single entry appended to the
+bottom instead of the top inverted that comparison, so every run printed
+"sections run oldest-first, which this script does not handle" and moved
+nothing. The convention it depended on was written down nowhere: not in
+`templates/PROGRESS.md`, not in `AGENTS.md`. Nobody violated a rule; there
+was no rule.
+
+The cost was invisible because the script reported success at doing nothing.
+That project's `PROGRESS.md` reached 219 KB — measured against Session Start,
+**54,884 tokens, 69% of everything read before the first word of the task** —
+in a project whose rotation had been marked done since wave J. The wave's
+other context work was aimed at `AGENTS.md`, which was 16% of the same budget.
+
+Selection is now by date rather than position: keep the N newest sections
+wherever they sit in the file, archive the rest by month, and write the kept
+ones back in date order, which repairs a shuffled file as a side effect.
+Sections with no date are never archived — a stray note and the file's
+preamble are indistinguishable, and archiving the wrong one loses history
+silently. The oldest-first guard stays, but judges by majority over every
+dated pair instead of two lines; when a mostly-ordered file has stragglers it
+now names them rather than refusing the file.
+
+Applied to that project: 1364 → 196 lines, 80 sections archived, and the
+session's starting context went **79,068 → 35,929 tokens**. What that reveals
+is worth more than the tokens: with `PROGRESS.md` cut down, the two
+`AGENTS.md` files are 35% of what remains rather than 16%, so `T-J1` is worth
+doing — after rotation, not instead of it.
+
 ### The harness was telling the model there was no skill mechanism — there was
 
 OpenCode registers every `SKILL.md` carrying YAML frontmatter as a native
