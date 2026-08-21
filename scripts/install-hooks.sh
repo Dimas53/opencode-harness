@@ -19,7 +19,7 @@
 #   everywhere is the correct fix, not splitting it into two files.
 set -euo pipefail
 
-TARGET_PROJECT="${1:-$(pwd)}"
+TARGET_PROJECT="${1:-$(pwd -P)}"
 GIT_HOOKS_DIR="$TARGET_PROJECT/.git/hooks"
 HARNESS_PATH="$(cd "$(dirname "$0")/.." && pwd)"
 

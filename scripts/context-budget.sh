@@ -20,7 +20,7 @@
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
-HARNESS_ROOT="$(pwd)"
+HARNESS_ROOT="$(pwd -P)"
 
 command -v python3 >/dev/null 2>&1 || {
   echo "✗ python3 is required to measure the context budget." >&2

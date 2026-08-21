@@ -46,7 +46,10 @@ for arg in "$@"; do
 done
 set -- "${ARGS[@]+"${ARGS[@]}"}"
 TEMPLATES="$HARNESS_PATH/templates"
-PROJECT="$(pwd)"
+# pwd -P, not pwd: macOS is case-insensitive, so `cd ~/documents/backend/itoCook`
+# succeeds and every path printed afterwards carries that spelling — including
+# the ones written into files. -P resolves to the real name on disk.
+PROJECT="$(pwd -P)"
 
 # ── Is this actually a project root? (T-J17.1)
 #    PROJECT is wherever the caller happened to be standing, and this script

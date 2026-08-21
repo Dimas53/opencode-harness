@@ -19,7 +19,7 @@ command -v python3 >/dev/null 2>&1 || {
   exit 1
 }
 
-PROJECT_DIR="${1:-$(pwd)}"
+PROJECT_DIR="${1:-$(pwd -P)}"
 ENV_FILE="$PROJECT_DIR/.env"
 OUT_FILE="$PROJECT_DIR/opencode.jsonc"
 GLOBAL_CONFIG="${OPENCODE_GLOBAL_CONFIG:-$HOME/.config/opencode/opencode.jsonc}"

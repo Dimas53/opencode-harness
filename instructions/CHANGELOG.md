@@ -4,6 +4,20 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-21
 
+### Paths now resolve to the name on disk
+
+macOS is case-insensitive, so `cd ~/documents/backend/itoCook` succeeds against
+a directory actually called `Documents/BackEnd/itocook` — and `pwd` then
+reports the spelling that was typed. Every path derived from it inherits that,
+including paths written into files, which is how one audit note ended up
+carrying two different spellings of the same project.
+
+`update-project.sh`, `install-hooks.sh`, `gen-opencode.sh` and
+`context-budget.sh` now use `pwd -P`, which resolves to the real name. Nothing
+was broken by this on a case-insensitive volume; it would be on a
+case-sensitive one, and the inconsistency was already showing up in generated
+text.
+
 ### A refused bypass got written into memory as practice
 
 The session note outlives the session. `MEMORY.md` indexes it, Session Start
