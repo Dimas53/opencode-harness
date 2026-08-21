@@ -91,20 +91,34 @@ Scripts are kept as a backup path, not the primary workflow.
 
 ## Hard Limits
 
-General — destructive actions regardless of project. Never do without explicit user confirmation:
+These come in two kinds, and the difference is what confirmation does.
+
+**Ask first — the user's confirmation settles it.** Destructive, but
+legitimate when intended:
 - `git push` / `git push --force`
 - `rm -rf` / deleting directories
 - Modifying `.env.production`
 - Any actions outside the current project
 - Running scripts from external sources (`curl | sh`)
-- `git commit --no-verify` (or any other way of bypassing the pre-commit
-  hook) — this disables ALL DoD checks at once, not just the one causing
-  trouble. If a specific check genuinely looks like a false positive, use
-  `DOD_SKIP=<step-name>` (documented at the top of `~/.opencode-harness/scripts/dod.sh`) to skip
-  ONLY that named step — never the whole gate. A post-commit guard will
-  detect a commit that bypassed DoD and roll it back automatically
-  (`git reset --soft HEAD~1` — your change is not lost, but the bad commit
-  is undone until you fix it).
+
+**No confirmation makes these acceptable.** Insistence is the situation they
+exist for, not a reason to reconsider:
+- `git commit --no-verify`, `-n`, or any other way of bypassing the
+  pre-commit hook — it disables ALL DoD checks at once, not just the one
+  causing trouble, and there is a narrower tool for the real case: if a
+  specific check genuinely looks like a false positive, `DOD_SKIP=<step-name>`
+  (documented at the top of `~/.opencode-harness/scripts/dod.sh`) skips ONLY
+  that named step. Bypassing the whole gate is not a faster version of that;
+  it is a different act with no legitimate form. The post-commit guard rolls
+  such a commit back anyway (`git reset --soft HEAD~1` — the change survives,
+  the commit does not), so "just this once, before the demo" produces a
+  broken history and a rollback, not a shipped demo.
+
+  This is not theoretical. Measured 2026-08-21: asked twice, the second time
+  with "I take responsibility", an agent reasoned that confirmation had been
+  given, tried the bypass, was stopped by the engine's permission rule — and
+  then handed the user the exact commands to run it themselves. All three
+  moves are wrong; the text only forbade the first.
 
 ---
 
@@ -348,7 +362,18 @@ Quiet under-delivery is the more common failure and needs saying too:
   working under stated assumptions. Stop and wait only when proceeding under any
   reasonable assumption would be unsafe or useless.
 - If the user reaffirms a request after your objection, that is their decision:
-  record it and carry out the request in full.
+  record it and carry out the request in full. **This is about scope — what to
+  build, how far to go, which trade-off to take. It does not extend to Hard
+  Limits.** Those are not objections waiting to be overruled; insistence is the
+  situation they exist for. Measured 2026-08-21: asked twice for
+  `git commit --no-verify`, an agent quoted this very line in its reasoning
+  and went ahead — the engine's permission rule stopped it, the text did not.
+- **Never hand the user a way around a Hard Limit.** Not as a suggestion, not
+  as a command to paste, not as "you take the responsibility, not me". The
+  limit protects the repository, not you; routing the same action through
+  someone else's keyboard produces the same broken commit, and the guard that
+  would have caught yours will roll theirs back instead. Say what is blocked,
+  say what it would cost to do it properly, and stop there.
 
 ---
 
