@@ -2,6 +2,52 @@
 
 All notable changes to opencode-harness are documented here.
 
+## 2026-08-21
+
+### The harness was telling the model there was no skill mechanism — there was
+
+OpenCode registers every `SKILL.md` carrying YAML frontmatter as a native
+`skill` tool and lists them all, with descriptions and SKIP rules, in the
+system prompt under `<available_skills>`. `AGENTS.md` did not use it. It
+instructed the agent to load skills by reading
+`~/.config/opencode/skills/<domain>/SKILL.md`, and stated in prose that no
+automatic mechanism existed — "checked", with a parenthetical about plugin
+hooks. The claim was false for this version, and the instruction it justified
+sent the model down the worse path: a file path has to be recalled from a
+thirty-row table, a tool only has to be called.
+
+The model behaved accordingly. Measured across nine live runs in a real
+project on 2026-08-20: it would name the correct skill out loud — "the
+relevant skills are codebase-design/improve-codebase-architecture" — and then
+open the source file without loading anything. Two runs out of nine loaded a
+skill. Five identical repeats of one prompt gave one success.
+
+Three places now say to call `skill` with the skill's name: Session Start step
+2, the per-message trigger scan, and the line that used to mandate the
+filesystem path. Reading the file survives as a fallback for the one case that
+needs it — a `SKILL.md` without frontmatter is not registered at all, which
+was true of `frontend-behavior` and is now fixed. One sentence was added that
+no version of this section had: load the skill **before** gathering facts. In
+the runs where a skill did get loaded late, it arrived after the code had been
+read, which turns it into a reference for writing up conclusions already
+reached.
+
+Same prompts after the change: **seven out of seven**, every load through the
+tool, none through a file read. The five `refactor` repeats went 5/5 (from
+1/5), and `deploy` → `ci-cd-and-automation` and `ADR` →
+`documentation-and-adrs` both passed after failing the day before.
+
+The `skill-router-auth` eval was asserting on the file path alone, so a run
+that loaded the skill the better way would have failed it. `assert_skill_loaded`
+now accepts either path — a `skill` tool call (plain-text or JSON event) or a
+read of the file — and still fails when the skill is merely mentioned. The
+scenario's stated rationale, which claimed a code-level router was not
+buildable, is rewritten: no router is needed.
+
+Full measurements, including two hypotheses that fit the data and turned out
+to be consequences rather than causes:
+`notes/Harness/implementation-plan-2/skill-routing-live-results.md`.
+
 ## 2026-08-20
 
 ### Permission patterns were anchored to the start of the command — and never fired

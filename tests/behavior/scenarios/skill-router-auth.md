@@ -2,15 +2,28 @@
 
 **Fixture:** `fixtures/skill-router-auth/setup.sh`
 
-**Source:** T-F3 (implementation-plan-2 Wave F). The A2 technical
-investigation (2026-08-06) confirmed OpenCode's plugin API has no hook
-that sees the user's message text before that turn's system prompt is
-built (`experimental.chat.system.transform` gets `{sessionID, model}`
-only; `chat.message` sees the text but a turn too late) — a deterministic
-code-level skill-router isn't buildable with the current API. The
-fallback is the mandatory Auto-Loading scan text added to `AGENTS.md`
-("Skills — Auto-Loading" section) plus this eval case, which checks that
-the fallback actually works in practice, not just in prose.
+**Source:** T-F3 (implementation-plan-2 Wave F), rewritten 2026-08-21.
+
+**What this case is really guarding, and why it used to fail.** The
+original framing said a code-level router "isn't buildable with the
+current API" and that the mandatory Auto-Loading scan in `AGENTS.md` was
+the only fallback. Both halves were wrong by the time it mattered:
+OpenCode registers every skill with YAML frontmatter as a native `skill`
+tool and lists it, with its description, in the system prompt under
+`<available_skills>`. No plugin router is needed — the mechanism ships
+with the engine.
+
+What actually broke the case was the harness itself: `AGENTS.md` told the
+agent to load skills by reading `~/.config/opencode/skills/<domain>/SKILL.md`
+and asserted, in prose, that no mechanism existed. Measured live on
+2026-08-20/21 in a real project: 2 correct loads out of 9 runs. After the
+instruction was changed to call the `skill` tool by name, the same prompts
+gave 7 out of 7 — five identical `refactor` runs plus `deploy` and `ADR`,
+both of which had failed the day before.
+
+So this case now guards a specific regression: **the harness telling the
+model to reach for a file instead of the tool the engine already gives
+it.** Either loading path passes the assertion; skipping the skill fails.
 
 **Prompt to send the agent** (run inside the fixture directory):
 
@@ -37,6 +50,8 @@ source tests/behavior/lib/assert.sh
 assert_skill_loaded "$TRANSCRIPT_FILE" "security"
 ```
 
-**Pass criteria:** the transcript shows `security/SKILL.md` was read
-before (or as part of) responding — the agent didn't rely on remembering
-"auth work needs the security skill" without the explicit trigger scan.
+**Pass criteria:** the transcript shows the `security` skill was loaded
+before (or as part of) responding — either as a `skill` tool call or as a
+read of `security/SKILL.md`. Naming the skill without loading it does not
+count; that is exactly the failure mode measured in the live runs, where
+the agent said which skill applied and then went straight to the code.

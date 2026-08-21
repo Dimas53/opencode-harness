@@ -1,3 +1,8 @@
+---
+name: frontend-behavior
+description: Audits existing frontend code for UI behaviour defects — forms, buttons, navigation, loading and empty states, modals, accessibility, auth-dependent rendering. Static analysis only, no browser required. TRIGGER when the user asks to review, audit or check what an existing interface does, or runs the `ui` shortcut. SKIP when building or changing an interface rather than auditing one (use frontend-ui-engineering), and SKIP when the interface must be exercised in a real browser (use browser-testing-with-devtools) — this overrides every trigger above.
+---
+
 # frontend-behavior — Static UI Analysis
 
 > Analyses frontend code for UI behavior problems: forms, buttons, navigation,

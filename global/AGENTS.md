@@ -177,7 +177,7 @@ Execute these steps in order BEFORE any response to the user:
    Also check that whatever the project needs to run is actually running
    (`docker ps`, dev server, `curl localhost:PORT`) — before you touch code,
    not after a failure makes you look.
-2. **Load skills:** load `using-agent-skills` — try filesystem path first: `Read ~/.config/opencode/skills/using-agent-skills/SKILL.md`. If not found (built-in skill), load via `skill("using-agent-skills")` instead. Also load the project's own stack skills (project `AGENTS.md` -> "Stack Skills") and check `docs/skills-cheatsheet.md` plus the project `AGENTS.md` "Task Context" table for anything matching the current task.
+2. **Load skills:** load `using-agent-skills` by calling the `skill` tool with that name. Only if the tool cannot find it, fall back to `Read ~/.config/opencode/skills/using-agent-skills/SKILL.md`. Also load the project's own stack skills (project `AGENTS.md` -> "Stack Skills") and check `docs/skills-cheatsheet.md` plus the project `AGENTS.md` "Task Context" table for anything matching the current task.
 3. **Progress:** read `PROGRESS.md` in project root — compare git log with progress status. If out of sync, update PROGRESS.md FIRST. If file doesn't exist — skip.
    Older sessions live in `docs/progress-archive/` (rotated out by Session End) — read those only when the task actually reaches back that far, never as part of startup.
    After reading PROGRESS.md, look for a line starting with `Chat language:`.
@@ -536,12 +536,14 @@ If the DoD docs-matrix step reports code changed without a docs update — updat
 **MANDATORY, every incoming user message, before doing anything else:**
 scan the message text against every row's Triggers column below. Any
 match — even one word, even if the message is "just a quick fix" — means
-`Read` that skill's SKILL.md path before responding or touching code.
+**calling the `skill` tool with that skill's name** before responding or
+touching code. The name is the last segment of the path in the table
+below (`security/SKILL.md` → `skill` with name `security`).
 This is a deterministic lookup, not something to rely on remembering:
-there is no automatic mechanism that loads a skill for you (checked —
-OpenCode's plugin API has no hook that sees the message text before the
-system prompt for that turn is built), so skipping this scan is the
-single most common way a cheap model silently drops a required skill.
+nothing loads a skill on your behalf — the `skill` tool is invoked by you,
+like any other tool — so skipping this scan is the single most common way
+a model silently drops a required skill. Measured 2026-08-20: five
+identical runs of the same refactor prompt loaded the right skill once.
 Multiple matches → load all of them. When unsure whether a word counts as
 a match, treat it as one — loading an extra skill costs a `Read`, missing
 one costs a real defect.
@@ -553,7 +555,18 @@ followed the rule the more context it burned. If two matches still happen
 (different words, overlapping meaning), the LOWER row wins — rows run from
 general to specific.
 
-Always load SKILL.md via filesystem path: `Read ~/.config/opencode/skills/<domain>/SKILL.md`
+**Load a skill by calling the `skill` tool with its name** — never by reading
+the file. OpenCode registers every skill in `~/.config/opencode/skills/` as
+that tool, and its description (including the SKIP rules) is already in your
+system prompt under `<available_skills>`; the table below tells you which
+name to pick, not where to find a file. `Read ~/.config/opencode/skills/<name>/SKILL.md`
+is a fallback for the one case where the tool cannot reach a skill: a
+`SKILL.md` with no YAML frontmatter is not registered at all.
+
+**Load the skill before gathering facts, not after.** Reading the code
+first and consulting the skill afterwards turns it into a reference for
+writing up conclusions you have already reached — the point is to shape
+how you investigate.
 
 | Domain | Triggers | Path |
 |--------|----------|------|

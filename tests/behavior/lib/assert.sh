@@ -60,12 +60,29 @@ assert_skill_loaded() {
   # and an `opencode run --format json` event stream (tool_use events
   # with tool:"read" carry the path in their JSON, which still matches
   # a plain string grep — no JSON parsing needed for this check).
+  # Two loading paths count, because OpenCode has both (measured 2026-08-21):
+  #   1. `Read ~/.config/opencode/skills/<domain>/SKILL.md` — the file path;
+  #   2. the native `skill` tool, which leaves no path in the transcript —
+  #      a JSON event carries tool:"skill" with name:"<domain>", a plain-text
+  #      transcript shows `Skill "<domain>"`.
+  # Checking only (1) fails a run that did the right thing the better way.
   local transcript="$1" domain="$2"
   if grep -qF "skills/$domain/SKILL.md" "$transcript"; then
-    echo "PASS: $domain/SKILL.md was loaded"
+    echo "PASS: $domain was loaded (file read)"
     return 0
   fi
-  echo "FAIL: no evidence $domain/SKILL.md was loaded"
+  # Plain-text transcript: `Skill "security"`.
+  if grep -qiE "skill[[:space:]]+\"?${domain}\"?([[:space:]]|$)" "$transcript"; then
+    echo "PASS: $domain was loaded (skill tool)"
+    return 0
+  fi
+  # JSON event stream: tool:"skill" and name:"<domain>" on the same line,
+  # whatever keys sit between them.
+  if grep -F '"skill"' "$transcript" | grep -qF "\"$domain\""; then
+    echo "PASS: $domain was loaded (skill tool)"
+    return 0
+  fi
+  echo "FAIL: no evidence $domain was loaded (neither file read nor skill tool)"
   return 1
 }
 
