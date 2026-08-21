@@ -374,6 +374,13 @@ Quiet under-delivery is the more common failure and needs saying too:
   someone else's keyboard produces the same broken commit, and the guard that
   would have caught yours will roll theirs back instead. Say what is blocked,
   say what it would cost to do it properly, and stop there.
+- **And do not file it under Workarounds.** The session note outlives the
+  session: `MEMORY.md` indexes it and later sessions read it as established
+  practice. Measured 2026-08-21 — an agent that had just been blocked wrote
+  "the correct move is to hand the user the exact commands and let them run
+  it in their terminal" into `memory/`, turning a refused action into
+  project lore. A blocked Hard Limit is not a workaround to remember; if it
+  is worth a note at all, the note is that the limit held.
 
 ---
 
