@@ -4,6 +4,34 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-21
 
+### Nothing checked whether session-end had ever run
+
+Rotation (`T-J2`) and the memory index (`T-J4`) are both invoked from
+`session-end.sh` and from nowhere else. No gate, no verify step, nothing else
+in the harness looked at whether either had happened. So in a project where
+the user stopped typing `session-end`, both quietly stopped — a mechanism
+that is never invoked reports nothing at all, and the absence looks exactly
+like health.
+
+Measured in a live project on 2026-08-21: last memory note dated 2026-08-12,
+no index in `MEMORY.md` at all — fourteen notes that Session Start could not
+reach, because it reads `MEMORY.md` and `MEMORY.md` did not mention them —
+and `PROGRESS.md` at 1364 lines, 69% of the session's starting context. Every
+piece was built, tested and marked done. None of it had run in nine days.
+
+`dod.sh` now ends with two upkeep warnings: `PROGRESS.md` over the rotation
+threshold, and a non-empty `memory/` with no index in `MEMORY.md`. Both name
+`session-end` as the fix. They warn and never fail — this is upkeep, and
+blocking a commit over it would punish the wrong moment; the shape is copied
+from the `.agentignore` warning, which says what is inactive rather than
+passing silently.
+
+This is the third finding of the same class in two days, after the permission
+block that was never merged and the skill instruction that pointed away from
+the engine's own tool. The pattern is worth naming: **a mechanism nobody
+verifies is a mechanism that eventually is not running**, and in each case
+the harness reported success while doing nothing.
+
 ### PROGRESS.md rotation never ran, because one entry was in the wrong place
 
 Rotation picked what to keep by position — the top N sections — and guarded

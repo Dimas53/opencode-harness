@@ -453,6 +453,36 @@ fi
 
 echo ""
 
+# ── Upkeep check — is session-end actually being run? ────────────────────────
+# Rotation (T-J2) and the memory index (T-J4) are both invoked from
+# session-end.sh and from nowhere else. Nothing verified they had ever run,
+# so in a project where the user stopped typing `session-end` they simply
+# stopped happening — silently, because a mechanism that is never invoked
+# reports nothing at all.
+#
+# Measured 2026-08-21 in a live project: last memory note 2026-08-12, no
+# index in MEMORY.md, and PROGRESS.md at 1364 lines — 69% of the session's
+# entire starting context. Every piece was built and working; none had run.
+#
+# Warn, never fail: this is upkeep, and blocking a commit over it would
+# punish the wrong moment. Same shape as the .agentignore warning above —
+# say what is inactive and name the command that fixes it.
+if [ -f "PROGRESS.md" ]; then
+  PROGRESS_LINES=$(wc -l < "PROGRESS.md" | tr -d ' ')
+  if [ "$PROGRESS_LINES" -gt "${PROGRESS_MAX_LINES:-400}" ]; then
+    check_warn "PROGRESS.md is $PROGRESS_LINES lines (threshold ${PROGRESS_MAX_LINES:-400}) — every session reads it in full; run: session-end"
+  fi
+fi
+
+if [ -d "memory" ] && [ -n "$(ls -A memory 2>/dev/null)" ] && [ -f "MEMORY.md" ]; then
+  if ! grep -q "MEMORY-INDEX START" "MEMORY.md" 2>/dev/null; then
+    NOTE_COUNT=$(ls -1 memory/*.md 2>/dev/null | wc -l | tr -d ' ')
+    check_warn "MEMORY.md has no index — $NOTE_COUNT note(s) in memory/ are unreachable at Session Start; run: session-end"
+  fi
+fi
+
+echo ""
+
 # ── Summary ──────────────────────────────────────────────────────────────────
 echo "Results: $PASS passed, $FAIL failed, $WARN warnings"
 
