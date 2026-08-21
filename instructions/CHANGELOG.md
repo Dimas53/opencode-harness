@@ -4,6 +4,25 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-21
 
+### A cap on skills per turn, now that loading them actually happens
+
+"Multiple matches → load all of them" was written when skills did not load.
+The rule cost nothing because nothing happened; the day it started working,
+it started costing. Measured 2026-08-21: one first turn pulled six skills —
+the trigger match plus four stack skills plus the meta-skill — for ~13k
+tokens against a ~36k session start, and that run hung badly enough to need
+an exit.
+
+The rule also under-counted what a skill weighs. `security/SKILL.md` is 909
+tokens; the sub-files beside it are 12,260, and a live run read three of
+them. Loading a skill is cheap. Reading everything under it is not.
+
+Two changes: **at most two skills per turn** from the trigger table, most
+specific first (the "lower row wins" tiebreak already there now also picks
+which two to keep), with the project's stack skills exempt because they load
+once per session rather than per turn. And an explicit line that was missing:
+read a sub-file when the work reaches it, not on the way in.
+
 ### update-project: three defects a live run found and no test could
 
 **It scaffolded a project into a folder that merely contained projects.**

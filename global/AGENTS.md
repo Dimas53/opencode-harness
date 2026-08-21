@@ -544,16 +544,27 @@ nothing loads a skill on your behalf — the `skill` tool is invoked by you,
 like any other tool — so skipping this scan is the single most common way
 a model silently drops a required skill. Measured 2026-08-20: five
 identical runs of the same refactor prompt loaded the right skill once.
-Multiple matches → load all of them. When unsure whether a word counts as
-a match, treat it as one — loading an extra skill costs a `Read`, missing
-one costs a real defect.
+**At most two skills per turn from this table**, and load the most specific
+matches. Stack skills from the project's own `AGENTS.md` do not count against
+that — they load once per session, not per turn. When unsure whether a word
+counts as a match, treat it as one: an extra skill is cheap next to a missed
+one, but only within the cap.
+
+The cap is not caution, it is a measurement. Before skills loaded reliably,
+"load all matches" cost nothing because nothing loaded. Measured 2026-08-21,
+once they did: six skills on one first turn came to ~13k tokens against a
+~36k session start, and one run hung. And a skill costs far more than its
+`SKILL.md` — `security/SKILL.md` is 909 tokens, its sub-files are 12,260, of
+which one live run pulled three.
+
+**Read a sub-file when the work reaches it, not on the way in.** Loading a
+skill means its `SKILL.md`; the sub-files are there for when you need that
+specific part.
 
 No trigger word appears in two rows — a checker in the harness repo enforces
-that before this table ships, because "load all matches" turned a single
-ambiguous word into three skill reads, and the more carefully a model
-followed the rule the more context it burned. If two matches still happen
-(different words, overlapping meaning), the LOWER row wins — rows run from
-general to specific.
+that before this table ships. If two matches still happen (different words,
+overlapping meaning), the LOWER row wins — rows run from general to specific,
+and that is also how you pick which two to keep when more than two match.
 
 **Load a skill by calling the `skill` tool with its name** — never by reading
 the file. OpenCode registers every skill in `~/.config/opencode/skills/` as
