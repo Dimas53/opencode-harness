@@ -4,6 +4,38 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-21
 
+### update-project: three defects a live run found and no test could
+
+**It scaffolded a project into a folder that merely contained projects.**
+`PROJECT="$(pwd)"` with nothing checking that `pwd` is a root, in a script
+whose job is creating files. Run one directory too high on 2026-08-20, it
+wrote `AGENTS.md`, `PROGRESS.md`, `docs/` and the rest into a scratch folder
+that was not a project at all — and the `--refresh-agents` error that followed
+named a path two levels above the real project, which an agent read as "this
+was never adopted, run adopt". A wrong conclusion built on a true message.
+There is now a guard: a root has `.git/`, `AGENTS.md` or `PROGRESS.md`;
+anything else asks, and with no one to answer it exits naming `--yes` rather
+than guessing.
+
+**Its diff was cut at forty lines without saying so.** With four managed
+regions, forty lines can show the first and stop, and the user then approves
+a refresh having seen a quarter of it. It now prints "showing 40 of N diff
+lines" and the command for the rest.
+
+**`--seed-markers`.** Marking up an `AGENTS.md` that predates T-G-U6 was done
+by hand three times — two client projects and a sandbox — and the procedure
+never varied, which is the definition of a job for a script. It anchors on the
+heading that opens each template region, wraps the project's own copy, and
+where a section is missing entirely inserts an empty marker pair in the right
+position for `--refresh-agents` to fill. Order and count matter more than they
+look: refresh matches regions **positionally**, so a seeded file with four
+regions in the wrong order would let the next refresh replace project content
+with placeholder text — silently, one run later.
+
+Checked against the hand-marked file from the day before: seed followed by
+refresh reproduced it byte for byte, including the Database Migrations section
+that the project never had. Five tests cover the three fixes.
+
 ### Nothing checked whether session-end had ever run
 
 Rotation (`T-J2`) and the memory index (`T-J4`) are both invoked from

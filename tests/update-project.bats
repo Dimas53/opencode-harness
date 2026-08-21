@@ -129,3 +129,115 @@ PY
   [ "$status" -eq 0 ]
   [[ "$output" == *"refreshed"* ]]
 }
+
+# ── --seed-markers (T-J17.3) ─────────────────────────────────────────────────
+# Marking up a pre-T-G-U6 AGENTS.md was done by hand three times before it was
+# scripted. What makes it worth a test rather than a one-liner: --refresh-agents
+# matches regions by POSITION, so a seeded file with the wrong count or order
+# would let the next refresh overwrite project content with template
+# placeholders — silently, and only on the run after the mistake.
+
+@test "seed-markers wraps existing sections and seeds absent ones" {
+  python3 - "$SCRATCH/AGENTS.md" <<'PY'
+import sys
+# An AGENTS.md shaped like the ones adopted before markers existed: it has
+# the DoD checklist, Git Workflow and Docs Update Matrix, but no Database
+# Migrations section at all.
+open(sys.argv[1], "w").write("""# Proj — Project Rules
+
+## Stack Skills
+- something project-specific
+
+### CONTEXT.md — update if session includes any of:
+```
+[ ] New collection
+```
+
+### Hard rules — no exceptions:
+```
+RULE 1: no
+```
+
+---
+
+## Git Workflow
+
+### When to commit
+- after a milestone
+
+---
+
+## MCP Servers Available
+
+| MCP | Use for |
+|-----|---------|
+
+---
+
+## Docs Update Matrix
+
+| File | Updated by | Trigger |
+|------|-----------|---------|
+""")
+PY
+  run bash "$HARNESS_ROOT/scripts/update-project.sh" --seed-markers
+  [ "$status" -eq 0 ]
+  [ "$(grep -cF '# === HARNESS-MANAGED START' "$SCRATCH/AGENTS.md")" -eq 4 ]
+  [ "$(grep -cF '# === HARNESS-MANAGED END ===' "$SCRATCH/AGENTS.md")" -eq 4 ]
+  # project content survives, outside the markers
+  grep -q "something project-specific" "$SCRATCH/AGENTS.md"
+  grep -q "MCP Servers Available" "$SCRATCH/AGENTS.md"
+}
+
+@test "seed-markers then refresh fills the seeded region from the template" {
+  cp "$HARNESS_ROOT/templates/AGENTS.md" "$SCRATCH/AGENTS.md"
+  python3 - "$SCRATCH/AGENTS.md" <<'PY'
+import sys
+# strip the markers to simulate a project that predates them
+p = sys.argv[1]
+lines = [l for l in open(p).read().split("\n")
+         if not l.startswith("# === HARNESS-MANAGED")]
+open(p, "w").write("\n".join(lines))
+PY
+  run bash "$HARNESS_ROOT/scripts/update-project.sh" --seed-markers
+  [ "$status" -eq 0 ]
+  run bash "$HARNESS_ROOT/scripts/update-project.sh" --refresh-agents --yes
+  [ "$status" -eq 0 ]
+  grep -q "Database Migrations" "$SCRATCH/AGENTS.md"
+  grep -q "down.sql" "$SCRATCH/AGENTS.md"
+}
+
+@test "seed-markers refuses to run twice" {
+  cp "$HARNESS_ROOT/templates/AGENTS.md" "$SCRATCH/AGENTS.md"
+  run bash "$HARNESS_ROOT/scripts/update-project.sh" --seed-markers
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"already has HARNESS-MANAGED markers"* ]]
+  [ "$(grep -cF '# === HARNESS-MANAGED START' "$SCRATCH/AGENTS.md")" -eq 4 ]
+}
+
+# ── project-root guard (T-J17.1) ─────────────────────────────────────────────
+# The script creates files in $(pwd). Run from a parent directory it used to
+# scaffold a whole project there, silently — which is what happened to a
+# scratch folder on 2026-08-20.
+
+@test "update-project stops when cwd does not look like a project root" {
+  NOT_A_ROOT="$(mktemp -d)"
+  cd "$NOT_A_ROOT" || return 1
+  run bash -c "printf 'n\n' | bash '$HARNESS_ROOT/scripts/update-project.sh'"
+  [ "$status" -eq 1 ]
+  [[ "$output" == *"does not look like a project root"* ]]
+  [ ! -f "$NOT_A_ROOT/PROGRESS.md" ]
+  [ ! -f "$NOT_A_ROOT/AGENTS.md" ]
+  cd "$HARNESS_ROOT" || true
+  rm -rf "$NOT_A_ROOT"
+}
+
+@test "update-project exits with a named flag when nobody answers the root question" {
+  NOT_A_ROOT="$(mktemp -d)"
+  cd "$NOT_A_ROOT" || return 1
+  run bash -c "bash '$HARNESS_ROOT/scripts/update-project.sh' < /dev/null"
+  [ "$status" -eq 2 ]
+  [[ "$output" == *"--yes"* ]]
+  cd "$HARNESS_ROOT" || true
+  rm -rf "$NOT_A_ROOT"
+}

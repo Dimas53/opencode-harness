@@ -48,6 +48,41 @@ set -- "${ARGS[@]+"${ARGS[@]}"}"
 TEMPLATES="$HARNESS_PATH/templates"
 PROJECT="$(pwd)"
 
+# ── Is this actually a project root? (T-J17.1)
+#    PROJECT is wherever the caller happened to be standing, and this script
+#    creates files. Run from a parent directory by mistake, it scaffolds a
+#    whole project — AGENTS.md, PROGRESS.md, docs/, .gitignore — into a folder
+#    that merely contains projects. That happened on 2026-08-20: a scratch
+#    directory got a full template set, and the error message from
+#    --refresh-agents named a path two levels above the real project, which
+#    an agent then read as "this project was never adopted, run adopt".
+#
+#    A root looks like one of: a git repo root, or a directory already
+#    carrying the harness's own files. Anything else asks first — and in a
+#    non-interactive run (agent, CI) refuses rather than guessing, because
+#    the failure mode is silent file creation in the wrong place.
+if [ ! -d "$PROJECT/.git" ] && [ ! -f "$PROJECT/AGENTS.md" ] && [ ! -f "$PROJECT/PROGRESS.md" ]; then
+  echo "⚠ $PROJECT does not look like a project root:"
+  echo "  no .git/, no AGENTS.md, no PROGRESS.md."
+  echo "  Running here would create a new project structure in this directory."
+  if [ "$ASSUME_YES" = "1" ]; then
+    echo "  Continuing anyway (--yes)."
+  elif [ "$DRY_RUN" = "1" ]; then
+    echo "  (dry run — nothing would be written without confirmation)"
+  else
+    printf "Continue anyway? (y/n): "
+    if ! read -r root_answer; then
+      echo ""
+      echo "✗ No answer received (stdin closed). If you meant to run here, pass --yes."
+      exit 2
+    fi
+    case "$root_answer" in
+      y|Y|yes|YES) echo "  Continuing." ;;
+      *) echo "✗ Stopped. cd into the project root and run again."; exit 1 ;;
+    esac
+  fi
+fi
+
 # ── --refresh-agents — on-request pull of harness-authored rule updates
 #    into an ALREADY-FILLED project AGENTS.md (G-DEC-4 addition, T-G-U6).
 #    The normal sync above never touches an existing AGENTS.md — templates
@@ -62,6 +97,127 @@ PROJECT="$(pwd)"
 #    outside a marked region (your filled-in Stack Skills, File Map,
 #    Gotchas, etc.) is untouched. Run manually when you know a harness
 #    rule improved and want it in this project, not automatically.
+# ── --seed-markers — put HARNESS-MANAGED markers into a project AGENTS.md
+#    that predates them (T-J17.3). Done by hand three times (itocook,
+#    karriere-page-ito, a sandbox copy) before it was worth automating; the
+#    procedure never varied, which is the definition of a job for a script.
+#
+#    --refresh-agents matches regions POSITIONALLY: the i-th marked region in
+#    the target is replaced by the i-th in the template, headings unchecked.
+#    So the count and order have to match the template exactly, and wrapping
+#    the wrong block would let the next refresh overwrite project content with
+#    placeholder text. Hence: anchor on the heading that opens each template
+#    region, wrap the target's own copy of that section, and where the section
+#    does not exist at all, insert an EMPTY marker pair in the right position —
+#    refresh then fills it from the template (verified: that is how a project
+#    with no Database Migrations section acquired one).
+if [ "${1:-}" = "--seed-markers" ]; then
+  TARGET="$PROJECT/AGENTS.md"
+  TEMPLATE="$TEMPLATES/AGENTS.md"
+
+  [ -f "$TARGET" ] || { echo "✗ $TARGET not found — nothing to seed"; exit 1; }
+  [ -f "$TEMPLATE" ] || { echo "✗ $TEMPLATE not found"; exit 1; }
+
+  if grep -qF "# === HARNESS-MANAGED START" "$TARGET"; then
+    echo "✓ $TARGET already has HARNESS-MANAGED markers — nothing to seed."
+    echo "  To pull current harness text into them: bash \"$0\" --refresh-agents"
+    exit 0
+  fi
+
+  SEEDED=$(python3 - "$TARGET" "$TEMPLATE" <<'PY'
+import re, sys
+
+target_path, template_path = sys.argv[1], sys.argv[2]
+START = "# === HARNESS-MANAGED START"
+END = "# === HARNESS-MANAGED END ==="
+
+template = open(template_path).read().split("\n")
+target = open(target_path).read().split("\n")
+
+# Anchors: the first markdown heading inside each template region, in order.
+anchors, start_line = [], None
+for i, line in enumerate(template):
+    if line.startswith(START):
+        start_line = template[i]
+        heading = None
+    elif line.strip() == END:
+        anchors.append((heading, start_line))
+        heading = None
+    elif start_line is not None and heading is None and line.startswith("#"):
+        heading = line.strip()
+
+def heading_level(line):
+    m = re.match(r"^(#+)\s", line)
+    return len(m.group(1)) if m else None
+
+def find_section(lines, heading):
+    """Return (start, end) of the target's own copy of `heading`, or None.
+    Matches on the heading text, not the exact string — a project may have
+    edited the wording ("### After every commit — update progress.md")."""
+    key = re.sub(r"[^a-z0-9]+", " ", heading.lower()).strip()
+    key_head = " ".join(key.split()[:3])
+    for i, line in enumerate(lines):
+        if heading_level(line) is None:
+            continue
+        norm = re.sub(r"[^a-z0-9]+", " ", line.lower()).strip()
+        if not norm.startswith(key_head):
+            continue
+        level = heading_level(line)
+        for j in range(i + 1, len(lines)):
+            lv = heading_level(lines[j])
+            if lv is not None and lv <= level:
+                end = j
+                break
+        else:
+            end = len(lines)
+        # trailing --- and blank lines belong outside the region
+        while end > i and lines[end - 1].strip() in ("", "---"):
+            end -= 1
+        return (i, end)
+    return None
+
+placements, report = [], []
+for heading, start_marker in anchors:
+    found = find_section(target, heading) if heading else None
+    placements.append((found, start_marker, heading))
+
+# Insert from the bottom up so earlier indices stay valid. Sections that were
+# not found are seeded empty, immediately after the previous region's end (or
+# at end of file for the first one) so template order is preserved.
+out = list(target)
+last_end = len(out)
+for found, start_marker, heading in reversed(placements):
+    if found:
+        s, e = found
+        out.insert(e, END)
+        out.insert(e, "")
+        out.insert(s, "")
+        out.insert(s, start_marker)
+        last_end = s
+        report.append(f"wrapped   {heading}")
+    else:
+        pos = last_end
+        out[pos:pos] = ["", start_marker, END, ""]
+        report.append(f"seeded    {heading}  (section absent — refresh will fill it)")
+
+sys.stderr.write("\n".join(reversed(report)) + "\n")
+print("\n".join(out))
+PY
+) || { echo "✗ Could not seed markers — target structure not recognised."; exit 1; }
+
+  if [ "$DRY_RUN" = "1" ]; then
+    echo "(dry run — nothing written)"
+    echo "To apply: bash \"$0\" --seed-markers --yes"
+    exit 0
+  fi
+
+  printf '%s\n' "$SEEDED" > "$TARGET"
+  MARKER_COUNT=$(grep -cF "# === HARNESS-MANAGED START" "$TARGET" || true)
+  echo "✓ $TARGET seeded with $MARKER_COUNT HARNESS-MANAGED region(s)"
+  echo "  Next: bash \"$0\" --refresh-agents   (fills them from the template)"
+  exit 0
+fi
+
 if [ "${1:-}" = "--refresh-agents" ]; then
   TARGET="$PROJECT/AGENTS.md"
   TEMPLATE="$TEMPLATES/AGENTS.md"
@@ -144,7 +300,19 @@ PY
   fi
 
   echo "HARNESS-MANAGED regions in $TARGET differ from the current template:"
-  diff "$TARGET" "$TMP" | head -40 || true
+  # T-J17.2: the cut used to be silent. With four managed regions, forty lines
+  # can show the first one and stop — and the user then approves a refresh
+  # having seen a quarter of it. Say how much was hidden and how to see it.
+  DIFF_FILE=$(mktemp)
+  diff "$TARGET" "$TMP" > "$DIFF_FILE" || true
+  DIFF_LINES=$(wc -l < "$DIFF_FILE" | tr -d ' ')
+  head -40 "$DIFF_FILE"
+  if [ "$DIFF_LINES" -gt 40 ]; then
+    echo ""
+    echo "  … showing 40 of $DIFF_LINES diff lines."
+    echo "  Full diff: diff \"$TARGET\" \"$TMP\""
+  fi
+  rm -f "$DIFF_FILE"
   echo ""
   if [ "$DRY_RUN" = "1" ]; then
     echo "(dry run — nothing applied)"
