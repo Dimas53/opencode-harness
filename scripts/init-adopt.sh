@@ -21,14 +21,25 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if ! command -v opencode &>/dev/null; then
-  echo "✗ opencode not found. Run: make setup"
-  exit 1
-fi
-
 if [ -z "$PROJECT" ]; then
 	echo "Usage: make init-adopt PROJECT=/path/to/project"
 	exit 1
+fi
+
+# The interactive path ends by launching OpenCode, so a missing binary is
+# caught here — before anything is written — rather than after, which would
+# leave a machine without OpenCode holding a half-adopted project. WSL2 users
+# install it inside WSL via `make setup` (GUIDE section 10); the message says so.
+#
+# --no-open is exempt on purpose: that flag exists precisely so this script can
+# run where OpenCode is not there — from another script, from CI, from a
+# container. Gating it as well cost 18 of the 25 failures in this repository's
+# first CI run: the script's own test, five `unadopt` tests that call it
+# directly, and all twelve `update-project` tests, whose setup() calls it and
+# so never reached an assertion.
+if [ "$NO_OPEN" -eq 0 ] && ! command -v opencode &>/dev/null; then
+  echo "✗ opencode not found. Run: make setup"
+  exit 1
 fi
 
 HARNESS_PATH="$(cd "$(dirname "$0")/.." && pwd)"

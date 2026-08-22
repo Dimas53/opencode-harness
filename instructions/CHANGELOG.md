@@ -4,6 +4,24 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-22
 
+### `--no-open` no longer needs the thing it opts out of
+
+`init-adopt.sh` checked for the `opencode` binary before doing anything at all,
+including under `--no-open` — the flag whose entire purpose is running where
+OpenCode is not there: from another script, from CI, from a container. Without
+the binary the script exited 1 having copied nothing.
+
+The check now applies to the interactive path only. It still runs before
+anything is written — a machine without OpenCode should not be left holding a
+half-adopted project, and WSL2 users install the binary inside WSL via
+`make setup` (GUIDE section 10), which is what the message tells them. It is
+simply skipped under `--no-open`.
+
+The first CI run of this repository showed the cost of the old placement: 18 of
+25 failures came from that one line — the script's own test, five `unadopt`
+tests that call it directly, and all twelve `update-project` tests, whose
+`setup()` calls it and so never reached their assertions.
+
 ### The test step now names the tests that failed
 
 `dod.sh` step 6 printed `head -5` of the test output on failure. bats emits its
