@@ -2,6 +2,24 @@
 
 All notable changes to opencode-harness are documented here.
 
+## 2026-08-22
+
+### The test step now names the tests that failed
+
+`dod.sh` step 6 printed `head -5` of the test output on failure. bats emits its
+banner and TAP plan first, so those five lines were `=== Quick Tests ===`, the
+syntax-check line and `1..105` — the gate announced a failure and then hid
+which one. The first CI run of this repository went red with a log that carried
+no diagnosis at all, and the failure could not be identified from GitHub.
+
+It now prints the `not ok` lines, up to twenty, and says how many more there
+are. When the failure is not a TAP failure — the runner itself broke — it
+prints the tail of the output, where the error is, instead of the head, where
+the banner is.
+
+Same defect class as the `diff | head -40` truncation fixed on 2026-08-21: a
+step that reports an outcome while withholding the evidence for it.
+
 ## 2026-08-21
 
 ### Paths now resolve to the name on disk

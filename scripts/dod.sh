@@ -350,7 +350,20 @@ if command -v bats &>/dev/null && [ -f "Makefile" ]; then
     check_pass "All tests pass"
   else
     check_fail "Tests failed — run 'make test-quick' to see details"
-    echo "   $TEST_OUTPUT" | head -5 | sed 's/^/    /'
+    # Print the failing tests, not the first five lines. bats emits its TAP
+    # header and plan first, so `head -5` showed "1..105" and nothing else —
+    # a gate that announced a failure and then hid which one. Found when the
+    # harness's own CI went red and the log carried no diagnosis (2026-08-22).
+    FAILING=$(printf '%s\n' "$TEST_OUTPUT" | grep -E '^not ok' || true)
+    if [ -n "$FAILING" ]; then
+      FAIL_TOTAL=$(printf '%s\n' "$FAILING" | wc -l | tr -d ' ')
+      printf '%s\n' "$FAILING" | head -20 | sed 's/^/    /'
+      [ "$FAIL_TOTAL" -gt 20 ] && echo "    … showing 20 of $FAIL_TOTAL failing tests"
+    else
+      # Not a TAP failure — the runner itself broke. Show the end, where the
+      # error is, rather than the beginning, where the banner is.
+      printf '%s\n' "$TEST_OUTPUT" | tail -20 | sed 's/^/    /'
+    fi
   fi
 elif [ "$IS_HARNESS_REPO" = "1" ]; then
   check_warn "bats or Makefile not found — TESTS NOT RUN. Install: brew install bats-core (or see README). Real enforcement happens in CI regardless of local bats."
