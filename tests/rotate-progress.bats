@@ -137,7 +137,13 @@ from datetime import date, timedelta
 print("# Progress Log")
 print()
 day = date(2026, 1, 1)
-for i in range(120):
+# 200, not 120: at 120 the file is 363 lines, under the 400-line threshold, so
+# rotate-progress.sh returned "under the threshold" and never reached the order
+# check this test exists to exercise. It passed anyway — the assertion that
+# would have caught it was not the last command in the body, and bash 3.2's
+# errexit does not fire inside a function, so bats reported ok. Fixed once the
+# suite was run under bash 5 (2026-08-22).
+for i in range(200):
     print(f"## Session {day + timedelta(days=i)} (session {i})")
     print(f"- Done: work item {i}")
     print()

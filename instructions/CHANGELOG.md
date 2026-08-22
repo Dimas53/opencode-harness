@@ -4,6 +4,32 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-22
 
+### The test suite could not fail on macOS, and three tests had not been failing
+
+bats runs each test body as a function under `set -e`. bash 3.2 — still what
+macOS ships — does not fire errexit inside a function, so only the **last**
+command of a test decided its verdict and every earlier assertion was
+decorative. Measured on this suite: 75 of 105 tests carry more than one
+assertion; 116 assertions never rendered a verdict.
+
+Every "105 tests green" in this changelog before today therefore meant
+"the scripts parse and the last line of each test holds". Ubuntu, where bash is
+5.2, showed the difference the first time this repository's CI ever ran.
+
+Three tests had been green while asserting things no script did:
+
+- `rotate-progress`: the oldest-first fixture was 363 lines against a 400-line
+  threshold, so the script answered "under the threshold" and the order check
+  the test exists for was never reached. The guard itself works — verified
+  separately at 602 lines: it refuses and says why.
+- two `update-project` tests expected the phrase "not a terminal", which no
+  script has printed for some time. The message is "No answer received (stdin
+  closed)".
+
+Fixed the fixtures and the expectations. `make test-quick` now refuses to run
+under bash 3.x rather than reporting a number that means something else —
+a green run there is worse than no run. Linux and CI are unaffected.
+
 ### `--no-open` no longer needs the thing it opts out of
 
 `init-adopt.sh` checked for the `opencode` binary before doing anything at all,

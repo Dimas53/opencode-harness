@@ -150,6 +150,25 @@ session-end:
 
 test-quick:
 	@echo "=== Quick Tests ==="
+	@# bats runs each test body as a function under `set -e`. bash 3.2 — which
+	@# is still what macOS ships — does not fire errexit inside a function, so
+	@# only the LAST command of a test decides its verdict and every earlier
+	@# assertion is decorative. Measured 2026-08-22 on this suite: 75 of 105
+	@# tests carried more than one assertion, 116 assertions never rendered a
+	@# verdict, and three tests had been green for weeks while asserting text
+	@# no script printed. A green run under bash 3.x is worse than no run: it
+	@# reports a number that means something else. Refuse it.
+	@bash -c 'v=$${BASH_VERSINFO[0]}; \
+	  if [ "$$v" -lt 4 ]; then \
+	    echo "✗ bash $$BASH_VERSION runs these tests, and it cannot fail them."; \
+	    echo "  bats needs errexit inside functions; bash 3.x does not provide it,"; \
+	    echo "  so only the last assertion of each test would be checked."; \
+	    echo "  Install a current bash and make sure it precedes /bin on PATH:"; \
+	    echo "      brew install bash"; \
+	    echo "  On Linux and in CI this is already the case — nothing to do there."; \
+	    exit 1; \
+	  fi; \
+	  echo "  ✓ bash $$BASH_VERSION — assertions are enforced"'
 	@echo "[bash -n] Checking script syntax..."
 	@for s in scripts/*.sh; do bash -n "$$s" || exit 1; done
 	@echo "  ✓ All scripts pass syntax check"

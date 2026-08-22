@@ -108,7 +108,11 @@ teardown() {
   rm -f "$SCRATCH/PLAN.md"
   run bash -c "bash '$HARNESS_ROOT/scripts/update-project.sh' < /dev/null"
   [ "$status" -eq 2 ]
-  [[ "$output" == *"not a terminal"* ]]
+  # The script says "No answer received (stdin closed)" — this asserted an
+  # older wording ("not a terminal") that no script has printed for some time.
+  # Never caught, because the line was not the last command in the body and
+  # bash 3.2's errexit does not fire inside a function.
+  [[ "$output" == *"No answer received"* ]]
   [[ "$output" == *"Do NOT answer on the user's behalf"* ]]
   [ ! -f "$SCRATCH/PLAN.md" ]
 }
@@ -123,7 +127,7 @@ open(p, "w").write(s)
 PY
   run bash -c "bash '$HARNESS_ROOT/scripts/update-project.sh' --refresh-agents < /dev/null"
   [ "$status" -eq 2 ]
-  [[ "$output" == *"not a terminal"* ]]
+  [[ "$output" == *"No answer received"* ]]
 
   run bash -c "bash '$HARNESS_ROOT/scripts/update-project.sh' --refresh-agents --yes < /dev/null"
   [ "$status" -eq 0 ]
