@@ -105,12 +105,26 @@ if git rev-parse --is-inside-work-tree &>/dev/null; then
       *.png|*.jpg|*.jpeg|*.gif|*.svg|*.ico|*.woff|*.woff2|*.ttf|*.eot|*.pdf|*.zip|*.tar|*.gz) continue ;;
     esac
 
-    # Check added lines only, exclude the Chat language: label itself
-    if [ -f "$file" ] && $DIFF_SRC "$file" 2>/dev/null | grep '^+' | grep -v '^+++' | grep -v 'Chat language:' | grep -q '[а-яА-ЯёЁ]'; then
-      check_fail "Cyrillic found in $file — use English"
-      echo "   Affected lines:"
-      $DIFF_SRC "$file" 2>/dev/null | grep '^+' | grep -v '^+++' | grep -v 'Chat language:' | grep '[а-яА-ЯёЁ]' | sed 's/^+/    +/'
-      CYRILLIC_FAIL=1
+    # Check added lines only, exclude the Chat language: label itself.
+    #
+    # Collected into a variable rather than tested with a trailing `grep -q`.
+    # `-q` exits at the first match, the greps upstream of it take SIGPIPE, and
+    # `set -o pipefail` (line 12) turns that into status 141 — so the `if` read
+    # false and the scan silently reported nothing. It needs a diff large
+    # enough for the writer to still be writing when `-q` leaves, which is why
+    # it showed up first in CI (GNU grep leaves immediately) and would have hit
+    # macOS on any big commit. Found 2026-08-22; reproduced on both platforms.
+    #
+    # Reading the whole stream costs nothing here and cannot race.
+    if [ -f "$file" ]; then
+      ADDED=$($DIFF_SRC "$file" 2>/dev/null | grep '^+' | grep -v '^+++' | grep -v 'Chat language:' || true)
+      CYR_LINES=$(printf '%s\n' "$ADDED" | grep '[а-яА-ЯёЁ]' || true)
+      if [ -n "$CYR_LINES" ]; then
+        check_fail "Cyrillic found in $file — use English"
+        echo "   Affected lines:"
+        printf '%s\n' "$CYR_LINES" | sed 's/^+/    +/'
+        CYRILLIC_FAIL=1
+      fi
     fi
   done
 fi
@@ -354,17 +368,24 @@ if command -v bats &>/dev/null && [ -f "Makefile" ]; then
     # header and plan first, so `head -5` showed "1..105" and nothing else —
     # a gate that announced a failure and then hid which one. Found when the
     # harness's own CI went red and the log carried no diagnosis (2026-08-22).
+    #
+    # No `head` and no early-exiting `awk` in these pipelines: either would
+    # leave the writer upstream holding a closed pipe, and `pipefail` turns
+    # that SIGPIPE into status 141, which aborts this script under `set -e` —
+    # the diagnosis added above then killed the gate before steps 7 and 8 and
+    # replaced exit 1 with exit 141. Both readers below consume the whole
+    # stream and limit what they print instead.
     FAILING=$(printf '%s\n' "$TEST_OUTPUT" | grep -E '^not ok' || true)
     if [ -n "$FAILING" ]; then
       FAIL_TOTAL=$(printf '%s\n' "$FAILING" | wc -l | tr -d ' ')
-      printf '%s\n' "$FAILING" | head -20 | sed 's/^/    /'
+      printf '%s\n' "$FAILING" | awk 'NR <= 20 { print "    " $0 }'
       [ "$FAIL_TOTAL" -gt 20 ] && echo "    … showing 20 of $FAIL_TOTAL failing tests"
       # Names alone say what broke, not why. bats writes its diagnosis as `#`
       # lines under each failure; print the first one's block so a red run is
       # actionable from the log instead of only reproducible on a machine.
-      FIRST_BLOCK=$(printf '%s\n' "$TEST_OUTPUT" \
-        | awk '/^not ok/ { if (seen) exit; seen = 1 } seen { print }' \
-        | head -30)
+      FIRST_BLOCK=$(printf '%s\n' "$TEST_OUTPUT" | awk '
+        /^not ok/ { if (started) finished = 1; else started = 1 }
+        started && !finished && n < 30 { print; n++ }')
       if [ -n "$FIRST_BLOCK" ]; then
         echo "    ── first failure in detail ──"
         printf '%s\n' "$FIRST_BLOCK" | sed 's/^/    /'

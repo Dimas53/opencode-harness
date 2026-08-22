@@ -4,6 +4,33 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-22
 
+### The Cyrillic gate could pass a commit that contained Cyrillic
+
+The scan ended in `grep -q`. That leaves at the first match, the greps upstream
+of it take SIGPIPE, and `set -o pipefail` turns the pipeline's status into 141 —
+so the `if` read false and the step reported "No Cyrillic in changed files" with
+Cyrillic sitting in the diff.
+
+It needs the diff to be large enough that the writer is still writing when `-q`
+leaves, which is why it surfaced in CI first: GNU grep leaves at once, so there
+it failed every time, while on macOS the one-line test fixture finished before
+the race could open. Reproduced on both platforms once looked for. Any
+sufficiently large commit would have carried Cyrillic straight through the gate
+on either.
+
+The scan now collects the added lines into a variable and tests that. Nothing
+exits early, so nothing can race. The regression test stages a 20,001-line file
+with one Cyrillic string in it — verified to fail against the old code and pass
+against the new.
+
+Same shape as `diff | head -40` (2026-08-21) and the `head -5` truncation fixed
+earlier today: a pipeline whose reader leaves before the writer is done. Worth
+looking for the rest of them.
+
+The diagnosis block added to step 6 earlier today had the same bug — `awk … |
+head -30` — and aborted the gate with status 141 before steps 7 and 8 ran. Both
+readers now consume the whole stream and limit what they print.
+
 ### The test suite could not fail on macOS, and three tests had not been failing
 
 bats runs each test body as a function under `set -e`. bash 3.2 — still what

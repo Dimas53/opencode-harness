@@ -41,6 +41,25 @@ QUIET_SKIP="docs-lag,progress,docs-matrix,tests,self-check"
   [[ "$output" == *"Cyrillic"* ]]
 }
 
+# The one-line case above cannot catch the failure this covers. The scan used
+# to end in `grep -q`, which leaves at the first match; the greps upstream then
+# took SIGPIPE, `set -o pipefail` turned the pipeline into status 141, and the
+# `if` read false — Cyrillic present, nothing reported. It only shows when the
+# diff is large enough that the writer is still writing when `-q` leaves, so a
+# short fixture passed on macOS for months while CI (GNU grep, which leaves at
+# once) failed. Keep this file big.
+@test "dod.sh cyrillic scan fails on a large staged file, not only a short one" {
+  python3 - > big.js <<'PY'
+print('const label = "Готово";')
+for i in range(20000):
+    print(f'const filler{i} = "line {i}";')
+PY
+  git add big.js
+  DOD_SKIP="$QUIET_SKIP" PRE_COMMIT=1 run bash "$HARNESS_ROOT/scripts/dod.sh"
+  [ "$status" -eq 1 ]
+  [[ "$output" == *"Cyrillic"* ]]
+}
+
 @test "dod.sh cyrillic scan passes on clean staged file" {
   printf 'const label = "Done";\n' > file.js
   git add file.js
