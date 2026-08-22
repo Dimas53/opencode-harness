@@ -13,9 +13,11 @@ which one. The first CI run of this repository went red with a log that carried
 no diagnosis at all, and the failure could not be identified from GitHub.
 
 It now prints the `not ok` lines, up to twenty, and says how many more there
-are. When the failure is not a TAP failure — the runner itself broke — it
-prints the tail of the output, where the error is, instead of the head, where
-the banner is.
+are, followed by the `#` diagnosis block of the first failure — names say what
+broke, not why, and a red CI run should be actionable from the log rather than
+only reproducible on someone's machine. When the failure is not a TAP failure —
+the runner itself broke — it prints the tail of the output, where the error is,
+instead of the head, where the banner is.
 
 Same defect class as the `diff | head -40` truncation fixed on 2026-08-21: a
 step that reports an outcome while withholding the evidence for it.

@@ -359,6 +359,16 @@ if command -v bats &>/dev/null && [ -f "Makefile" ]; then
       FAIL_TOTAL=$(printf '%s\n' "$FAILING" | wc -l | tr -d ' ')
       printf '%s\n' "$FAILING" | head -20 | sed 's/^/    /'
       [ "$FAIL_TOTAL" -gt 20 ] && echo "    … showing 20 of $FAIL_TOTAL failing tests"
+      # Names alone say what broke, not why. bats writes its diagnosis as `#`
+      # lines under each failure; print the first one's block so a red run is
+      # actionable from the log instead of only reproducible on a machine.
+      FIRST_BLOCK=$(printf '%s\n' "$TEST_OUTPUT" \
+        | awk '/^not ok/ { if (seen) exit; seen = 1 } seen { print }' \
+        | head -30)
+      if [ -n "$FIRST_BLOCK" ]; then
+        echo "    ── first failure in detail ──"
+        printf '%s\n' "$FIRST_BLOCK" | sed 's/^/    /'
+      fi
     else
       # Not a TAP failure — the runner itself broke. Show the end, where the
       # error is, rather than the beginning, where the banner is.
