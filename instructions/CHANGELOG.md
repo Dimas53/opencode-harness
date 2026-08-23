@@ -23,6 +23,22 @@ exits early, so nothing can race. The regression test stages a 20,001-line file
 with one Cyrillic string in it — verified to fail against the old code and pass
 against the new.
 
+**That was one of two causes.** With the race gone, CI still reported no
+Cyrillic: the pattern itself — a bracket expression holding a range of Cyrillic
+letters — is resolved by the locale's collation and by whichever grep reads it,
+and BSD grep on macOS and GNU grep on a runner do not have to agree. Measured
+here: the class matched under every locale on macOS and matched nothing in CI.
+So the class is gone too.
+Detection is now by UTF-8 lead byte (D0–D3, which begin the Cyrillic block and,
+in valid UTF-8, begin nothing else) under `LC_ALL=C`, so both greps compare
+bytes and reach the same answer. `LC_ALL=C` is not optional: in a UTF-8 locale
+BSD grep rejects the byte pattern outright with "illegal byte sequence".
+
+`make test-quick` now runs bats with `--print-output-on-failure`. Without it a
+red test shows the assertion that failed and never what the command under test
+printed — two CI round-trips went into guessing at output bats had captured and
+discarded.
+
 Same shape as `diff | head -40` (2026-08-21) and the `head -5` truncation fixed
 earlier today: a pipeline whose reader leaves before the writer is done. Worth
 looking for the rest of them.

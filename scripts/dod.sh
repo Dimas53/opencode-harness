@@ -118,7 +118,18 @@ if git rev-parse --is-inside-work-tree &>/dev/null; then
     # Reading the whole stream costs nothing here and cannot race.
     if [ -f "$file" ]; then
       ADDED=$($DIFF_SRC "$file" 2>/dev/null | grep '^+' | grep -v '^+++' | grep -v 'Chat language:' || true)
-      CYR_LINES=$(printf '%s\n' "$ADDED" | grep '[а-яА-ЯёЁ]' || true)
+      # Matched by UTF-8 lead byte under LC_ALL=C, not by the character class
+      # `[а-яА-ЯёЁ]`. A multibyte range inside a bracket expression is resolved
+      # by the locale's collation and by the grep implementation reading it —
+      # BSD grep on macOS and GNU grep on a runner do not have to agree, and
+      # did not: the class matched here and matched nothing in CI, so the gate
+      # passed Cyrillic through on Linux while catching it on this machine.
+      #
+      # Bytes D0–D3 begin every character in the Cyrillic block (U+0400–U+04FF)
+      # and, in valid UTF-8, begin nothing else — continuation bytes are 80–BF.
+      # LC_ALL=C makes both greps compare bytes, so the answer is the same
+      # everywhere. Binary files are already skipped above.
+      CYR_LINES=$(printf '%s\n' "$ADDED" | LC_ALL=C grep $'[\xd0\xd1\xd2\xd3]' || true)
       if [ -n "$CYR_LINES" ]; then
         check_fail "Cyrillic found in $file — use English"
         echo "   Affected lines:"

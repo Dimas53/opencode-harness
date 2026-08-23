@@ -176,7 +176,11 @@ test-quick:
 	@# Glob, not a hand-written list: tests/dod.bats and tests/unadopt.bats
 	@# existed for weeks without ever being run because nobody added them
 	@# here (T-I5). A new tests/*.bats file is now picked up automatically.
-	@bats tests/*.bats
+	@# --print-output-on-failure: without it a red test shows only the assertion
+	@# that failed, never what the command under test actually printed. Two
+	@# round-trips through CI were spent on 2026-08-22 guessing at output that
+	@# bats had captured and thrown away.
+	@bats --print-output-on-failure tests/*.bats
 
 test: test-quick
 
