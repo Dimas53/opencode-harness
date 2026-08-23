@@ -4,6 +4,46 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-23
 
+### The Cyrillic scan could not fail in the post-commit guard or in CI
+
+Step 2 built its file list from `git diff --name-only HEAD` in manual mode —
+the working tree against the commit. Once a commit lands the tree is clean, so
+the list came back empty, the loop never ran, and the step reported "No
+Cyrillic in changed files" over a commit that was nothing but Cyrillic. Steps
+5 and 8 diff against `HEAD~1` and saw the commit correctly; step 2 was the
+only one looking at the wrong range, and step 7 reuses its file list, so the
+syntax check went blind in the same way and fell through to "advisory".
+
+Manual mode is not a corner case. It is what the post-commit guard runs — with
+`PRE_COMMIT=0` set deliberately, to judge a commit that already exists — and
+what every CI run uses on a fresh checkout, both this repo's own workflow and
+the template shipped into adopted projects. A never-skippable rule, placed
+outside the agent's reach on purpose, could not be enforced from outside at
+all. The local pre-commit hook caught it and still does; only the layer an
+agent can bypass was working.
+
+Manual mode now bases the diff on `HEAD~1`. The range ends at the working
+tree, so one comparison covers both the commit that landed and anything still
+uncommitted — strictly more than before, never less. On a root commit
+`HEAD~1` does not resolve; that falls back to the old range rather than to the
+empty tree, which would sweep the whole repository and could make an adopted
+project's first CI run unpassable over Cyrillic the harness never wrote.
+Narrow gap, recorded and pinned by a test.
+
+Found by a live red run against a real repository, not by reading the code.
+The guard did roll the commit back — on the docs matrix. The rule the run was
+built to test passed it.
+
+The tests for it then found the same shape one level up. `dod.sh` step 6 runs
+`make test-quick`, so a gate invoked from a pre-commit hook exports
+`PRE_COMMIT=1` straight into `tests/dod.bats` — and every test written to
+exercise manual mode silently became a second pre-commit test. The new T-J25
+tests were green under `bats tests/` and red the moment the gate ran them,
+which is how it surfaced; the pre-existing mode-agreement test had been
+degraded the same way for as long as it existed, with both halves running one
+mode and agreeing about nothing. `setup()` now exports `PRE_COMMIT=0` as the
+floor, and tests that want the other mode set it on the line itself.
+
 ### Lock files no longer count as code that owes a docs update
 
 In a client project the docs matrix inverts its test — anything that is not a

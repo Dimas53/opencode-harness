@@ -97,8 +97,33 @@ if git rev-parse --is-inside-work-tree &>/dev/null; then
     FILES=$(git diff --cached --name-only --diff-filter=ACMR 2>/dev/null || true)
     DIFF_SRC="git diff --cached"
   else
-    FILES=$(git diff --name-only HEAD 2>/dev/null || true)
-    DIFF_SRC="git diff HEAD --"
+    # T-J25: this used to be `git diff HEAD` — the working tree against the
+    # commit. Right after a commit lands the tree is clean, so the list came
+    # back empty, the loop below never ran once, and the step reported
+    # "No Cyrillic in changed files" over a commit that was nothing but
+    # Cyrillic. Manual mode is what the post-commit guard runs (PRE_COMMIT=0,
+    # explicitly) and what every CI run uses on a fresh checkout, so the one
+    # never-skippable rule that exists to be enforced from outside the agent's
+    # reach could not fail in either place. Steps 5 and 8 already diff against
+    # HEAD~1; step 2 was the odd one out, and step 7 reuses FILES from here,
+    # so it went blind alongside.
+    #
+    # HEAD~1 rather than HEAD~1..HEAD: the range ends at the working tree, so
+    # one diff covers both the commit that landed and anything still
+    # uncommitted. Strictly more than the old range, never less.
+    #
+    # On a root commit HEAD~1 does not resolve. Falling back to HEAD keeps
+    # today's behaviour rather than reaching for the empty tree, which would
+    # scan every file in the repository and can make an adopted project's
+    # first CI run unpassable over Cyrillic the harness never wrote (T-J20 is
+    # the same lesson). Narrow gap, recorded, not papered over.
+    if git rev-parse --verify --quiet HEAD~1 >/dev/null 2>&1; then
+      CYR_BASE="HEAD~1"
+    else
+      CYR_BASE="HEAD"
+    fi
+    FILES=$(git diff --name-only --diff-filter=ACMR "$CYR_BASE" 2>/dev/null || true)
+    DIFF_SRC="git diff $CYR_BASE --"
   fi
 
   for file in $FILES; do

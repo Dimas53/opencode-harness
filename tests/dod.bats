@@ -13,6 +13,18 @@
 setup() {
   HARNESS_ROOT="$(cd "$(dirname "$BATS_TEST_FILENAME")/.." && pwd)"
   export HARNESS_ROOT
+
+  # Pin the mode. dod.sh step 6 runs `make test-quick`, which runs this file,
+  # so anything invoked from a pre-commit hook exports PRE_COMMIT=1 straight
+  # into these tests — and every test meaning to exercise manual mode quietly
+  # became a second pre-commit test. The mode-agreement tests were the worst
+  # affected: both halves ran the same mode and agreed trivially.
+  #
+  # It is the exact hazard the post-commit hook's own comment warns about, and
+  # it hid T-J25's tests for the length of one commit: green under `bats
+  # tests/`, red the moment the gate ran them. Tests wanting pre-commit set
+  # PRE_COMMIT=1 on the line itself; this is the floor under everything else.
+  export PRE_COMMIT=0
   SCRATCH="$(mktemp -d)"
   export SCRATCH
   cd "$SCRATCH" || return 1
@@ -65,6 +77,107 @@ PY
   git add file.js
   DOD_SKIP="$QUIET_SKIP" PRE_COMMIT=1 run bash "$HARNESS_ROOT/scripts/dod.sh"
   [ "$status" -eq 0 ]
+}
+
+# ── Step 2 in manual mode — the mode the guard and CI actually run (T-J25) ─
+#
+# The scan took its file list from `git diff HEAD`: the working tree against
+# the commit. A commit lands, the tree goes clean, the list comes back empty,
+# the loop never runs, and the step reports "No Cyrillic in changed files"
+# over a commit that is nothing but Cyrillic. Manual mode is what the
+# post-commit guard runs (PRE_COMMIT=0, deliberately) and what every CI run
+# uses on a fresh checkout — so the one never-skippable rule meant to be
+# enforced beyond the agent's reach could not fail in either place.
+#
+# Found by a live L10 red run: the fixture's guard did roll the commit back,
+# but on the docs matrix. Step 2 passed it.
+
+# docs/ is touched in these fixtures so the docs matrix cannot mask the result
+# — the point is which step fails, not merely that something did.
+landed_cyrillic_commit() {
+  mkdir -p docs
+  printf 'seed\n' > docs/README.md
+  git add docs/README.md
+  git commit -q -m "init"
+  printf 'const msg = "привет"\n' > tmp-red.js
+  printf '# doc\n' > docs/red.md
+  git add tmp-red.js docs/red.md
+  git commit -q -m "red" --no-verify
+}
+
+@test "dod.sh manual mode fails on a landed commit containing Cyrillic" {
+  landed_cyrillic_commit
+  DOD_SKIP="docs-lag,progress,docs-matrix,tests,self-check" run bash "$HARNESS_ROOT/scripts/dod.sh"
+  [ "$status" -eq 1 ]
+  [[ "$output" == *"Cyrillic found in tmp-red.js"* ]]
+  [[ "$output" != *"No Cyrillic in changed files"* ]]
+}
+
+@test "dod.sh pre-commit and manual modes agree about the same Cyrillic commit" {
+  landed_cyrillic_commit
+  DOD_SKIP="docs-lag,progress,docs-matrix,tests,self-check" run bash "$HARNESS_ROOT/scripts/dod.sh"
+  local manual_status="$status"
+
+  git reset -q --soft HEAD~1
+  DOD_SKIP="docs-lag,progress,docs-matrix,tests,self-check" PRE_COMMIT=1 run bash "$HARNESS_ROOT/scripts/dod.sh"
+  [ "$status" -eq "$manual_status" ]
+  [ "$status" -eq 1 ]
+}
+
+# Widening the range must not cost the case it already handled.
+@test "dod.sh manual mode still fails on uncommitted Cyrillic" {
+  mkdir -p docs
+  printf 'seed\n' > docs/README.md
+  git add docs/README.md
+  git commit -q -m "init"
+  printf 'const msg = "привет"\n' > tmp-red.js
+  git add tmp-red.js
+  DOD_SKIP="docs-lag,progress,docs-matrix,tests,self-check" run bash "$HARNESS_ROOT/scripts/dod.sh"
+  [ "$status" -eq 1 ]
+  [[ "$output" == *"Cyrillic found in tmp-red.js"* ]]
+}
+
+@test "dod.sh manual mode passes a landed commit with no Cyrillic" {
+  mkdir -p docs
+  printf 'seed\n' > docs/README.md
+  git add docs/README.md
+  git commit -q -m "init"
+  printf 'const msg = "hello"\n' > tmp-green.js
+  git add tmp-green.js
+  git commit -q -m "green" --no-verify
+  DOD_SKIP="docs-lag,progress,docs-matrix,tests,self-check" run bash "$HARNESS_ROOT/scripts/dod.sh"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"No Cyrillic in changed files"* ]]
+}
+
+# Step 7 reuses FILES from step 2, so it went blind in the same way: after a
+# commit landed it had nothing to syntax-check and fell through to "advisory".
+@test "dod.sh step 7 syntax-checks a shell file from a landed commit, not just staged" {
+  mkdir -p docs
+  printf 'seed\n' > docs/README.md
+  git add docs/README.md
+  git commit -q -m "init"
+  printf '#!/bin/bash\nif [ 1 -eq 1 ]\n' > broken.sh   # missing fi
+  git add broken.sh
+  git commit -q -m "broken" --no-verify
+  DOD_SKIP="docs-lag,progress,docs-matrix,tests" run bash "$HARNESS_ROOT/scripts/dod.sh"
+  [ "$status" -eq 1 ]
+  [[ "$output" == *"Self-check (syntax)"* ]]
+  [[ "$output" != *"Self-check is advisory"* ]]
+}
+
+# The root commit has no HEAD~1. Documented gap: the scan falls back to the
+# old range there rather than diffing the empty tree, which would sweep the
+# whole repository and can make an adopted project's first CI run unpassable
+# over Cyrillic the harness never wrote. Pinned so the fallback stays a
+# deliberate choice and not a crash.
+@test "dod.sh manual mode reaches a verdict on a repo with only one commit" {
+  printf 'const msg = "hello"\n' > only.js
+  git add only.js
+  git commit -q -m "root" --no-verify
+  DOD_SKIP="docs-lag,progress,docs-matrix,tests,self-check" run bash "$HARNESS_ROOT/scripts/dod.sh"
+  [[ "$output" == *"Results:"* ]]
+  [[ "$output" != *"ABORTED"* ]]
 }
 
 # ── Step 8: .agentignore file-level check ──────────────────────────────────

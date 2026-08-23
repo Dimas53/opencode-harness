@@ -100,8 +100,17 @@ Two tickets from the 2026-08-22 handover, in the order the handover set.
   neither owes a docs update nor satisfies one. Announced in the output, not
   silently skipped.
 
+- **T-J25** — found by the user's live L10 red run, not by reading code. A
+  commit consisting of one Cyrillic line was rolled back by the post-commit
+  guard on the *docs matrix*; step 2 reported "No Cyrillic in changed files".
+  Manual mode took its file list from `git diff HEAD`, which is empty once a
+  commit lands. Manual mode is what the guard runs and what every CI run
+  uses — so the never-skippable rule placed outside the agent's reach could
+  not be enforced from outside at all, in this repo or in any adopted one.
+  Base is now `HEAD~1`. Step 7 shared the file list and the blindness.
+
 ### Tests
-105 → 115. Every new failure test was confirmed red against the unfixed
+105 → 121. Every new failure test was confirmed red against the unfixed
 script before being counted — the week's standing lesson is that a test which
 cannot fail is not a test. Two of the T-J24 tests are green in both
 directions on purpose: they guard against over-exempting (real code beside a
@@ -112,10 +121,13 @@ lock file, and `package.json` alone, must both still fail).
 gate walks all 8 steps, prints `0 note(s)`, reaches `Results:`. Fixture
 restored.
 
-### Open from the same handover
-L10's red run (user, by hand — `--no-verify` is the thing under test), L2,
-and `T-J23`: the sweep for pipelines where the reader leaves before the
-writer. Three instances found one at a time; nobody has looked for the fourth.
+### Open
+L10's red run — still open, and now needs a different procedure: the guard
+rolls the commit back locally before it can reach CI, so the run has to
+simulate the case the CI gate exists for (hooks absent) by moving
+`.git/hooks/post-commit` aside. Also L2, and `T-J23` — whose sweep should
+widen: T-J25 was not a pipeline race but a range that differs by mode, the
+same family as `T-I27`. Look for both shapes.
 
 ## Session 2026-08-07 (report audit + 3 closed gaps)
 
