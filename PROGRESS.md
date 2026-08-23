@@ -121,13 +121,22 @@ lock file, and `package.json` alone, must both still fail).
 gate walks all 8 steps, prints `0 note(s)`, reaches `Results:`. Fixture
 restored.
 
+### L10 closed
+Red run done on `harness-ci-live`: `DoD Gate #3` on `022598a` red, step 2
+naming `src/tmp-red.js` and the offending line, step 5 alongside it. Both
+guards, where the first attempt had only step 5. `ci #3` green — T-J24 live.
+10–11s per job including the harness checkout. T-I14 item 2 closed; detail in
+`16-live-validation-scenarios.md` § L10.
+
+The run departed from its script: the post-commit guard rolled the commit back
+twice, so `.git/hooks/post-commit` was moved aside — an honest stand-in for
+the case the CI gate exists for, a machine with no hooks. Restored after.
+
 ### Open
-L10's red run — still open, and now needs a different procedure: the guard
-rolls the commit back locally before it can reach CI, so the run has to
-simulate the case the CI gate exists for (hooks absent) by moving
-`.git/hooks/post-commit` aside. Also L2, and `T-J23` — whose sweep should
-widen: T-J25 was not a pipeline race but a range that differs by mode, the
-same family as `T-I27`. Look for both shapes.
+L2 — needs a real 40–60 minute session in itocook, does not run standalone.
+`T-J23` — and its sweep should widen: T-J25 was not a pipeline race but a
+range that differs by mode, the same family as `T-I27`. Look for both shapes.
+Remaining tickets are in the plan-2 ticket registry, by priority.
 
 ## Session 2026-08-07 (report audit + 3 closed gaps)
 

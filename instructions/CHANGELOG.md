@@ -4,6 +4,64 @@ All notable changes to opencode-harness are documented here.
 
 ## 2026-08-23
 
+### The CI gate was run for real, green and red — T-I14 item 2 closed
+
+`Dimas53/harness-ci-live`, a private scratch repository carrying
+`templates/ci/github-actions-dod.yml` as `.github/workflows/dod.yml`. Run URLs
+are not recorded because `gh` is not installed on this machine; runs are
+identified by number and commit in the repository's Actions tab.
+
+| Run | Commit | Verdict | Duration |
+|---|---|---|---|
+| `DoD Gate #2` | `04da384` | green | 11s |
+| `DoD Gate #3` | `022598a` | **red** | 10s |
+| `ci #3` | `022598a` | green | 15s |
+
+What the red run caught:
+
+```
+[ 2/8 ] Cyrillic scan (project files)
+✗ Cyrillic found in src/tmp-red.js — use English
+   Affected lines:
+    +const msg = "<Cyrillic literal, elided — this file is scanned too>"
+...
+[ 5/8 ] Docs matrix check
+✗ Code changed but no docs update found
+   Changed: src/tmp-red.js
+...
+Results: 4 passed, 2 failed, 3 warnings
+✗ DoD failed — fix the issues above before committing.
+Error: Process completed with exit code 1.
+```
+
+Two steps, not one. That distinction is the finding: on the first attempt only
+step 5 fired and step 2 reported the file clean, which is how T-J25 was found.
+The run above is the first evidence that the Cyrillic rule can fail in a real
+runner at all — before the fix it could not, in this repository's CI or in any
+adopted project's.
+
+Cost: 10–11 seconds per job, including checking the whole harness repository
+out into the runner. Cheap enough to need no decision.
+
+The scenario had to depart from its script. The red commit was meant to slip
+past the local `pre-commit` hook; in practice the post-commit guard rolled it
+back twice, so `.git/hooks/post-commit` was moved aside for the run — an
+honest stand-in for the case the CI gate exists to cover, a machine with no
+hooks installed. Restored afterwards.
+
+`ci #3` going green is T-J24 confirmed live: `npm ci` works now that the lock
+file could be committed.
+
+The one line elided above is elided because the gate caught this entry: the
+verbatim log contains Cyrillic, and `instructions/` is scanned. The unedited
+output is kept in `notes/Harness/implementation-plan-2/`, § L10 of the live
+validation scenarios, where `notes/` is exempt by design. Worth noting as its
+own small piece of evidence — the fix landed one commit ago and immediately
+failed the commit that documented it.
+
+Propagation: none. This is a record of a live run, not a change to delivered
+files.
+
 ### The Cyrillic scan could not fail in the post-commit guard or in CI
 
 Step 2 built its file list from `git diff --name-only HEAD` in manual mode —
