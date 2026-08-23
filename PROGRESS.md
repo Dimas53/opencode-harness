@@ -132,11 +132,36 @@ The run departed from its script: the post-commit guard rolled the commit back
 twice, so `.git/hooks/post-commit` was moved aside — an honest stand-in for
 the case the CI gate exists for, a machine with no hooks. Restored after.
 
+### Plan-2 notes reorganised — one file now holds everything open
+`notes/Harness/implementation-plan-2/` had grown to 26 files with the live
+state smeared across four of them. All 26 moved into an archive subfolder
+(each of the eight most-opened ones now carries a banner saying it is no
+longer the task list), and a single file at the folder's top level now holds
+every open item, transcribed in full rather than referenced: seven agent-side
+defects, four live-session scenarios, four decisions that are the user's
+alone, the deferred `T-J1` family, and the exit criteria for reaching v0.4
+Sandbox. That file is the only thing to read there. It is untracked like the
+rest of `notes/`, and its name is Cyrillic, so it is not linkable from here.
+
+The sweep found a fourth instance of `T-J23` and reproduced it 5 runs out of
+5: `init-adopt.sh:75` uses `find … | grep -q .`, `grep -q` leaves on the first
+hit, `find` takes SIGPIPE, `pipefail` yields 141 and the leading `!` turns that
+into "No package.json found" — after which the script deletes
+`docs/design.md`. It fires on a monorepo with no root `package.json` but a
+nested one, which is an ordinary shape. `session-end.sh:217` is the same code
+with the sense inverted. Recorded, not fixed: `T-J23` asks for a full sweep
+plus a mechanical check, and patching two sites piecemeal is the
+fix-the-instance-not-the-class habit this project keeps paying for.
+
+Also filed as `T-J26`: the post-commit rollback is easy to miss, because git
+prints its own `[main <sha>]` success line *after* the hook's warning. It had
+sat as an unfiled note since 2026-08-13 and cost time twice — once then, once
+during today's L10 run.
+
 ### Open
-L2 — needs a real 40–60 minute session in itocook, does not run standalone.
-`T-J23` — and its sweep should widen: T-J25 was not a pipeline race but a
-range that differs by mode, the same family as `T-I27`. Look for both shapes.
-Remaining tickets are in the plan-2 ticket registry, by priority.
+L2 — needs a real 40–60 minute session in itocook, does not run standalone,
+and itocook is on hold until its migrations are settled. Everything else, in
+execution order, is in the plan-2 notes file described above.
 
 ## Session 2026-08-07 (report audit + 3 closed gaps)
 
