@@ -2,6 +2,57 @@
 
 All notable changes to opencode-harness are documented here.
 
+## 2026-08-23
+
+### Lock files no longer count as code that owes a docs update
+
+In a client project the docs matrix inverts its test — anything that is not a
+`.md` or under `docs/` is code — so committing `package-lock.json` failed with
+"Code changed but no docs update found". A lock file is a machine-written
+snapshot of a dependency tree; there is nothing in it to document, and the
+demand left exactly two ways out: an empty line in `docs/`, or `--no-verify`.
+
+Generated artefacts are now dropped before the code/docs classification, keyed
+on basename so monorepo paths match too: the npm/yarn/pnpm/bun lock files,
+`composer.lock`, `Cargo.lock`, `poetry.lock`, `uv.lock`, `Gemfile.lock`,
+`go.sum`, `Podfile.lock`, `Package.resolved`, `flake.lock`. Dropped, not
+counted as documentation — a lock file neither owes a docs update nor
+satisfies one. `package.json`, `Cargo.toml` and friends stay under the check,
+which is where the decision worth documenting is actually made.
+
+The step says so out loud rather than quietly ignoring a file: a lock-file-only
+commit passes as "Only generated files changed", and a mixed commit lists what
+was not counted.
+
+This is what kept the `ci` job red in the `harness-ci-live` fixture — `npm ci`
+needs the lock file, and the lock file could not be committed.
+
+### The gate blocked the first commit of every freshly adopted project
+
+`dod.sh` counted memory notes with `ls -1 memory/*.md | wc -l`. On a fresh
+adopt `memory/` holds nothing but `.gitkeep`, so the glob matched nothing, `ls`
+exited 1, `pipefail` carried that out of the pipeline and `set -e` killed the
+script on the assignment itself. The surrounding guard (`memory/` exists and is
+non-empty, `MEMORY.md` has no index) was true — `.gitkeep` counts as content —
+so the branch was entered every time. That is exactly the state `init-adopt.sh`
+leaves behind: every adopted project's first commit was blocked.
+
+Counting now uses `find`, which reports an empty set as success.
+
+The worse half was that it happened silently. The script died before printing
+`Results:`, so the hook returned 1 with no failing check named, and working out
+that the blocker was a crash rather than a verdict took several traced runs. A
+crash and a FAIL both exit 1, so the exit code cannot distinguish them — an
+`ERR` trap now can. Any death before the summary prints `DoD ABORTED at
+dod.sh:<line>`, says the gate crashed rather than failed a check, and says not
+to reach for `--no-verify`.
+
+Tests: no fixture had ever run the gate on an empty `memory/`. Added a fresh
+`init-adopt` fixture, its non-empty counterpart, a crash-injection test that
+checks the trap fires and names a line, and a test that an ordinary failed
+check is *not* reported as a crash. Both new failure tests were confirmed red
+against the unfixed script.
+
 ## 2026-08-22
 
 ### The Cyrillic gate could pass a commit that contained Cyrillic

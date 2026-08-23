@@ -79,6 +79,44 @@ below and `06-open-decisions.md`.
 Last commit: (this session, see below)
 Chat language: ru
 
+## Session 2026-08-23 (T-J20, T-J24 — both gate defects, both silent)
+
+Chat language: ru
+
+Two tickets from the 2026-08-22 handover, in the order the handover set.
+
+### Done
+- **T-J20** — `dod.sh` counted memory notes with `ls -1 memory/*.md`. On a
+  fresh adopt `memory/` holds only `.gitkeep`, so the glob matched nothing,
+  `ls` exited 1, `pipefail` carried it out and `set -e` killed the gate on the
+  assignment. Every adopted project's first commit was blocked. Now `find`,
+  which reports an empty set as success. Second half of the fix is the one
+  that generalises: an `ERR` trap, because a crash and a FAIL both exit 1 and
+  nothing downstream could tell them apart — any death before `Results:` now
+  prints `DoD ABORTED at dod.sh:<line>`.
+- **T-J24** — the docs matrix treated `package-lock.json` as code owing a docs
+  update. `is_generated_file()` drops lock files before classification, keyed
+  on basename for monorepos. Dropped rather than counted as docs: a lock file
+  neither owes a docs update nor satisfies one. Announced in the output, not
+  silently skipped.
+
+### Tests
+105 → 115. Every new failure test was confirmed red against the unfixed
+script before being counted — the week's standing lesson is that a test which
+cannot fail is not a test. Two of the T-J24 tests are green in both
+directions on purpose: they guard against over-exempting (real code beside a
+lock file, and `package.json` alone, must both still fail).
+
+### Verified live
+`harness-test/adopt-live-0822` with `memory/2026-08-22.md` moved aside — the
+gate walks all 8 steps, prints `0 note(s)`, reaches `Results:`. Fixture
+restored.
+
+### Open from the same handover
+L10's red run (user, by hand — `--no-verify` is the thing under test), L2,
+and `T-J23`: the sweep for pipelines where the reader leaves before the
+writer. Three instances found one at a time; nobody has looked for the fourth.
+
 ## Session 2026-08-07 (report audit + 3 closed gaps)
 
 Chat language: ru

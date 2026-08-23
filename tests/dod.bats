@@ -311,6 +311,152 @@ lag_setup() {
   grep -q "CUSTOM LOCAL EDIT" "$SCRATCH/AGENTS.md.bak"
 }
 
+# ── Step 5: lock files are not code that owes documentation (T-J24) ───────
+#
+# In a client project is_doc_file() inverts the test — anything that is not a
+# .md or under docs/ is code — so `package-lock.json` demanded a docs update.
+# That leaves an empty line in docs/ or --no-verify, and the gate should hand
+# out neither. It kept `ci` red in harness-ci-live: npm ci needs the lock file,
+# the lock file could not be committed.
+
+@test "dod.sh docs-matrix passes a lock-file-only commit in a client project" {
+  mkdir -p app
+  printf '<template>x</template>\n' > app/placeholder.vue
+  git add app
+  git commit -q -m "init"
+  printf '{"lockfileVersion":3}\n' > package-lock.json
+  git add package-lock.json
+  DOD_SKIP="docs-lag,progress,tests,self-check" PRE_COMMIT=1 run bash "$HARNESS_ROOT/scripts/dod.sh"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"Only generated files changed"* ]]
+  [[ "$output" != *"Code changed but no docs update found"* ]]
+}
+
+@test "dod.sh docs-matrix ignores a lock file nested in a monorepo subdir" {
+  mkdir -p frontend
+  printf 'x\n' > frontend/keep.txt
+  git add frontend
+  git commit -q -m "init"
+  printf 'lockfileVersion: 6\n' > frontend/pnpm-lock.yaml
+  git add frontend/pnpm-lock.yaml
+  DOD_SKIP="docs-lag,progress,tests,self-check" PRE_COMMIT=1 run bash "$HARNESS_ROOT/scripts/dod.sh"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"Only generated files changed"* ]]
+}
+
+# The exemption must not launder the code sitting next to the lock file.
+@test "dod.sh docs-matrix still fails when real code rides along with a lock file" {
+  mkdir -p app
+  printf '<template>x</template>\n' > app/placeholder.vue
+  git add app
+  git commit -q -m "init"
+  printf '<template>changed</template>\n' > app/placeholder.vue
+  printf '{"lockfileVersion":3}\n' > package-lock.json
+  git add app/placeholder.vue package-lock.json
+  DOD_SKIP="docs-lag,progress,tests,self-check" PRE_COMMIT=1 run bash "$HARNESS_ROOT/scripts/dod.sh"
+  [ "$status" -eq 1 ]
+  [[ "$output" == *"Code changed but no docs update found"* ]]
+}
+
+# package.json is where a dependency decision worth documenting is made.
+@test "dod.sh docs-matrix still fails on package.json alone" {
+  mkdir -p app
+  printf 'x\n' > app/keep.txt
+  git add app
+  git commit -q -m "init"
+  printf '{"dependencies":{"left-pad":"^1.0.0"}}\n' > package.json
+  git add package.json
+  DOD_SKIP="docs-lag,progress,tests,self-check" PRE_COMMIT=1 run bash "$HARNESS_ROOT/scripts/dod.sh"
+  [ "$status" -eq 1 ]
+  [[ "$output" == *"Code changed but no docs update found"* ]]
+}
+
+@test "dod.sh docs-matrix says out loud when it ignored a generated file" {
+  mkdir -p app docs
+  printf '<template>x</template>\n' > app/placeholder.vue
+  git add app
+  git commit -q -m "init"
+  printf '<template>changed</template>\n' > app/placeholder.vue
+  printf '# Feature\n' > docs/feature.md
+  printf '{"lockfileVersion":3}\n' > package-lock.json
+  git add app/placeholder.vue docs/feature.md package-lock.json
+  DOD_SKIP="docs-lag,progress,tests,self-check" PRE_COMMIT=1 run bash "$HARNESS_ROOT/scripts/dod.sh"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"generated files not counted as code: package-lock.json"* ]]
+}
+
+# ── A freshly adopted project must survive its own first commit (T-J20) ───
+#
+# init-adopt leaves memory/ holding nothing but .gitkeep and a MEMORY.md with
+# no index — so the memory-index warning's guard was true, `memory/*.md`
+# matched nothing, `ls` exited 1, pipefail carried it out and set -e killed
+# the gate on the assignment. Every adopted project's first commit was blocked,
+# and the output named no failing check because the script died before the
+# summary. No fixture had ever run the gate on an empty memory/.
+#
+# Assert on reaching the summary, not on the exit code: a fresh adopt may
+# legitimately fail a check. Crash and verdict both exit 1 — "Results:" is
+# what tells them apart.
+
+@test "dod.sh survives a freshly adopted project (empty memory/, unindexed MEMORY.md)" {
+  bash "$HARNESS_ROOT/scripts/init-adopt.sh" "$SCRATCH" --no-open >/dev/null 2>&1
+  [ -f "$SCRATCH/memory/.gitkeep" ]
+  [ ! -e "$SCRATCH/memory/2000-01-01.md" ]        # the glob really matches nothing
+  run grep -q "MEMORY-INDEX START" "$SCRATCH/MEMORY.md"
+  [ "$status" -ne 0 ]                              # and the warning branch is really entered
+
+  printf 'ok\n' > normal.txt
+  git add normal.txt
+  DOD_SKIP="docs-lag,progress,docs-matrix,tests,self-check" PRE_COMMIT=1 \
+    run bash "$HARNESS_ROOT/scripts/dod.sh"
+  [[ "$output" == *"Results:"* ]]
+  [[ "$output" != *"ABORTED"* ]]
+  [[ "$output" == *"MEMORY.md has no index — 0 note(s)"* ]]
+}
+
+@test "dod.sh counts real notes in memory/ once they exist" {
+  bash "$HARNESS_ROOT/scripts/init-adopt.sh" "$SCRATCH" --no-open >/dev/null 2>&1
+  printf '# note\n' > memory/2026-08-23.md
+  printf '# note\n' > memory/topic.md
+  printf 'ok\n' > normal.txt
+  git add normal.txt
+  DOD_SKIP="docs-lag,progress,docs-matrix,tests,self-check" PRE_COMMIT=1 \
+    run bash "$HARNESS_ROOT/scripts/dod.sh"
+  [[ "$output" == *"MEMORY.md has no index — 2 note(s)"* ]]
+}
+
+# The fix above closes one crash; the trap catches the next one. T-J20 cost
+# several traced runs to diagnose precisely because a crash and a FAIL are
+# indistinguishable from outside — same exit 1, and the crash prints less.
+# Inject a crash into a copy of the real script and check the gate says so.
+@test "dod.sh reports a crash as a crash, naming the line, not as a silent exit 1" {
+  cp "$HARNESS_ROOT/scripts/dod.sh" ./dod-crash.sh
+  # Fail on a plain assignment mid-run — the exact shape of T-J20.
+  awk '/^echo "=== DoD Check ==="$/ && !done { print "BOOM=$(ls /nonexistent-abcxyz | wc -l)"; done=1 } { print }' \
+    ./dod-crash.sh > ./dod-crash.tmp && mv ./dod-crash.tmp ./dod-crash.sh
+  grep -q '^BOOM=' ./dod-crash.sh                  # the injection landed
+
+  printf 'ok\n' > normal.txt
+  git add normal.txt
+  DOD_SKIP="docs-lag,progress,docs-matrix,tests,self-check" PRE_COMMIT=1 \
+    run bash ./dod-crash.sh
+  [ "$status" -ne 0 ]
+  # A real line number and a real exit code, not the "?" fallback or an
+  # empty $? — the whole point is that the next reader gets a place to look.
+  [[ "$output" =~ DoD\ ABORTED\ at\ dod\.sh:[0-9]+\ \(exit\ [1-9][0-9]*\) ]]
+  [[ "$output" == *"the gate crashed"* ]]
+  [[ "$output" != *"Results:"* ]]
+}
+
+@test "dod.sh does not report a crash on an ordinary failed check" {
+  printf 'const label = "Готово";\n' > file.js
+  git add file.js
+  DOD_SKIP="$QUIET_SKIP" PRE_COMMIT=1 run bash "$HARNESS_ROOT/scripts/dod.sh"
+  [ "$status" -eq 1 ]
+  [[ "$output" == *"Results:"* ]]
+  [[ "$output" != *"ABORTED"* ]]
+}
+
 # ── Step 7: syntax check on paths with spaces (T-I19) ─────────────────────
 # `bash -n $SH_STAGED` word-split on spaces, so a client project with an
 # ordinary path like "src/My Component/build.sh" got a missing-file error

@@ -30,6 +30,27 @@ check_pass() { echo "✓ $1"; PASS=$((PASS + 1)); }
 check_fail() { echo "✗ $1"; FAIL=$((FAIL + 1)); }
 check_warn() { echo "⚠ $1"; WARN=$((WARN + 1)); }
 
+# The gate must never die without saying so.
+#
+# T-J20: one assignment under `set -e` killed dod.sh mid-step, before it
+# reached `Results:`. The hook saw exit 1, the commit was blocked, and the
+# output named no failing check — because there wasn't one. Working out that
+# the blocker was a crash and not a verdict took several traced runs.
+#
+# A crash and a FAIL both exit 1, so the exit code cannot tell them apart.
+# This trap can: it fires only on the path that never reaches the summary,
+# and it names the line, so the next bug of this shape is a two-second read.
+DOD_COMPLETED=0
+dod_died() {
+  local code=$? line="${1:-?}"
+  [ "$DOD_COMPLETED" = "1" ] && return 0
+  echo ""
+  echo "✗ DoD ABORTED at dod.sh:$line (exit $code) — the gate crashed, it did not"
+  echo "  fail a check. This is a bug in the gate itself: report it. Do not"
+  echo "  reach for --no-verify, and do not treat the commit as reviewed."
+}
+trap 'dod_died "$LINENO"' ERR
+
 # Steps 6/7 below check for a local Makefile/bats and scripts/*.sh — real
 # only in the harness repo itself. Client projects never get their own copy
 # of these (see init-project.sh/init-adopt.sh), so absence there is the
@@ -283,6 +304,26 @@ is_doc_file() {
   esac
 }
 
+# T-J24: a lock file is a machine-written snapshot of a dependency tree —
+# there is nothing in it to document. Demanding a docs update alongside one
+# leaves exactly two ways out, an empty line in docs/ or --no-verify, and a
+# gate should not be handing out either.
+#
+# Filtered out rather than counted as documentation: a lock file neither owes
+# a docs update nor satisfies one. The human-authored half of a dependency
+# bump — package.json, Cargo.toml, pyproject.toml — stays under the check,
+# which is where the decision worth documenting actually lives.
+#
+# Matched on the basename: monorepos keep these under app/, frontend/, etc.
+is_generated_file() {
+  case "${1##*/}" in
+    package-lock.json|npm-shrinkwrap.json|yarn.lock|pnpm-lock.yaml|bun.lockb) return 0 ;;
+    composer.lock|Cargo.lock|poetry.lock|uv.lock|Gemfile.lock|go.sum) return 0 ;;
+    Podfile.lock|Package.resolved|flake.lock) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
 if ! git rev-parse --is-inside-work-tree &>/dev/null; then
   check_warn "Not inside a git repo — skipping"
 else
@@ -304,6 +345,23 @@ else
     CODE_CHANGED=0
     DOCS_CHANGED=0
     FILTERED=$(echo "$CHANGED" | grep -v "^PROGRESS.md$" | grep -v "^notes/" || true)
+
+    # Drop generated artefacts before classifying (T-J24). Announced, not
+    # silent: a step that quietly stops looking at a file is how a gate ends
+    # up reporting something other than what it did.
+    GENERATED=""
+    KEPT=""
+    while IFS= read -r gf; do
+      [ -z "$gf" ] && continue
+      if is_generated_file "$gf"; then
+        GENERATED="$GENERATED $gf"
+      else
+        KEPT="$KEPT$gf
+"
+      fi
+    done <<< "$FILTERED"
+    FILTERED="$KEPT"
+
     if [ "$IS_HARNESS_REPO" = "1" ]; then
       for d in $CODE_DIRS; do
         if echo "$FILTERED" | grep -q "^$d"; then CODE_CHANGED=1; fi
@@ -354,8 +412,18 @@ else
           echo "   → Update docs/ or instructions/ before committing"
         fi
       fi
+    elif [ "$CODE_CHANGED" = "0" ] && [ "$DOCS_CHANGED" = "0" ] && [ -n "$GENERATED" ]; then
+      # Nothing left after the generated files were dropped — say that,
+      # rather than claiming docs accompanied a change that had no code in it.
+      check_pass "Only generated files changed —$GENERATED (nothing to document)"
     else
       check_pass "Code changes accompanied by docs update (or docs-only change)"
+      # A plain `[ -n … ] && echo …` here would leave the branch with status 1
+      # when GENERATED is empty, which under set -e is a coin flip on the
+      # gate's life. Spelled out: this is the script T-J20 came from.
+      if [ -n "$GENERATED" ]; then
+        echo "   → generated files not counted as code:$GENERATED"
+      fi
     fi
   fi
 fi
@@ -531,7 +599,12 @@ fi
 
 if [ -d "memory" ] && [ -n "$(ls -A memory 2>/dev/null)" ] && [ -f "MEMORY.md" ]; then
   if ! grep -q "MEMORY-INDEX START" "MEMORY.md" 2>/dev/null; then
-    NOTE_COUNT=$(ls -1 memory/*.md 2>/dev/null | wc -l | tr -d ' ')
+    # `find`, not the `memory/*.md` glob: on a freshly adopted project memory/
+    # holds only .gitkeep, the glob matches nothing, `ls` exits 1, pipefail
+    # carries that out of the pipeline and set -e kills the gate on this very
+    # assignment — before it prints a single result (T-J20). find reports an
+    # empty set as success, which is what an empty set is.
+    NOTE_COUNT=$(find memory -maxdepth 1 -type f -name '*.md' 2>/dev/null | wc -l | tr -d ' ')
     check_warn "MEMORY.md has no index — $NOTE_COUNT note(s) in memory/ are unreachable at Session Start; run: session-end"
   fi
 fi
@@ -539,6 +612,8 @@ fi
 echo ""
 
 # ── Summary ──────────────────────────────────────────────────────────────────
+# Every step ran; from here on an exit is a verdict, not a crash.
+DOD_COMPLETED=1
 echo "Results: $PASS passed, $FAIL failed, $WARN warnings"
 
 # ── Audit trail (T-F4) — append one line per run, local-only, gitignored.
